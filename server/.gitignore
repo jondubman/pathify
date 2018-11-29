@@ -1,0 +1,13 @@
+config
+config/*.json5
+dist
+dump
+gpx
+*.gpx
+logs
+*.log
+node_modules
+secrets
+test/js/*.js
+test/js/*.map
+ref.txt
