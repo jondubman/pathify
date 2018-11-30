@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@mapbox/react-native-mapbox-gl": "^6.1.3",
+    "@types/react-redux": "^6.0.10",
+    "@types/redux-saga": "^0.10.5",
     "prop-types": "^15.6.2",
     "react": "16.6.1",
     "react-native": "0.57.5",
