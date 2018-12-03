@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 
+import { CONFIG_TEST } from 'react-native-dotenv';
+
 import constants from '../../lib/constants';
 import utils from '../../lib/utils';
 
@@ -42,7 +44,7 @@ class AppUI extends Component {
       <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
         <View>
           <Text style={AppStyles.text}>
-            Hello, world.
+            {CONFIG_TEST}
           </Text>
         </View>
       </SafeAreaView>
