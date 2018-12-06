@@ -5,8 +5,8 @@ import {
   Dimensions,
 } from 'react-native';
 
-import Reducer from './reducer';
-import Sagas from './sagas';
+import Reducer from 'lib/reducer';
+import Sagas from 'lib/sagas';
 
 let reduxStore: any; // global singleton Redux store
 

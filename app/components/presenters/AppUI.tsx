@@ -9,18 +9,13 @@ import {
   View,
 } from 'react-native';
 
-import { CONFIG_TEST } from 'react-native-dotenv';
+import constants from 'lib/constants';
 
-import constants from '../../lib/constants';
-import utils from '../../lib/utils';
-
-const { height, width } = utils.windowSize();
+import MapContainer from 'containers/MapContainer';
 
 const AppStyles = StyleSheet.create({
-  app: {
-    backgroundColor: constants.colors.appBackground,
-  },
   safeAreaView: {
+    backgroundColor: constants.colors.appBackground,
     position: 'absolute',
     top: 0,
     bottom: 0,
@@ -28,6 +23,7 @@ const AppStyles = StyleSheet.create({
     right: 0,
   },
   text: {
+    color: constants.colors.appText,
     padding: 5,
   },
 })
@@ -40,12 +36,14 @@ class AppUI extends Component {
   }
 
   public render() {
+    const text = 'Hello, world!';
     return (
       <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
         <View>
           <Text style={AppStyles.text}>
-            {CONFIG_TEST}
+            {text}
           </Text>
+          <MapContainer />
         </View>
       </SafeAreaView>
     )

@@ -4,9 +4,7 @@ import React, {
 
 import { connect } from 'react-redux';
 
-import AppUI from '../presenters/AppUI';
-
-// import utils from '../../lib/utils';
+import AppUI from 'presenters/AppUI';
 
 const mapStateToProps = (state: any) => {
   return {
