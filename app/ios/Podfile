@@ -33,6 +33,9 @@ target 'Pathify' do
   # Mapbox
   pod 'react-native-mapbox-gl', :path => '../node_modules/@mapbox/react-native-mapbox-gl'
 
+  pod 'RNBackgroundGeolocation', :path => '../node_modules/react-native-background-geolocation'
+  pod 'RNBackgroundFetch', :path => '../node_modules/react-native-background-fetch'
+
   target 'PathifyTests' do
     inherit! :search_paths
     # Pods for testing
