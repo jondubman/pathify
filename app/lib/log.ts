@@ -44,7 +44,7 @@ const log = {
     } catch (err) {
       console.log(`${constants.appName} log err ${err}`);
     }
-    // logs.push(logItem); // keep logs around
+    logs.push(logItem); // keep logs around
 
     // inform all 'subscribers'
     // for (const logSubscriber of logSubscribers) {

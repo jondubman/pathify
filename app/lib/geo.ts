@@ -177,11 +177,11 @@ const geo = {
     // Now, configure the plugin, using those options.
     BackgroundGeolocation.ready(geolocationOptions_highPower, pluginState => {
 
-      const onError = err => { // TODO
-        log.error('BackgroundGeolocation error', err);
-      }
       const onActivityChange = activityInfo => {
         geo.handleEvent('onActivityChange', activityInfo);
+      }
+      const onEnabledChange = isEnabled => {
+        geo.handleEvent('onEnabledChange', isEnabled);
       }
       const onGeofence = geofence => {
         geo.handleEvent('onGeofence', geofence);
@@ -198,12 +198,13 @@ const geo = {
       const onMotionChange = location => {
         geo.handleEvent('onMotionChange', location);
       }
-      BackgroundGeolocation.on('activitychange', onActivityChange, onError);
-      BackgroundGeolocation.on('geofence', onGeofence, onError);
-      BackgroundGeolocation.on('geofenceschange', onGeofencesChange, onError);
-      BackgroundGeolocation.on('heartbeat', onHeartbeat, onError);
-      BackgroundGeolocation.on('location', onLocation, onError);
-      BackgroundGeolocation.on('motionchange', onMotionChange, onError);
+      BackgroundGeolocation.onActivityChange(onActivityChange);
+      BackgroundGeolocation.onEnabledChange(onEnabledChange);
+      BackgroundGeolocation.onGeofence(onGeofence);
+      BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
+      BackgroundGeolocation.onHeartbeat(onHeartbeat);
+      BackgroundGeolocation.onLocation(onLocation);
+      BackgroundGeolocation.onMotionChange(onMotionChange);
 
       if (pluginState.enabled) {
         // This means it is already enabled, as it would be if the app is being resumed
