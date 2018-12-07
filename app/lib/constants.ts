@@ -5,6 +5,7 @@ interface MapStyle {
 }
 
 const constants = {
+  appName: 'Pathify',
   colors: {
     appBackground: 'blue',
     appText: 'white',

@@ -10,6 +10,11 @@ import utils from 'lib/utils';
 
 import AppUIContainer from 'containers/AppUIContainer';
 export default class App extends Component {
+  constructor(props: any) {
+    super(props);
+    utils.onAppStart(); // TODO is this the right place for this?
+  }
+
   render() {
     return (
       <Provider store={utils.store()}>
