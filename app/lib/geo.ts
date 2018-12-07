@@ -1,4 +1,18 @@
-import BackgroundGeolocation from 'react-native-background-geolocation';
+import BackgroundGeolocation, {
+  State,
+  Config,
+  Location,
+  LocationError,
+  Geofence,
+  GeofenceEvent,
+  GeofencesChangeEvent,
+  HeartbeatEvent,
+  HttpEvent,
+  MotionActivityEvent,
+  MotionChangeEvent,
+  ProviderChangeEvent,
+  ConnectivityChangeEvent
+} from 'react-native-background-geolocation';
 
 // import {
 //   appActivityUpdate,
@@ -177,26 +191,26 @@ const geo = {
     // Now, configure the plugin, using those options.
     BackgroundGeolocation.ready(geolocationOptions_highPower, pluginState => {
 
-      const onActivityChange = activityInfo => {
-        geo.handleEvent('onActivityChange', activityInfo);
+      const onActivityChange = (event: MotionActivityEvent) => {
+        geo.handleEvent('onActivityChange', event);
       }
       const onEnabledChange = isEnabled => {
         geo.handleEvent('onEnabledChange', isEnabled);
       }
-      const onGeofence = geofence => {
-        geo.handleEvent('onGeofence', geofence);
+      const onGeofence = (event: GeofenceEvent) => {
+        geo.handleEvent('onGeofence', event);
       }
-      const onGeofencesChange = event => {
+      const onGeofencesChange = (event: GeofencesChangeEvent) => {
         geo.handleEvent('onGeofencesChange', event);
       }
-      const onHeartbeat = params => {
-        geo.handleEvent('onHeartbeat', params);
+      const onHeartbeat = (event: HeartbeatEvent) => {
+        geo.handleEvent('onHeartbeat', event);
       }
       const onLocation = location => {
         geo.handleEvent('onLocation', location);
       }
-      const onMotionChange = location => {
-        geo.handleEvent('onMotionChange', location);
+      const onMotionChange = (event: MotionChangeEvent) => {
+        geo.handleEvent('onMotionChange', event);
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);
