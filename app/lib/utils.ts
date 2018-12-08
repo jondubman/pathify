@@ -22,8 +22,6 @@ const utils = {
     log.debug('windowSize', utils.windowSize());
 
     utils.store(); // create Redux store
-
-    geo.initializeGeolocation(); // TODO use return value
   },
 
   // ---SECTION: misc
@@ -51,6 +49,8 @@ const utils = {
     }
     return reduxStore;
   },
+
+  dispatch: action => utils.store().dispatch(action),
 }
 
 export default utils;

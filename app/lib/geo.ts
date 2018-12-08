@@ -1,17 +1,17 @@
 import BackgroundGeolocation, {
-  State,
+  // State,
   Config,
   Location,
-  LocationError,
-  Geofence,
+  // LocationError,
+  // Geofence,
   GeofenceEvent,
   GeofencesChangeEvent,
   HeartbeatEvent,
-  HttpEvent,
+  // HttpEvent,
   MotionActivityEvent,
   MotionChangeEvent,
-  ProviderChangeEvent,
-  ConnectivityChangeEvent
+  // ProviderChangeEvent,
+  // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
 // import {
@@ -23,7 +23,7 @@ import BackgroundGeolocation, {
 import log from 'lib/log';
 import utils from 'lib/utils';
 
-const geolocationOptions = {
+const geolocationOptions: Config = {
   // --------------
   // Common Options
   // --------------
@@ -36,6 +36,7 @@ const geolocationOptions = {
   // (device moving at highway speeds -> locations returned at ~1/km)
   disableElasticity: true, // default false
   stopAfterElapsedMinutes: 0, // default 0
+
   // stopOnStationary: false, // default false
 
   // ----------------------------
@@ -103,14 +104,14 @@ const geolocationOptions = {
 
   useSignificantChangesOnly: false, // default false
   locationAuthorizationRequest: 'Always', // either Always or WhenInUse
-  locationAuthorizationAlert: {}, // default {}
+  // locationAuthorizationAlert: {}, // default {}
 
   // Enable to prevent iOS from suspending when stationary. Must be used with a heartbeatInterval.
   // preventSuspend: false, // default false
 
   // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype
   // default 'Other'
-  activityType: 'Other',
+  activityType: BackgroundGeolocation.ACTIVITY_TYPE_OTHER,
 
   // Note plugin is highly optimized for motion-activity-updates. Disabling these is not advised.
   disableMotionActivityUpdates: false, // default false
@@ -126,7 +127,7 @@ const geolocationOptions = {
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
 // stopTimeout is the amount of time to
 
-const geolocationOptions_lowPower = {
+const geolocationOptions_lowPower: Config = {
   ...geolocationOptions,
 
   // desired time between activity detections.
@@ -151,9 +152,9 @@ const geolocationOptions_lowPower = {
   stopDetectionDelay: 1, // minutes during which GPS is off and only the accelerometer is monitored
   stopOnStationary: false, // default false
   stopTimeout: 5, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
-} as any;
+}
 
-const geolocationOptions_highPower = {
+const geolocationOptions_highPower: Config = {
   ...geolocationOptions,
 
   // desired time between activity detections.
@@ -177,14 +178,13 @@ const geolocationOptions_highPower = {
   stopDetectionDelay: 1, // minutes during which GPS is off and only the accelerometer is monitored
   stopOnStationary: false, // default false
   stopTimeout: 5, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
-} as any;
+}
 
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // for backgroundGeolocation
 const haveReasonBesides = reason => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
 const geo = {
-  // returns true if already enabled
   initializeGeolocation: () => {
     log.debug('initializeGeolocation');
 
@@ -192,25 +192,18 @@ const geo = {
     BackgroundGeolocation.ready(geolocationOptions_highPower, pluginState => {
 
       const onActivityChange = (event: MotionActivityEvent) => {
-        geo.handleEvent('onActivityChange', event);
       }
       const onEnabledChange = isEnabled => {
-        geo.handleEvent('onEnabledChange', isEnabled);
       }
       const onGeofence = (event: GeofenceEvent) => {
-        geo.handleEvent('onGeofence', event);
       }
       const onGeofencesChange = (event: GeofencesChangeEvent) => {
-        geo.handleEvent('onGeofencesChange', event);
       }
       const onHeartbeat = (event: HeartbeatEvent) => {
-        geo.handleEvent('onHeartbeat', event);
       }
-      const onLocation = location => {
-        geo.handleEvent('onLocation', location);
+      const onLocation = (location: Location) => {
       }
       const onMotionChange = (event: MotionChangeEvent) => {
-        geo.handleEvent('onMotionChange', event);
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);
@@ -221,10 +214,7 @@ const geo = {
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       if (pluginState.enabled) {
-        // This means it is already enabled, as it would be if the app is being resumed
-        // after having been suspended in the tracking state.
-        log.debug('BackgroundGeolocation already enabled');
-        return true;
+        log.debug('BackgroundGeolocation was already enabled -- app may be resumed after having been suspended');
       } else {
         log.debug('BackgroundGeolocation configured and ready', pluginState);
 
@@ -236,7 +226,6 @@ const geo = {
     }, err => {
       log.error('BackgroundGeolocation failed to configure', err);
     })
-    return false;
   },
 
   changePace: (isMoving, done) => {
@@ -269,24 +258,6 @@ const geo = {
   //   },
   //   "odometer": [Float/meters]
   // }
-  handleEvent: (eventName, info) => {
-    let update;
-    if (eventName === 'onActivityChange') {
-      log.info('onActivityChange', info);
-      // update = appActivityUpdate(info);
-    } else if (eventName === 'onLocation') {
-      // update = appLocationUpdate(info);
-    } else if (eventName === 'onMotionChange') {
-      log.info('onMotionChange');
-      // update = appMotionUpdate(info);
-    // } else { // enable for debugging (TODO do via app option)
-    // utils.serverLog('handleEvent', { eventName, ...info });
-    }
-    // if (update) {
-    //   log.trace(`dispatching ${eventName} event`, update);
-    //   utils.dispatch(update);
-    // }
-  },
 
   resetOdometer: async () => {
     const done = () => {
