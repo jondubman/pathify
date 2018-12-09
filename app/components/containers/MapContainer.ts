@@ -1,12 +1,7 @@
-// Note this is the container for MapArea but it's just MapContainer instead of "MapAreaContainer"
-
-import React, {
-  Component,
-} from 'react';
+// Note this is the container for MapArea but for brevity, it's called MapContainer instead of MapAreaContainer.
 
 import { connect } from 'react-redux';
 
-import { appAction } from 'lib/actionTypes';
 import constants from 'lib/constants';
 import MapArea from 'presenters/MapArea';
 

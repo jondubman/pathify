@@ -13,19 +13,12 @@ Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 
-interface IMapAreaProps extends React.Props<any> {
+interface Props extends React.Props<any> {
   mapStyleURL: string,
   opacity: number,
 }
 
-class MapArea extends Component<IMapAreaProps> {
-
-  constructor(props: any) {
-    super(props);
-    this.state = {
-    }
-  }
-
+class MapArea extends Component<Props> {
   render() {
     const { mapStyleURL, opacity } = this.props;
     const { height, width } = utils.windowSize();
@@ -61,4 +54,3 @@ class MapArea extends Component<IMapAreaProps> {
 }
 
 export default MapArea;
-

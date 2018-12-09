@@ -29,12 +29,6 @@ const AppStyles = StyleSheet.create({
 })
 
 class AppUI extends Component {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-    }
-  }
-
   public render() {
     const text = 'Hello, world!';
     return (
