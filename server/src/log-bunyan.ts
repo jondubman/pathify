@@ -1,9 +1,9 @@
 import * as bunyan from 'bunyan';
 import * as fs from 'fs';
 
-const latestLogFile = './latest.log';
-const serverLogfile = './server.log';
-const completeLogFile = './complete.log';
+const latestLogFile = './logs/latest.log';
+const serverLogfile = './logs/server.log';
+const completeLogFile = './logs/complete.log';
 
 // tail -f server.log | bunyan
 // `type: 'file'` is implied

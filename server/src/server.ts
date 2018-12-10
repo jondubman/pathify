@@ -9,11 +9,12 @@ import * as helmet from 'helmet';
 
 const bunyanMiddleware = require('bunyan-middleware');
 
-// const constants = require('./constants');
+const constants = require('./constants');
 // const database = require('./database');
 // const datetime = require('./datetime');
 const log = require('./log-bunyan');
 // const utils = require('./utils');
+
 
 const app = express();
 
@@ -39,6 +40,9 @@ app.use(bunyanMiddleware({
   }
 ))
 
+const ping = require('./routers/ping');
+app.use('/ping', ping);
+
 // used for fatal error / server restart
 function flushLogsAndExit(msecDelay = 1000) {
   // Note this would exit immediately, omitting logs due to https://github.com/trentm/node-bunyan/issues/95
@@ -56,9 +60,27 @@ function flushLogsAndExit(msecDelay = 1000) {
 
 // ---SECTION: Startup
 
+const startExpressServer = () => {
+  let server, port, via;
+  const secure = false;
+  log.info('startExpressServer');
+  if (secure) {
+    // TODO
+  } else {
+    log.warn('Server running over insecure http');
+    port = constants.DEFAULT_PORT;
+    via = 'http';
+    server = app;
+  }
+  server.listen(port, () => {
+    log.info(`server listening via ${via}, port ${port}`);
+  })
+}
+
 // This is called synchronously below. It's only async so it can await.
 const startServer = async () => {
   log.info('--------------------------');
+  startExpressServer();
 }
 
 // ---SECTION: Top-level code
