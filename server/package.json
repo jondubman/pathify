@@ -4,11 +4,9 @@
   "description": "Pathify server",
   "scripts": {
     "build": "mkdir dist 2>/dev/null; tsc; cp -R src/config dist; echo 'done building to /dist'",
-    "build-tests": "mkdir dist 2>/dev/null; tsc -p test",
     "start": "NODE_ENV=development nodemon --watch src -e ts --exec 'yarn build; yarn run run'",
     "run": "NODE_ENV=development node dist/server.js",
-    "test": "mkdir dist 2>/dev/null; tsc -p test; sleep 10; NODE_ENV=development mocha ./test/js/*.js",
-    "retest": "NODE_ENV=development mocha ./test/js/*.js"
+    "test": "NODE_ENV=development mocha ./dist/test/*.js"
   },
   "author": "Jonathan Dubman",
   "license": "ISC",

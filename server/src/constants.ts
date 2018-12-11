@@ -1,10 +1,10 @@
 // Shared constants
 
 const constants = {
-  DEFAULT_PORT: 3000, // TODO move to config
+  defaultPort: 3000,
 }
 
-module.exports = constants;
+export { constants };
 
 // For reference: HTTP status codes
 //

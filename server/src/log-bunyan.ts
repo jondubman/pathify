@@ -77,4 +77,4 @@ const log = {
 
 // testLogging();
 
-module.exports = log;
+export { log };

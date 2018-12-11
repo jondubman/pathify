@@ -1,13 +1,9 @@
-config
-config/*.json5
 dist
-dump
+local.json5
 gpx
 *.gpx
 logs
 *.log
 node_modules
 secrets
-test/js/*.js
-test/js/*.map
 ref.txt

@@ -1,8 +1,8 @@
-var express = require('express')
+import * as express from 'express';
 var router = express.Router()
 
 router.get('/', function (req, res) {
   res.send('pong')
 })
 
-module.exports = router
+export { router as ping };

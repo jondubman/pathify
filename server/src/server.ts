@@ -9,12 +9,8 @@ import * as helmet from 'helmet';
 
 const bunyanMiddleware = require('bunyan-middleware');
 
-const constants = require('./constants');
-// const database = require('./database');
-// const datetime = require('./datetime');
-const log = require('./log-bunyan');
-// const utils = require('./utils');
-
+import { log } from './log-bunyan';
+import { constants } from './constants';
 
 const app = express();
 
@@ -40,7 +36,7 @@ app.use(bunyanMiddleware({
   }
 ))
 
-const ping = require('./routers/ping');
+import { ping } from './routers/ping';
 app.use('/ping', ping);
 
 // used for fatal error / server restart
@@ -68,7 +64,7 @@ const startExpressServer = () => {
     // TODO
   } else {
     log.warn('Server running over insecure http');
-    port = constants.DEFAULT_PORT;
+    port = constants.defaultPort;
     via = 'http';
     server = app;
   }

@@ -1,0 +1,24 @@
+// For use with node config.
+//
+// https://www.npmjs.com/package/config
+// http://json5.org
+//
+// Create a file named local.json5 in the same directory as this, with appropriate urls, to assign servers.
+
+{
+  localServer: 'http://127.0.0.1:3000',
+  devServer: 'https://my-dev-server:3000',
+  prodServer: 'https://my-dev-server:3000',
+  testServer: 'http://my-test-server:3000',
+
+  thisServer: 'localServer', // value should be one of the keys above; others are used for cli
+
+  isProduction: false,
+  runningLocally: true,
+
+  jwtSigningKey: 'todo-jwtSigningKey-something-secure',
+
+  AWSAccessKeyId: '',
+  AWSSecretKey: '',
+  AWSRegion: 'us-west-2',
+}
