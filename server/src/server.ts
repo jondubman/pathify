@@ -10,7 +10,7 @@ import * as helmet from 'helmet';
 const bunyanMiddleware = require('bunyan-middleware');
 
 import { log } from './log-bunyan';
-import { constants } from './constants';
+import { constants } from './lib/constants';
 
 const app = express();
 
