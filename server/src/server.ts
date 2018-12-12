@@ -11,7 +11,7 @@ import * as helmet from 'helmet';
 // import * as https from 'https';
 // import * as JSON5 from 'json5'; // extension of JSON with more permissive syntax
 
-const bunyanMiddleware = require('bunyan-middleware');
+const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues with import, but works fine with require.
 
 import { log } from 'lib/log-bunyan';
 import { constants } from 'lib/constants';
@@ -97,6 +97,10 @@ process
 
 // Important: Actually start the server!
 console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
+
+// test ability to use code from shared folder
+import testMessage from 'shared/test'
+console.log(testMessage); // 'It works!'
 
 startServer();
 

@@ -57,6 +57,9 @@
         "routers/*": [
             "src/routers/*"
         ],
+        "shared/*": [
+            "src/shared/*"
+        ],
         "test/*": [
             "src/test/*"
         ]
