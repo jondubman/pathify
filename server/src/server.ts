@@ -1,5 +1,9 @@
 // Pathify server main
 
+// This creates an Express server, installs middleware, configures all the routes, and launches it.
+
+require('module-alias/register'); // for module import alias resolution. See tsconfig.json and package.json
+
 import * as bodyParser from 'body-parser'; // Unbundled from Express as of Express 4
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -9,8 +13,8 @@ import * as helmet from 'helmet';
 
 const bunyanMiddleware = require('bunyan-middleware');
 
-import { log } from './log-bunyan';
-import { constants } from './lib/constants';
+import { log } from 'lib/log-bunyan';
+import { constants } from 'lib/constants';
 
 const app = express();
 
@@ -37,11 +41,8 @@ app.use(bunyanMiddleware({
   }
 ))
 
-// ---SECTION: REST API
-
 // TODO use /api/ping etc.
-
-import { ping } from './routers/ping';
+import { ping } from 'routers/ping';
 app.use('/ping', ping);
 
 // used for fatal error / server restart
@@ -58,8 +59,6 @@ function flushLogsAndExit(msecDelay = 1000) {
     process.exit(1);
   }, msecDelay);
 }
-
-// ---SECTION: Startup
 
 const startExpressServer = () => {
   let server, port, via;
@@ -78,13 +77,11 @@ const startExpressServer = () => {
   })
 }
 
-// This is called synchronously below. It's only async so it can await.
+// This is called synchronously below. It's only async so it can await. TODO
 const startServer = async () => {
   log.info('--------------------------');
   startExpressServer();
 }
-
-// ---SECTION: Top-level code
 
 // https://stackoverflow.com/questions/40867345/catch-all-uncaughtexception-for-node-js-app
 process
@@ -99,8 +96,8 @@ process
   })
 
 // Important: Actually start the server!
-
 console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
+
 startServer();
 
 // TODO - experimental timer-based failure injection

@@ -48,6 +48,17 @@
         "*": [
             "node_modules/*",
             "src/types/*"                     /* TODO */
+        ],
+        /* See also: package.json _moduleAliases, which must be kept in sync for these import paths to work! */
+        /* Also, must require('module-alias/register') */
+        "lib/*": [
+            "src/lib/*"
+        ],
+        "routers/*": [
+            "src/routers/*"
+        ],
+        "test/*": [
+            "src/test/*"
         ]
     }
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */

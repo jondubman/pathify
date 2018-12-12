@@ -1,7 +1,9 @@
+require('module-alias/register');
+
 import * as chai from 'chai';
 const expect = chai.expect;
 
-import { constants } from '../lib/constants';
+import { constants } from 'lib/constants';
 
 // ----------------------
 // Mocha tests begin here
