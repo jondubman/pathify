@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 
 app.use(cookieParser());
 
+// Log network activity at TRACE level
 app.use(bunyanMiddleware({
   headerName: 'X-Request-Id',
   propertyName: 'reqId',
@@ -35,6 +36,10 @@ app.use(bunyanMiddleware({
   level: 'trace',
   }
 ))
+
+// ---SECTION: REST API
+
+// TODO use /api/ping etc.
 
 import { ping } from './routers/ping';
 app.use('/ping', ping);
@@ -95,6 +100,7 @@ process
 
 // Important: Actually start the server!
 
+console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
 startServer();
 
 // TODO - experimental timer-based failure injection

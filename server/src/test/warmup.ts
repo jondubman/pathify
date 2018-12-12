@@ -8,9 +8,7 @@ import { constants } from '../lib/constants';
 // ----------------------
 
 describe('category-warmup', function() {
-  describe('server-port', function() {
-    it(`should confirm server port number ${constants.defaultPort}`, async function() {
-      expect(constants.defaultPort).to.exist;
-    })
+  it(`should confirm server port number ${constants.defaultPort}`, async function() {
+    expect(constants.defaultPort).to.exist;
   })
 })
