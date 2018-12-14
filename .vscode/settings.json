@@ -1,5 +1,9 @@
 {
   "files.exclude": {
-    "src/shared": true
+    "**/app/shared": true,
+    "**/server/src/shared": true,
+    "**/web/build": true,
+    "**/web/src/shared": true,
+    "test.ts": true
   }
 }

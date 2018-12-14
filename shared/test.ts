@@ -1,7 +1,7 @@
 // export default 'It works!';
 
 const sharedFolderTest = {
-  message: 'It works!',
+  message: 'It works! (sharedFolderTest)',
 }
 
 export default sharedFolderTest;
