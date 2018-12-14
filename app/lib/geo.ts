@@ -193,7 +193,7 @@ const geo = {
 
       const onActivityChange = (event: MotionActivityEvent) => {
       }
-      const onEnabledChange = isEnabled => {
+      const onEnabledChange = (isEnabled: boolean) => {
       }
       const onGeofence = (event: GeofenceEvent) => {
       }
