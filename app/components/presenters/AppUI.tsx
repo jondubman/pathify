@@ -12,6 +12,7 @@ import {
 import constants from 'lib/constants';
 
 import MapContainer from 'containers/MapContainer';
+import Timeline from 'presenters/Timeline';
 
 const AppStyles = StyleSheet.create({
   safeAreaView: {
@@ -24,6 +25,7 @@ const AppStyles = StyleSheet.create({
   },
   text: {
     color: constants.colors.appText,
+    fontSize: 14, // this seems to be the default
     padding: 5,
   },
 })
@@ -37,7 +39,8 @@ class AppUI extends Component {
           <Text style={AppStyles.text}>
             {text}
           </Text>
-          <MapContainer />
+          {/*<MapContainer />*/}
+          <Timeline />
         </View>
       </SafeAreaView>
     )

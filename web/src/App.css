@@ -18,11 +18,29 @@
   font-size: 1.5em;
 }
 
-.App-intro {
-  font-size: large;
-}
-
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.axis line {
+  fill: none;
+  stroke: #fff;
+}
+.axis path {
+  stroke: red;
+}
+.axis text {
+  fill: blue;
+}
+
+.container {
+  background-color: white;
+  margin: 50px;
+  height: 400px;
+  width: 1000px;
+}
+
+.d3test {
+  border: 1px solid gray;
 }

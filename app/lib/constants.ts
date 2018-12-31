@@ -7,8 +7,8 @@ interface MapStyle {
 const constants = {
   appName: 'Pathify',
   colors: {
-    appBackground: 'blue',
-    appText: 'white',
+    appBackground: 'lightblue',
+    appText: 'black',
   },
   map: {
     default: {

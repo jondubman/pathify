@@ -36,6 +36,8 @@ target 'Pathify' do
   pod 'RNBackgroundGeolocation', :path => '../node_modules/react-native-background-geolocation'
   pod 'RNBackgroundFetch', :path => '../node_modules/react-native-background-fetch'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
   target 'PathifyTests' do
     inherit! :search_paths
     # Pods for testing
