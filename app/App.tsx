@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import utils from 'lib/utils';
 
 import AppUIContainer from 'containers/AppUIContainer';
+
 export default class App extends Component {
   constructor(props: any) {
     super(props);

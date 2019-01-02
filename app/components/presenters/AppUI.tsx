@@ -27,7 +27,6 @@ const AppStyles = StyleSheet.create({
 
 class AppUI extends Component {
   public render() {
-    const text = 'Hello, world!';
     return (
       <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
         <View>

@@ -11,7 +11,6 @@ import {
 import {
   appAction,
   newAction,
-  reducerAction,
 } from 'lib/actions';
 
 import { Geo } from 'lib/geo';

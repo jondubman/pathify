@@ -17,7 +17,6 @@ import BackgroundGeolocation, {
 import {
   appAction,
   newAction,
-  reducerAction,
 } from 'lib/actions';
 
 import log from 'lib/log';

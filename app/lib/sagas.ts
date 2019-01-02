@@ -98,11 +98,11 @@ const Sagas = {
 
       // Potential cascading appAction.CENTER_MAP_ON_USER:
       if (mapArea) {
-        // TODO there must be a more concise way to do the following:
+        // TODO use a more concise way
         const { loc, options } = yield select((state: any) => ({ loc: state.loc, options: state.options }));
         const { followingUser } = options;
         const bounds = yield call(mapArea.getVisibleBounds);
-        if (followingUser && (options.keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
+        if (followingUser && loc && (options.keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
           yield put(newAction(appAction.CENTER_MAP_ON_USER));
         }
       }

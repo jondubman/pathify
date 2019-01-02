@@ -13,7 +13,6 @@ Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 import {
   appAction,
   newAction,
-  reducerAction,
 } from 'lib/actions';
 
 import constants from 'lib/constants';

@@ -21,41 +21,66 @@
 //
 // See https://stackoverflow.com/questions/34965856/what-is-the-point-of-the-constants-in-redux
 
-const actionTypes = {} as any; // Keys (which are exported) will be the same as keys of actionTypeStrings.
+// const actionTypes = {} as any; // Keys (which are exported) will be the same as keys of actionTypeStrings.
 
-const actionTypeStrings = { // Basis for forming the actionTypes.
+// const actionTypeStrings = { // Basis for forming the actionTypes.
 
-  // actions initiated by the user or app, handled by sagas that may subsequently trigger cascading actions.
-  // appAction are not handled by the reducer, but the reducer is usually invoked indirectly.
-  appAction: [
-    'GEOLOCATION',
+//   // actions initiated by the user or app, handled by sagas that may subsequently trigger cascading actions.
+//   // appAction are not handled by the reducer, but the reducer is usually invoked indirectly.
+//   appAction: [
+//     'GEOLOCATION',
 
-    'CENTER_MAP_ON_USER',
-    'USER_PANNED_MAP',
+//     'CENTER_MAP_ON_USER',
+//     'USER_PANNED_MAP',
 
-    'START_FOLLOWING_USER',
-    'STOP_FOLLOWING_USER',
-  ],
+//     'START_FOLLOWING_USER',
+//     'STOP_FOLLOWING_USER',
+//   ],
 
-  // actions handled by the reducer. These directly impact the Redux store when dispatched.
-  reducerAction: [
-    'FOLLOW_USER',
-    'UNFOLLOW_USER',
+//   // actions handled by the reducer. These directly impact the Redux store when dispatched.
+//   reducerAction: [
+//     'FOLLOW_USER',
+//     'UNFOLLOW_USER',
 
-    'GEOLOCATION',
-  ],
-} as any;
+//     'GEOLOCATION',
+//   ],
+// } as any;
 
-for (const category of Object.keys(actionTypeStrings)) { // 'appAction', 'reducerAction'
-  actionTypes[category] = {};
-  for (let s of actionTypeStrings[category]) {
-    actionTypes[category][s] = `${category}.${s}`;
-    // This expands to, like:
-    // actionTypes.appAction.START_TRACKING = 'appAction.START_TRACKING'
-  }
+// for (const category of Object.keys(actionTypeStrings)) { // 'appAction', 'reducerAction'
+//   actionTypes[category] = {};
+//   for (let s of actionTypeStrings[category]) {
+//     actionTypes[category][s] = `${category}.${s}`;
+//     // This expands to, like:
+//     // actionTypes.appAction.START_TRACKING = 'appAction.START_TRACKING'
+//   }
+// }
+
+// export const { appAction, reducerAction } = actionTypes;
+
+// The actions are strings in order to work smoothly with redux-saga. This also makes action objects self-explanatory.
+
+export enum reducerAction {
+  'GEOLOCATION' = 'GEOLOCATION',
+  'FOLLOW_USER' = 'FOLLOW_USER',
+  'UNFOLLOW_USER' = 'UNFOLLOW_USER',
 }
 
-const { appAction, reducerAction } = actionTypes;
+// By convention these strings are preceded by async_ so as never to match any reducerActions (similar to namespacing)
+export enum appAction {
+  'GEOLOCATION' = 'async_GEOLOCATION',
+
+  'CENTER_MAP_ON_USER' = 'async_CENTER_MAP_ON_USER',
+  'USER_PANNED_MAP' = 'async_USER_PANNED_MAP',
+
+  'START_FOLLOWING_USER' = 'async_START_FOLLOWING_USER',
+  'STOP_FOLLOWING_USER' = 'async_STOP_FOLLOWING_USER',
+}
+
+export type ActionType = reducerAction | appAction;
+export interface Action {
+  type: ActionType;
+  params: object;
+}
 
 // Redux action creators for the app.
 
@@ -72,11 +97,9 @@ const { appAction, reducerAction } = actionTypes;
 // -- If it's an appAction, it should be handled by one of the sagas (and it just passes through the reducer)
 //    appActions may yield other appActions and/or reducerActions.
 
-// Note actionType could be an appAction or reducerAction.
+// Note type could be an appAction or reducerAction.
 
-const newAction = (type: string, params: any = null) => ({
+export const newAction = (type: string, params: any = null) => ({
   type,
   params,
 })
-
-export { appAction, newAction, reducerAction };

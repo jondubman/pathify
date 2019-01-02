@@ -1,12 +1,10 @@
 import {
-  appAction,
-  newAction,
+  Action,
   reducerAction,
 } from 'lib/actions';
 
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
-import log from 'lib/log';
 
 const initialAppState = {
   loc: null as any,
@@ -17,14 +15,14 @@ const initialAppState = {
   },
 }
 
-const Reducer = (state = initialAppState, action: any) => {
+const Reducer = (state = initialAppState, action: Action) => {
   const newState = { ...state }; // shallow copy for now
-
+;
   switch (action.type) {
     // If there's an active trackingId, store location (associated with trackingId), and update track stats.
     // Note this will not post the location to the server. That happens in a Saga via queuePostLocation.
     case reducerAction.GEOLOCATION:
-      const locationEvent: LocationEvent = action.params;
+      const locationEvent = action.params as LocationEvent;
       if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
         newState.loc = locationEvent;
       }
@@ -39,10 +37,7 @@ const Reducer = (state = initialAppState, action: any) => {
       break;
 
     default:
-      // TODO could also validate it's a legitimate appAction
-      if (!action.type.startsWith('@@redux/INIT') && !action.type.startsWith('appAction')) {
-        log.warn('Unexpected action type in reducer:', action.type);
-      }
+      break;
   }
   return newState;
 }
