@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 
 import {
+  Action,
   appAction,
   newAction,
 } from 'lib/actions';
 
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
-import Reducer from 'lib/reducer';
+import Reducer, { AppState } from 'lib/reducer';
 import Sagas from 'lib/sagas';
 
 let reduxStore: any; // global singleton Redux store. TODO define types
@@ -38,7 +39,7 @@ const utils = {
 
     const store = utils.store(); // create Redux store
     Geo.initializeGeolocation(); // TODO use only when needed
-
+    Geo.resetOdometer();
     store.dispatch(newAction(appAction.START_FOLLOWING_USER));
   },
 
@@ -90,6 +91,10 @@ const utils = {
 
   // ---SECTION: Redux
 
+  getState: () => {
+    return utils.store().getState() as AppState;
+  },
+
   store: () => {
     // create once
     if (!reduxStore) {
@@ -102,7 +107,7 @@ const utils = {
     return reduxStore;
   },
 
-  dispatch: (action: any) => utils.store().dispatch(action),
+  dispatch: (action: Action) => utils.store().dispatch(action),
 }
 
 export default utils;

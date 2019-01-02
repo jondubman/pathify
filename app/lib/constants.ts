@@ -9,6 +9,7 @@ const constants = {
   colors: {
     appBackground: 'lightblue',
     appText: 'black',
+    user: '#007FFF',  // azure, the hue halfway between blue and cyan
   },
   map: {
     default: {

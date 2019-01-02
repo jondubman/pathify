@@ -3,11 +3,12 @@
 import { connect } from 'react-redux';
 
 import constants from 'lib/constants';
+import { AppState } from 'lib/reducer';
 import utils from 'lib/utils';
 
 import MapArea from 'presenters/MapArea';
 
-const mapStateToProps = (state: any, ownProps: any) => {
+const mapStateToProps = (state: AppState, ownProps: any) => {
   const mapStyle = constants.mapStyles[state.options.mapStyle];
   const { height, width } = utils.windowSize();
   return {
@@ -15,6 +16,7 @@ const mapStateToProps = (state: any, ownProps: any) => {
     mapStyleURL: mapStyle.url,
     opacity: mapStyle.opacity,
     width,
+    userLoc: state.loc,
   }
 }
 

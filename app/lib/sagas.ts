@@ -29,9 +29,11 @@ import {
 
 import { Geo, LocationEvent } from 'lib/geo';
 import log from 'lib/log';
+import { AppState } from 'lib/reducer';
 import utils from 'lib/utils';
 
 import {
+  Action,
   appAction,
   newAction,
   reducerAction,
@@ -53,7 +55,7 @@ const Sagas = {
       log.debug('saga centerMapOnUser');
       const { mapArea } = utils as any;
       if (mapArea && mapArea.flyTo) {
-        const loc = yield select(state => state.loc);
+        const loc = yield select((state: AppState) => state.loc);
         if (loc && loc.lon && loc.lat) {
           const coordinates = [loc.lon, loc.lat];
           yield call(mapArea.flyTo, coordinates);
@@ -88,10 +90,10 @@ const Sagas = {
     }
   },
 
-  geolocation: function* (action) {
+  geolocation: function* (action: Action) {
     try {
       log.debug('saga geolocation');
-      const locationEvent: LocationEvent = action.params;
+      const locationEvent: LocationEvent = action.params as LocationEvent;
       yield put(newAction(reducerAction.GEOLOCATION, locationEvent));
 
       const { mapArea } = utils as any;

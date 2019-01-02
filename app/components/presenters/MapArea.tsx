@@ -16,14 +16,18 @@ import {
 } from 'lib/actions';
 
 import constants from 'lib/constants';
+import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
 import utils from 'lib/utils';
+
+import Pulsar from 'components/presenters/Pulsar';
 
 interface Props extends React.Props<any> {
   height: number,
   mapStyleURL: string,
   opacity: number,
   width: number,
+  userLoc: LocationEvent | null,
 }
 
 class MapArea extends Component<Props> {
@@ -48,18 +52,21 @@ class MapArea extends Component<Props> {
   }
 
   render() {
-    const { height, mapStyleURL, opacity, width } = this.props;
+    const { height, mapStyleURL, opacity, width, userLoc } = this.props;
     const mapStyle = {
       alignSelf: 'center',
       height,
       width,
     } as any;
-    const { lon, lat } = constants.map.default;
+    const mapCenterLon = constants.map.default.lon;
+    const mapCenterLat = constants.map.default.lat;
+
+    const showUserMarker = !!userLoc; // boolean (related to use of userLoc! postfix bang for non-null assertion below)
 
     return (
       <View style={{ opacity }}>
         <Mapbox.MapView
-          centerCoordinate={[ lon, lat ]}
+          centerCoordinate={[ mapCenterLon, mapCenterLat ]}
           contentInset={[ 0, 0, 0, 0 ]}
           heading={0}
           logoEnabled={false}
@@ -75,6 +82,16 @@ class MapArea extends Component<Props> {
           zoomEnabled={true}
           zoomLevel={constants.map.default.zoom}
         >
+          {showUserMarker ?
+            <Pulsar
+              id="userLocationMarker"
+              lon={userLoc!.lon}
+              lat={userLoc!.lat}
+              color={constants.colors.user}
+            />
+            :
+            null
+          }
         </Mapbox.MapView>
       </View>
     )
@@ -85,14 +102,16 @@ class MapArea extends Component<Props> {
   // coordinates is [ lon, lat ]
   async getPointInView(coordinates) {
     if (this._map) {
-      return await this._map.getPointInView(coordinates);
+      const mapView = this._map as any;
+      return await mapView.getPointInView(coordinates);
     }
   }
 
   // return the coordinate bounds [NE [lon, lat], SW [lon, lat]] visible in the users’s viewport.
   async getVisibleBounds() {
     if (this._map) {
-      return await this._map.getVisibleBounds();
+      const mapView = this._map as any;
+      return await mapView.getVisibleBounds();
     }
   }
 
@@ -100,14 +119,16 @@ class MapArea extends Component<Props> {
   // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
   flyTo(coordinates, duration) {
     if (this._map) {
-      this._map.flyTo(coordinates, duration);
+      const mapView = this._map as any;
+      mapView.flyTo(coordinates, duration);
     }
   }
 
   // duration is optional
   moveTo(coordinates, duration) {
     if (this._map) {
-      this._map.moveTo(coordinates, duration);
+      const mapView = this._map as any;
+      mapView.moveTo(coordinates, duration);
     }
   }
 
@@ -117,7 +138,8 @@ class MapArea extends Component<Props> {
   // duration is msec.
   fitBounds(neCoords, swCoords, padding, duration) {
     if (this._map) {
-      this._map.fitBounds(neCoords, swCoords, padding, duration);
+      const mapView = this._map as any;
+      mapView.fitBounds(neCoords, swCoords, padding, duration);
     }
   }
 

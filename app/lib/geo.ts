@@ -183,7 +183,7 @@ const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolo
 const haveReason = () => Object.values(reasons).includes(true); // for backgroundGeolocation
 const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
-// TODO consolidate event declarations?
+// TODO consolidate this and future event interface declarations? Or just have them all inherit a shared interface?
 export interface LocationEvent {
   type: string,
   time: string,
@@ -212,6 +212,7 @@ const locationEventFromLocation = (info: Location): LocationEvent => {
 }
 
 export const Geo = {
+
   initializeGeolocation: () => {
     log.debug('initializeGeolocation');
 
