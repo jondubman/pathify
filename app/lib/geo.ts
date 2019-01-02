@@ -14,11 +14,11 @@ import BackgroundGeolocation, {
   // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
-// import {
-//   appActivityUpdate,
-//   appLocationUpdate,
-//   appMotionUpdate,
-// } from 'lib/actionCreators.js';
+import {
+  appAction,
+  newAction,
+  reducerAction,
+} from 'lib/actions';
 
 import log from 'lib/log';
 import utils from 'lib/utils';
@@ -182,9 +182,37 @@ const geolocationOptions_highPower: Config = {
 
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // for backgroundGeolocation
-const haveReasonBesides = reason => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
+const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
-const geo = {
+// TODO consolidate event declarations?
+export interface LocationEvent {
+  type: string,
+  time: string,
+
+  ele: number | undefined,
+  heading: number | undefined,
+  lat: number,
+  lon: number,
+  odo: number,
+  speed: number | undefined,
+}
+
+const locationEventFromLocation = (info: Location): LocationEvent => {
+  const loc: LocationEvent = {
+    type: 'loc',
+    time: info.timestamp,
+
+    ele: info.coords.altitude,
+    heading: info.coords.heading,
+    lat: info.coords.latitude,
+    lon: info.coords.longitude,
+    odo: info.odometer,
+    speed: info.coords.speed,
+  }
+  return loc;
+}
+
+export const Geo = {
   initializeGeolocation: () => {
     log.debug('initializeGeolocation');
 
@@ -202,6 +230,9 @@ const geo = {
       const onHeartbeat = (event: HeartbeatEvent) => {
       }
       const onLocation = (location: Location) => {
+        const locationEvent = locationEventFromLocation(location);
+        log.info('location', locationEvent);
+        utils.dispatch(newAction(appAction.GEOLOCATION, locationEvent));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
       }
@@ -214,12 +245,10 @@ const geo = {
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       if (pluginState.enabled) {
-        log.debug('BackgroundGeolocation was already enabled -- app may be resumed after having been suspended');
-      } else {
         log.debug('BackgroundGeolocation configured and ready', pluginState);
 
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
-        geo.changePace(true, () => {
+        Geo.changePace(true, () => {
           log.info('BackgroundGeolocation pace manually set to moving');
         })
       }
@@ -228,7 +257,7 @@ const geo = {
     })
   },
 
-  changePace: (isMoving, done) => {
+  changePace: (isMoving: boolean, done: Function) => {
     BackgroundGeolocation.changePace(isMoving, done);
   },
 
@@ -271,16 +300,16 @@ const geo = {
   // Client should then pass the same reason when requesting to stopBackgroundGeolocation.
   // If any reasons still apply on stopBackgroundGeolocation, we leave geolocation on.
   // Resolves to true if background geolocation was started as a result of this request.
-  startBackgroundGeolocation: async reason => {
+  startBackgroundGeolocation: async (reason: string) => {
     log.trace(`startBackgroundGeolocation: reason: ${reason}`);
     if (reasons[reason]) {
-      log.debug(`Background geolocation already active for ${reason} in startBackgroundGeolocation`);
+      log.debug(`BackgroundGeolocation already active for ${reason} in startBackgroundGeolocation`);
       return false;
     }
     reasons[reason] = true;
     if (haveReasonBesides(reason)) {
-      log.debug(`Background geolocation requested for ${reason}, but already running`);
-      log.trace('Background geolocation reasons', reasons);
+      log.debug(`BackgroundGeolocation requested for ${reason}, but already running`);
+      log.trace('BackgroundGeolocation reasons', reasons);
       return false;
     }
     return new Promise((resolve, reject) => {
@@ -293,14 +322,14 @@ const geo = {
   },
 
   // Returns true if background geolocation was stopped as a result of this request.
-  stopBackgroundGeolocation: async reason => {
+  stopBackgroundGeolocation: async (reason: string) => {
     if (!reasons[reason]) {
-      log.debug(`Background geolocation already inactive for ${reason} in stopBackgroundGeolocation`);
+      log.debug(`BackgroundGeolocation already inactive for ${reason} in stopBackgroundGeolocation`);
       return false;
     }
     reasons[reason] = false;
     if (haveReason()) { // still
-      log.debug(`Background geolocation no longer needed for ${reason}, but still running`);
+      log.debug(`BackgroundGeolocation no longer needed for ${reason}, but still running`);
       return false;
     }
     return new Promise((resolve, reject) => {
@@ -317,5 +346,3 @@ const geo = {
 // https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/LocationAwarenessPG/GettingHeadings/GettingHeadings.html
 // Devices with a magnetometer can report the direction in which a device is pointing (aka heading).
 // Devices with GPS hardware can report the direction in which a device is moving (aka course).
-
-export default geo;

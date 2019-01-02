@@ -15,7 +15,7 @@ interface Props extends React.Props<any> {
 class Timeline extends Component<Props> {
   render() {
     return (
-      <View style={{margin: 5}}>
+      <View style={{ margin: 5 }}>
         <ART.Surface width={200} height={20}>
           <ART.Group>
             <ART.Text

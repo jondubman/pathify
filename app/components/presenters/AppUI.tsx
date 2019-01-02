@@ -23,11 +23,6 @@ const AppStyles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  text: {
-    color: constants.colors.appText,
-    fontSize: 14, // this seems to be the default
-    padding: 5,
-  },
 })
 
 class AppUI extends Component {
@@ -36,10 +31,7 @@ class AppUI extends Component {
     return (
       <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
         <View>
-          <Text style={AppStyles.text}>
-            {text}
-          </Text>
-          {/*<MapContainer />*/}
+          <MapContainer />
           <Timeline />
         </View>
       </SafeAreaView>
