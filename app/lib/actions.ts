@@ -31,7 +31,7 @@ export enum appAction {
 export type ActionType = reducerAction | appAction;
 export interface Action {
   type: ActionType;
-  params: object;
+  params: any;
 }
 
 // Generic Redux action creator.

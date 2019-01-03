@@ -14,12 +14,11 @@ export interface AppOptions {
 }
 
 export interface AppState {
-  loc: LocationEvent | null;
+  loc?: LocationEvent;
   options: AppOptions;
 }
 
 const initialAppState: AppState = {
-  loc: null,
   options: {
     followingUser: true, // TODO
     keepMapCenteredWhenFollowing: true,

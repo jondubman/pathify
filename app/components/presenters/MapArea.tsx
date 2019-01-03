@@ -27,7 +27,7 @@ interface Props extends React.Props<any> {
   mapStyleURL: string,
   opacity: number,
   width: number,
-  userLoc: LocationEvent | null,
+  userLoc?: LocationEvent,
 }
 
 class MapArea extends Component<Props> {
