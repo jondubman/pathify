@@ -23,11 +23,11 @@ import utils from 'lib/utils';
 import Pulsar from 'components/presenters/Pulsar';
 
 interface Props extends React.Props<any> {
-  height: number,
-  mapStyleURL: string,
-  opacity: number,
-  width: number,
-  userLoc?: LocationEvent,
+  height: number;
+  mapStyleURL: string;
+  opacity: number;
+  width: number;
+  userLoc?: LocationEvent;
 }
 
 class MapArea extends Component<Props> {

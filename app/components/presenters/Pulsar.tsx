@@ -21,10 +21,10 @@ const desiredRadius = 8;
 const defaultCircleColor = constants.colors.user;
 
 interface Props extends React.Props<any> {
-  id: string,
-  lon: number,
-  lat: number,
-  color: string,
+  id: string;
+  lon: number;
+  lat: number;
+  color: string;
 }
 
 class Pulsar extends Component<Props> {

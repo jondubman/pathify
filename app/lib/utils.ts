@@ -22,8 +22,8 @@ import Sagas from 'lib/sagas';
 let reduxStore: any; // global singleton Redux store. TODO define types
 
 interface LatLon {
-  lat: number,
-  lon: number,
+  lat: number;
+  lon: number;
 }
 
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]

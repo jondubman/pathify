@@ -7,7 +7,7 @@ interface MapStyle {
 const constants = {
   appName: 'Pathify',
   colors: {
-    appBackground: 'lightblue',
+    appBackground: 'black',
     appText: 'black',
     user: '#007FFF',  // azure, the hue halfway between blue and cyan
   },
@@ -15,7 +15,7 @@ const constants = {
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,
-      style: 'Dark',
+      style: 'Default',
       zoom: 14,
     },
   },

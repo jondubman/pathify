@@ -1,3 +1,6 @@
+// Geo: Configuration and support code related to react-native-background-geolocation.
+// Includes LocationEvent interface.
+
 import BackgroundGeolocation, {
   // State,
   Config,

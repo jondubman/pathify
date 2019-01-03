@@ -1,11 +1,19 @@
+//  Redux reducer for the app
+
 import {
   Action,
   reducerAction,
 } from 'lib/actions';
 
 import constants from 'lib/constants';
-import log from 'lib/log';
 import { LocationEvent } from 'lib/geo';
+
+interface AppEvent {
+  type: string;
+  time: string;
+}
+
+// Canonical interface for AppOptions included in AppState
 
 export interface AppOptions {
   followingUser: boolean;
@@ -13,7 +21,10 @@ export interface AppOptions {
   mapStyle: string;
 }
 
+// Canonical interface for AppState, the contents of the Redux store
+
 export interface AppState {
+
   loc?: LocationEvent;
   options: AppOptions;
 }
@@ -25,6 +36,8 @@ const initialAppState: AppState = {
     mapStyle: constants.map.default.style,
   },
 }
+
+// The one and only Redux Reducer.
 
 const Reducer = (state = initialAppState, action: Action) => {
   const newState = { ...state }; // shallow copy for now
