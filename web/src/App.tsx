@@ -1,11 +1,8 @@
 import * as React from 'react';
 import './App.css';
-
 import logo from './logo.svg';
-
-import D3test from './D3test';
-
 import sharedFolderTest from './shared/test';
+import VictoryTest from './VictoryTest';
 
 class App extends React.Component {
   public render() {
@@ -15,7 +12,9 @@ class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">{sharedFolderTest.message}</h1>
         </header>
-        <D3test />
+        <div className="VictoryTest">
+          <VictoryTest />
+        </div>
       </div>
     );
   }

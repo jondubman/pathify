@@ -1,10 +1,8 @@
 // tslint:disable:no-console
 import * as d3 from 'd3';
 import * as React from 'react';
-// import { style } from 'd3';
 
 import './App.css';
-// import { rgb } from 'd3';
 
 interface IDatum {
   t: number;
