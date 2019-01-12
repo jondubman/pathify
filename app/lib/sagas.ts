@@ -52,7 +52,6 @@ const Sagas = {
   // This has the side effect of panning the map component imperatively.
   centerMapOnUser: function* () {
     try {
-      log.debug('saga centerMapOnUser');
       const { mapArea } = utils as any;
       if (mapArea && mapArea.flyTo) {
         const loc = yield select((state: AppState) => state.loc);
@@ -92,7 +91,6 @@ const Sagas = {
 
   geolocation: function* (action: Action) {
     try {
-      log.debug('saga geolocation');
       const locationEvent: LocationEvent = action.params as LocationEvent;
       yield put(newAction(reducerAction.GEOLOCATION, locationEvent));
 

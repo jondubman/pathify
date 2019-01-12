@@ -1,79 +1,116 @@
+import * as d3 from 'd3';
+
 import React, {
   Component,
 } from 'react';
 
 import {
-  ART,
   View,
 } from 'react-native';
 
-import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
-import Svg, { Circle, Rect } from 'react-native-svg';
+import {
+    VictoryAxis,
+    VictoryChart,
+    VictoryZoomContainer,
+} from 'victory-native';
 
+// import constants from 'lib/constants';
+
+import Timespans from 'components/presenters/Timespans';
 import constants from 'lib/constants';
+import log from 'lib/log';
+
+const initialState = {
+  zoomDomain: null as any,
+}
+type State = Readonly<typeof initialState>
+
+const tickFormat = (t: Date) => {
+  // TODO improve, and use multi-format
+  // https://github.com/d3/d3-time-format/blob/master/README.md#timeFormat
+  return d3.timeFormat('%I:%M:%S')(t);
+}
 
 interface Props extends React.Props<any> {
 }
 
 class Timeline extends Component<Props> {
 
-  public shouldComponentUpdate() {
-    return false; // Tell React not to re-render this component
+  public readonly state: State = initialState;
+  public renderCount: number = 0;
+
+  constructor(props: any) {
+    super(props);
+    this.handleZoom = this.handleZoom.bind(this);
+  }
+
+  public handleZoom(domain: any, props: any) {
+    // log.debug('handleZoom', domain);
+    this.setState({ zoomDomain: domain }, () => {
+      const timespans = (this as any)._timespans as any;
+      if (timespans) {
+        timespans.forceUpdate();
+      }
+    })
   }
 
   public render() {
-    // return (
-    //   <View style={{ margin: 5 }}>
-    //     <ART.Surface width={200} height={20}>
-    //       <ART.Group>
-    //         <ART.Text
-    //           alignment="left"
-    //           font={`14px "Helvetica Neue", "Helvetica", Arial`}
-    //           fill="blue"
-    //         >
-    //           Hello, ART world!
-    //         </ART.Text>
-    //       </ART.Group>
-    //     </ART.Surface>
+    this.renderCount++;
+    if (this.renderCount % 10 == 0) {
+      log.debug('Timeline', this.renderCount);
+    }
 
-    //     <Svg height='100' width='100'>
-    //       <Circle
-    //         cx='50'
-    //         cy='50'
-    //         r='45'
-    //         stroke='blue'
-    //         strokeWidth='2.5'
-    //         fill='green' />
-    //       <Rect
-    //         x='15'
-    //         y='15'
-    //         width='70'
-    //         height='70'
-    //         stroke='red'
-    //         strokeWidth='2'
-    //         fill='yellow' />
-    //     </Svg>
-    //   </View>
-    // )
-
-    const data = [
-      { x: 1, y: 1 },
-      { x: 2, y: 3 },
-      { x: 3, y: 5 },
+    const timespanPadding = 50000;
+    const timespansData = [
+      {
+        t1: 1547071948644, // start
+        t2: 1547071964838, // end
+      },
+      {
+        t1: 1547071948044, // start
+        t2: 1547071968838, // end
+      },
     ]
-
-    // return (
-    //   <View style={{ margin: 5 }}>
-    //   </View>
-    // )
-
+    for (let i = 0; i < 75; i++) {
+      const t = {
+        t1: 1547071948644 - 1000 * i,
+        t2: 1547071964838 + 1000 * i,
+      }
+      timespansData.push(t);
+    }
+    const initialZoomDomain = { x: [1547071948644 - timespanPadding, 1547071964838 + timespanPadding], y: [0, 10] };
+    const victoryAxisStyle = {
+      axis: { stroke: 'white' },
+      axisLabel: { fontSize: 10, padding: 2 },
+      // grid: { stroke: (t: Date) => 'white' },
+      // ticks: { stroke: 'pink', size: 1 },
+      tickLabels: { fontSize: 10, padding: 0, stroke: 'white' },
+    }
     return (
-      <View style={{ margin: 5 }}>
+      <View style={{ backgroundColor: '#004', height: constants.timeline.height }}>
         <VictoryChart
-          domainPadding={10}
-          height={constants.timelineHeight}
+          containerComponent={
+            <VictoryZoomContainer
+              minimumZoom={{ x: 10000, y: 1 }}
+              responsive={true}
+              zoomDimension="x"
+              zoomDomain={this.state.zoomDomain as any}
+              onZoomDomainChange={this.handleZoom}
+            />
+          }
+          domain={initialZoomDomain}
+          height={constants.timeline.height}
+          padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
-          <VictoryBar horizontal data={data} style={{ data: { fill: "#c43a31" } }} />
+          <Timespans
+            data={timespansData}
+            ref={(timespans: any) => (this as any)._timespans = timespans}
+          />
+          <VictoryAxis
+            style={victoryAxisStyle}
+            tickCount={5}
+            tickFormat={tickFormat}
+          />
         </VictoryChart>
       </View>
     )

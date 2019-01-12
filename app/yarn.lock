@@ -912,6 +912,13 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.6.tgz#9c03d3fed70a8d517c191b7734da2879b50ca26c"
   integrity sha512-ZBFR7TROLVzCkswA3Fmqq+IIJt62/T7aY/Dmz+QkU7CaW2QFqAitCE8Ups7IzmGhcN1YWMBT4Qcoc07jU9hOJQ==
 
+"@types/radium@^0.24.2":
+  version "0.24.2"
+  resolved "https://registry.yarnpkg.com/@types/radium/-/radium-0.24.2.tgz#a3cfa86122cbef363d9175660806c0c1574048ec"
+  integrity sha512-AudCpKQH/csx6eB4OZhEdKf8Avm18wX8gLOig5H5iocPDPp3GRUPkQmUOXvsIYO64LyAb4CiIfSmcWUaUdvl4A==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-native@^0.57.25":
   version "0.57.25"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.57.25.tgz#20041561e5c5d6b4a0ed563be37ec3b12d31a8ae"
@@ -957,6 +964,13 @@
   integrity sha1-gL8hB4N568lzh9vlbkRGe1Z3+oU=
   dependencies:
     redux-saga "*"
+
+"@types/victory@^31.0.3":
+  version "31.0.3"
+  resolved "https://registry.yarnpkg.com/@types/victory/-/victory-31.0.3.tgz#2075f7124f1505c7fb3603d74f9b88a0a69d93c3"
+  integrity sha512-eppNGzHMbjWOSQWL5HpMUF9int6Zq6qy9YOobVffhv2TaEN1oG8bP463LuMbW4JDOZTtszZMYWy0h6KLfAee8A==
+  dependencies:
+    "@types/react" "*"
 
 abab@^2.0.0:
   version "2.0.0"

@@ -2,7 +2,8 @@ import * as React from 'react';
 import './App.css';
 import logo from './logo.svg';
 import sharedFolderTest from './shared/test';
-import VictoryTest from './VictoryTest';
+
+import Timeline from 'src/components/Timeline';
 
 class App extends React.Component {
   public render() {
@@ -12,8 +13,8 @@ class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">{sharedFolderTest.message}</h1>
         </header>
-        <div className="VictoryTest">
-          <VictoryTest />
+        <div className="Timeline">
+          <Timeline />
         </div>
       </div>
     );

@@ -234,7 +234,7 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         const locationEvent = locationEventFromLocation(location);
-        log.info('location', locationEvent);
+        log.debug('location', locationEvent);
         utils.dispatch(newAction(appAction.GEOLOCATION, locationEvent));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
@@ -295,7 +295,7 @@ export const Geo = {
     const done = () => {
       log.debug('resetOdometer done');
     }
-    BackgroundGeolocation.resetOdometer(done, () => { log.error('unable to reset odometer') });
+    BackgroundGeolocation.resetOdometer(done, () => { log.info('reset odometer') });
   },
 
   // Geolocation may be needed for multiple reasons.
