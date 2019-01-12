@@ -881,10 +881,10 @@
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.4.tgz#4e049756383c3f055dd8f3d24e63fb543e98eb07"
   integrity sha512-MHmwBtCb7OCv1DSivz2UNJXPGU/1btAWRKlqJ2saEhVJkpkvqHMMaOpKg0v4sAbDWSQekHGvPVMM8nQ+Jen03Q==
 
-"@types/jest@^23.3.11":
-  version "23.3.11"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.11.tgz#d3a936ae753d9e484965f5cbd19027c2b8af2551"
-  integrity sha512-eroF85PoG87XjCwzxey7yBsQNkIY/TV5myKKSG/022A0FW25afdu/uub6JDMS5eT68zBBt82S+w/MFOTjeLM3Q==
+"@types/jest@^23.3.12":
+  version "23.3.12"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.12.tgz#7e0ced251fa94c3bc2d1023d4b84b2992fa06376"
+  integrity sha512-/kQvbVzdEpOq4tEWT79yAHSM4nH4xMlhJv2GrLVQt4Qmo8yYsPdioBM1QpN/2GX1wkfMnyXvdoftvLUr0LBj7Q==
 
 "@types/leaflet@^0":
   version "0.7.32"
@@ -919,10 +919,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-native@^0.57.25":
-  version "0.57.25"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.57.25.tgz#20041561e5c5d6b4a0ed563be37ec3b12d31a8ae"
-  integrity sha512-rCqzVLo45p9nh28a/6nQ/9Td3k2IvOgPc6xVAF9MIdGJAD1ijqpIn6eyhy0NZjvIEdjdO83eBx0+doOmN8Jk0g==
+"@types/react-native@^0.57.27":
+  version "0.57.27"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.57.27.tgz#d12a66836f330bf3b6364a44f662b92660170ff4"
+  integrity sha512-uUPwAogiUXeMGoz01RgFLmsZ1wisumMvxI+2VOIspG4sVzg/+jccvgCb4OksnJSLBbTBjtskBYG+yz6iXAbpDg==
   dependencies:
     "@types/prop-types" "*"
     "@types/react" "*"
@@ -5315,7 +5315,16 @@ react-is@^16.6.3:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.7.0.tgz#c1bd21c64f1f1364c6f70695ec02d69392f41bfa"
   integrity sha512-Z0VRQdF4NPDoI0tsXVMLkJLiwEBa+RP66g0xDHxgxysxSoCUccSten4RTF/UFvZF1dZvZ9Zu1sx+MDXwcOR34g==
 
-react-native-background-fetch@^2.4.5, react-native-background-fetch@~2.4.4:
+react-native-background-fetch@^2.4.6:
+  version "2.4.6"
+  resolved "https://registry.yarnpkg.com/react-native-background-fetch/-/react-native-background-fetch-2.4.6.tgz#86eef69f00f1acefd4107e658d35e7b2df4055ce"
+  integrity sha512-u0NH6liYRoohJqP8zFTj87ODK61D7ibl8q+lUFcc5WxPawC8C1DDrb82txtkbvyPNHch7hX2OYz5FAGaahvnDg==
+  dependencies:
+    fast-plist "^0.1.2"
+    plist "^2.0.1"
+    xcode "^0.9.1"
+
+react-native-background-fetch@~2.4.4:
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/react-native-background-fetch/-/react-native-background-fetch-2.4.5.tgz#ddf201d1e9799957e20068a8ca19b98d3e25e7ce"
   integrity sha512-Gv94vLqqSuXI10aDJCKs3A8xvuZEE6Ph/xRuBMyjnKKe6mhbyTDaDNj5i8L/3HkxarD7BtPTeukwEu6hDjvdzw==
@@ -5351,11 +5360,12 @@ react-native-svg@^8.0.10:
     lodash "^4.16.6"
     pegjs "^0.10.0"
 
-react-native-typescript-transformer@^1.2.10:
-  version "1.2.10"
-  resolved "https://registry.yarnpkg.com/react-native-typescript-transformer/-/react-native-typescript-transformer-1.2.10.tgz#6f76c1449028cdeafa184b533301ecd547367ed1"
-  integrity sha512-oZqP9BwM4+TRupw2qEX+XwiGJkOq9aY9rSHVGG8OLO09PHyy+gAgejWtLV6j3A0Wi1szsJaY+cmBcng7JN3xcQ==
+react-native-typescript-transformer@^1.2.11:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/react-native-typescript-transformer/-/react-native-typescript-transformer-1.2.11.tgz#679398c27262cf941e5a5f3ea45cf7eea715d557"
+  integrity sha512-Kz/t1CQI4L2MrZQHI4fh5gkrPbNBaxim74QF0d02vg+4vlxHnn4iye8vI7WM9cWZdNUnN5IafrNn3ah5dWtElQ==
   dependencies:
+    babel-traverse "^6.26.0"
     chalk "^2.4.0"
     find-root "^1.1.0"
     jju "^1.3.0"

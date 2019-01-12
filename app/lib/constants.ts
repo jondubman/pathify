@@ -25,8 +25,9 @@ const constants = {
     Satellite: { url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
   },
   timeline: {
+    barHeight: 20,
     bottomPaddingForAxis: 33, // TODO empirically determined so as not to cut off the horizontal (time) axis
-    height: 200,
+    height: 75,
   },
 }
 

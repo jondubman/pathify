@@ -60,38 +60,32 @@ class Timeline extends Component<Props> {
       log.debug('Timeline', this.renderCount);
     }
 
-    const timespanPadding = 50000;
+    const now = Date.now()
+    const timespanPadding = 100000;
     const timespansData = [
       {
-        t1: 1547071948644, // start
-        t2: 1547071964838, // end
+        t1: now - 10000, // start
+        t2: now, // end
       },
       {
-        t1: 1547071948044, // start
-        t2: 1547071968838, // end
+        t1: now - 20000, // start
+        t2: now, // end
       },
     ]
-    for (let i = 0; i < 75; i++) {
-      const t = {
-        t1: 1547071948644 - 1000 * i,
-        t2: 1547071964838 + 1000 * i,
-      }
-      timespansData.push(t);
-    }
-    const initialZoomDomain = { x: [1547071948644 - timespanPadding, 1547071964838 + timespanPadding], y: [0, 10] };
+    const initialZoomDomain = { x: [now - timespanPadding, now + timespanPadding], y: [0, 10] };
     const victoryAxisStyle = {
       axis: { stroke: 'white' },
       axisLabel: { fontSize: 10, padding: 2 },
       // grid: { stroke: (t: Date) => 'white' },
       // ticks: { stroke: 'pink', size: 1 },
-      tickLabels: { fontSize: 10, padding: 0, stroke: 'white' },
+      tickLabels: { fontSize: 9, padding: 0, stroke: 'white' },
     }
     return (
       <View style={{ backgroundColor: '#004', height: constants.timeline.height }}>
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
-              minimumZoom={{ x: 10000, y: 1 }}
+              minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"
               zoomDomain={this.state.zoomDomain as any}
