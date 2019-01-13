@@ -9,6 +9,16 @@ const constants = {
   colors: {
     appBackground: 'black',
     appText: 'black',
+    timeline: {
+      axis: '#48f',
+      background: '#004',
+      bars: [
+        'red',
+        'green',
+        'blue',
+        'yellow',
+      ],
+    },
     user: '#007FFF',  // azure, the hue halfway between blue and cyan
   },
   map: {
@@ -27,7 +37,8 @@ const constants = {
   timeline: {
     barHeight: 20,
     bottomPaddingForAxis: 33, // TODO empirically determined so as not to cut off the horizontal (time) axis
-    height: 75,
+    bottomPaddingForBars: 2,
+    height: 120,
   },
 }
 

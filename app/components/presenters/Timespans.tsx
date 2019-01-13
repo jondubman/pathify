@@ -6,10 +6,10 @@ const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript ty
 import log from 'lib/log';
 import constants from 'lib/constants';
 
-// interface TimespansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
-// }
+interface TimespansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
+}
 
-class Timespans extends React.Component<any> {
+class Timespans extends React.Component<TimespansProps> {
 
   public renderCount: number = 0;
 
@@ -18,23 +18,23 @@ class Timespans extends React.Component<any> {
   }
 
   public render() {
-    this.renderCount++;
-    if (this.renderCount % 10 == 0) {
-      log.debug('  Timespans', this.renderCount);
-    }
-
     const {
       data,
       scale,
     } = this.props as any;
 
     const scaleUsed = scale.x;
+    const tl = constants.timeline;
+
     return data.map((d: any, index: number) => (
       <Rect
         key={`Rect${index}`}
-        style={{ fill: index % 2 ? 'red' : 'blue' }}
+        style={{ fill: constants.colors.timeline.bars[index] }}
         x={scaleUsed(d.t1)}
-        y={constants.timeline.barHeight * index}
+        y={
+          (tl.height - tl.bottomPaddingForAxis - tl.bottomPaddingForBars) -
+          (tl.barHeight * (index + 1))
+        }
         width={scaleUsed(d.t2) - scaleUsed(d.t1)}
         height={constants.timeline.barHeight}
       />

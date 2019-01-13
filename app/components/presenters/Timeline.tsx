@@ -28,7 +28,7 @@ type State = Readonly<typeof initialState>
 const tickFormat = (t: Date) => {
   // TODO improve, and use multi-format
   // https://github.com/d3/d3-time-format/blob/master/README.md#timeFormat
-  return d3.timeFormat('%I:%M:%S')(t);
+  return d3.timeFormat('%-I:%M:%S')(t);
 }
 
 interface Props extends React.Props<any> {
@@ -71,17 +71,27 @@ class Timeline extends Component<Props> {
         t1: now - 20000, // start
         t2: now, // end
       },
+      {
+        t1: now - 30000, // start
+        t2: now + 5000, // end
+      },
+      {
+        t1: now - 40000, // start
+        t2: now + 10000, // end
+      },
     ]
-    const initialZoomDomain = { x: [now - timespanPadding, now + timespanPadding], y: [0, 10] };
+    const initialZoomDomain = {
+      x: [now - timespanPadding, now + timespanPadding],
+      y: [0, 10]
+    }
     const victoryAxisStyle = {
-      axis: { stroke: 'white' },
-      axisLabel: { fontSize: 10, padding: 2 },
-      // grid: { stroke: (t: Date) => 'white' },
-      // ticks: { stroke: 'pink', size: 1 },
-      tickLabels: { fontSize: 9, padding: 0, stroke: 'white' },
+      axis: { stroke: constants.colors.timeline.axis },
+      grid: { stroke: (t: Date) => constants.colors.timeline.axis },
+      // ticks: { stroke: 'gray', size: 5 }, // appears below axis, not needed
+      tickLabels: { fontSize: 10, padding: 0, stroke: constants.colors.timeline.axis },
     }
     return (
-      <View style={{ backgroundColor: '#004', height: constants.timeline.height }}>
+      <View style={{ backgroundColor: constants.colors.timeline.background, height: constants.timeline.height }}>
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
@@ -96,14 +106,14 @@ class Timeline extends Component<Props> {
           height={constants.timeline.height}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
-          <Timespans
-            data={timespansData}
-            ref={(timespans: any) => (this as any)._timespans = timespans}
-          />
           <VictoryAxis
             style={victoryAxisStyle}
             tickCount={5}
             tickFormat={tickFormat}
+          />
+          <Timespans
+            data={timespansData}
+            ref={(timespans: any) => (this as any)._timespans = timespans}
           />
         </VictoryChart>
       </View>
