@@ -1,9 +1,9 @@
 PODS:
-  - CocoaLumberjack (3.4.1):
-    - CocoaLumberjack/Default (= 3.4.1)
-    - CocoaLumberjack/Extensions (= 3.4.1)
-  - CocoaLumberjack/Default (3.4.1)
-  - CocoaLumberjack/Extensions (3.4.1):
+  - CocoaLumberjack (3.4.2):
+    - CocoaLumberjack/Default (= 3.4.2)
+    - CocoaLumberjack/Extensions (= 3.4.2)
+  - CocoaLumberjack/Default (3.4.2)
+  - CocoaLumberjack/Extensions (3.4.2):
     - CocoaLumberjack/Default
   - React (0.57.5):
     - React/Core (= 0.57.5)
@@ -47,17 +47,19 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNBackgroundFetch (2.4.5):
+  - RNBackgroundFetch (2.4.6):
     - React
   - RNBackgroundGeolocation (2.14.2):
     - CocoaLumberjack (~> 3.0)
     - React
   - RNSVG (8.0.10):
     - React
+  - RNVectorIcons (6.1.0):
+    - React
   - yoga (0.57.5.React)
 
 DEPENDENCIES:
-  - react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)
+  - "react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)"
   - React/Core (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
@@ -77,31 +79,39 @@ DEPENDENCIES:
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/Yoga.podspec`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - CocoaLumberjack
 
 EXTERNAL SOURCES:
   React:
-    :path: ../node_modules/react-native
+    :path: "../node_modules/react-native"
   react-native-mapbox-gl:
-    :path: ../node_modules/@mapbox/react-native-mapbox-gl
+    :path: "../node_modules/@mapbox/react-native-mapbox-gl"
   RNBackgroundFetch:
-    :path: ../node_modules/react-native-background-fetch
+    :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
-    :path: ../node_modules/react-native-background-geolocation
+    :path: "../node_modules/react-native-background-geolocation"
   RNSVG:
-    :path: ../node_modules/react-native-svg
+    :path: "../node_modules/react-native-svg"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
-    :path: ../node_modules/react-native/ReactCommon/yoga/Yoga.podspec
+    :path: "../node_modules/react-native/ReactCommon/yoga/Yoga.podspec"
 
 SPEC CHECKSUMS:
-  CocoaLumberjack: 2e258a064cacc8eb9a2aca318e24d02a0a7fd56d
-  React: 01aa04500b2957c2767e1dff9fe12e09444a467c
-  react-native-mapbox-gl: d0ac3b81a6cadbd7cadc80891da72e3e85379350
-  RNBackgroundFetch: 8098db4fee60e99afd8bcefa950e8d1760d733ba
-  RNBackgroundGeolocation: 5cc7ba83ad78d19e9556e3c62fbfaef7d4c4faa8
-  RNSVG: dc7b75b8e1f953cea4abea74d5af07c447765443
-  yoga: a5c0ba30ebe82c13612b4c9301ad29708b8978dc
+  CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
+  React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  react-native-mapbox-gl: b42480060cdcc515dfa3d8e403fb4dd32466a1b9
+  RNBackgroundFetch: 8c4f77f83c398c659bce82af2f0a885079417b9e
+  RNBackgroundGeolocation: c9bbf69b9aa277f0b46754cc5f853bd26051a18f
+  RNSVG: 6252323c0312735f0af5f58b5adf2965b6a9ffbf
+  RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
+  yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 95f8aeb4478e409f94e94168c8d083ebf87fab11
+PODFILE CHECKSUM: e45ced656d2c5498dbf40bbb0fbc4258178da498
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.5.3

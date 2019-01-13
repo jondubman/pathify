@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as Victory from 'victory-native';
 const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
-import log from 'lib/log';
 import constants from 'lib/constants';
 
 interface TimespansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
@@ -23,19 +22,18 @@ class Timespans extends React.Component<TimespansProps> {
       scale,
     } = this.props as any;
 
-    const scaleUsed = scale.x;
-    const tl = constants.timeline;
+    const { timeline } = constants;
 
     return data.map((d: any, index: number) => (
       <Rect
         key={`Rect${index}`}
         style={{ fill: constants.colors.timeline.bars[index] }}
-        x={scaleUsed(d.t1)}
+        x={scale.x(d.t1)}
         y={
-          (tl.height - tl.bottomPaddingForAxis - tl.bottomPaddingForBars) -
-          (tl.barHeight * (index + 1))
+          (timeline.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) -
+          (timeline.barHeight * (index + 1))
         }
-        width={scaleUsed(d.t2) - scaleUsed(d.t1)}
+        width={scale.x(d.t2) - scale.x(d.t1)}
         height={constants.timeline.barHeight}
       />
     ))

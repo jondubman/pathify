@@ -70,9 +70,9 @@ const Sagas = {
     try {
       log.debug('saga startFollowingUser');
       yield put(newAction(reducerAction.FOLLOW_USER));
-      // if (utils.mapArea) {
-      //   yield put(newAction(appAction.CENTER_MAP_ON_USER)); // cascading app action
-      // }
+      if (utils.mapArea) {
+        yield put(newAction(appAction.CENTER_MAP_ON_USER)); // cascading app action
+      }
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
       log.error('saga startFollowingUser', err);
