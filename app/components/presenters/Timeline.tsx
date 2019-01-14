@@ -45,7 +45,6 @@ class Timeline extends Component<Props> {
   }
 
   public handleZoom(domain: any, props: any) {
-    // log.debug('handleZoom', domain);
     this.setState({ zoomDomain: domain }, () => {
       const timespans = (this as any)._timespans as any;
       if (timespans) {
