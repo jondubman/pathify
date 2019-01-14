@@ -24,6 +24,7 @@ import {
 
 import log from 'lib/log';
 import utils from 'lib/utils';
+import store from 'lib/store';
 
 const geolocationOptions: Config = {
   // --------------
@@ -235,7 +236,7 @@ export const Geo = {
       const onLocation = (location: Location) => {
         const locationEvent = locationEventFromLocation(location);
         log.debug('location', locationEvent);
-        utils.dispatch(newAction(appAction.GEOLOCATION, locationEvent));
+        store.dispatch(newAction(appAction.GEOLOCATION, locationEvent));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
       }

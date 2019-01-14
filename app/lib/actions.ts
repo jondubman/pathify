@@ -43,7 +43,7 @@ export interface Action {
 // -- Something happens that should influence the Redux store, which is shared throughout the app.
 //    This might be a location update from background geolocation, a user-initiated UI action, etc.
 // -- Call an action creator, e.g. newAction
-// -- Dispatch that action (utils.dispatch) to Redux
+// -- Dispatch that action (store.dispatch) to Redux
 // -- If it's a reducerAction, it should be handled by one of the cases in the reducer.
 //    reducerActions should act synchronously using pure functions without side effects.
 // -- If it's an appAction, it should be handled by one of the sagas (and it just passes through the reducer)

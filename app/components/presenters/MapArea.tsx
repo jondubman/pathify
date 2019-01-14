@@ -18,6 +18,7 @@ import {
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
+import store from 'lib/store';
 import utils from 'lib/utils';
 
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
@@ -153,7 +154,7 @@ class MapArea extends Component<Props> {
 
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
-      utils.dispatch(newAction(appAction.USER_MOVED_MAP));
+      store.dispatch(newAction(appAction.USER_MOVED_MAP));
     }
   }
 

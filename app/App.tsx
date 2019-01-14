@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 // https: //www.npmjs.com/package/react-native-typescript-transformer
 // This is referenced in getTransformModulePath in rn-cli.config.js.
 
+import store from 'lib/store';
 import utils from 'lib/utils';
 
 import AppUIContainer from 'containers/AppUIContainer';
@@ -18,11 +19,11 @@ export default class App extends Component {
 
   render() {
     return (
-      <Provider store={utils.store()}>
+      <Provider store={store.create() as any}>
         <AppUIContainer />
       </Provider>
     )
   }
 }
 
-AppRegistry.registerComponent('app', () => App);
+AppRegistry.registerComponent('app', () => App as any);

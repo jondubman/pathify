@@ -6,7 +6,7 @@ import {
 } from 'lib/actions';
 
 import { AppState } from 'lib/reducer';
-import utils from 'lib/utils';
+import store from 'lib/store';
 
 import FollowMeButton from 'presenters/FollowMeButton';
 
@@ -18,10 +18,10 @@ interface DispatchProps {
   onPress: Function;
 }
 
-interface OwnProps {
-}
+// interface OwnProps {
+// }
 
-const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
+const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps => {
   return {
     active: state.options.followingUser,
   }
@@ -29,7 +29,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
   const onPress = () => {
-    const { followingUser } = utils.getState().options;
+    const { followingUser } = store.options();
     if (followingUser) { // toggle the state
       dispatch(newAction(appAction.STOP_FOLLOWING_USER));
     } else {

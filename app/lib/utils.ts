@@ -1,25 +1,16 @@
 import {
-  applyMiddleware,
-  createStore,
-} from 'redux';
-import createSagaMiddleware from 'redux-saga';
-
-import {
   Dimensions,
 } from 'react-native';
 
 import {
-  Action,
+  // Action,
   appAction,
   newAction,
 } from 'lib/actions';
 
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
-import Reducer, { AppState } from 'lib/reducer';
-import Sagas from 'lib/sagas';
-
-let reduxStore: any; // global singleton Redux store. TODO define types
+import store from 'lib/store';
 
 interface LatLon {
   lat: number;
@@ -37,7 +28,7 @@ const utils = {
     log.info('----- App starting up! (device log)');
     log.debug('windowSize', utils.windowSize());
 
-    const store = utils.store(); // create Redux store
+    store.create(); // proactively create Redux store instance
     Geo.initializeGeolocation(); // TODO use only when needed
     Geo.resetOdometer();
     store.dispatch(newAction(appAction.START_FOLLOWING_USER));
@@ -88,26 +79,6 @@ const utils = {
     const dim = Dimensions.get('window');
     return dim; // { height, width }
   },
-
-  // ---SECTION: Redux
-
-  getState: () => {
-    return utils.store().getState() as AppState;
-  },
-
-  store: () => {
-    // create once
-    if (!reduxStore) {
-      const appReducer = Reducer;
-      const sagaMiddleware = createSagaMiddleware();
-
-      reduxStore = createStore(appReducer, applyMiddleware(sagaMiddleware));
-      sagaMiddleware.run(Sagas.root);
-    }
-    return reduxStore;
-  },
-
-  dispatch: (action: Action) => utils.store().dispatch(action),
 }
 
 export default utils;
