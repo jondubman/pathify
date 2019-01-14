@@ -4,22 +4,33 @@ interface MapStyle {
   opacity: number;
 }
 
+const azure = '#007fff';  // azure, the hue halfway between blue and cyan
+
 const constants = {
   appName: 'Pathify',
   colors: {
     appBackground: 'black',
     appText: 'black',
+    followMeButton: {
+      background: { active: 'white', inactive: 'black' },
+      icon: { active: 'black', inactive: 'azure' },
+      underlay: '#00f',
+    },
     timeline: {
       axis: '#48f',
       background: '#004',
       bars: [
         'red',
         'green',
-        'blue',
+        azure,
         'yellow',
       ],
     },
-    user: '#007FFF',  // azure, the hue halfway between blue and cyan
+    user: azure,
+  },
+  followMeButton: {
+    opacity: 0.8,
+    size: 50,
   },
   map: {
     default: {

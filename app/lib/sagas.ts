@@ -83,7 +83,7 @@ const Sagas = {
     try {
       log.debug('saga stopFollowingUser');
       yield put(newAction(reducerAction.UNFOLLOW_USER));
-      yield call(Geo.stopBackgroundGeolocation, 'following');
+      // yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
       log.error('saga stopFollowingUser', err);
     }

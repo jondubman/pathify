@@ -32,11 +32,7 @@ local.properties
 
 # node.js
 #
-node_modules/**
-# TODO until official @types/victory-native is available
-# TODO This exclusion is not working, not sure why.
-!node_modules/@types/victory-native/
-
+node_modules/
 npm-debug.log
 yarn-error.log
 

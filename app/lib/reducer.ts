@@ -22,7 +22,7 @@ export interface AppOptions {
 }
 const initialAppOptions: AppOptions = {
   followingUser: true,
-  keepMapCenteredWhenFollowing: true,
+  keepMapCenteredWhenFollowing: false,
   mapStyle: constants.map.default.style,
 }
 
@@ -30,7 +30,7 @@ const initialAppOptions: AppOptions = {
 
 export interface AppState {
   loc?: LocationEvent;
-  options: AppOptions; // TODO want to require, but that is generating TS error 2345
+  options: AppOptions;
 }
 
 const initialAppState: AppState = {

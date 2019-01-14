@@ -20,6 +20,7 @@ import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
 import utils from 'lib/utils';
 
+import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import Pulsar from 'components/presenters/Pulsar';
 
 interface Props {
@@ -66,11 +67,14 @@ class MapArea extends Component<Props> {
     return (
       <View style={{ opacity }}>
         <Mapbox.MapView
+          attributionEnabled={true}
           centerCoordinate={[ mapCenterLon, mapCenterLat ]}
           contentInset={[ 0, 0, 0, 0 ]}
           heading={0}
           logoEnabled={false}
           compassEnabled={false}
+          onRegionDidChange={this.onRegionDidChange}
+          onRegionWillChange={this.onRegionWillChange}
           pitchEnabled={false}
           ref={map => { this._map = map; }}
           rotateEnabled={true}
@@ -93,7 +97,8 @@ class MapArea extends Component<Props> {
             null
           }
         </Mapbox.MapView>
-      </View>
+        <FollowMeButtonContainer />
+     </View>
     )
   }
 
@@ -144,16 +149,21 @@ class MapArea extends Component<Props> {
   }
 
   onRegionWillChange(...args) {
-    log.trace('onRegionWillChange', args);
-  }
-
-  onRegionDidChange(...args) {
-    log.trace('onRegionDidChange', args);
+    log.debug('onRegionWillChange', args);
 
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
       utils.dispatch(newAction(appAction.USER_PANNED_MAP));
     }
+  }
+
+  onRegionDidChange(...args) {
+    log.debug('onRegionDidChange', args);
+
+    // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
+    // if (args[0].properties.isUserInteraction) {
+    //   utils.dispatch(newAction(appAction.USER_PANNED_MAP));
+    // }
   }
 
   onDidFinishRenderingMapFully(...args) {
