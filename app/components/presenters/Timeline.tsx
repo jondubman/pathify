@@ -31,7 +31,7 @@ const tickFormat = (t: Date) => {
   return d3.timeFormat('%-I:%M:%S')(t);
 }
 
-interface Props extends React.Props<any> {
+interface Props {
 }
 
 class Timeline extends Component<Props> {
@@ -86,7 +86,7 @@ class Timeline extends Component<Props> {
     }
     const victoryAxisStyle = {
       axis: { stroke: constants.colors.timeline.axis },
-      grid: { stroke: (t: Date) => constants.colors.timeline.axis },
+      grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
       // ticks: { stroke: 'gray', size: 5 }, // appears below axis, not needed
       tickLabels: { fontSize: 10, padding: 0, stroke: constants.colors.timeline.axis },
     }
@@ -100,9 +100,9 @@ class Timeline extends Component<Props> {
               zoomDimension="x"
               zoomDomain={this.state.zoomDomain as any}
               onZoomDomainChange={this.handleZoom}
-            />
+            /> as any
           }
-          domain={initialZoomDomain}
+          domain={initialZoomDomain as any}
           height={constants.timeline.height}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >

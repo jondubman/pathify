@@ -20,7 +20,7 @@ const pulseMsec = 1000;
 const desiredRadius = 8;
 const defaultCircleColor = constants.colors.user;
 
-interface Props extends React.Props<any> {
+interface Props {
   id: string;
   lon: number;
   lat: number;

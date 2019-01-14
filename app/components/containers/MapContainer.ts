@@ -6,9 +6,24 @@ import constants from 'lib/constants';
 import { AppState } from 'lib/reducer';
 import utils from 'lib/utils';
 
+import { LocationEvent } from 'lib/geo';
 import MapArea from 'presenters/MapArea';
 
-const mapStateToProps = (state: AppState, ownProps: any) => {
+interface StateProps {
+  height: number;
+  mapStyleURL: string;
+  opacity: number;
+  width: number;
+  userLoc?: LocationEvent;
+}
+
+interface DispatchProps {
+}
+
+interface OwnProps {
+}
+
+const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
   const mapStyle = constants.mapStyles[state.options.mapStyle];
   const { height, width } = utils.windowSize();
   return {
@@ -20,15 +35,15 @@ const mapStateToProps = (state: AppState, ownProps: any) => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any) => {
+const mapDispatchToProps = (dispatch: any): DispatchProps => {
   const dispatchers = {
   }
   return dispatchers;
 }
 
-const MapContainer = connect(
-  mapStateToProps,
+const MapContainer = connect<StateProps, DispatchProps>(
+  mapStateToProps as any, // TODO 'as any' addresses TS error 2345
   mapDispatchToProps
-)(MapArea);
+)(MapArea as any); // TODO 'as any' addresses TS error 2345
 
 export default MapContainer;

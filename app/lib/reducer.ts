@@ -20,28 +20,28 @@ export interface AppOptions {
   keepMapCenteredWhenFollowing: boolean;
   mapStyle: string;
 }
+const initialAppOptions: AppOptions = {
+  followingUser: true,
+  keepMapCenteredWhenFollowing: true,
+  mapStyle: constants.map.default.style,
+}
 
 // Canonical interface for AppState, the contents of the Redux store
 
 export interface AppState {
-
   loc?: LocationEvent;
-  options: AppOptions;
+  options: AppOptions; // TODO want to require, but that is generating TS error 2345
 }
 
 const initialAppState: AppState = {
-  options: {
-    followingUser: true, // TODO
-    keepMapCenteredWhenFollowing: true,
-    mapStyle: constants.map.default.style,
-  },
+  options: initialAppOptions,
 }
 
 // The one and only Redux Reducer.
 
-const Reducer = (state = initialAppState, action: Action) => {
+const Reducer = (state: AppState = initialAppState, action: Action): AppState => {
   const newState = { ...state }; // shallow copy for now
-;
+
   switch (action.type) {
     case reducerAction.GEOLOCATION:
       const locationEvent = action.params as LocationEvent;

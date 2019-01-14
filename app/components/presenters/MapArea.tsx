@@ -22,7 +22,7 @@ import utils from 'lib/utils';
 
 import Pulsar from 'components/presenters/Pulsar';
 
-interface Props extends React.Props<any> {
+interface Props {
   height: number;
   mapStyleURL: string;
   opacity: number;
