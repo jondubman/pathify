@@ -43,7 +43,7 @@ const Sagas = {
   root: function* () {
     yield takeEvery(appAction.CENTER_MAP_ON_USER, Sagas.centerMapOnUser);
     yield takeEvery(appAction.GEOLOCATION, Sagas.geolocation);
-    yield takeEvery(appAction.USER_PANNED_MAP, Sagas.userPannedMap);
+    yield takeEvery(appAction.USER_MOVED_MAP, Sagas.userMovedMap);
 
     yield takeEvery(appAction.START_FOLLOWING_USER, Sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, Sagas.stopFollowingUser);
@@ -112,12 +112,12 @@ const Sagas = {
   },
 
   // Stop following user after panning the map
-  userPannedMap: function* () {
+  userMovedMap: function* () {
     try {
-      log.debug('saga userPannedMap');
+      log.debug('saga userMovedMap');
       yield put(newAction(appAction.STOP_FOLLOWING_USER));
     } catch (err) {
-      log.error('userPannedMap', err);
+      log.error('userMovedMap', err);
     }
   },
 }

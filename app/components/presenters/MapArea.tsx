@@ -153,17 +153,12 @@ class MapArea extends Component<Props> {
 
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
-      utils.dispatch(newAction(appAction.USER_PANNED_MAP));
+      utils.dispatch(newAction(appAction.USER_MOVED_MAP));
     }
   }
 
   onRegionDidChange(...args) {
     log.debug('onRegionDidChange', args);
-
-    // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
-    // if (args[0].properties.isUserInteraction) {
-    //   utils.dispatch(newAction(appAction.USER_PANNED_MAP));
-    // }
   }
 
   onDidFinishRenderingMapFully(...args) {

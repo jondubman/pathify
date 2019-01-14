@@ -41,8 +41,8 @@ const initialAppState: AppState = {
 
 const Reducer = (state: AppState = initialAppState, action: Action): AppState => {
   const newState = { ...state }; // shallow copy for now
-
   switch (action.type) {
+
     case reducerAction.GEOLOCATION:
       const locationEvent = action.params as LocationEvent;
       if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
