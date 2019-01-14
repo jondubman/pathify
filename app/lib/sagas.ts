@@ -39,6 +39,8 @@ import {
   reducerAction,
 } from 'lib/actions';
 
+import { MapUtils } from 'components/MapArea';
+
 const Sagas = {
   root: function* () {
     yield takeEvery(appAction.CENTER_MAP_ON_USER, Sagas.centerMapOnUser);
@@ -52,12 +54,12 @@ const Sagas = {
   // This has the side effect of panning the map component imperatively.
   centerMapOnUser: function* () {
     try {
-      const { mapArea } = utils as any;
-      if (mapArea && mapArea.flyTo) {
+      const map = MapUtils();
+      if (map && map.flyTo) {
         const loc = yield select((state: AppState) => state.loc);
         if (loc && loc.lon && loc.lat) {
           const coordinates = [loc.lon, loc.lat];
-          yield call(mapArea.flyTo, coordinates);
+          yield call(map.flyTo as any, coordinates);
         }
       }
     } catch (err) {
@@ -70,7 +72,8 @@ const Sagas = {
     try {
       log.debug('saga startFollowingUser');
       yield put(newAction(reducerAction.FOLLOW_USER));
-      if (utils.mapArea) {
+      const map = MapUtils();
+      if (map) {
         yield put(newAction(appAction.CENTER_MAP_ON_USER)); // cascading app action
       }
       yield call(Geo.startBackgroundGeolocation, 'following');
@@ -94,14 +97,13 @@ const Sagas = {
       const locationEvent: LocationEvent = action.params as LocationEvent;
       yield put(newAction(reducerAction.GEOLOCATION, locationEvent));
 
-      const { mapArea } = utils as any;
-
       // Potential cascading appAction.CENTER_MAP_ON_USER:
-      if (mapArea) {
+      const map = MapUtils();
+      if (map) {
         // TODO use a more concise way
         const { loc, options } = yield select((state: any) => ({ loc: state.loc, options: state.options }));
         const { followingUser } = options;
-        const bounds = yield call(mapArea.getVisibleBounds);
+        const bounds = yield call(map.getVisibleBounds as any);
         if (followingUser && loc && (options.keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
           yield put(newAction(appAction.CENTER_MAP_ON_USER));
         }

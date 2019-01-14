@@ -22,7 +22,7 @@ export interface AppOptions {
 }
 const initialAppOptions: AppOptions = {
   followingUser: true,
-  keepMapCenteredWhenFollowing: false,
+  keepMapCenteredWhenFollowing: true,
   mapStyle: constants.map.default.style,
 }
 

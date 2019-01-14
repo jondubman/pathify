@@ -19,7 +19,6 @@ import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
 import store from 'lib/store';
-import utils from 'lib/utils';
 
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import Pulsar from 'components/presenters/Pulsar';
@@ -31,6 +30,23 @@ interface Props {
   width: number;
   userLoc?: LocationEvent;
 }
+
+// Public interface to singleton underlying Mapbox component
+export interface IMapUtils {
+  flyTo: Function;
+  getVisibleBounds: Function;
+}
+
+let singletonMap = null;
+
+export function MapUtils(): IMapUtils  {
+  if (!singletonMap) {
+    return null as any; // TODO
+  }
+  return (singletonMap as any).getMap();
+}
+
+// For now this is intended to be a singleton component. TODO enforce via ref function.
 
 class MapArea extends Component<Props> {
 
@@ -49,8 +65,13 @@ class MapArea extends Component<Props> {
     this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
     this.onPress = this.onPress.bind(this);
     this.zoomTo = this.zoomTo.bind(this);
+  }
 
-    (utils as any).mapArea = this; // expose component for imperative use TODO use a better way
+  getMap(): IMapUtils {
+    return { // methods exposed for imperative use as needed
+      flyTo: this.flyTo,
+      getVisibleBounds: this.getVisibleBounds,
+    }
   }
 
   render() {
@@ -77,7 +98,10 @@ class MapArea extends Component<Props> {
           onRegionDidChange={this.onRegionDidChange}
           onRegionWillChange={this.onRegionWillChange}
           pitchEnabled={false}
-          ref={map => { this._map = map; }}
+          ref={map => {
+            this._map = map;
+            singletonMap = this;
+          }}
           rotateEnabled={true}
           scrollEnabled={true}
           showUserLocation={false}
@@ -159,7 +183,7 @@ class MapArea extends Component<Props> {
   }
 
   onRegionDidChange(...args) {
-    log.debug('onRegionDidChange', args);
+    log.trace('onRegionDidChange', args);
   }
 
   onDidFinishRenderingMapFully(...args) {

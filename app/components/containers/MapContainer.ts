@@ -7,7 +7,7 @@ import { AppState } from 'lib/reducer';
 import utils from 'lib/utils';
 
 import { LocationEvent } from 'lib/geo';
-import MapArea from 'presenters/MapArea';
+import MapArea from 'components/MapArea';
 
 interface StateProps {
   height: number;
