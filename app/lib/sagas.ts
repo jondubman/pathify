@@ -41,14 +41,14 @@ import {
 
 import { MapUtils } from 'components/MapArea';
 
-const Sagas = {
+const sagas = {
   root: function* () {
-    yield takeEvery(appAction.CENTER_MAP_ON_USER, Sagas.centerMapOnUser);
-    yield takeEvery(appAction.GEOLOCATION, Sagas.geolocation);
-    yield takeEvery(appAction.USER_MOVED_MAP, Sagas.userMovedMap);
+    yield takeEvery(appAction.CENTER_MAP_ON_USER, sagas.centerMapOnUser);
+    yield takeEvery(appAction.GEOLOCATION, sagas.geolocation);
+    yield takeEvery(appAction.USER_MOVED_MAP, sagas.userMovedMap);
 
-    yield takeEvery(appAction.START_FOLLOWING_USER, Sagas.startFollowingUser);
-    yield takeEvery(appAction.STOP_FOLLOWING_USER, Sagas.stopFollowingUser);
+    yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
+    yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
   },
 
   // This has the side effect of panning the map component imperatively.
@@ -124,4 +124,4 @@ const Sagas = {
   },
 }
 
-export default Sagas;
+export default sagas;

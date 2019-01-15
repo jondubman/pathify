@@ -37,7 +37,7 @@ export interface IMapUtils {
   getVisibleBounds: Function;
 }
 
-let singletonMap = null;
+let singletonMap: (Component<Props> | null) = null; // a reference to the singleton MapArea component that is created
 
 export function MapUtils(): IMapUtils  {
   if (!singletonMap) {

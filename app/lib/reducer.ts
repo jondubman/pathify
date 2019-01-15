@@ -39,7 +39,7 @@ const initialAppState: AppState = {
 
 // The one and only Redux Reducer.
 
-const Reducer = (state: AppState = initialAppState, action: Action): AppState => {
+const reducer = (state: AppState = initialAppState, action: Action): AppState => {
   const newState = { ...state }; // shallow copy for now
   switch (action.type) {
 
@@ -64,4 +64,4 @@ const Reducer = (state: AppState = initialAppState, action: Action): AppState =>
   return newState;
 }
 
-export default Reducer;
+export default reducer;
