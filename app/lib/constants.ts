@@ -9,12 +9,22 @@ const azure = '#007fff';  // azure, the hue halfway between blue and cyan
 const constants = {
   appName: 'Pathify',
   colors: {
-    appBackground: 'black',
+    appBackground: 'white',
     appText: 'black',
     followMeButton: {
       background: { active: 'white', inactive: 'black' },
       icon: { active: 'black', inactive: 'azure' },
-      underlay: '#00f',
+      underlay: '#0074d9',
+    },
+    helpButton: {
+      background: 'white',
+      icon: 'black',
+      underlay: '#2ecc40',
+    },
+    settingsButton: {
+      background: 'white',
+      icon: 'black',
+      underlay: '#ff4136',
     },
     timeline: {
       axis: '#48f',
@@ -29,7 +39,11 @@ const constants = {
     user: azure,
   },
   followMeButton: {
-    opacity: 0.8,
+    opacity: 0.7,
+    size: 50,
+  },
+  helpButton: {
+    opacity: 0.7,
     size: 50,
   },
   map: {
@@ -44,6 +58,10 @@ const constants = {
     Default: { url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp', opacity: 1 } as MapStyle,
     Dark: { url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0', opacity: 1 } as MapStyle,
     Satellite: { url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
+  },
+  settingsButton: {
+    opacity: 0.7,
+    size: 50,
   },
   timeline: {
     barHeight: 20,

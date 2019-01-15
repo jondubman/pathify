@@ -10,8 +10,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import constants from 'lib/constants';
-const colors = constants.colors.followMeButton;
-const { size } = constants.followMeButton;
+const colors = constants.colors.settingsButton;
+const { opacity, size } = constants.settingsButton;
 
 const Styles = StyleSheet.create({
   button: {
@@ -21,35 +21,34 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4,
     width: size,
     height: size,
-    bottom: 35,
-    right: 2,
+    left: 2,
+    top: 2,
     justifyContent: 'center',
     flexDirection: 'row',
 
     // appearance
-    opacity: constants.followMeButton.opacity,
+    opacity,
   },
 })
 
-interface FollowMeButtonProps {
-  active: boolean;
+interface SettingsButtonProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-const FollowMeButton = (props: FollowMeButtonProps) => (
+const SettingsButton = (props: SettingsButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
-      backgroundColor: props.active ? colors.background.active : colors.background.inactive,
+      backgroundColor: colors.background,
     }]}
     onPress={props.onPress as any}
     underlayColor={colors.underlay}
   >
     <Icon
-      color={props.active ? colors.icon.active : colors.icon.inactive}
-      name='location-arrow'
-      size={constants.followMeButton.size / 2}
+      color={colors.icon}
+      name='cogs'
+      size={size / 2}
     />
   </TouchableHighlight>
 )
 
-export default FollowMeButton;
+export default SettingsButton;

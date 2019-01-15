@@ -12,6 +12,8 @@ import {
 import constants from 'lib/constants';
 
 import MapContainer from 'containers/MapContainer';
+import HelpButton from 'presenters/HelpButton';
+import SettingsButton from 'presenters/SettingsButton';
 import Timeline from 'presenters/Timeline';
 
 const AppStyles = StyleSheet.create({
@@ -31,6 +33,8 @@ class AppUI extends Component {
       <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
         <View>
           <MapContainer />
+          <HelpButton onPress={() => {}} />
+          <SettingsButton onPress={() => { }} />
           <Timeline />
         </View>
       </SafeAreaView>
