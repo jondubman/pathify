@@ -11,23 +11,25 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import constants from 'lib/constants';
 const colors = constants.colors.followMeButton;
-const { size } = constants.followMeButton;
+const {
+  bottomOffset,
+  rightOffset,
+  opacity,
+  size
+} = constants.followMeButton;
 
 const Styles = StyleSheet.create({
-  button: {
-    // position, shape (circular) and size
+  button: { // round
     borderRadius: size / 2,
     position: 'absolute',
     paddingTop: size / 4,
     width: size,
     height: size,
-    bottom: 35,
-    right: 2,
+    bottom: bottomOffset,
+    right: rightOffset,
     justifyContent: 'center',
     flexDirection: 'row',
-
-    // appearance
-    opacity: constants.followMeButton.opacity,
+    opacity,
   },
 })
 

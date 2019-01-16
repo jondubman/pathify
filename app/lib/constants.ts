@@ -4,41 +4,75 @@ interface MapStyle {
   opacity: number;
 }
 
-const azure = '#007fff';  // azure, the hue halfway between blue and cyan
+const namedColors = {
+  // https://clrs.cc
+  aqua: '#7fdbff',
+  azure: '#007fff',
+  blue: '#0074d9',
+  fuschia: '#f012be',
+  gray: '#aaa',
+  green: '#2ecc40',
+  maroon: '#85144b',
+  navy: '#001f3f',
+  orange: '#ff851b',
+  purple: '#b10dc9',
+  red: '#ff4136',
+  silver: '#ddd',
+  teal: '#39cccc',
+  yellow: '#ffdc00',
+
+  darkerGray: '#888',
+}
+const timelineHeight = 120;
 
 const constants = {
   appName: 'Pathify',
   colors: {
-    appBackground: 'white',
+    appBackground: namedColors.navy,
     appText: 'black',
+    byName: namedColors, // all of them
     followMeButton: {
       background: { active: 'white', inactive: 'black' },
       icon: { active: 'black', inactive: 'azure' },
       underlay: '#0074d9',
     },
+    geolocationButton: {
+      background: 'white',
+      icon: 'black',
+      underlay: namedColors.yellow,
+    },
     helpButton: {
       background: 'white',
       icon: 'black',
-      underlay: '#2ecc40',
+      underlay: namedColors.green,
     },
     settingsButton: {
       background: 'white',
       icon: 'black',
-      underlay: '#ff4136',
+      underlay: namedColors.red,
     },
     timeline: {
-      axis: '#48f',
-      background: '#004',
+      axis: namedColors.darkerGray,
+      axisLabels: namedColors.gray,
+      background: namedColors.navy,
       bars: [
-        'red',
-        'green',
-        azure,
-        'yellow',
+        namedColors.red,
+        namedColors.orange,
+        namedColors.yellow,
+        namedColors.purple,
       ],
     },
-    user: azure,
+    user: namedColors.azure,
   },
   followMeButton: {
+    bottomOffset: 50,
+    opacity: 0.7,
+    rightOffset: 2,
+    size: 50,
+  },
+  geolocationButton: {
+    bottomOffset: timelineHeight + 50,
+    leftOffset: 2,
     opacity: 0.7,
     size: 50,
   },
@@ -67,7 +101,9 @@ const constants = {
     barHeight: 20,
     bottomPaddingForAxis: 33, // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForBars: 2,
-    height: 120,
+    height: timelineHeight,
+    tickCount: 5,
+    tickLabelFontSize: 12,
   },
 }
 

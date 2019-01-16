@@ -3,16 +3,17 @@ import React, {
 } from 'react';
 
 import {
-  SafeAreaView, // TODO this is iOS only
+  SafeAreaView,
+  StatusBar,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 
 import constants from 'lib/constants';
 
-import MapContainer from 'containers/MapContainer';
+import GeolocationButton from 'presenters/GeolocationButton';
 import HelpButton from 'presenters/HelpButton';
+import MapContainer from 'containers/MapContainer';
 import SettingsButton from 'presenters/SettingsButton';
 import Timeline from 'presenters/Timeline';
 
@@ -32,7 +33,12 @@ class AppUI extends Component {
     return (
       <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
         <View>
+          <StatusBar
+            backgroundColor={constants.colors.byName.navy}
+            barStyle="light-content"
+          />
           <MapContainer />
+          <GeolocationButton onPress={() => { }} />
           <HelpButton onPress={() => {}} />
           <SettingsButton onPress={() => { }} />
           <Timeline />

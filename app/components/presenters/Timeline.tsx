@@ -11,6 +11,7 @@ import {
 import {
     VictoryAxis,
     VictoryChart,
+    VictoryLabel,
     VictoryZoomContainer,
 } from 'victory-native';
 
@@ -18,7 +19,6 @@ import {
 
 import Timespans from 'components/presenters/Timespans';
 import constants from 'lib/constants';
-import log from 'lib/log';
 
 const initialState = {
   zoomDomain: null as any,
@@ -54,11 +54,10 @@ class Timeline extends Component<Props> {
   }
 
   public render() {
-    this.renderCount++;
-    if (this.renderCount % 10 == 0) {
-      log.debug('Timeline', this.renderCount);
-    }
-
+    // this.renderCount++;
+    // if (this.renderCount % 10 == 0) {
+    //   log.debug('Timeline', this.renderCount);
+    // }
     const now = Date.now()
     const timespanPadding = 100000;
     const timespansData = [
@@ -83,11 +82,19 @@ class Timeline extends Component<Props> {
       x: [now - timespanPadding, now + timespanPadding],
       y: [0, 10]
     }
-    const victoryAxisStyle = {
+    const axisStyle = {
       axis: { stroke: constants.colors.timeline.axis },
       grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
       // ticks: { stroke: 'gray', size: 5 }, // appears below axis, not needed
-      tickLabels: { fontSize: 10, padding: 0, stroke: constants.colors.timeline.axis },
+      tickLabels: { fontSize: constants.timeline.tickLabelFontSize, padding: 0, stroke: constants.colors.timeline.axis },
+    }
+    const axisLabelStyle = {
+      // fill: constants.colors.timeline.axisLabels,
+      fontFamily: 'Verdana',
+      fontSize: 10,
+      letterSpacing: 'normal',
+      padding: 0,
+      stroke: constants.colors.timeline.axisLabels,
     }
     return (
       <View style={{ backgroundColor: constants.colors.timeline.background, height: constants.timeline.height }}>
@@ -106,8 +113,9 @@ class Timeline extends Component<Props> {
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
           <VictoryAxis
-            style={victoryAxisStyle}
-            tickCount={5}
+            style={axisStyle}
+            tickCount={constants.timeline.tickCount}
+            tickLabelComponent={<VictoryLabel style={axisLabelStyle}/> as any}
             tickFormat={tickFormat}
           />
           <Timespans

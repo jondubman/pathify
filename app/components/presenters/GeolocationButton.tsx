@@ -1,4 +1,5 @@
 import React, {
+  Fragment,
 } from 'react';
 
 import {
@@ -10,32 +11,34 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import constants from 'lib/constants';
-const colors = constants.colors.helpButton;
-const { opacity, size } = constants.helpButton;
+const colors = constants.colors.geolocationButton;
+const {
+  bottomOffset,
+  leftOffset,
+  opacity,
+  size
+} = constants.geolocationButton;
 
 const Styles = StyleSheet.create({
-  button: {
-    // position, shape (circular) and size
+  button: { // round
     borderRadius: size / 2,
     position: 'absolute',
     paddingTop: size / 4,
     width: size,
     height: size,
-    right: 2,
-    top: 2,
+    bottom: bottomOffset,
+    left: leftOffset,
     justifyContent: 'center',
     flexDirection: 'row',
-
-    // appearance
     opacity,
   },
 })
 
-interface HelpButtonProps {
+interface GeolocationButtonProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-const HelpButton = (props: HelpButtonProps) => (
+const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: colors.background,
@@ -45,10 +48,10 @@ const HelpButton = (props: HelpButtonProps) => (
   >
     <FontAwesome5
       color={colors.icon}
-      name='lightbulb' // was 'question'
-      size={size / 2}
+      name='ghost'
+      size={constants.geolocationButton.size / 2}
     />
   </TouchableHighlight>
 )
 
-export default HelpButton;
+export default GeolocationButton;
