@@ -40,12 +40,16 @@ import {
 } from 'lib/actions';
 
 import { MapUtils } from 'components/MapArea';
+import { Feature } from '@turf/helpers';
+import constants from './constants';
 
 const sagas = {
   root: function* () {
     yield takeEvery(appAction.CENTER_MAP_ON_USER, sagas.centerMapOnUser);
     yield takeEvery(appAction.GEOLOCATION, sagas.geolocation);
     yield takeEvery(appAction.USER_MOVED_MAP, sagas.userMovedMap);
+    yield takeEvery(appAction.REORIENT_MAP, sagas.reorientMap);
+    yield takeEvery(appAction.MAP_REGION_CHANGED, sagas.mapRegionChanged);
 
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
@@ -113,14 +117,34 @@ const sagas = {
     }
   },
 
-  // Stop following user after panning the map
-  userMovedMap: function* () {
+  // Stop following user after panning the map.
+  userMovedMap: function* (action: Action) {
     try {
       log.debug('saga userMovedMap');
       yield put(newAction(appAction.STOP_FOLLOWING_USER));
+
+      // TODO the following may be redundant now with mapRegionChanged below
+      // const mapRegion = action.params as Feature;
+      // log.debug('mapRegion', mapRegion);
+      // yield put(newAction(reducerAction.MAP_REGION, mapRegion as Feature));
     } catch (err) {
       log.error('userMovedMap', err);
     }
+  },
+
+  // Set map bearing to 0 (true north)
+  reorientMap: function* () {
+    const map = MapUtils();
+    if (map) {
+      log.debug('saga reorientMap');
+      const obj = { heading: 0, duration: constants.map.reorientationTime };
+      map.setCamera(obj);
+    }
+  },
+
+  mapRegionChanged: function* (action: Action) {
+    log.debug('saga mapRegionChanged', action.params);
+    yield put(newAction(reducerAction.MAP_REGION, action.params as Feature));
   },
 }
 

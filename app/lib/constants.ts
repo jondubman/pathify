@@ -31,10 +31,15 @@ const constants = {
     appBackground: namedColors.navy,
     appText: 'black',
     byName: namedColors, // all of them
+    compassButton: {
+      background: 'white',
+      icon: 'black',
+      underlay: namedColors.purple,
+    },
     followMeButton: {
       background: { active: 'white', inactive: 'black' },
       icon: { active: 'black', inactive: 'azure' },
-      underlay: '#0074d9',
+      underlay: namedColors.blue,
     },
     geolocationButton: {
       background: 'white',
@@ -64,6 +69,12 @@ const constants = {
     },
     user: namedColors.azure,
   },
+  compassButton: {
+    bottomOffset: 120,
+    rightOffset: 2,
+    opacity: 0.7,
+    size: 50,
+  },
   followMeButton: {
     bottomOffset: 50,
     opacity: 0.7,
@@ -87,6 +98,7 @@ const constants = {
       style: 'Default',
       zoom: 14,
     },
+    reorientationTime: 2000, // msec
   },
   mapStyles: {
     Default: { url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp', opacity: 1 } as MapStyle,

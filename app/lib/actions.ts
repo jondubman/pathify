@@ -14,15 +14,19 @@
 export enum reducerAction {
   'GEOLOCATION' = 'GEOLOCATION',
   'FOLLOW_USER' = 'FOLLOW_USER',
+  'MAP_REGION' = 'MAP_REGION',
   'UNFOLLOW_USER' = 'UNFOLLOW_USER',
 }
 
-// These enum strings are preceded by async_ so as never to match any reducerActions (similar to namespacing)
+// These enum strings are preceded by async_ so as never to match any reducerActions (similar to namespacing).
+// async_ serves as a reminder that while reducers are synchronous, these are handled asynchronously (via sagas).
 export enum appAction {
   'GEOLOCATION' = 'async_GEOLOCATION',
 
   'CENTER_MAP_ON_USER' = 'async_CENTER_MAP_ON_USER',
   'USER_MOVED_MAP' = 'async_USER_MOVED_MAP',
+  'REORIENT_MAP' = 'async_REORIENT_MAP',
+  'MAP_REGION_CHANGED' = 'async_MAP_REGION_CHANGED',
 
   'START_FOLLOWING_USER' = 'async_START_FOLLOWING_USER',
   'STOP_FOLLOWING_USER' = 'async_STOP_FOLLOWING_USER',

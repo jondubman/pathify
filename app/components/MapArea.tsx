@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  View,
+  View, MapView,
 } from 'react-native';
 
 import Mapbox from '@mapbox/react-native-mapbox-gl';
@@ -20,6 +20,7 @@ import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
 import store from 'lib/store';
 
+import CompassButtonContainer from 'containers/CompassButtonContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import Pulsar from 'components/presenters/Pulsar';
 
@@ -35,6 +36,7 @@ interface Props {
 export interface IMapUtils {
   flyTo: Function;
   getVisibleBounds: Function;
+  setCamera: Function,
 }
 
 let singletonMap: (Component<Props> | null) = null; // a reference to the singleton MapArea component that is created
@@ -64,6 +66,7 @@ class MapArea extends Component<Props> {
     this.onRegionDidChange = this.onRegionDidChange.bind(this);
     this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
     this.onPress = this.onPress.bind(this);
+    this.setCamera = this.setCamera.bind(this);
     this.zoomTo = this.zoomTo.bind(this);
   }
 
@@ -71,6 +74,7 @@ class MapArea extends Component<Props> {
     return { // methods exposed for imperative use as needed
       flyTo: this.flyTo,
       getVisibleBounds: this.getVisibleBounds,
+      setCamera: this.setCamera,
     }
   }
 
@@ -123,6 +127,7 @@ class MapArea extends Component<Props> {
           }
         </Mapbox.MapView>
         <FollowMeButtonContainer />
+        <CompassButtonContainer />
      </View>
     )
   }
@@ -141,7 +146,9 @@ class MapArea extends Component<Props> {
   async getVisibleBounds() {
     if (this._map) {
       const mapView = this._map as any;
-      return await mapView.getVisibleBounds();
+      const bounds = await mapView.getVisibleBounds();
+      log.debug('bounds', bounds);
+      return bounds;
     }
   }
 
@@ -174,16 +181,17 @@ class MapArea extends Component<Props> {
   }
 
   onRegionWillChange(...args) {
-    log.debug('onRegionWillChange', args);
+    log.trace('onRegionWillChange', args);
 
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
-      store.dispatch(newAction(appAction.USER_MOVED_MAP));
+      store.dispatch(newAction(appAction.USER_MOVED_MAP, args));
     }
   }
 
   onRegionDidChange(...args) {
     log.trace('onRegionDidChange', args);
+    store.dispatch(newAction(appAction.MAP_REGION_CHANGED, args[0]));
   }
 
   onDidFinishRenderingMapFully(...args) {
@@ -202,6 +210,11 @@ class MapArea extends Component<Props> {
     log.trace('onPress', args);
     const bounds = await this.getVisibleBounds();
     log.trace('onPress: bounds', bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]);
+  }
+
+  setCamera(config: object) {
+    const mapView = this._map as any;
+    mapView.setCamera(config);
   }
 
   // TODO zoomTo is not really working right now

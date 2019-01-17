@@ -1,5 +1,7 @@
 //  Redux reducer for the app
 
+import { Feature } from "@turf/helpers";
+
 import {
   Action,
   reducerAction,
@@ -30,11 +32,13 @@ const initialAppOptions: AppOptions = {
 
 export interface AppState {
   loc?: LocationEvent;
+  mapRegion: Feature | null;
   options: AppOptions;
 }
 
 const initialAppState: AppState = {
   options: initialAppOptions,
+  mapRegion: null,
 }
 
 // The one and only Redux Reducer.
@@ -56,6 +60,11 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
 
     case reducerAction.UNFOLLOW_USER:
       newState.options.followingUser = false;
+      break;
+
+    case reducerAction.MAP_REGION:
+      const mapRegion = action.params as Feature;
+      newState.mapRegion = mapRegion;
       break;
 
     default:
