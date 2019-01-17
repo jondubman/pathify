@@ -50,6 +50,7 @@ const sagas = {
     yield takeEvery(appAction.USER_MOVED_MAP, sagas.userMovedMap);
     yield takeEvery(appAction.REORIENT_MAP, sagas.reorientMap);
     yield takeEvery(appAction.MAP_REGION_CHANGED, sagas.mapRegionChanged);
+    yield takeEvery(appAction.MAP_REGION_CHANGING, sagas.mapRegionChanging);
 
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
@@ -145,6 +146,12 @@ const sagas = {
   mapRegionChanged: function* (action: Action) {
     log.debug('saga mapRegionChanged', action.params);
     yield put(newAction(reducerAction.MAP_REGION, action.params as Feature));
+    yield put(newAction(reducerAction.MAP_MOVING, false));
+  },
+
+  mapRegionChanging: function* (action: Action) {
+    log.debug('saga mapRegionChanging', action.params);
+    yield put(newAction(reducerAction.MAP_MOVING, true));
   },
 }
 

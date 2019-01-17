@@ -12,6 +12,7 @@ import CompassButton from 'presenters/CompassButton';
 
 interface StateProps {
   heading: number | null;
+  mapMoving: boolean;
 }
 
 interface DispatchProps {
@@ -29,6 +30,7 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps
   }
   return {
     heading,
+    mapMoving: state.mapMoving,
   }
 }
 

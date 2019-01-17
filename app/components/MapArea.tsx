@@ -187,6 +187,7 @@ class MapArea extends Component<Props> {
     if (args[0].properties.isUserInteraction) {
       store.dispatch(newAction(appAction.USER_MOVED_MAP, args));
     }
+    store.dispatch(newAction(appAction.MAP_REGION_CHANGING, args[0]));
   }
 
   onRegionDidChange(...args) {

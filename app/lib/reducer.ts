@@ -32,12 +32,14 @@ const initialAppOptions: AppOptions = {
 
 export interface AppState {
   loc?: LocationEvent;
+  mapMoving: boolean;
   mapRegion: Feature | null;
   options: AppOptions;
 }
 
 const initialAppState: AppState = {
   options: initialAppOptions,
+  mapMoving: false,
   mapRegion: null,
 }
 
@@ -60,6 +62,10 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
 
     case reducerAction.UNFOLLOW_USER:
       newState.options.followingUser = false;
+      break;
+
+    case reducerAction.MAP_MOVING:
+      newState.mapMoving = action.params as boolean;
       break;
 
     case reducerAction.MAP_REGION:
