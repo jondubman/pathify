@@ -40,7 +40,7 @@ interface CompassButtonProps {
 }
 
 const CompassButton = (props: CompassButtonProps) => (
-  props.heading > constants.compassButton.mapHeadingThreshold ?
+  !props.mapMoving && props.heading > constants.compassButton.mapHeadingThreshold ?
     (
     <TouchableHighlight
       style={[Styles.button, {
