@@ -1,7 +1,8 @@
 // constants module
 interface MapStyle {
-  url: string;
+  name: string;
   opacity: number;
+  url: string;
 }
 
 const namedColors = {
@@ -23,7 +24,7 @@ const namedColors = {
 
   darkerGray: '#888',
 }
-const timelineHeight = 120;
+const timelineHeight = 150;
 
 const constants = {
   appName: 'Pathify',
@@ -44,12 +45,12 @@ const constants = {
     geolocationButton: {
       background: 'white',
       icon: 'black',
-      underlay: namedColors.yellow,
+      underlay: namedColors.green,
     },
     helpButton: {
       background: 'white',
       icon: 'black',
-      underlay: namedColors.green,
+      underlay: namedColors.yellow,
     },
     settingsButton: {
       background: 'white',
@@ -98,12 +99,12 @@ const constants = {
       style: 'Default',
       zoom: 14,
     },
-    reorientationTime: 2000, // msec
+    reorientationTime: 500, // msec
   },
   mapStyles: {
-    Default: { url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp', opacity: 1 } as MapStyle,
-    Dark: { url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0', opacity: 1 } as MapStyle,
-    Satellite: { url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
+    Satellite: { name: 'Standard', url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp', opacity: 1 } as MapStyle,
+    Dark: { name: 'Dark', url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0', opacity: 1 } as MapStyle,
+    Default: { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
   },
   settingsButton: {
     opacity: 0.7,
