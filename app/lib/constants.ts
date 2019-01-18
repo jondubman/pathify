@@ -73,6 +73,7 @@ const constants = {
   compassButton: {
     bottomOffset: 120,
     rightOffset: 2,
+    mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
     opacity: 0.7,
     size: 50,
   },
