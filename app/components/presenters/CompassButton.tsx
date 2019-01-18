@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { Feature } from '@turf/helpers';
 
 import constants from 'lib/constants';
 const colors = constants.colors.compassButton;
@@ -41,7 +40,7 @@ interface CompassButtonProps {
 }
 
 const CompassButton = (props: CompassButtonProps) => (
-(props.heading > constants.compassButton.mapHeadingThreshold) || props.mapMoving ?
+  props.heading > constants.compassButton.mapHeadingThreshold ?
     (
     <TouchableHighlight
       style={[Styles.button, {
