@@ -2006,10 +2006,10 @@
     "@types/d3-interpolate" "*"
     "@types/d3-selection" "*"
 
-"@types/d3@^5.5.0":
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-5.5.0.tgz#dfdb67190f40a78773d5c8ef9aaba56d02aa8e76"
-  integrity sha512-Bz9EAhWnaO93jLYSAT13blgzwP5Z0grO5THBOXSMeWHIIFHA7ntJSLpHSCr1kDtQunEZKCYT9OfE+4lYY/PwlA==
+"@types/d3@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-5.7.0.tgz#b29ced2f4fca01d531441fdfcc1e9f9ae14ba2f5"
+  integrity sha512-zk39IR/djm4A/CO0OWydc33u572TyV5L7FRZVnj54vyeBHgRc+WCfEPZmiRtQx3QkuGb5/IKJtQr0tpU25CKkg==
   dependencies:
     "@types/d3-array" "*"
     "@types/d3-axis" "*"
@@ -2048,10 +2048,10 @@
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.4.tgz#4e049756383c3f055dd8f3d24e63fb543e98eb07"
   integrity sha512-MHmwBtCb7OCv1DSivz2UNJXPGU/1btAWRKlqJ2saEhVJkpkvqHMMaOpKg0v4sAbDWSQekHGvPVMM8nQ+Jen03Q==
 
-"@types/jest@^23.3.12":
-  version "23.3.12"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.12.tgz#7e0ced251fa94c3bc2d1023d4b84b2992fa06376"
-  integrity sha512-/kQvbVzdEpOq4tEWT79yAHSM4nH4xMlhJv2GrLVQt4Qmo8yYsPdioBM1QpN/2GX1wkfMnyXvdoftvLUr0LBj7Q==
+"@types/jest@^23.3.13":
+  version "23.3.13"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.13.tgz#c81484b6f4ca007bb09887ed15ecb3286d58f928"
+  integrity sha512-ePl4l+7dLLmCucIwgQHAgjiepY++qcI6nb8eAwGNkB6OxmTe3Z9rQU3rSpomqu42PCCnlThZbOoxsf+qylJsLA==
 
 "@types/leaflet@^0":
   version "0.7.32"
@@ -2094,7 +2094,7 @@
     "@types/react" "*"
     "@types/react-native" "*"
 
-"@types/react-native@*", "@types/react-native@^0.57.27":
+"@types/react-native@*":
   version "0.57.27"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.57.27.tgz#d12a66836f330bf3b6364a44f662b92660170ff4"
   integrity sha512-uUPwAogiUXeMGoz01RgFLmsZ1wisumMvxI+2VOIspG4sVzg/+jccvgCb4OksnJSLBbTBjtskBYG+yz6iXAbpDg==
@@ -2102,10 +2102,18 @@
     "@types/prop-types" "*"
     "@types/react" "*"
 
-"@types/react-redux@^6.0.12":
-  version "6.0.12"
-  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-6.0.12.tgz#f3e9a400b8d40db43ffd8949ce14db4aa17a53ce"
-  integrity sha512-fvcpm7cfW/JMflRdZgegCVbSGYt/hyEWQKriesaLZDRDjBGKQsAiui08VCQg5lBpocPmulVGKFhICtOAcMUPOQ==
+"@types/react-native@^0.57.29":
+  version "0.57.29"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.57.29.tgz#5e2ba67fae9325c878286a07b9357c8a26e658e7"
+  integrity sha512-wuF3hJOXCqcS0/ZbqPa34rrb0TwhkqIxulgaCsjsvrHsdMoIv/lw5t55FXhEU9mKyoAwFYp8xK/EZj0udMLM5w==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/react" "*"
+
+"@types/react-redux@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.0.0.tgz#8aaba50fb43739462c40e65e85f96eb8a550d494"
+  integrity sha512-p5/vXqS4+Gq7EYzNv4SMi/yy7cM/BUbZORlPXY6F8wCyo5EfPa3Gpf6CEQX+UtbK5g2mqgERqVYyutzZYKIpaQ==
   dependencies:
     "@types/react" "*"
     redux "^4.0.0"
@@ -2125,10 +2133,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@types/react@^16.7.18":
-  version "16.7.18"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.7.18.tgz#f4ce0d539a893dd61e36cd11ae3a5e54f5a48337"
-  integrity sha512-Tx4uu3ppK53/iHk6VpamMP3f3ahfDLEVt3ZQc8TFm30a1H3v9lMsCntBREswZIW/SKrvJjkb3Hq8UwO6GREBng==
+"@types/react@^16.7.20":
+  version "16.7.20"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.7.20.tgz#13ae752c012710d0fa800985ca809814b51d3b58"
+  integrity sha512-Qd5RWkwl6SL7R2XzLk/cicjVQm1Mhc6HqXY5Ei4pWd1Vi8Fkbd5O0sA398x8fRSTPAuHdDYD9nrWmJMYTJI0vQ==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -2140,10 +2148,10 @@
   dependencies:
     redux-saga "*"
 
-"@types/victory@^31.0.3":
-  version "31.0.3"
-  resolved "https://registry.yarnpkg.com/@types/victory/-/victory-31.0.3.tgz#2075f7124f1505c7fb3603d74f9b88a0a69d93c3"
-  integrity sha512-eppNGzHMbjWOSQWL5HpMUF9int6Zq6qy9YOobVffhv2TaEN1oG8bP463LuMbW4JDOZTtszZMYWy0h6KLfAee8A==
+"@types/victory@^31.0.6":
+  version "31.0.6"
+  resolved "https://registry.yarnpkg.com/@types/victory/-/victory-31.0.6.tgz#ceb2260c16c81f68c2fe771a9c5bcf94ddd51464"
+  integrity sha512-IhvdTj9zu+GRGxmKQPDqs0hjJKowfAEo47RisALjzcvK4uIvp7xicV/xq8iqG5b+bidR1rg5HhrvTAsV4+zHTg==
   dependencies:
     "@types/react" "*"
 
@@ -7744,10 +7752,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.2.tgz#fe8101c46aa123f8353523ebdcf5730c2ae493e5"
-  integrity sha512-VCj5UiSyHBjwfYacmDuc/NOk4QQixbE+Wn7MFJuS0nRuPQbof132Pw4u53dm264O8LPc2MVsc7RJNml5szurkg==
+typescript@^3.2.4:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.4.tgz#c585cb952912263d915b462726ce244ba510ef3d"
+  integrity sha512-0RNDbSdEokBeEAkgNbxJ+BLwSManFy9TeXz8uW+48j/xhEXv1ePME60olyzw2XzUqUBNAYFeJadIqAgNqIACwg==
 
 ua-parser-js@^0.7.18:
   version "0.7.19"
