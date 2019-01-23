@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { Feature } from "@turf/helpers";
 
 import {
   appAction,

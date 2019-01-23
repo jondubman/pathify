@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  View, MapView,
+  View,
 } from 'react-native';
 
 import Mapbox from '@mapbox/react-native-mapbox-gl';

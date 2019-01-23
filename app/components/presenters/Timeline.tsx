@@ -17,7 +17,7 @@ import {
 
 // import constants from 'lib/constants';
 
-import Timespans from 'components/presenters/Timespans';
+import Timespans from 'presenters/Timespans';
 import constants from 'lib/constants';
 
 const initialState = {

@@ -11,11 +11,11 @@ import {
 
 import constants from 'lib/constants';
 
-import GeolocationButton from 'presenters/GeolocationButton';
-import HelpButton from 'presenters/HelpButton';
+import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
+import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
-import SettingsButton from 'presenters/SettingsButton';
-import Timeline from 'presenters/Timeline';
+import SettingsButtonContainer from 'containers/SettingsButtonContainer';
+import TimelineContainer from 'containers/TimelineContainer';
 
 const AppStyles = StyleSheet.create({
   safeAreaView: {
@@ -38,10 +38,10 @@ class AppUI extends Component {
             barStyle="light-content"
           />
           <MapContainer />
-          <GeolocationButton onPress={() => { }} />
-          <HelpButton onPress={() => {}} />
-          <SettingsButton onPress={() => { }} />
-          <Timeline />
+          <GeolocationButtonContainer />
+          <HelpButtonContainer />
+          <SettingsButtonContainer />
+          <TimelineContainer />
         </View>
       </SafeAreaView>
     )
