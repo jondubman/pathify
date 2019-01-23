@@ -40,7 +40,7 @@ const SettingsButton = (props: SettingsButtonProps) => (
     style={[Styles.button, {
       backgroundColor: colors.background,
     }]}
-    onPress={props.onPress as any}
+    onPress={props.onPress}
     underlayColor={colors.underlay}
   >
     <Icon

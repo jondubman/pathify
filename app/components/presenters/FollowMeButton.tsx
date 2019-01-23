@@ -43,7 +43,7 @@ const FollowMeButton = (props: FollowMeButtonProps) => (
     style={[Styles.button, {
       backgroundColor: props.active ? colors.background.active : colors.background.inactive,
     }]}
-    onPress={props.onPress as any}
+    onPress={props.onPress}
     underlayColor={colors.underlay}
   >
     <Icon

@@ -1,3 +1,6 @@
+import {
+  GestureResponderEvent,
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import {
@@ -15,7 +18,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-  onPress: Function;
+  onPress: (event: GestureResponderEvent) => void;
 }
 
 // interface OwnProps {
