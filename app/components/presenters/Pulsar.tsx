@@ -27,15 +27,18 @@ interface Props {
   color: string;
 }
 
-class Pulsar extends Component<Props> {
+const initialState = {
+  pulse: new Animated.Value(pulseMin),
+}
+type State = Readonly<typeof initialState>
 
+class Pulsar extends Component<Props, State> {
+
+  public readonly state: State = initialState;
   _pulseAnimation: any = null;
 
   constructor(props) {
     super(props);
-    this.state = {
-      pulse: new Animated.Value(pulseMin),
-    }
   }
 
   componentDidMount() {

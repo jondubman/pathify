@@ -39,11 +39,11 @@ export interface IMapUtils {
   setCamera: Function,
 }
 
-let singletonMap: (Component<Props> | null) = null; // a reference to the singleton MapArea component that is created
+let singletonMap: (Component<Props> & IMapUtils | null) = null; // ref to singleton MapArea component that is created
 
-export function MapUtils(): IMapUtils  {
+export function MapUtils(): IMapUtils | null {
   if (!singletonMap) {
-    return null as any; // TODO
+    return null; // TODO
   }
   return (singletonMap as any).getMap();
 }
