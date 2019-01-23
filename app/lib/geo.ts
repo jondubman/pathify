@@ -23,8 +23,8 @@ import {
 } from 'lib/actions';
 
 import log from 'lib/log';
-import utils from 'lib/utils';
 import store from 'lib/store';
+import utils from 'lib/utils';
 
 const geolocationOptions: Config = {
   // --------------
@@ -128,7 +128,6 @@ const geolocationOptions: Config = {
 // TODO choose between these. For now, just using geolocationOptions_highPower.
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
-// stopTimeout is the amount of time to
 
 const geolocationOptions_lowPower: Config = {
   ...geolocationOptions,
@@ -146,7 +145,7 @@ const geolocationOptions_lowPower: Config = {
 
   distanceFilter: 10, // meters device must move to generate update event, default 10
   heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: true, // default false
+  preventSuspend: false, // default false
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
@@ -172,7 +171,7 @@ const geolocationOptions_highPower: Config = {
 
   distanceFilter: 1, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: true, // default false
+  preventSuspend: false, // default false
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
@@ -182,6 +181,8 @@ const geolocationOptions_highPower: Config = {
   stopOnStationary: false, // default false
   stopTimeout: 5, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
 }
+
+// TODO geolocationOptions_maxPower
 
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // for backgroundGeolocation
