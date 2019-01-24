@@ -10,7 +10,6 @@ import {
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 import AppUI from "components/presenters/AppUI";
-import { treemapBinary } from "d3";
 
 interface AppEvent {
   type: string;
@@ -35,9 +34,10 @@ const initialAppOptions: AppOptions = {
 
 const initialAppUIState = {
   flags: {
-    followingUser: true,
+    followingUser: true, // should map follow user?
     gpsControlShowing: false,
     helpEnabled: false,
+    mapMoving: false, // is the map currently moving?
     settingsOpen: false,
   },
 }
@@ -47,7 +47,6 @@ export type AppUIState = typeof initialAppUIState;
 
 export interface AppState {
   loc?: LocationEvent;
-  mapMoving: boolean;
   mapRegion: Feature | null;
   options: AppOptions;
   ui: AppUIState;
@@ -55,7 +54,6 @@ export interface AppState {
 
 const initialAppState: AppState = {
   options: initialAppOptions,
-  mapMoving: false,
   mapRegion: null,
   ui: initialAppUIState,
 }
@@ -75,10 +73,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
         newState.loc = locationEvent;
       }
-      break;
-
-    case reducerAction.MAP_MOVING:
-      newState.mapMoving = params as boolean;
       break;
 
     case reducerAction.MAP_REGION:

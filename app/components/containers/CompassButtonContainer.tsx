@@ -29,7 +29,7 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps
   }
   return {
     heading,
-    mapMoving: state.mapMoving,
+    mapMoving: state.ui.flags.mapMoving,
   }
 }
 

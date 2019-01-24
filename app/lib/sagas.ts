@@ -149,12 +149,12 @@ const sagas = {
   mapRegionChanged: function* (action: Action) {
     log.debug('saga mapRegionChanged', action.params);
     yield put(newAction(reducerAction.MAP_REGION, action.params as Feature));
-    yield put(newAction(reducerAction.MAP_MOVING, false));
+    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapMoving'));
   },
 
   mapRegionChanging: function* (action: Action) {
     log.debug('saga mapRegionChanging', action.params);
-    yield put(newAction(reducerAction.MAP_MOVING, true));
+    yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
   },
 }
 
