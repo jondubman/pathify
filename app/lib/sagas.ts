@@ -76,7 +76,7 @@ const sagas = {
   startFollowingUser: function* () {
     try {
       log.debug('saga startFollowingUser');
-      yield put(newAction(reducerAction.FOLLOW_USER));
+      yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'followingUser'));
       const map = MapUtils();
       if (map) {
         yield put(newAction(appAction.CENTER_MAP_ON_USER)); // cascading app action
@@ -90,7 +90,7 @@ const sagas = {
   stopFollowingUser: function* () {
     try {
       log.debug('saga stopFollowingUser');
-      yield put(newAction(reducerAction.UNFOLLOW_USER));
+      yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'followingUser'));
       // yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
       log.error('saga stopFollowingUser', err);
@@ -106,7 +106,10 @@ const sagas = {
       const map = MapUtils();
       if (map) {
         // TODO use a more concise way
-        const { loc, options } = yield select((state: any) => ({ loc: state.loc, options: state.options }));
+        const { loc, options } = yield select((state: any) => ({
+          loc: state.loc,
+          followingUser: state.ui.flags.followingUser,
+        }))
         const { followingUser } = options;
         const bounds = yield call(map.getVisibleBounds as any);
         if (followingUser && loc && (options.keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {

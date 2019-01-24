@@ -13,13 +13,11 @@
 
 export enum reducerAction {
   'GEOLOCATION' = 'GEOLOCATION',
-  'FOLLOW_USER' = 'FOLLOW_USER',
   'MAP_MOVING' = 'MAP_MOVING',
   'MAP_REGION' = 'MAP_REGION',
   'UI_FLAG_DISABLE' = 'UI_FLAG_DISABLE',
   'UI_FLAG_ENABLE' = 'UI_FLAG_ENABLE',
   'UI_FLAG_TOGGLE' = 'UI_FLAG_TOGGLE',
-  'UNFOLLOW_USER' = 'UNFOLLOW_USER',
 }
 
 // These enum strings are preceded by async_ so as never to match any reducerActions (similar to namespacing).

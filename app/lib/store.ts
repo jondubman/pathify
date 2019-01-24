@@ -9,7 +9,11 @@ import {
   Action,
 } from 'lib/actions';
 
-import reducer, { AppOptions, AppState } from 'lib/reducer';
+import reducer, {
+  AppOptions,
+  AppState,
+  AppUIState
+} from 'lib/reducer';
 import sagas from 'lib/sagas';
 
 let reduxStore: Store<AppState, Action>; // global singleton Redux store
@@ -40,6 +44,11 @@ const store = {
     store.create();
     return reduxStore.getState().options;
   },
+
+  uiState: (): AppUIState => {
+    store.create();
+    return reduxStore.getState().ui;
+  }
 }
 
 export default store;

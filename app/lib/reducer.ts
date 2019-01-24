@@ -22,12 +22,10 @@ interface AppEvent {
 // all the options that are modifiable via Settings in the UI.
 
 export interface AppOptions {
-  followingUser: boolean;
   keepMapCenteredWhenFollowing: boolean;
   mapStyle: string;
 }
 const initialAppOptions: AppOptions = {
-  followingUser: true,
   keepMapCenteredWhenFollowing: true,
   mapStyle: constants.map.default.style,
 }
@@ -37,12 +35,13 @@ const initialAppOptions: AppOptions = {
 
 const initialAppUIState = {
   flags: {
+    followingUser: true,
     gpsControlShowing: false,
     helpEnabled: false,
     settingsOpen: false,
   },
 }
-type AppUIState = typeof initialAppUIState;
+export type AppUIState = typeof initialAppUIState;
 
 // Canonical interface for AppState, the contents of the Redux store
 
@@ -76,14 +75,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
         newState.loc = locationEvent;
       }
-      break;
-
-    case reducerAction.FOLLOW_USER:
-      newState.options.followingUser = true;
-      break;
-
-    case reducerAction.UNFOLLOW_USER:
-      newState.options.followingUser = false;
       break;
 
     case reducerAction.MAP_MOVING:

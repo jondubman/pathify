@@ -22,13 +22,13 @@ interface DispatchProps {
 
 const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps => {
   return {
-    active: state.options.followingUser,
+    active: state.ui.flags.followingUser,
   }
 }
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
   const onPress = () => {
-    const { followingUser } = store.options();
+    const { followingUser } = store.uiState().flags;
     if (followingUser) { // toggle the state
       dispatch(newAction(appAction.STOP_FOLLOWING_USER));
     } else {
