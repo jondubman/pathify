@@ -17,8 +17,8 @@ import {
 
 // import constants from 'lib/constants';
 
-import Timespans from 'presenters/Timespans';
 import constants from 'lib/constants';
+import Timespans from 'presenters/Timespans';
 
 const initialState = {
   zoomDomain: null as any,

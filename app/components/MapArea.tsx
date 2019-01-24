@@ -10,11 +10,7 @@ import Mapbox from '@mapbox/react-native-mapbox-gl';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv';
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-import {
-  appAction,
-  newAction,
-} from 'lib/actions';
-
+import { appAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';

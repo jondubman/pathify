@@ -17,11 +17,7 @@ import BackgroundGeolocation, {
   // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
-import {
-  appAction,
-  newAction,
-} from 'lib/actions';
-
+import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import store from 'lib/store';
 import utils from 'lib/utils';
@@ -153,7 +149,7 @@ const geolocationOptions_lowPower: Config = {
 
   stopDetectionDelay: 1, // minutes during which GPS is off and only the accelerometer is monitored
   stopOnStationary: false, // default false
-  stopTimeout: 5, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
+  stopTimeout: 3, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
 }
 
 const geolocationOptions_highPower: Config = {
@@ -171,7 +167,7 @@ const geolocationOptions_highPower: Config = {
 
   distanceFilter: 1, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: false, // default false
+  preventSuspend: false, // default false (note true has major battery impact!)
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)

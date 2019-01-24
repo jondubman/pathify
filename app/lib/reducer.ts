@@ -9,13 +9,17 @@ import {
 
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
+import AppUI from "components/presenters/AppUI";
+import { treemapBinary } from "d3";
 
 interface AppEvent {
   type: string;
   time: string;
 }
 
-// Canonical interface for AppOptions included in AppState
+// Canonical interface for AppOptions included in AppState.
+// AppOptions are modifiable via the API by name. These include, but are not limited to,
+// all the options that are modifiable via Settings in the UI.
 
 export interface AppOptions {
   followingUser: boolean;
@@ -28,6 +32,18 @@ const initialAppOptions: AppOptions = {
   mapStyle: constants.map.default.style,
 }
 
+// Canonical interface for AppUIState included in AppState.
+// AppUIState is for transient, user-initiated state changes, e.g. for menus.
+
+const initialAppUIState = {
+  flags: {
+    gpsControlShowing: false,
+    helpEnabled: false,
+    settingsOpen: false,
+  },
+}
+type AppUIState = typeof initialAppUIState;
+
 // Canonical interface for AppState, the contents of the Redux store
 
 export interface AppState {
@@ -35,22 +51,28 @@ export interface AppState {
   mapMoving: boolean;
   mapRegion: Feature | null;
   options: AppOptions;
+  ui: AppUIState;
 }
 
 const initialAppState: AppState = {
   options: initialAppOptions,
   mapMoving: false,
   mapRegion: null,
+  ui: initialAppUIState,
+}
+
+const setUIFlag = (flagName: string, newValue: boolean): void => {
 }
 
 // The one and only Redux Reducer.
 
 const reducer = (state: AppState = initialAppState, action: Action): AppState => {
   const newState = { ...state }; // shallow copy for now
+  const { params } = action;
   switch (action.type) {
 
     case reducerAction.GEOLOCATION:
-      const locationEvent = action.params as LocationEvent;
+      const locationEvent = params as LocationEvent;
       if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
         newState.loc = locationEvent;
       }
@@ -65,12 +87,39 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       break;
 
     case reducerAction.MAP_MOVING:
-      newState.mapMoving = action.params as boolean;
+      newState.mapMoving = params as boolean;
       break;
 
     case reducerAction.MAP_REGION:
-      const mapRegion = action.params as Feature;
+      const mapRegion = params as Feature;
       newState.mapRegion = mapRegion;
+      break;
+
+    case reducerAction.UI_FLAG_DISABLE:
+      {
+        const flagName = params as string;
+        newState.ui = { ...state.ui };
+        newState.ui.flags = { ...state.ui.flags };
+        newState.ui.flags[flagName] = false;
+      }
+      break;
+
+    case reducerAction.UI_FLAG_ENABLE:
+      {
+        const flagName = params as string;
+        newState.ui = { ...state.ui };
+        newState.ui.flags = { ...state.ui.flags };
+        newState.ui.flags[flagName] = true;
+      }
+      break;
+
+    case reducerAction.UI_FLAG_TOGGLE:
+      {
+        const flagName = params as string;
+        newState.ui = { ...state.ui };
+        newState.ui.flags = { ...state.ui.flags };
+        newState.ui.flags[flagName] = !state.ui.flags[flagName];
+      }
       break;
 
     default:

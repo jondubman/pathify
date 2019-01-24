@@ -32,16 +32,17 @@ const Styles = StyleSheet.create({
 })
 
 interface HelpButtonProps {
+  enabled: boolean;
   onPress: (event: GestureResponderEvent) => void;
 }
 
 const HelpButton = (props: HelpButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
-      backgroundColor: colors.background,
+      backgroundColor: props.enabled ? colors.underlay : colors.background,
     }]}
     onPress={props.onPress}
-    underlayColor={colors.underlay}
+    underlayColor={props.enabled ? colors.background : colors.underlay}
   >
     <FontAwesome5
       color={colors.icon}

@@ -3,24 +3,29 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
+import { newAction, reducerAction } from 'lib/actions';
 import log from 'lib/log';
+import { AppState } from 'lib/reducer';
 import HelpButton from 'presenters/HelpButton';
 
 interface StateProps {
+  enabled: boolean;
 }
 
 interface DispatchProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-const mapStateToProps = (state: any): StateProps => {
+const mapStateToProps = (state: AppState): StateProps => {
   return {
+    enabled: state.ui.flags.helpEnabled,
   }
 }
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
   const onPress = () => {
     log.debug('HelpButton press');
+    dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'helpEnabled'));
   }
   const dispatchers = {
     onPress,
@@ -29,7 +34,7 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 }
 
 const HelpButtonContainer = connect<StateProps, DispatchProps>(
-  mapStateToProps,
+  mapStateToProps as any,
   mapDispatchToProps
 )(HelpButton as any); // TODO 'as any' addresses TS error 2345
 

@@ -7,8 +7,6 @@ import createSagaMiddleware from 'redux-saga';
 
 import {
   Action,
-  // appAction,
-  // newAction,
 } from 'lib/actions';
 
 import reducer, { AppOptions, AppState } from 'lib/reducer';

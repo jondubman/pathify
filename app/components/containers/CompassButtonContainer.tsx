@@ -3,10 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import {
-  appAction,
-  newAction,
-} from 'lib/actions';
+import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
 
