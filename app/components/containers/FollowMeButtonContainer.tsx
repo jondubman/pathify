@@ -42,8 +42,8 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 }
 
 const FollowMeButtonContainer = connect<StateProps, DispatchProps>(
-  mapStateToProps as any, // TODO 'as any' addresses TS error 2345
+  mapStateToProps as any,
   mapDispatchToProps
-)(FollowMeButton as any); // TODO 'as any' addresses TS error 2345
+)(FollowMeButton as any);
 
 export default FollowMeButtonContainer;

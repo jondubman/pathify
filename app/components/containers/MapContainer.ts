@@ -42,8 +42,8 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 }
 
 const MapContainer = connect<StateProps, DispatchProps>(
-  mapStateToProps as any, // TODO 'as any' addresses TS error 2345
+  mapStateToProps as any,
   mapDispatchToProps
-)(MapArea as any); // TODO 'as any' addresses TS error 2345
+)(MapArea as any);
 
 export default MapContainer;

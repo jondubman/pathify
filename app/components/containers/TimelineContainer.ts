@@ -22,6 +22,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 const AppUIContainer = connect<StateProps, DispatchProps>(
   mapStateToProps,
   mapDispatchToProps
-)(Timeline as any); // TODO 'as any' addresses TS error 2345
+)(Timeline as any);
 
 export default AppUIContainer;

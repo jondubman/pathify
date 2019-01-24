@@ -40,7 +40,7 @@ const constants = {
     followMeButton: {
       background: { active: namedColors.blue, inactive: 'black' },
       icon: { active: 'black', inactive: 'azure' },
-      underlay: namedColors.darkerGray,
+      underlay: namedColors.azure,
     },
     geolocationButton: {
       background: 'white',

@@ -36,6 +36,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 const HelpButtonContainer = connect<StateProps, DispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(HelpButton as any); // TODO 'as any' addresses TS error 2345
+)(HelpButton as any);
 
 export default HelpButtonContainer;

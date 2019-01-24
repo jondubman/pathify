@@ -45,8 +45,8 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 }
 
 const CompassButtonContainer = connect<StateProps, DispatchProps>(
-  mapStateToProps as any, // TODO 'as any' addresses TS error 2345
+  mapStateToProps as any,
   mapDispatchToProps
-)(CompassButton as any); // TODO 'as any' addresses TS error 2345
+)(CompassButton as any);
 
 export default CompassButtonContainer;

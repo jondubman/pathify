@@ -35,6 +35,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 const SettingsButtonContainer = connect<StateProps, DispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-) (SettingsButton as any); // TODO 'as any' addresses TS error 2345
+) (SettingsButton as any);
 
 export default SettingsButtonContainer;

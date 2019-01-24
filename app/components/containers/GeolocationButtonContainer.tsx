@@ -35,6 +35,6 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
 const GeolocationButtonContainer = connect<StateProps, DispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(GeolocationButton as any); // TODO 'as any' addresses TS error 2345
+)(GeolocationButton as any);
 
 export default GeolocationButtonContainer;

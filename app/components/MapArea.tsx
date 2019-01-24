@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import Mapbox from '@mapbox/react-native-mapbox-gl';
-import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv';
+import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 import { appAction, newAction } from 'lib/actions';
