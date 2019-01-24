@@ -24,6 +24,10 @@ const namedColors = {
 
   darkerGray: '#888',
 }
+
+const mapButtonOffset = 2;
+const mapButtonOpacity = 0.5;
+const mapButtonSize = 50;
 const timelineHeight = 150;
 
 const constants = {
@@ -72,26 +76,28 @@ const constants = {
   },
   compassButton: {
     bottomOffset: 120,
-    rightOffset: 2,
+    rightOffset: mapButtonOffset,
     mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
-    opacity: 0.7,
-    size: 50,
+    opacity: mapButtonOpacity,
+    size: mapButtonSize,
   },
   followMeButton: {
-    bottomOffset: 50,
-    opacity: 0.7,
-    rightOffset: 2,
-    size: 50,
+    bottomOffset: mapButtonSize,
+    opacity: mapButtonOpacity,
+    rightOffset: mapButtonOffset,
+    size: mapButtonSize,
   },
   geolocationButton: {
-    bottomOffset: timelineHeight + 50,
-    leftOffset: 2,
-    opacity: 0.7,
-    size: 50,
+    bottomOffset: timelineHeight + mapButtonSize,
+    leftOffset: mapButtonOffset,
+    opacity: mapButtonOpacity,
+    size: mapButtonSize,
   },
   helpButton: {
-    opacity: 0.7,
-    size: 50,
+    opacity: mapButtonOpacity,
+    rightOffset: mapButtonOffset,
+    size: mapButtonSize,
+    topOffset: mapButtonOffset,
   },
   map: {
     default: {
@@ -108,16 +114,18 @@ const constants = {
     Satellite: { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
   },
   settingsButton: {
-    opacity: 0.7,
-    size: 50,
+    leftOffset: mapButtonOffset,
+    opacity: mapButtonOpacity,
+    size: mapButtonSize,
+    topOffset: mapButtonOffset,
   },
   timeline: {
     barHeight: 20,
     bottomPaddingForAxis: 33, // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForBars: 2,
     height: timelineHeight,
-    tickCount: 5,
-    tickLabelFontSize: 12,
+    tickCount: 5, // target number of ticks on the axis (approximate)
+    tickLabelFontSize: 12, // anything smaller is hard to read; anything bigger takes up too much room
   },
 }
 

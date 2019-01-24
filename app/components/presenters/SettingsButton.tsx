@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import constants from 'lib/constants';
 const colors = constants.colors.settingsButton;
-const { opacity, size } = constants.settingsButton;
+const { leftOffset, opacity, size, topOffset } = constants.settingsButton;
 
 const Styles = StyleSheet.create({
   button: {
@@ -21,8 +21,8 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4,
     width: size,
     height: size,
-    left: 2,
-    top: 2,
+    left: leftOffset,
+    top: topOffset,
     justifyContent: 'center',
     flexDirection: 'row',
 
