@@ -35,7 +35,7 @@ const initialAppOptions: AppOptions = {
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
-    gpsControlShowing: false,
+    geolocationControlOpen: false,
     helpEnabled: false,
     mapMoving: false, // is the map currently moving?
     settingsOpen: false,
