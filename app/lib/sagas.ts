@@ -106,13 +106,13 @@ const sagas = {
       const map = MapUtils();
       if (map) {
         // TODO use a more concise way
-        const { loc, options } = yield select((state: any) => ({
-          loc: state.loc,
+        const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: any) => ({
           followingUser: state.ui.flags.followingUser,
+          keepMapCenteredWhenFollowing: state.options.keepMapCenteredWhenFollowing,
+          loc: state.loc,
         }))
-        const { followingUser } = options;
         const bounds = yield call(map.getVisibleBounds as any);
-        if (followingUser && loc && (options.keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
+        if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
           yield put(newAction(appAction.CENTER_MAP_ON_USER));
         }
       }

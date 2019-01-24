@@ -32,16 +32,17 @@ const Styles = StyleSheet.create({
 })
 
 interface SettingsButtonProps {
+  open: boolean;
   onPress: (event: GestureResponderEvent) => void;
 }
 
 const SettingsButton = (props: SettingsButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
-      backgroundColor: colors.background,
+      backgroundColor: props.open ? colors.underlay : colors.background,
     }]}
     onPress={props.onPress}
-    underlayColor={colors.underlay}
+    underlayColor={props.open ? colors.background : colors.underlay}
   >
     <Icon
       color={colors.icon}
