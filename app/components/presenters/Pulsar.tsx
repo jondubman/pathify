@@ -42,7 +42,7 @@ class Pulsar extends Component<Props, State> {
   }
 
   componentDidMount() {
-    const { pulse } = this.state as any;
+    const { pulse } = this.state;
     const pulseOutAnimation = Animated.timing(pulse, {
       toValue: pulseMax,
       duration: pulseMsec,
@@ -63,7 +63,7 @@ class Pulsar extends Component<Props, State> {
       type: 'Point',
       coordinates: [lon, lat],
     }
-    const { pulse } = this.state as any;
+    const { pulse } = this.state;
     // pulse directly affects the circleStrokeWidth, which gets drawn outside the circle's canonical radius.
     // To yield a circle with desiredRadius, circleRadius should be smaller when pulse is larger.
     const radius = pulse.interpolate({

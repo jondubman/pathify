@@ -4,7 +4,8 @@ import constants from 'lib/constants';
 import util from 'util';
 
 // Cached movingTime app logs, kept outside of Redux store to avoid dependency
-const logs = [] as any[]; // easy place to dump any accumulated logs
+// const logs = [] as any[]; // easy place to dump any accumulated logs
+let logCount = 0;
 // const logSubscribers = []; // callback functions registered with addSubscriber
 
 const log = {
@@ -30,21 +31,21 @@ const log = {
       log.log('warn', 'app', `....pathify: Invalid log level ${level}`); // recurse one level deep
       level = 'warn'; // assume warn level if level unknown
     }
-    const index = logs.length;
-    let logItem;
+    // let logItem;
     try {
-      const logPrefix = `${index}${log.dotsFor(level)}${constants.appName} ${level}`;
+      logCount++;
+      const logPrefix = `${logCount}${log.dotsFor(level)}${constants.appName} ${level}`;
       console.log(logPrefix, ...args); // prefix enables easy filtering in Console
 
       const stringifiedArgs = [] as string[];
       for (const arg of args) {
         stringifiedArgs.push(util.inspect(arg));
       }
-      logItem = { level, key: index, text: stringifiedArgs.join(' ') };
+      // logItem = { level, key: logCount, text: stringifiedArgs.join(' ') };
     } catch (err) {
       console.log(`${constants.appName} log err ${err}`);
     }
-    logs.push(logItem); // keep logs around
+    // logs.push(logItem); // keep logs around
 
     // inform all 'subscribers'
     // for (const logSubscriber of logSubscribers) {

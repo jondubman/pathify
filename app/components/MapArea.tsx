@@ -80,7 +80,7 @@ class MapArea extends Component<Props> {
       alignSelf: 'center',
       height,
       width,
-    } as any;
+    }
     const mapCenterLon = constants.map.default.lon;
     const mapCenterLat = constants.map.default.lat;
 
