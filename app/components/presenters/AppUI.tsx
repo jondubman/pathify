@@ -3,11 +3,12 @@ import React, {
 } from 'react';
 
 import {
-  SafeAreaView,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
+
+import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 
 import constants from 'lib/constants';
 
@@ -17,33 +18,36 @@ import MapContainer from 'containers/MapContainer';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import TimelineContainer from 'containers/TimelineContainer';
 
+import CompassButtonContainer from 'containers/CompassButtonContainer';
+import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
+
 const AppStyles = StyleSheet.create({
   safeAreaView: {
     backgroundColor: constants.colors.appBackground,
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    flex: 1,
   },
 })
 
 class AppUI extends Component {
   public render() {
     return (
-      <SafeAreaView pointerEvents="box-none" style={AppStyles.safeAreaView}>
-        <View>
-          <StatusBar
-            backgroundColor={constants.colors.byName.navy}
-            barStyle="light-content"
-          />
+      <View style={AppStyles.safeAreaView}>
+        <StatusBar
+          backgroundColor={constants.colors.byName.navy}
+          barStyle="light-content"
+        />
+        <SafeAreaView style={{flex: 1}}>
           <MapContainer />
-          <GeolocationButtonContainer />
+
           <HelpButtonContainer />
           <SettingsButtonContainer />
+          <GeolocationButtonContainer />
+          <FollowMeButtonContainer />
+          <CompassButtonContainer />
+
           <TimelineContainer />
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </View>
     )
   }
 }

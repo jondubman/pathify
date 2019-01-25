@@ -16,8 +16,6 @@ import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
 import store from 'lib/store';
 
-import CompassButtonContainer from 'containers/CompassButtonContainer';
-import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import Pulsar from 'components/presenters/Pulsar';
 
 interface Props {
@@ -75,7 +73,17 @@ class MapArea extends Component<Props> {
   }
 
   render() {
-    const { height, mapStyleURL, opacity, width, userLoc } = this.props;
+    const {
+      height,
+      mapStyleURL,
+      opacity,
+      width,
+      userLoc,
+    } = this.props;
+
+    const viewStyle = {
+      opacity,
+    }
     const mapStyle = {
       alignSelf: 'center',
       height,
@@ -83,17 +91,16 @@ class MapArea extends Component<Props> {
     }
     const mapCenterLon = constants.map.default.lon;
     const mapCenterLat = constants.map.default.lat;
-
     const showUserMarker = !!userLoc; // boolean (related to use of userLoc! postfix bang for non-null assertion below)
 
     return (
-      <View style={{ opacity }}>
+      <View style={viewStyle}>
         <Mapbox.MapView
           attributionEnabled={true}
           centerCoordinate={[ mapCenterLon, mapCenterLat ]}
           contentInset={[ 0, 0, 0, 0 ]}
           heading={0}
-          logoEnabled={false}
+          logoEnabled={true}
           compassEnabled={false}
           onRegionDidChange={this.onRegionDidChange}
           onRegionWillChange={this.onRegionWillChange}
@@ -122,8 +129,6 @@ class MapArea extends Component<Props> {
             null
           }
         </Mapbox.MapView>
-        <FollowMeButtonContainer />
-        <CompassButtonContainer />
      </View>
     )
   }

@@ -8,6 +8,7 @@ import {
   newAction,
 } from 'lib/actions';
 
+import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
 import store from 'lib/store';
@@ -73,6 +74,10 @@ const utils = {
   objectWithoutKey: (object: any, key: string) => {
     const { [key]: deletedKey, ...otherKeys } = object;
     return otherKeys;
+  },
+
+  safeAreaHeight: () => {
+    return utils.windowSize().height - (constants.safeAreaBottom + constants.safeAreaTop);
   },
 
   windowSize: () => {

@@ -1,4 +1,12 @@
 // constants module
+import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
+const getInset = (SafeAreaView as any).getInset;
+const safeAreaTop =  getInset('top');
+const safeAreaBottom = getInset('bottom');
+// const safeAreaLeft = getInset('left');
+// const safeAreaRight = getInset('right');
+const bottomPaddingForAxis = safeAreaBottom ? 10 : 14;
+
 interface MapStyle {
   name: string;
   opacity: number;
@@ -25,8 +33,9 @@ const namedColors = {
   darkerGray: '#888',
 }
 
-const mapButtonOffset = 2;
-const mapButtonOpacity = 0.5;
+const mapLogoHeight = 34;
+const mapButtonOffset = 6;
+const mapButtonOpacity = 0.65;
 const mapButtonSize = 50;
 const timelineHeight = 150;
 
@@ -82,13 +91,13 @@ const constants = {
     size: mapButtonSize,
   },
   followMeButton: {
-    bottomOffset: mapButtonSize,
+    bottomOffset: timelineHeight + mapLogoHeight + safeAreaBottom,
     opacity: mapButtonOpacity,
     rightOffset: mapButtonOffset,
     size: mapButtonSize,
   },
   geolocationButton: {
-    bottomOffset: timelineHeight + mapButtonSize,
+    bottomOffset: timelineHeight + mapLogoHeight + safeAreaBottom,
     leftOffset: mapButtonOffset,
     opacity: mapButtonOpacity,
     size: mapButtonSize,
@@ -97,7 +106,7 @@ const constants = {
     opacity: mapButtonOpacity,
     rightOffset: mapButtonOffset,
     size: mapButtonSize,
-    topOffset: mapButtonOffset,
+    topOffset: safeAreaTop + mapButtonOffset,
   },
   map: {
     default: {
@@ -113,15 +122,18 @@ const constants = {
     Dark: { name: 'Pathify Dark', url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0', opacity: 1 } as MapStyle,
     Satellite: { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
   },
+  safeAreaBottom,
+  safeAreaTop,
   settingsButton: {
     leftOffset: mapButtonOffset,
     opacity: mapButtonOpacity,
     size: mapButtonSize,
-    topOffset: mapButtonOffset,
+    topOffset: safeAreaTop + mapButtonOffset,
   },
   timeline: {
     barHeight: 20,
-    bottomPaddingForAxis: 33, // TODO empirically determined so as not to cut off the horizontal (time) axis
+     // TODO empirically determined so as not to cut off the horizontal (time) axis
+    bottomPaddingForAxis,
     bottomPaddingForBars: 2,
     height: timelineHeight,
     tickCount: 5, // target number of ticks on the axis (approximate)

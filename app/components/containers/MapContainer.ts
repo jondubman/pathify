@@ -25,9 +25,9 @@ interface OwnProps {
 
 const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
   const mapStyle = constants.mapStyles[state.options.mapStyle];
-  const { height, width } = utils.windowSize();
+  const { width } = utils.windowSize();
   return {
-    height: height - constants.timeline.height,
+    height: utils.safeAreaHeight() - constants.timeline.height,
     mapStyleURL: mapStyle.url,
     opacity: mapStyle.opacity,
     width,

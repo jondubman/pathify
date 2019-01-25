@@ -9,7 +9,6 @@ import {
 
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
-import AppUI from "components/presenters/AppUI";
 
 interface AppEvent {
   type: string;

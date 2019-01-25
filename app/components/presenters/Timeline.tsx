@@ -5,14 +5,15 @@ import React, {
 } from 'react';
 
 import {
+  StyleSheet,
   View,
 } from 'react-native';
 
 import {
-    VictoryAxis,
-    VictoryChart,
-    VictoryLabel,
-    VictoryZoomContainer,
+  VictoryAxis,
+  VictoryChart,
+  VictoryLabel,
+  VictoryZoomContainer,
 } from 'victory-native';
 
 // import constants from 'lib/constants';
@@ -33,6 +34,18 @@ const tickFormat = (t: Date) => {
 
 interface Props {
 }
+
+const TimelineStyles = StyleSheet.create({
+  timeline: {
+    backgroundColor: constants.colors.timeline.background,
+    height: constants.timeline.height,
+    position: 'absolute',
+    bottom: constants.safeAreaBottom,
+    left: 0,
+    right: 0,
+    opacity: 1,
+  },
+})
 
 class Timeline extends Component<Props> {
 
@@ -97,7 +110,7 @@ class Timeline extends Component<Props> {
       stroke: constants.colors.timeline.axisLabels,
     }
     return (
-      <View style={{ backgroundColor: constants.colors.timeline.background, height: constants.timeline.height }}>
+      <View style={TimelineStyles.timeline}>
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
