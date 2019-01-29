@@ -30,7 +30,7 @@ class Timespans extends React.Component<TimespansProps> {
         style={{ fill: constants.colors.timeline.bars[index] }}
         x={scale.x(d.t1)}
         y={
-          (timeline.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) -
+          (timeline.initialHeight - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) -
           (timeline.barHeight * (index + 1))
         }
         width={scale.x(d.t2) - scale.x(d.t1)}

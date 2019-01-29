@@ -28,8 +28,13 @@ const AppStyles = StyleSheet.create({
   },
 })
 
-class AppUI extends Component {
+interface Props {
+  showTimeline: boolean;
+}
+
+class AppUI extends Component<Props> {
   public render() {
+    const showTimeline = this.props.showTimeline;
     return (
       <View style={AppStyles.safeAreaView}>
         <StatusBar
@@ -45,7 +50,7 @@ class AppUI extends Component {
           <FollowMeButtonContainer />
           <CompassButtonContainer />
 
-          <TimelineContainer />
+          {showTimeline ? <TimelineContainer /> : null}
         </SafeAreaView>
       </View>
     )

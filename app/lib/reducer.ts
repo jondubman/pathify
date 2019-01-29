@@ -36,6 +36,7 @@ const initialAppUIState = {
     followingUser: true, // should map follow user?
     geolocationControlOpen: false,
     helpEnabled: false,
+    mapFullScreen: false,
     mapMoving: false, // is the map currently moving?
     settingsOpen: false,
   },

@@ -38,7 +38,7 @@ interface Props {
 const TimelineStyles = StyleSheet.create({
   timeline: {
     backgroundColor: constants.colors.timeline.background,
-    height: constants.timeline.height,
+    height: constants.timeline.initialHeight,
     position: 'absolute',
     bottom: constants.safeAreaBottom,
     left: 0,
@@ -122,7 +122,7 @@ class Timeline extends Component<Props> {
             /> as any
           }
           domain={initialZoomDomain as any}
-          height={constants.timeline.height}
+          height={constants.timeline.initialHeight}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
           <VictoryAxis

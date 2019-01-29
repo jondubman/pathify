@@ -5,12 +5,14 @@ import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
 import { AppState } from 'lib/reducer';
+import { dynamicTimelineHeight } from 'lib/selectors';
 import store from 'lib/store';
 
 import FollowMeButton from 'presenters/FollowMeButton';
 
 interface StateProps {
   active: boolean;
+  marginBottom: number,
 }
 
 interface DispatchProps {
@@ -23,6 +25,7 @@ interface DispatchProps {
 const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps => {
   return {
     active: state.ui.flags.followingUser,
+    marginBottom: dynamicTimelineHeight(state),
   }
 }
 

@@ -37,7 +37,7 @@ const mapLogoHeight = 34;
 const mapButtonOffset = 6;
 const mapButtonOpacity = 0.65;
 const mapButtonSize = 50;
-const timelineHeight = 150;
+const initialTimelineHeight = 150;
 
 const constants = {
   appName: 'Pathify',
@@ -91,13 +91,13 @@ const constants = {
     size: mapButtonSize,
   },
   followMeButton: {
-    bottomOffset: timelineHeight + mapLogoHeight + safeAreaBottom,
+    bottomOffset: mapLogoHeight + safeAreaBottom,
     opacity: mapButtonOpacity,
     rightOffset: mapButtonOffset,
     size: mapButtonSize,
   },
   geolocationButton: {
-    bottomOffset: timelineHeight + mapLogoHeight + safeAreaBottom,
+    bottomOffset: mapLogoHeight + safeAreaBottom,
     leftOffset: mapButtonOffset,
     opacity: mapButtonOpacity,
     size: mapButtonSize,
@@ -135,7 +135,7 @@ const constants = {
      // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForAxis,
     bottomPaddingForBars: 2,
-    height: timelineHeight,
+    initialHeight: initialTimelineHeight,
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // anything smaller is hard to read; anything bigger takes up too much room
   },

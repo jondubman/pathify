@@ -6,9 +6,12 @@ import { connect } from 'react-redux';
 import { newAction, reducerAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
+import { dynamicTimelineHeight } from 'lib/selectors';
 import GeolocationButton from 'presenters/GeolocationButton';
 
 interface StateProps {
+  marginBottom: number,
+  open: boolean,
 }
 
 interface DispatchProps {
@@ -17,6 +20,7 @@ interface DispatchProps {
 
 const mapStateToProps = (state: AppState): StateProps => {
   return {
+    marginBottom: dynamicTimelineHeight(state),
     open: state.ui.flags.geolocationControlOpen,
   }
 }

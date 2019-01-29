@@ -10,7 +10,7 @@ import Mapbox from '@mapbox/react-native-mapbox-gl';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-import { appAction, newAction } from 'lib/actions';
+import { appAction, newAction, reducerAction } from 'lib/actions';
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
@@ -98,10 +98,11 @@ class MapArea extends Component<Props> {
         <Mapbox.MapView
           attributionEnabled={true}
           centerCoordinate={[ mapCenterLon, mapCenterLat ]}
+          compassEnabled={false}
           contentInset={[ 0, 0, 0, 0 ]}
           heading={0}
           logoEnabled={true}
-          compassEnabled={false}
+          onPress={this.onPress}
           onRegionDidChange={this.onRegionDidChange}
           onRegionWillChange={this.onRegionWillChange}
           pitchEnabled={false}
@@ -148,7 +149,7 @@ class MapArea extends Component<Props> {
     if (this._map) {
       const mapView = this._map as any;
       const bounds = await mapView.getVisibleBounds();
-      log.debug('bounds', bounds);
+      log.trace('bounds', bounds);
       return bounds;
     }
   }
@@ -210,8 +211,7 @@ class MapArea extends Component<Props> {
 
   async onPress(...args) {
     log.trace('onPress', args);
-    const bounds = await this.getVisibleBounds();
-    log.trace('onPress: bounds', bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]);
+    store.dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
   }
 
   setCamera(config: object) {

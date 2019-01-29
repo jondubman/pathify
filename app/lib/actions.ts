@@ -23,13 +23,11 @@ export enum reducerAction {
 // async_ serves as a reminder that while reducers are synchronous, these are handled asynchronously (via sagas).
 export enum appAction {
   'GEOLOCATION' = 'async_GEOLOCATION',
-
   'CENTER_MAP_ON_USER' = 'async_CENTER_MAP_ON_USER',
   'USER_MOVED_MAP' = 'async_USER_MOVED_MAP',
   'REORIENT_MAP' = 'async_REORIENT_MAP',
   'MAP_REGION_CHANGED' = 'async_MAP_REGION_CHANGED',
   'MAP_REGION_CHANGING' = 'async_MAP_REGION_CHANGING',
-
   'START_FOLLOWING_USER' = 'async_START_FOLLOWING_USER',
   'STOP_FOLLOWING_USER' = 'async_STOP_FOLLOWING_USER',
 }

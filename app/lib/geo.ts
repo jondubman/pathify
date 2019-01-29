@@ -232,7 +232,7 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         const locationEvent = locationEventFromLocation(location);
-        log.debug('location', locationEvent);
+        log.trace('location', locationEvent);
         store.dispatch(newAction(appAction.GEOLOCATION, locationEvent));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
@@ -302,9 +302,10 @@ export const Geo = {
   // If any reasons still apply on stopBackgroundGeolocation, we leave geolocation on.
   // Resolves to true if background geolocation was started as a result of this request.
   startBackgroundGeolocation: async (reason: string) => {
-    log.trace(`startBackgroundGeolocation: reason: ${reason}`);
+    log.debug(`startBackgroundGeolocation: reason: ${reason}`);
     if (reasons[reason]) {
       log.debug(`BackgroundGeolocation already active for ${reason} in startBackgroundGeolocation`);
+      log.trace('BackgroundGeolocation reasons', reasons);
       return false;
     }
     reasons[reason] = true;
@@ -326,11 +327,13 @@ export const Geo = {
   stopBackgroundGeolocation: async (reason: string) => {
     if (!reasons[reason]) {
       log.debug(`BackgroundGeolocation already inactive for ${reason} in stopBackgroundGeolocation`);
+      log.trace('BackgroundGeolocation reasons', reasons);
       return false;
     }
     reasons[reason] = false;
     if (haveReason()) { // still
       log.debug(`BackgroundGeolocation no longer needed for ${reason}, but still running`);
+      log.trace('BackgroundGeolocation reasons', reasons);
       return false;
     }
     return new Promise((resolve, reject) => {

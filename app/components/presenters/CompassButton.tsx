@@ -37,6 +37,7 @@ interface CompassButtonProps {
   onPress: (event: GestureResponderEvent) => void;
   heading: number;
   mapMoving: boolean;
+  marginBottom: number;
 }
 
 const CompassButton = (props: CompassButtonProps) => (
@@ -45,6 +46,7 @@ const CompassButton = (props: CompassButtonProps) => (
     <TouchableHighlight
       style={[Styles.button, {
         backgroundColor: colors.background,
+        bottom: bottomOffset + props.marginBottom,
       }]}
       onPress={props.onPress}
       underlayColor={colors.underlay}

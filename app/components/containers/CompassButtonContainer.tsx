@@ -6,12 +6,14 @@ import { connect } from 'react-redux';
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
+import { dynamicTimelineHeight } from 'lib/selectors';
 
 import CompassButton from 'presenters/CompassButton';
 
 interface StateProps {
   heading: number | null;
   mapMoving: boolean;
+  marginBottom: number,
 }
 
 interface DispatchProps {
@@ -30,6 +32,7 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps
   return {
     heading,
     mapMoving: state.ui.flags.mapMoving,
+    marginBottom: dynamicTimelineHeight(state),
   }
 }
 

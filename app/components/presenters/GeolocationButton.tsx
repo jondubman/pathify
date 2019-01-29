@@ -26,7 +26,6 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4,
     width: size,
     height: size,
-    bottom: bottomOffset,
     left: leftOffset,
     justifyContent: 'center',
     flexDirection: 'row',
@@ -35,6 +34,7 @@ const Styles = StyleSheet.create({
 })
 
 interface GeolocationButtonProps {
+  marginBottom: number,
   open: boolean;
   onPress: (event: GestureResponderEvent) => void;
 }
@@ -43,6 +43,7 @@ const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.open ? colors.underlay : colors.background,
+      bottom: bottomOffset + props.marginBottom,
     }]}
     onPress={props.onPress}
     underlayColor={props.open ? colors.background : colors.underlay}

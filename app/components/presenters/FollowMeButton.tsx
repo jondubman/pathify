@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import constants from 'lib/constants';
+import { dynamicTimelineHeight } from 'lib/selectors';
 const colors = constants.colors.followMeButton;
 const {
   bottomOffset,
@@ -25,7 +26,6 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4,
     width: size,
     height: size,
-    bottom: bottomOffset,
     right: rightOffset,
     justifyContent: 'center',
     flexDirection: 'row',
@@ -35,6 +35,7 @@ const Styles = StyleSheet.create({
 
 interface FollowMeButtonProps {
   active: boolean;
+  marginBottom: number,
   onPress: (event: GestureResponderEvent) => void;
 }
 
@@ -42,6 +43,7 @@ const FollowMeButton = (props: FollowMeButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.active ? colors.background.active : colors.background.inactive,
+      bottom: bottomOffset + props.marginBottom,
     }]}
     onPress={props.onPress}
     underlayColor={colors.underlay}
