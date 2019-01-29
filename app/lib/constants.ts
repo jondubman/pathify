@@ -84,7 +84,7 @@ const constants = {
     user: namedColors.azure,
   },
   compassButton: {
-    bottomOffset: 120,
+    bottomOffset: mapLogoHeight + safeAreaBottom + mapButtonSize + mapButtonOffset * 2,
     rightOffset: mapButtonOffset,
     mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
     opacity: mapButtonOpacity,
