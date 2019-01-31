@@ -6,23 +6,26 @@ import { connect } from 'react-redux';
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
-import { dynamicTimelineHeight } from 'lib/selectors';
+import {
+  dynamicTimelineHeight,
+  mapHidden,
+} from 'lib/selectors';
 
 import CompassButton from 'presenters/CompassButton';
 
-interface StateProps {
+interface CompassButtonStateProps {
   heading: number | null;
+  hidden: boolean;
   marginBottom: number,
 }
 
-interface DispatchProps {
+interface CompassButtonDispatchProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-// interface OwnProps {
-// }
+export type CompassButtonProps = CompassButtonStateProps & CompassButtonDispatchProps;
 
-const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps => {
+const mapStateToProps = (state: AppState): CompassButtonStateProps => {
   let heading = null;
   if (state.mapRegion) {
     const r = state.mapRegion;
@@ -30,11 +33,12 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps
   }
   return {
     heading,
+    hidden: mapHidden(state),
     marginBottom: dynamicTimelineHeight(state),
   }
 }
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: any): CompassButtonDispatchProps => {
   const onPress = () => {
     log.debug('compass press');
     dispatch(newAction(appAction.REORIENT_MAP));
@@ -45,7 +49,7 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
   return dispatchers;
 }
 
-const CompassButtonContainer = connect<StateProps, DispatchProps>(
+const CompassButtonContainer = connect<CompassButtonStateProps, CompassButtonDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(CompassButton as any);

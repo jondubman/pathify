@@ -2,7 +2,6 @@ import React, {
 } from 'react';
 
 import {
-  GestureResponderEvent,
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
@@ -33,14 +32,10 @@ const Styles = StyleSheet.create({
   },
 })
 
-interface CompassButtonProps {
-  onPress: (event: GestureResponderEvent) => void;
-  heading: number;
-  marginBottom: number;
-}
+import { CompassButtonProps } from 'containers/CompassButtonContainer';
 
-const CompassButton = (props: CompassButtonProps) => (
-  props.heading > constants.compassButton.mapHeadingThreshold ?
+const CompassButton = (props: CompassButtonProps) => (props.hidden ? null : (
+  props.heading && props.heading > constants.compassButton.mapHeadingThreshold ?
     (
     <TouchableHighlight
       style={[Styles.button, {
@@ -57,6 +52,6 @@ const CompassButton = (props: CompassButtonProps) => (
       />
     </TouchableHighlight>
     ) : null
-)
+))
 
 export default CompassButton;

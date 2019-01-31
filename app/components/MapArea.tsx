@@ -14,6 +14,7 @@ import { appAction, newAction, reducerAction } from 'lib/actions';
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
+import { mapHidden } from 'lib/selectors';
 import store from 'lib/store';
 
 import Pulsar from 'components/presenters/Pulsar';
@@ -93,7 +94,8 @@ class MapArea extends Component<Props> {
     const mapCenterLat = constants.map.default.lat;
     const showUserMarker = !!userLoc; // boolean (related to use of userLoc! postfix bang for non-null assertion below)
 
-    if (mapStyleURL == '') {
+    if (mapHidden(store.getState())) {
+      // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
       return (
         <View style={viewStyle} />
       )

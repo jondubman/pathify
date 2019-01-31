@@ -2,7 +2,6 @@ import React, {
 } from 'react';
 
 import {
-  GestureResponderEvent,
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
@@ -32,11 +31,7 @@ const Styles = StyleSheet.create({
   },
 })
 
-interface GeolocationButtonProps {
-  marginBottom: number,
-  open: boolean;
-  onPress: (event: GestureResponderEvent) => void;
-}
+import { GeolocationButtonProps } from 'containers/GeolocationButtonContainer';
 
 const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight

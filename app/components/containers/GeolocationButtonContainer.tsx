@@ -9,23 +9,25 @@ import { AppState } from 'lib/reducer';
 import { dynamicTimelineHeight } from 'lib/selectors';
 import GeolocationButton from 'presenters/GeolocationButton';
 
-interface StateProps {
+interface GeolocationButtonStateProps {
   marginBottom: number,
   open: boolean,
 }
 
-interface DispatchProps {
+interface GeolocationButtonDispatchProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-const mapStateToProps = (state: AppState): StateProps => {
+export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationButtonDispatchProps;
+
+const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     marginBottom: dynamicTimelineHeight(state),
     open: state.ui.flags.geolocationControlOpen,
   }
 }
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: any): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
     dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'geolocationControlOpen'));
@@ -36,7 +38,7 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
   return dispatchers;
 }
 
-const GeolocationButtonContainer = connect<StateProps, DispatchProps>(
+const GeolocationButtonContainer = connect<GeolocationButtonStateProps, GeolocationButtonDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(GeolocationButton as any);
