@@ -11,11 +11,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import constants from 'lib/constants';
 const colors = constants.colors.settingsButton;
-const { leftOffset, opacity, size, topOffset } = constants.settingsButton;
+const { leftOffset, opacityWhenClosed, opacityWhenOpen, size, topOffset } = constants.settingsButton;
 
 const Styles = StyleSheet.create({
   button: {
-    // position, shape (circular) and size
     borderRadius: size / 2,
     position: 'absolute',
     paddingTop: size / 4,
@@ -25,9 +24,6 @@ const Styles = StyleSheet.create({
     top: topOffset,
     justifyContent: 'center',
     flexDirection: 'row',
-
-    // appearance
-    opacity,
   },
 })
 
@@ -40,6 +36,7 @@ const SettingsButton = (props: SettingsButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.open ? colors.underlay : colors.background,
+      opacity: props.open ? opacityWhenOpen : opacityWhenClosed,
     }]}
     onPress={props.onPress}
     underlayColor={props.open ? colors.background : colors.underlay}

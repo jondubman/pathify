@@ -1,7 +1,7 @@
 //  Selector functions for Redux reducer
 
 import { AppState } from 'lib/reducer';
-import constants from './constants';
+import constants, { MapStyle } from './constants';
 import utils from 'lib/utils';
 
 export const dynamicMapHeight = (state: AppState): number => {
@@ -14,3 +14,7 @@ export const dynamicTimelineHeight = (state: AppState): number => {
     :
     constants.timeline.initialHeight
 }
+
+export const dynamicMapStyle = (state: AppState): MapStyle => (
+  constants.mapStyles.find((mapStyle: MapStyle) => (mapStyle.name === state.options.mapStyle)) as MapStyle
+)

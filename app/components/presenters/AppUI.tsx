@@ -15,7 +15,7 @@ import constants from 'lib/constants';
 import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
-import SettingsButtonContainer from 'containers/SettingsButtonContainer';
+import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import TimelineContainer from 'containers/TimelineContainer';
 
 import CompassButtonContainer from 'containers/CompassButtonContainer';
@@ -45,7 +45,7 @@ class AppUI extends Component<Props> {
           <MapContainer />
 
           <HelpButtonContainer />
-          <SettingsButtonContainer />
+          <SettingsPanelContainer />
           <GeolocationButtonContainer />
           <FollowMeButtonContainer />
           <CompassButtonContainer />

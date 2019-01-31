@@ -2,13 +2,12 @@
 
 import { connect } from 'react-redux';
 
-import constants from 'lib/constants';
 import { AppState } from 'lib/reducer';
 import utils from 'lib/utils';
 
 import { LocationEvent } from 'lib/geo';
 import MapArea from 'components/MapArea';
-import { dynamicMapHeight, dynamicTimelineHeight } from 'lib/selectors';
+import { dynamicMapHeight, dynamicMapStyle } from 'lib/selectors';
 
 interface StateProps {
   height: number;
@@ -25,7 +24,7 @@ interface OwnProps {
 }
 
 const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
-  const mapStyle = constants.mapStyles[state.options.mapStyle];
+  const mapStyle = dynamicMapStyle(state);
   const { width } = utils.windowSize();
   return {
     height: dynamicMapHeight(state),

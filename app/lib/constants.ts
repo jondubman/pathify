@@ -7,7 +7,7 @@ const safeAreaBottom = getInset('bottom');
 // const safeAreaRight = getInset('right');
 const bottomPaddingForAxis = safeAreaBottom ? 10 : 14;
 
-interface MapStyle {
+export interface MapStyle {
   name: string;
   opacity: number;
   url: string;
@@ -33,16 +33,25 @@ const namedColors = {
   darkerGray: '#888',
 }
 
-const mapLogoHeight = 34;
-const mapButtonOffset = 6;
-const mapButtonOpacity = 0.65;
-const mapButtonSize = 50;
+const colorThemes = {
+  background: namedColors.navy,
+  settings: namedColors.red,
+}
+
+const buttonOffset = 6;
+const buttonSize = 50;
+const defaultOpacity = 0.65;
+const mapLogoHeight = 34; // mapbox logo
 const initialTimelineHeight = 150;
+
+const dec1ToHexFF = (dec: number) => Math.round(dec * 255).toString(16); // dec between 0 and 1; e.g. 0.8 => 'cc'
+const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
 
 const constants = {
   appName: 'Pathify',
+  buttonSize,
   colors: {
-    appBackground: namedColors.navy,
+    appBackground: colorThemes.background,
     appText: 'black',
     byName: namedColors, // all of them
     compassButton: {
@@ -68,12 +77,18 @@ const constants = {
     settingsButton: {
       background: 'white',
       icon: 'black',
-      underlay: namedColors.red,
+      underlay: colorThemes.settings,
+    },
+    settingsPanel: {
+      background: withOpacity(colorThemes.background, defaultOpacity),
+      border: colorThemes.settings,
+      choiceUnderlay: 'black',
+      opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
     },
     timeline: {
       axis: namedColors.darkerGray,
       axisLabels: namedColors.gray,
-      background: namedColors.navy,
+      background: colorThemes.background,
       bars: [
         namedColors.red,
         namedColors.orange,
@@ -83,30 +98,39 @@ const constants = {
     },
     user: namedColors.azure,
   },
+  colorThemes,
   compassButton: {
-    bottomOffset: mapLogoHeight + safeAreaBottom + mapButtonSize + mapButtonOffset * 2,
-    rightOffset: mapButtonOffset,
+    bottomOffset: mapLogoHeight + safeAreaBottom + buttonSize + buttonOffset * 2,
+    rightOffset: buttonOffset,
     mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
-    opacity: mapButtonOpacity,
-    size: mapButtonSize,
+    opacity: defaultOpacity,
+    size: buttonSize,
   },
   followMeButton: {
     bottomOffset: mapLogoHeight + safeAreaBottom,
-    opacity: mapButtonOpacity,
-    rightOffset: mapButtonOffset,
-    size: mapButtonSize,
+    opacity: defaultOpacity,
+    rightOffset: buttonOffset,
+    size: buttonSize,
+  },
+  fonts: {
+    colors: {
+      default: 'white',
+    },
+    sizes: {
+      label: 15,
+    },
   },
   geolocationButton: {
     bottomOffset: mapLogoHeight + safeAreaBottom,
-    leftOffset: mapButtonOffset,
-    opacity: mapButtonOpacity,
-    size: mapButtonSize,
+    leftOffset: buttonOffset,
+    opacity: defaultOpacity,
+    size: buttonSize,
   },
   helpButton: {
-    opacity: mapButtonOpacity,
-    rightOffset: mapButtonOffset,
-    size: mapButtonSize,
-    topOffset: safeAreaTop + mapButtonOffset,
+    opacity: defaultOpacity,
+    rightOffset: buttonOffset,
+    size: buttonSize,
+    topOffset: safeAreaTop + buttonOffset,
   },
   map: {
     default: {
@@ -115,20 +139,31 @@ const constants = {
       style: 'Default',
       zoom: 14,
     },
+    opacityUnderPanels: defaultOpacity, // TODO adjust
     reorientationTime: 500, // msec
   },
-  mapStyles: {
-    Default: { name: 'Pathify Default', url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp', opacity: 1 } as MapStyle,
-    Dark: { name: 'Pathify Dark', url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0', opacity: 1 } as MapStyle,
-    Satellite: { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655', opacity: 1 } as MapStyle,
-  },
+  mapStyles: [
+    { name: 'None', url: '' },
+    { name: 'Default', url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
+    { name: 'Topo', url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
+    { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
+  ] as MapStyle[],
   safeAreaBottom,
   safeAreaTop,
   settingsButton: {
-    leftOffset: mapButtonOffset,
-    opacity: mapButtonOpacity,
-    size: mapButtonSize,
-    topOffset: safeAreaTop + mapButtonOffset,
+    leftOffset: buttonOffset,
+    opacityWhenClosed: defaultOpacity,
+    opacityWhenOpen: 1,
+    size: buttonSize,
+    topOffset: safeAreaTop + buttonOffset,
+  },
+  settingsPanel: {
+    height: 350,
+    leftOffset: buttonOffset,
+    subpanelLeftOffset: buttonOffset,
+    subpanelTopOffset: buttonSize + buttonOffset,
+    rightOffset: buttonOffset + buttonSize + buttonOffset,
+    topOffset: safeAreaTop + buttonOffset,
   },
   timeline: {
     barHeight: 20,

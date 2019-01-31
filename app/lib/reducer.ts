@@ -7,7 +7,7 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import constants from 'lib/constants';
+import constants, { MapStyle } from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 
 interface AppEvent {
@@ -36,9 +36,9 @@ const initialAppUIState = {
     followingUser: true, // should map follow user?
     geolocationControlOpen: false,
     helpEnabled: false,
-    mapFullScreen: false,
+    mapFullScreen: true,
     mapMoving: false, // is the map currently moving?
-    settingsOpen: false,
+    settingsOpen: true,
   },
 }
 export type AppUIState = typeof initialAppUIState;
@@ -104,6 +104,16 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         newState.ui = { ...state.ui };
         newState.ui.flags = { ...state.ui.flags };
         newState.ui.flags[flagName] = !state.ui.flags[flagName];
+      }
+      break;
+
+  case reducerAction.MAP_STYLE:
+      {
+        const newStyle = params as string;
+        newState.options = {
+          ...state.options,
+          mapStyle: newStyle,
+        }
       }
       break;
 
