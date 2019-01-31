@@ -32,21 +32,22 @@ const Styles = StyleSheet.create({
     borderColor: constants.colorThemes.settings,
     borderWidth: 1,
     justifyContent: 'center',
+    paddingBottom: 3,
+    paddingTop: 3,
   },
   choiceLabel: {
-    justifyContent: 'center',
   },
   choiceLabelText: {
     color: constants.colors.byName.gray,
-    marginRight: 35,
+    fontSize: constants.fonts.sizes.choiceLabel,
+    fontWeight: 'normal',
+    marginBottom: 2,
   },
   chosen: {
     backgroundColor: constants.colorThemes.settings,
   },
-  mapDimmer: {
-    ...panelStyleBase as any,
-    backgroundColor: constants.colors.appBackground,
-    opacity: 1 - constants.map.opacityUnderPanels,
+  multiSelect: {
+    flexDirection: 'row',
   },
   opacitySlider: {
     borderRadius: 10,
@@ -61,7 +62,7 @@ const Styles = StyleSheet.create({
   },
   opacitySliderView: {
     backgroundColor: colors.opacitySliderBackground,
-    width: 175,
+    width: 230,
   },
   panel: {
     ...panelStyleBase as any,
@@ -69,25 +70,23 @@ const Styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
+    paddingLeft: 5,
   },
   subpanel: {
     display: 'flex',
     alignSelf: 'flex-start',
     flexDirection: 'row',
-    justifyContent: 'center',
-    height: 40,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   subpanelContents: {
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   subpanels: {
-    left: constants.settingsPanel.subpanelLeftOffset,
     top: constants.settingsPanel.subpanelTopOffset,
   },
   text: {
     color: constants.fonts.colors.default,
-    fontSize: constants.fonts.sizes.label,
+    fontSize: constants.fonts.sizes.choice,
     fontWeight: 'bold',
     margin: 5,
   },
@@ -105,31 +104,33 @@ const SettingsPanel = (props: SettingsPanelProps) => (
             <View style={Styles.subpanel}>
               <View style={Styles.subpanelContents}>
                 <View style={Styles.choiceLabel}>
-                  <Text style={[Styles.text, Styles.choiceLabelText]}>
-                    MAP
+                  <Text style={Styles.choiceLabelText}>
+                    MAP STYLE
                   </Text>
                 </View>
-                {constants.mapStyles.map((mapStyle: MapStyle, i: number) => (
-                  <TouchableHighlight
-                    onPress={() => { props.onSelectMapStyle(mapStyle.name)}}
-                    style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
-                    underlayColor={constants.colors.settingsPanel.choiceUnderlay}
-                  >
-                    <Text style={Styles.text}>
-                      {mapStyle.name}
-                    </Text>
-                  </TouchableHighlight>
-                ))}
+                <View style={Styles.multiSelect}>
+                  {constants.mapStyles.map((mapStyle: MapStyle, i: number) => (
+                    <TouchableHighlight
+                      onPress={() => { props.onSelectMapStyle(mapStyle.name)}}
+                      style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
+                      underlayColor={constants.colors.settingsPanel.choiceUnderlay}
+                    >
+                      <Text style={Styles.text}>
+                        {mapStyle.name}
+                      </Text>
+                    </TouchableHighlight>
+                  ))}
+                </View>
               </View>
             </View>
             <View style={Styles.subpanel}>
               <View style={Styles.subpanelContents}>
                 <View style={Styles.choiceLabel}>
-                  <Text style={[Styles.text, Styles.choiceLabelText]}>
-                    OPACITY
+                  <Text style={Styles.choiceLabelText}>
+                    MAP OPACITY
                   </Text>
                 </View>
-                <View style={Styles.opacitySliderView} >
+                <View style={Styles.opacitySliderView}>
                   <Slider
                     minimumTrackTintColor={constants.colors.byName.azure}
                     style={Styles.opacitySlider}

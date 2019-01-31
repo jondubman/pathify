@@ -117,7 +117,8 @@ const constants = {
       default: 'white',
     },
     sizes: {
-      label: 15,
+      choice: 15,
+      choiceLabel: 12,
     },
   },
   geolocationButton: {
