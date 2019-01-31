@@ -43,6 +43,7 @@ const buttonSize = 50;
 const defaultOpacity = 0.65;
 const mapLogoHeight = 34; // mapbox logo
 const initialTimelineHeight = 150;
+const panelWidth = 252; // fits on iPhone SE
 
 const dec1ToHexFF = (dec: number) => Math.round(dec * 255).toString(16); // dec between 0 and 1; e.g. 0.8 => 'cc'
 const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
@@ -149,6 +150,7 @@ const constants = {
     { name: 'Topo', url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
     { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
+  panelWidth,
   safeAreaBottom,
   safeAreaTop,
   settingsButton: {

@@ -126,11 +126,6 @@ const sagas = {
     try {
       log.debug('saga userMovedMap');
       yield put(newAction(appAction.STOP_FOLLOWING_USER));
-
-      // TODO the following may be redundant now with mapRegionChanged below
-      // const mapRegion = action.params as Feature;
-      // log.debug('mapRegion', mapRegion);
-      // yield put(newAction(reducerAction.MAP_REGION, mapRegion as Feature));
     } catch (err) {
       log.error('userMovedMap', err);
     }

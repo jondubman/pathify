@@ -12,7 +12,6 @@ import CompassButton from 'presenters/CompassButton';
 
 interface StateProps {
   heading: number | null;
-  mapMoving: boolean;
   marginBottom: number,
 }
 
@@ -31,7 +30,6 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): StateProps
   }
   return {
     heading,
-    mapMoving: state.ui.flags.mapMoving,
     marginBottom: dynamicTimelineHeight(state),
   }
 }

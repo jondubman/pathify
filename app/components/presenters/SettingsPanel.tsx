@@ -2,6 +2,7 @@ import React, {
 } from 'react';
 
 import {
+  // GestureResponderEvent,
   Slider,
   StyleSheet,
   Text,
@@ -46,13 +47,16 @@ const Styles = StyleSheet.create({
   chosen: {
     backgroundColor: constants.colorThemes.settings,
   },
+  chosenText: {
+    color: 'black',
+  },
   multiSelect: {
     flexDirection: 'row',
   },
   opacitySlider: {
-    borderRadius: 10,
     borderWidth: 1,
     borderColor: constants.colorThemes.settings,
+    borderRadius: 1,
 
     position: 'relative',
     top: 0,
@@ -62,7 +66,7 @@ const Styles = StyleSheet.create({
   },
   opacitySliderView: {
     backgroundColor: colors.opacitySliderBackground,
-    width: 230,
+    width: constants.panelWidth - 16, // bit narrower
   },
   panel: {
     ...panelStyleBase as any,
@@ -70,7 +74,8 @@ const Styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    paddingLeft: 5,
+    paddingLeft: 6,
+    width: constants.panelWidth
   },
   subpanel: {
     display: 'flex',
@@ -111,11 +116,11 @@ const SettingsPanel = (props: SettingsPanelProps) => (
                 <View style={Styles.multiSelect}>
                   {constants.mapStyles.map((mapStyle: MapStyle, i: number) => (
                     <TouchableHighlight
-                      onPress={() => { props.onSelectMapStyle(mapStyle.name)}}
+                      onPress={() => { props.onSelectMapStyle(mapStyle.name)} }
                       style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
                       underlayColor={constants.colors.settingsPanel.choiceUnderlay}
                     >
-                      <Text style={Styles.text}>
+                      <Text style={[Styles.text, (mapStyle.name === props.mapStyle.name) ? Styles.chosenText : null]}>
                         {mapStyle.name}
                       </Text>
                     </TouchableHighlight>
@@ -133,8 +138,9 @@ const SettingsPanel = (props: SettingsPanelProps) => (
                 <View style={Styles.opacitySliderView}>
                   <Slider
                     minimumTrackTintColor={constants.colors.byName.azure}
+                    onValueChange={(value: number) => { props.onSetMapOpacity(value) }}
                     style={Styles.opacitySlider}
-                    value={0.5}
+                    value={props.mapOpacity}
                   />
                 </View>
               </View>

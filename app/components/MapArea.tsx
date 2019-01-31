@@ -93,6 +93,12 @@ class MapArea extends Component<Props> {
     const mapCenterLat = constants.map.default.lat;
     const showUserMarker = !!userLoc; // boolean (related to use of userLoc! postfix bang for non-null assertion below)
 
+    if (mapStyleURL == '') {
+      return (
+        <View style={viewStyle} />
+      )
+    }
+
     return (
       <View style={viewStyle}>
         <Mapbox.MapView

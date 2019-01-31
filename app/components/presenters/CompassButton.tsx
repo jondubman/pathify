@@ -36,12 +36,11 @@ const Styles = StyleSheet.create({
 interface CompassButtonProps {
   onPress: (event: GestureResponderEvent) => void;
   heading: number;
-  mapMoving: boolean;
   marginBottom: number;
 }
 
 const CompassButton = (props: CompassButtonProps) => (
-  !props.mapMoving && props.heading > constants.compassButton.mapHeadingThreshold ?
+  props.heading > constants.compassButton.mapHeadingThreshold ?
     (
     <TouchableHighlight
       style={[Styles.button, {

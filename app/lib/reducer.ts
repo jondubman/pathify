@@ -7,7 +7,7 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import constants, { MapStyle } from 'lib/constants';
+import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 
 interface AppEvent {
@@ -21,11 +21,17 @@ interface AppEvent {
 
 export interface AppOptions {
   keepMapCenteredWhenFollowing: boolean;
+  mapOpacity: number; // 0 to 1
   mapStyle: string;
 }
 const initialAppOptions: AppOptions = {
   keepMapCenteredWhenFollowing: true,
+  mapOpacity: 1,
   mapStyle: constants.map.default.style,
+}
+export interface AppOption {
+  name: string;
+  value: any;
 }
 
 // Canonical interface for AppUIState included in AppState.
@@ -37,7 +43,7 @@ const initialAppUIState = {
     geolocationControlOpen: false,
     helpEnabled: false,
     mapFullScreen: true,
-    mapMoving: false, // is the map currently moving?
+    mapMoving: false, // is the map currently moving? TODO not currently used
     settingsOpen: true,
   },
 }
@@ -58,9 +64,6 @@ const initialAppState: AppState = {
   ui: initialAppUIState,
 }
 
-const setUIFlag = (flagName: string, newValue: boolean): void => {
-}
-
 // The one and only Redux Reducer.
 
 const reducer = (state: AppState = initialAppState, action: Action): AppState => {
@@ -69,15 +72,19 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
   switch (action.type) {
 
     case reducerAction.GEOLOCATION:
-      const locationEvent = params as LocationEvent;
-      if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
-        newState.loc = locationEvent;
+      {
+        const locationEvent = params as LocationEvent;
+        if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
+          newState.loc = locationEvent;
+        }
       }
       break;
 
     case reducerAction.MAP_REGION:
-      const mapRegion = params as Feature;
-      newState.mapRegion = mapRegion;
+      {
+        const mapRegion = params as Feature;
+        newState.mapRegion = mapRegion;
+      }
       break;
 
     case reducerAction.UI_FLAG_DISABLE:
@@ -107,12 +114,12 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-  case reducerAction.MAP_STYLE:
+    case reducerAction.SET_APP_OPTION:
       {
-        const newStyle = params as string;
+        const { name, value } = params as AppOption;
         newState.options = {
           ...state.options,
-          mapStyle: newStyle,
+          [name]: value,
         }
       }
       break;

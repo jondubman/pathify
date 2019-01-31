@@ -29,7 +29,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
   return {
     height: dynamicMapHeight(state),
     mapStyleURL: mapStyle.url,
-    opacity: mapStyle.opacity,
+    opacity: state.options.mapOpacity,
     width,
     userLoc: state.loc,
   }
