@@ -219,7 +219,7 @@ class MapArea extends Component<Props> {
 
   async onPress(...args) {
     log.trace('onPress', args);
-    store.dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
+    store.dispatch(newAction(appAction.MAP_TAPPED, args));
   }
 
   setCamera(config: object) {

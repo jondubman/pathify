@@ -83,7 +83,7 @@ const constants = {
     settingsPanel: {
       background: withOpacity(colorThemes.background, defaultOpacity),
       border: colorThemes.settings,
-      choiceUnderlay: 'black',
+      choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
       opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
     },
     timeline: {
@@ -161,7 +161,7 @@ const constants = {
     topOffset: safeAreaTop + buttonOffset,
   },
   settingsPanel: {
-    height: 350,
+    height: 340,
     leftOffset: buttonOffset,
     subpanelLeftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset,

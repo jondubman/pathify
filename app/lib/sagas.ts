@@ -51,6 +51,7 @@ const sagas = {
     yield takeEvery(appAction.REORIENT_MAP, sagas.reorientMap);
     yield takeEvery(appAction.MAP_REGION_CHANGED, sagas.mapRegionChanged);
     yield takeEvery(appAction.MAP_REGION_CHANGING, sagas.mapRegionChanging);
+    yield takeEvery(appAction.MAP_TAPPED, sagas.mapTapped);
 
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
@@ -150,6 +151,16 @@ const sagas = {
   mapRegionChanging: function* (action: Action) {
     log.trace('saga mapRegionChanging', action.params);
     yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
+  },
+
+  mapTapped: function* (action: Action) {
+    log.trace('saga mapTapped', action.params);
+    const settingsOpen = yield select((state: AppState) => state.ui.flags.settingsOpen);
+    if (settingsOpen) {
+      yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'settingsOpen'));
+    } else {
+      yield put(newAction(reducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
+    }
   },
 }
 
