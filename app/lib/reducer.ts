@@ -43,11 +43,13 @@ export interface AppOption {
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
-    geolocationPanelOpen: true,
     helpEnabled: false,
     mapFullScreen: true,
     mapMoving: false, // is the map currently moving? TODO not currently used
-    settingsOpen: false,
+  },
+  panels: {
+    geolocation: { open: true },
+    settings: { open: false },
   },
 }
 export type AppUIState = typeof initialAppUIState;
@@ -124,6 +126,16 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           ...state.options,
           [name]: value,
         }
+      }
+      break;
+
+    case reducerAction.SET_PANEL_VISIBILITY:
+      {
+        const panelName = params.name as string;
+        const open = params.open as boolean;
+        newState.ui = { ...state.ui };
+        newState.ui.panels = { ...state.ui.panels };
+        newState.ui.panels[panelName].open = open;
       }
       break;
 

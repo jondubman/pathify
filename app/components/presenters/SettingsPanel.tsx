@@ -111,6 +111,7 @@ const SettingsPanel = (props: SettingsPanelProps) => (
                 <View style={Styles.multiSelect}>
                   {constants.mapStyles.map((mapStyle: MapStyle, index: number) => (
                     <TouchableHighlight
+                      key={index}
                       onPress={() => { props.onSelectMapStyle(mapStyle.name)} }
                       style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
                       underlayColor={constants.colors.settingsPanel.choiceUnderlay}
