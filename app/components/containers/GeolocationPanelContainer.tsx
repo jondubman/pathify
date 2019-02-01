@@ -1,26 +1,35 @@
 import { connect } from 'react-redux';
 
-// import { newAction, reducerAction } from 'lib/actions';
+import { appAction, newAction } from 'lib/actions';
+import log from 'lib/log';
 import { AppState } from 'lib/reducer';
+import { dynamicTimelineHeight } from 'lib/selectors';
+
 import GeolocationPanel from 'presenters/GeolocationPanel';
 
 interface GeolocationPanelStateProps {
+  marginBottom: number;
   open: boolean;
 }
 
 interface GeolocationPanelDispatchProps {
+  setGeolocationMode: (id: number) => void;
 }
 
 export type GeolocationPanelProps = GeolocationPanelStateProps & GeolocationPanelDispatchProps;
 
 const mapStateToProps = (state: AppState): GeolocationPanelStateProps => {
   return {
+    marginBottom: dynamicTimelineHeight(state),
     open: state.ui.flags.geolocationPanelOpen,
   }
 }
 
 const mapDispatchToProps = (dispatch: any): GeolocationPanelDispatchProps => {
   const dispatchers = {
+    setGeolocationMode: (id: number) => {
+      dispatch(newAction(appAction.SET_GEOLOCATION_MODE, id));
+    },
   }
   return dispatchers;
 }

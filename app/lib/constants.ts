@@ -7,7 +7,8 @@ const safeAreaBottom = getInset('bottom');
 // const safeAreaRight = getInset('right');
 const bottomPaddingForAxis = safeAreaBottom ? 10 : 14;
 
-export interface GeolocationChoice {
+export interface GeolocationModeChoice {
+  id: number;
   name: string;
 }
 
@@ -40,7 +41,7 @@ const namedColors = {
 const colorThemes = {
   background: namedColors.navy,
   settings: namedColors.red,
-  geolocation: namedColors.green,
+  geolocation: namedColors.azure,
 }
 
 const buttonOffset = 6;
@@ -140,16 +141,15 @@ const constants = {
     opacity: defaultOpacity,
     size: buttonSize,
   },
-  geolocationChoices: [
-    { name: 'Off' },
-    { name: 'For Mapping' },
-    { name: 'Track Activity' },
-    { name: 'Max Power)' },
-  ] as GeolocationChoice[],
+  geolocationModeChoices: [
+    { id: 0, name: 'Off' },
+    { id: 1, name: 'Map use' },
+    { id: 2, name: 'Activity tracking' },
+    { id: 3, name: 'Max power' },
+  ] as GeolocationModeChoice[],
   geolocationPanel: {
-    height: 300,
+    height: 230, // big enough, and doesn't cover Pulsar at center of map on iPhone SE (at least with Timeline hidden)
     leftOffset: buttonOffset,
-    rightOffset: buttonOffset,
     subpanelLeftOffset: buttonOffset,
     bottomOffset: safeAreaBottom + mapLogoHeight,
     subpanelBottomOffset: safeAreaBottom + mapLogoHeight + buttonSize + buttonOffset,
@@ -188,7 +188,7 @@ const constants = {
     topOffset: safeAreaTop + buttonOffset,
   },
   settingsPanel: {
-    height: 340,
+    height: 300, // tallest it can be without covering up Geolocation button on iPhone SE with Timeline showing
     leftOffset: buttonOffset,
     subpanelLeftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset,

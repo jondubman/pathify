@@ -76,6 +76,7 @@ const Styles = StyleSheet.create({
     display: 'flex',
     alignSelf: 'flex-start',
     flexDirection: 'row',
+    marginBottom: 10,
   },
   subpanelContents: {
     flexDirection: 'column',
@@ -108,7 +109,7 @@ const SettingsPanel = (props: SettingsPanelProps) => (
                   </Text>
                 </View>
                 <View style={Styles.multiSelect}>
-                  {constants.mapStyles.map((mapStyle: MapStyle, i: number) => (
+                  {constants.mapStyles.map((mapStyle: MapStyle, index: number) => (
                     <TouchableHighlight
                       onPress={() => { props.onSelectMapStyle(mapStyle.name)} }
                       style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}

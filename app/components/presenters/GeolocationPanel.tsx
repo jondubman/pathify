@@ -1,4 +1,5 @@
 import React, {
+  Fragment,
 } from 'react';
 
 import {
@@ -8,17 +9,16 @@ import {
   View,
 } from 'react-native';
 
-import constants, { GeolocationChoice } from 'lib/constants';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
+import constants, { GeolocationModeChoice } from 'lib/constants';
 import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import { GeolocationPanelProps } from 'containers/GeolocationPanelContainer';
 const colors = constants.colors.geolocationPanel;
-const { bottomOffset, height, leftOffset, rightOffset, subpanelTopMargin } = constants.geolocationPanel;
+const { bottomOffset, height, leftOffset, subpanelTopMargin } = constants.geolocationPanel;
 
 const Styles = StyleSheet.create({
   choice: {
-    borderColor: constants.colorThemes.geolocation,
-    borderWidth: 1,
-    justifyContent: 'center',
     paddingBottom: 3,
     paddingTop: 3,
   },
@@ -29,7 +29,7 @@ const Styles = StyleSheet.create({
     fontSize: constants.fonts.sizes.choiceLabel,
     fontWeight: 'normal',
     marginBottom: 2,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
   },
   chosen: {
     backgroundColor: constants.colorThemes.geolocation,
@@ -38,11 +38,11 @@ const Styles = StyleSheet.create({
     color: 'black',
   },
   multiSelect: {
-    alignItems: 'stretch',
-    flexDirection: 'column',
   },
   panel: {
-    borderRadius: constants.buttonSize / 2,
+    borderRadius: 5,
+    borderBottomLeftRadius: constants.buttonSize / 2,
+    borderTopRightRadius: height,
     borderColor: colors.border,
     borderWidth: 2,
     position: 'absolute',
@@ -71,8 +71,9 @@ const Styles = StyleSheet.create({
   text: {
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.choice,
-    // fontWeight: 'bold',
+    fontWeight: 'bold',
     margin: 5,
+    textAlign: 'center',
   },
   view: {
     position: 'absolute',
@@ -84,7 +85,7 @@ const GeolocationPanel = (props: GeolocationPanelProps) => (
   <View style={Styles.view}>
     {props.open ?
       <View style={Styles.view}>
-        <View style={Styles.panel}>
+        <View style={[Styles.panel, { bottom: bottomOffset + props.marginBottom }]}>
           <View style={Styles.subpanels}>
             <View style={Styles.subpanel}>
               <View style={Styles.subpanelContents}>
@@ -94,15 +95,18 @@ const GeolocationPanel = (props: GeolocationPanelProps) => (
                   </Text>
                 </View>
                 <View style={Styles.multiSelect}>
-                  {constants.geolocationChoices.map((choice: GeolocationChoice, i: number) => (
+                  {constants.geolocationModeChoices.map((choice: GeolocationModeChoice, index: number) => (
                     <TouchableHighlight
-                      onPress={() => {}}
+                      key={index}
+                      onPress={() => { props.setGeolocationMode(index) }}
                       style={[Styles.choice, (false) ? Styles.chosen : null]}
                       underlayColor={constants.colors.geolocationPanel.choiceUnderlay}
                     >
-                      <Text style={[Styles.text, (false) ? Styles.chosenText : null]}>
-                        {choice.name}
-                      </Text>
+                      <Fragment>
+                        <Text style={[Styles.text, (false) ? Styles.chosenText : null]}>
+                          {choice.name}
+                        </Text>
+                      </Fragment>
                     </TouchableHighlight>
                   ))}
                 </View>

@@ -47,6 +47,7 @@ const sagas = {
   root: function* () {
     yield takeEvery(appAction.CENTER_MAP_ON_USER, sagas.centerMapOnUser);
     yield takeEvery(appAction.GEOLOCATION, sagas.geolocation);
+    yield takeEvery(appAction.SET_GEOLOCATION_MODE, sagas.setGeolocationMode);
     yield takeEvery(appAction.USER_MOVED_MAP, sagas.userMovedMap);
     yield takeEvery(appAction.REORIENT_MAP, sagas.reorientMap);
     yield takeEvery(appAction.MAP_REGION_CHANGED, sagas.mapRegionChanged);
@@ -119,6 +120,18 @@ const sagas = {
       }
     } catch (err) {
       log.error('geolocation', err);
+    }
+  },
+
+  setGeolocationMode: function* (action: Action) {
+    try {
+      const id = action.params as number;
+      yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'geolocationModeId', value: id }));
+
+      // And here is the side-effect that belongs outside the reducer:
+      Geo.setGeolocationMode(id);
+    } catch (err) {
+      log.error('setGeolocationMode', err);
     }
   },
 

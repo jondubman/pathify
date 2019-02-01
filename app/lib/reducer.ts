@@ -10,6 +10,7 @@ import {
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo';
 
+// TODO
 interface AppEvent {
   type: string;
   time: string;
@@ -20,11 +21,13 @@ interface AppEvent {
 // all the options that are modifiable via Settings in the UI.
 
 export interface AppOptions {
+  geolocationModeId: number;
   keepMapCenteredWhenFollowing: boolean;
   mapOpacity: number; // 0 to 1
   mapStyle: string;
 }
 const initialAppOptions: AppOptions = {
+  geolocationModeId: 1,
   keepMapCenteredWhenFollowing: true,
   mapOpacity: 1,
   mapStyle: constants.map.default.style,

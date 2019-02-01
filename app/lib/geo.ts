@@ -18,6 +18,7 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 
 import { appAction, newAction } from 'lib/actions';
+import constants from 'lib/constants';
 import log from 'lib/log';
 import store from 'lib/store';
 import utils from 'lib/utils';
@@ -118,10 +119,9 @@ const geolocationOptions: Config = {
   // Optionally, you can specify reset: true to #ready. This will esentially force the supplied {config} to be
   // applied with each launch of your application, making it behave like the traditional #configure method.
   // https://github.com/transistorsoft/react-native-background-geolocation/blob/master/docs/README.md#resetconfig-successfn-failurefn
+  // https://transistorsoft.github.io/react-native-background-geolocation/classes/_react_native_background_geolocation_.backgroundgeolocation.html#ready
   reset: true,
 }
-
-// TODO choose between these. For now, just using geolocationOptions_highPower.
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
 
@@ -218,7 +218,7 @@ export const Geo = {
     log.debug('initializeGeolocation');
 
     // Now, configure the plugin, using those options.
-    BackgroundGeolocation.ready(geolocationOptions_highPower, pluginState => {
+    BackgroundGeolocation.ready(geolocationOptions_lowPower, pluginState => {
 
       const onActivityChange = (event: MotionActivityEvent) => {
       }
@@ -260,6 +260,27 @@ export const Geo = {
 
   changePace: (isMoving: boolean, done: Function) => {
     BackgroundGeolocation.changePace(isMoving, done);
+  },
+
+  setGeolocationMode: (id: number): void => {
+    log.debug('setGeolocationMode', id);
+    switch (id) {
+      case 0:
+        BackgroundGeolocation.stop();
+        break;
+      case 1:
+        BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
+        break;
+      case 2:
+        BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
+        break;
+      case 3:
+        BackgroundGeolocation.setConfig(geolocationOptions_highPower);
+        break;
+      default:
+        log.error('unknown id in Geo.setGeolocationMode');
+        break;
+    }
   },
 
   // Event handlers for background geolocation

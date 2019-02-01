@@ -44,7 +44,7 @@ const GeolocationButton = (props: GeolocationButtonProps) => (
   >
     <FontAwesome5
       color={colors.icon}
-      name='ghost'
+      name='bullseye'
       size={constants.geolocationButton.size / 2}
     />
   </TouchableHighlight>
