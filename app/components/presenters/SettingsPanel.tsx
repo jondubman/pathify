@@ -11,22 +11,10 @@ import {
 } from 'react-native';
 
 import constants, { MapStyle } from 'lib/constants';
-import utils from 'lib/utils';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
 const colors = constants.colors.settingsPanel;
-const { height, leftOffset, rightOffset, topOffset } = constants.settingsPanel;
-
-const panelStyleBase = {
-  borderRadius: constants.buttonSize / 2,
-  borderColor: colors.border,
-  borderWidth: 2,
-  position: 'absolute',
-  left: leftOffset,
-  top: topOffset,
-  height,
-  width: utils.windowSize().width - (leftOffset + rightOffset),
-}
+const { height, leftOffset, topOffset } = constants.settingsPanel;
 
 const Styles = StyleSheet.create({
   choice: {
@@ -69,19 +57,25 @@ const Styles = StyleSheet.create({
     width: constants.panelWidth - 16, // bit narrower
   },
   panel: {
-    ...panelStyleBase as any,
+    borderRadius: constants.buttonSize / 2,
+    borderColor: colors.border,
+    borderWidth: 2,
+    position: 'absolute',
+    left: leftOffset,
+    top: topOffset,
+    height,
+
     backgroundColor: colors.background,
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     paddingLeft: 6,
-    width: constants.panelWidth
+    width: constants.panelWidth,
   },
   subpanel: {
     display: 'flex',
     alignSelf: 'flex-start',
     flexDirection: 'row',
-    marginBottom: 10,
   },
   subpanelContents: {
     flexDirection: 'column',

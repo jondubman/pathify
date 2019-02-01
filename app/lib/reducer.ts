@@ -40,11 +40,11 @@ export interface AppOption {
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
-    geolocationControlOpen: false,
+    geolocationPanelOpen: true,
     helpEnabled: false,
     mapFullScreen: true,
     mapMoving: false, // is the map currently moving? TODO not currently used
-    settingsOpen: true,
+    settingsOpen: false,
   },
 }
 export type AppUIState = typeof initialAppUIState;

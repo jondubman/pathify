@@ -23,14 +23,14 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     marginBottom: dynamicTimelineHeight(state),
-    open: state.ui.flags.geolocationControlOpen,
+    open: state.ui.flags.geolocationPanelOpen,
   }
 }
 
 const mapDispatchToProps = (dispatch: any): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'geolocationControlOpen'));
+    dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'geolocationPanelOpen'));
   }
   const dispatchers = {
     onPress,

@@ -12,7 +12,7 @@ import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 
 import constants from 'lib/constants';
 
-import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
+import GeolocationPanelContainer from 'containers/GeolocationPanelContainer';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
@@ -46,7 +46,7 @@ class AppUI extends Component<Props> {
 
           <HelpButtonContainer />
           <SettingsPanelContainer />
-          <GeolocationButtonContainer />
+          <GeolocationPanelContainer />
           <FollowMeButtonContainer />
           <CompassButtonContainer />
 

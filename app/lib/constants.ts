@@ -7,6 +7,10 @@ const safeAreaBottom = getInset('bottom');
 // const safeAreaRight = getInset('right');
 const bottomPaddingForAxis = safeAreaBottom ? 10 : 14;
 
+export interface GeolocationChoice {
+  name: string;
+}
+
 export interface MapStyle {
   name: string;
   opacity: number;
@@ -36,6 +40,7 @@ const namedColors = {
 const colorThemes = {
   background: namedColors.navy,
   settings: namedColors.red,
+  geolocation: namedColors.green,
 }
 
 const buttonOffset = 6;
@@ -48,57 +53,64 @@ const panelWidth = 252; // fits on iPhone SE
 const dec1ToHexFF = (dec: number) => Math.round(dec * 255).toString(16); // dec between 0 and 1; e.g. 0.8 => 'cc'
 const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
 
+const colors = {
+  appBackground: colorThemes.background,
+  appText: 'black',
+  byName: namedColors, // all of them
+  compassButton: {
+    background: 'white',
+    icon: 'black',
+    underlay: namedColors.purple,
+  },
+  followMeButton: {
+    background: { active: namedColors.blue, inactive: 'black' },
+    icon: { active: 'black', inactive: namedColors.azure },
+    underlay: namedColors.azure,
+  },
+  geolocationButton: {
+    background: 'white',
+    icon: 'black',
+    underlay: colorThemes.geolocation,
+  },
+  geolocationPanel: {
+    background: withOpacity(colorThemes.background, defaultOpacity),
+    border: colorThemes.geolocation,
+    choiceUnderlay: withOpacity(colorThemes.geolocation, 0.5),
+  },
+  helpButton: {
+    background: 'white',
+    icon: 'black',
+    underlay: namedColors.yellow,
+  },
+  settingsButton: {
+    background: 'white',
+    icon: 'black',
+    underlay: colorThemes.settings,
+  },
+  settingsPanel: {
+    background: withOpacity(colorThemes.background, defaultOpacity),
+    border: colorThemes.settings,
+    choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
+    opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
+  },
+  timeline: {
+    axis: namedColors.darkerGray,
+    axisLabels: namedColors.gray,
+    background: colorThemes.background,
+    bars: [
+      namedColors.red,
+      namedColors.orange,
+      namedColors.yellow,
+      namedColors.purple,
+    ],
+  },
+  user: namedColors.azure,
+}
+
 const constants = {
   appName: 'Pathify',
   buttonSize,
-  colors: {
-    appBackground: colorThemes.background,
-    appText: 'black',
-    byName: namedColors, // all of them
-    compassButton: {
-      background: 'white',
-      icon: 'black',
-      underlay: namedColors.purple,
-    },
-    followMeButton: {
-      background: { active: namedColors.blue, inactive: 'black' },
-      icon: { active: 'black', inactive: 'azure' },
-      underlay: namedColors.azure,
-    },
-    geolocationButton: {
-      background: 'white',
-      icon: 'black',
-      underlay: namedColors.green,
-    },
-    helpButton: {
-      background: 'white',
-      icon: 'black',
-      underlay: namedColors.yellow,
-    },
-    settingsButton: {
-      background: 'white',
-      icon: 'black',
-      underlay: colorThemes.settings,
-    },
-    settingsPanel: {
-      background: withOpacity(colorThemes.background, defaultOpacity),
-      border: colorThemes.settings,
-      choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
-      opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
-    },
-    timeline: {
-      axis: namedColors.darkerGray,
-      axisLabels: namedColors.gray,
-      background: colorThemes.background,
-      bars: [
-        namedColors.red,
-        namedColors.orange,
-        namedColors.yellow,
-        namedColors.purple,
-      ],
-    },
-    user: namedColors.azure,
-  },
+  colors,
   colorThemes,
   compassButton: {
     bottomOffset: mapLogoHeight + safeAreaBottom + buttonSize + buttonOffset * 2,
@@ -123,10 +135,25 @@ const constants = {
     },
   },
   geolocationButton: {
-    bottomOffset: mapLogoHeight + safeAreaBottom,
+    bottomOffset: safeAreaBottom + mapLogoHeight,
     leftOffset: buttonOffset,
     opacity: defaultOpacity,
     size: buttonSize,
+  },
+  geolocationChoices: [
+    { name: 'Off' },
+    { name: 'For Mapping' },
+    { name: 'Track Activity' },
+    { name: 'Max Power)' },
+  ] as GeolocationChoice[],
+  geolocationPanel: {
+    height: 300,
+    leftOffset: buttonOffset,
+    rightOffset: buttonOffset,
+    subpanelLeftOffset: buttonOffset,
+    bottomOffset: safeAreaBottom + mapLogoHeight,
+    subpanelBottomOffset: safeAreaBottom + mapLogoHeight + buttonSize + buttonOffset,
+    subpanelTopMargin: 10,
   },
   helpButton: {
     opacity: defaultOpacity,
@@ -165,7 +192,6 @@ const constants = {
     leftOffset: buttonOffset,
     subpanelLeftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset,
-    rightOffset: buttonOffset + buttonSize + buttonOffset,
     topOffset: safeAreaTop + buttonOffset,
   },
   timeline: {
