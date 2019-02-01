@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { newAction, reducerAction } from 'lib/actions';
+import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
 import { dynamicTimelineHeight } from 'lib/selectors';
@@ -23,14 +23,14 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     marginBottom: dynamicTimelineHeight(state),
-    open: state.ui.flags.geolocationPanelOpen,
+    open: state.ui.panels.geolocation.open,
   }
 }
 
 const mapDispatchToProps = (dispatch: any): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'geolocationPanelOpen'));
+    dispatch(newAction(appAction.TOGGLE_PANEL_VISIBILITY, 'geolocation'));
   }
   const dispatchers = {
     onPress,

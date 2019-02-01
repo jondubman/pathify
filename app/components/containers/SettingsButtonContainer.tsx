@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { newAction, reducerAction } from 'lib/actions';
+import { newAction, appAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
 import SettingsButton from 'presenters/SettingsButton';
@@ -17,14 +17,14 @@ interface DispatchProps {
 
 const mapStateToProps = (state: AppState): StateProps => {
   return {
-    open: state.ui.flags.settingsOpen,
+    open: state.ui.panels.settings.open,
   }
 }
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
   const onPress = () => {
     log.debug('SettingsButton press');
-    dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'settingsOpen'));
+    dispatch(newAction(appAction.TOGGLE_PANEL_VISIBILITY, 'settings'));
   }
   const dispatchers = {
     onPress,

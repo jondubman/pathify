@@ -21,7 +21,7 @@ export type GeolocationPanelProps = GeolocationPanelStateProps & GeolocationPane
 const mapStateToProps = (state: AppState): GeolocationPanelStateProps => {
   return {
     marginBottom: dynamicTimelineHeight(state),
-    open: state.ui.flags.geolocationPanelOpen,
+    open: state.ui.panels.geolocation.open,
   }
 }
 
