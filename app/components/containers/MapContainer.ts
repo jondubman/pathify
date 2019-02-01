@@ -5,29 +5,35 @@ import { connect } from 'react-redux';
 import { AppState } from 'lib/reducer';
 import utils from 'lib/utils';
 
+import { appAction, newAction } from 'lib/actions';
 import { LocationEvent } from 'lib/geo';
 import MapArea from 'components/MapArea';
-import { dynamicMapHeight, dynamicMapStyle } from 'lib/selectors';
+import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
 
-interface StateProps {
+interface MapAreaStateProps {
   height: number;
+  mapHidden: boolean;
   mapStyleURL: string;
   opacity: number;
   width: number;
   userLoc?: LocationEvent;
 }
 
-interface DispatchProps {
+interface MapAreaDispatchProps {
+  mapRegionChanged: (args: any) => void;
+  mapRegionChanging: (args: any) => void;
+  mapTapped: (args: any) => void;
+  userMovedMap: (args: any) => void;
 }
 
-interface OwnProps {
-}
+export type MapAreaProps = MapAreaStateProps & MapAreaDispatchProps;
 
-const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
+const mapStateToProps = (state: AppState): MapAreaStateProps => {
   const mapStyle = dynamicMapStyle(state);
   const { width } = utils.windowSize();
   return {
     height: dynamicMapHeight(state),
+    mapHidden: mapHidden(state),
     mapStyleURL: mapStyle.url,
     opacity: state.options.mapOpacity,
     width,
@@ -35,13 +41,25 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: any): MapAreaDispatchProps => {
   const dispatchers = {
+    mapTapped: (args: any) => {
+      dispatch(newAction(appAction.MAP_TAPPED, args));
+    },
+    mapRegionChanged: (args: any) => {
+      dispatch(newAction(appAction.MAP_REGION_CHANGED, args));
+    },
+    mapRegionChanging: (args: any) => {
+      dispatch(newAction(appAction.MAP_REGION_CHANGING, args));
+    },
+    userMovedMap: (args: any) => {
+      dispatch(newAction(appAction.USER_MOVED_MAP, args));
+    },
   }
   return dispatchers;
 }
 
-const MapContainer = connect<StateProps, DispatchProps>(
+const MapContainer = connect<MapAreaStateProps, MapAreaDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(MapArea as any);

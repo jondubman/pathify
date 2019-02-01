@@ -10,22 +10,11 @@ import Mapbox from '@mapbox/react-native-mapbox-gl';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-import { appAction, newAction, reducerAction } from 'lib/actions';
 import constants from 'lib/constants';
-import { LocationEvent } from 'lib/geo';
 import log from 'lib/log';
-import { mapHidden } from 'lib/selectors';
-import store from 'lib/store';
 
-import Pulsar from 'components/presenters/Pulsar';
-
-interface Props {
-  height: number;
-  mapStyleURL: string;
-  opacity: number;
-  width: number;
-  userLoc?: LocationEvent;
-}
+import { MapAreaProps } from 'containers/MapContainer';
+import Pulsar from 'presenters/Pulsar';
 
 // Public interface to singleton underlying Mapbox component
 export interface IMapUtils {
@@ -34,7 +23,7 @@ export interface IMapUtils {
   setCamera: Function,
 }
 
-let singletonMap: (Component<Props> & IMapUtils | null) = null; // ref to singleton MapArea component that is created
+let singletonMap: (Component<MapAreaProps> & IMapUtils | null) = null; // ref to singleton MapArea component that is created
 
 export function MapUtils(): IMapUtils | null {
   if (!singletonMap) {
@@ -45,11 +34,11 @@ export function MapUtils(): IMapUtils | null {
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.
 
-class MapArea extends Component<Props> {
+class MapArea extends Component<MapAreaProps> {
 
   _map: null; // set by MapBox.MapView ref function below
 
-  constructor(props: Props) {
+  constructor(props: MapAreaProps) {
     super(props);
 
     this.getPointInView = this.getPointInView.bind(this);
@@ -76,6 +65,7 @@ class MapArea extends Component<Props> {
   render() {
     const {
       height,
+      mapHidden,
       mapStyleURL,
       opacity,
       width,
@@ -94,7 +84,7 @@ class MapArea extends Component<Props> {
     const mapCenterLat = constants.map.default.lat;
     const showUserMarker = !!userLoc; // boolean (related to use of userLoc! postfix bang for non-null assertion below)
 
-    if (mapHidden(store.getState())) {
+    if (mapHidden) {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
       return (
         <View style={viewStyle} />
@@ -195,14 +185,14 @@ class MapArea extends Component<Props> {
 
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
-      store.dispatch(newAction(appAction.USER_MOVED_MAP, args));
+      this.props.userMovedMap(args);
     }
-    store.dispatch(newAction(appAction.MAP_REGION_CHANGING, args[0]));
+    this.props.mapRegionChanging(args[0]);
   }
 
   onRegionDidChange(...args) {
     log.trace('onRegionDidChange', args);
-    store.dispatch(newAction(appAction.MAP_REGION_CHANGED, args[0]));
+    this.props.mapRegionChanged(args[0]);
   }
 
   onDidFinishRenderingMapFully(...args) {
@@ -219,7 +209,7 @@ class MapArea extends Component<Props> {
 
   async onPress(...args) {
     log.trace('onPress', args);
-    store.dispatch(newAction(appAction.MAP_TAPPED, args));
+    this.props.mapTapped(args);
   }
 
   setCamera(config: object) {

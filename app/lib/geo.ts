@@ -18,9 +18,8 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 
 import { appAction, newAction } from 'lib/actions';
-import constants from 'lib/constants';
 import log from 'lib/log';
-import store from 'lib/store';
+import { Store } from 'lib/store';
 import utils from 'lib/utils';
 
 const geolocationOptions: Config = {
@@ -214,7 +213,7 @@ const locationEventFromLocation = (info: Location): LocationEvent => {
 
 export const Geo = {
 
-  initializeGeolocation: () => {
+  initializeGeolocation: (store: Store) => {
     log.debug('initializeGeolocation');
 
     // Now, configure the plugin, using those options.

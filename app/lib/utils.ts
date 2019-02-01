@@ -9,9 +9,6 @@ import {
 } from 'lib/actions';
 
 import constants from 'lib/constants';
-import { Geo } from 'lib/geo';
-import log from 'lib/log';
-import store from 'lib/store';
 
 interface LatLon {
   lat: number;
@@ -21,21 +18,6 @@ interface LatLon {
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
 
 const utils = {
-
-  // ---SECTION: app
-
-  // Once, when app starts up
-  onAppStart: () => {
-    log.info('----- App starting up! (device log)');
-    log.debug('windowSize', utils.windowSize());
-
-    store.create(); // proactively create Redux store instance
-    Geo.initializeGeolocation(); // TODO use only when needed
-    Geo.resetOdometer();
-    store.dispatch(newAction(appAction.START_FOLLOWING_USER));
-  },
-
-  // ---SECTION: misc
 
   // return true if loc is inside bounds.
   // lonInset and latInset of 0 is the simple test.

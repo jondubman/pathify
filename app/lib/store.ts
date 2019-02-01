@@ -51,4 +51,6 @@ const store = {
   }
 }
 
+export type Store = typeof store;
+
 export default store;
