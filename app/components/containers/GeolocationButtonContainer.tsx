@@ -11,6 +11,7 @@ import GeolocationButton from 'presenters/GeolocationButton';
 
 interface GeolocationButtonStateProps {
   marginBottom: number,
+  mode: number,
   open: boolean,
 }
 
@@ -23,6 +24,7 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     marginBottom: dynamicTimelineHeight(state),
+    mode: state.options.geolocationModeId,
     open: state.ui.panels.geolocation.open,
   }
 }
