@@ -20,6 +20,7 @@ interface MapAreaStateProps {
 }
 
 interface MapAreaDispatchProps {
+  backgroundTapped: (args: any) => void;
   mapRegionChanged: (args: any) => void;
   mapRegionChanging: (args: any) => void;
   mapTapped: (args: any) => void;
@@ -43,6 +44,9 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
 
 const mapDispatchToProps = (dispatch: any): MapAreaDispatchProps => {
   const dispatchers = {
+    backgroundTapped: (args: any) => {
+      dispatch(newAction(appAction.BACKGROUND_TAPPED, args));
+    },
     mapTapped: (args: any) => {
       dispatch(newAction(appAction.MAP_TAPPED, args));
     },

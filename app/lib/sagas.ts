@@ -53,6 +53,7 @@ const sagas = {
     yield takeEvery(appAction.MAP_REGION_CHANGED, sagas.mapRegionChanged);
     yield takeEvery(appAction.MAP_REGION_CHANGING, sagas.mapRegionChanging);
     yield takeEvery(appAction.MAP_TAPPED, sagas.mapTapped);
+    yield takeEvery(appAction.BACKGROUND_TAPPED, sagas.backgroundTapped);
     yield takeEvery(appAction.TOGGLE_PANEL_VISIBILITY, sagas.togglePanelVisiblity);
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
@@ -181,24 +182,33 @@ const sagas = {
     }
   },
 
+  // If named panel is open, it will be closed.
+  // If named panel is closed, any opened panels will be closed, and the named panel will be opened.
+  // If named panel is empty (or unknown), any open panels will be closed.
   togglePanelVisiblity: function* (action: Action) {
     log.trace('saga togglePanelVisiblity', action.params);
     const name = action.params as string;
     const panels = yield select((state: AppState) => state.ui.panels);
+    const closeAll = !name || (name === '') || !panels[name];
 
-    if (panels[name].open) {
+    if (!closeAll && panels[name].open) {
       yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name, open: false }));
     } else {
-      // close other panel if open
-      if (name === 'geolocation') {
+      if (closeAll || name === 'geolocation') {
         yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
       }
-      if (name === 'settings') {
+      if (closeAll || name === 'settings') {
         yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
       }
       // open the new panel
       yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
     }
+  },
+
+  backgroundTapped: function* (action: Action) {
+    log.trace('saga backgroundTapped');
+    yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
+    yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
   },
 }
 

@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 
 import {
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 
@@ -64,6 +65,7 @@ class MapArea extends Component<MapAreaProps> {
 
   render() {
     const {
+      backgroundTapped,
       height,
       mapHidden,
       mapStyleURL,
@@ -73,6 +75,15 @@ class MapArea extends Component<MapAreaProps> {
     } = this.props;
 
     const viewStyle = {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      opacity,
+      position: 'absolute',
+    } as any; // as any: https://github.com/Microsoft/TypeScript/issues/18744
+
+    const opacifier = {
       opacity,
     }
     const mapStyle = {
@@ -86,13 +97,18 @@ class MapArea extends Component<MapAreaProps> {
 
     if (mapHidden) {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
+      // onPressIn is instantaneous, unlike onPress which waits for the tap to end.
       return (
-        <View style={viewStyle} />
+        <TouchableWithoutFeedback
+          onPressIn={backgroundTapped}
+        >
+          <View style={viewStyle} />
+        </TouchableWithoutFeedback>
       )
     }
 
     return (
-      <View style={viewStyle}>
+      <View style={opacifier}>
         <Mapbox.MapView
           attributionEnabled={true}
           centerCoordinate={[ mapCenterLon, mapCenterLat ]}

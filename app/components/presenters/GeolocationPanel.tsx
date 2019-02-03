@@ -96,18 +96,19 @@ const GeolocationPanel = (props: GeolocationPanelProps) => (
                 </View>
                 <View style={Styles.multiSelect}>
                   {constants.geolocationModeChoices.map((choice: GeolocationModeChoice, index: number) => (
-                    <TouchableHighlight
+                    <Fragment
                       key={index}
-                      onPress={() => { props.setGeolocationMode(index) }}
-                      style={[Styles.choice, (false) ? Styles.chosen : null]}
-                      underlayColor={constants.colors.geolocationPanel.choiceUnderlay}
                     >
-                      <Fragment>
-                        <Text style={[Styles.text, (false) ? Styles.chosenText : null]}>
-                          {choice.name}
-                        </Text>
-                      </Fragment>
-                    </TouchableHighlight>
+                      <TouchableHighlight
+                        onPress={() => { props.setGeolocationMode(index) }}
+                        style={[Styles.choice, (false) ? Styles.chosen : null]}
+                        underlayColor={constants.colors.geolocationPanel.choiceUnderlay}
+                      >
+                          <Text style={[Styles.text, (false) ? Styles.chosenText : null]}>
+                            {choice.name}
+                          </Text>
+                      </TouchableHighlight>
+                    </Fragment>
                   ))}
                 </View>
               </View>

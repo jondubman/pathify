@@ -24,6 +24,7 @@ export enum reducerAction {
 // These enum strings are preceded by async_ so as never to match any reducerActions (similar to namespacing).
 // async_ serves as a reminder that while reducers are synchronous, these are handled asynchronously (via sagas).
 export enum appAction {
+  'BACKGROUND_TAPPED' = 'async_BACKGROUND_TAPPED',
   'GEOLOCATION' = 'async_GEOLOCATION',
   'CENTER_MAP_ON_USER' = 'async_CENTER_MAP_ON_USER',
   'USER_MOVED_MAP' = 'async_USER_MOVED_MAP',

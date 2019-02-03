@@ -142,10 +142,10 @@ const constants = {
     size: buttonSize,
   },
   geolocationModeChoices: [
-    { id: 0, name: 'Off' },
-    { id: 1, name: 'Map use' },
-    { id: 2, name: 'Activity tracking' },
-    { id: 3, name: 'Max power' },
+    { id: 0, name: 'OFF' },
+    { id: 1, name: 'MAPPING' },
+    { id: 2, name: 'TRACKING' },
+    { id: 3, name: 'MAX TRACKING' },
   ] as GeolocationModeChoice[],
   geolocationPanel: {
     height: 230, // big enough, and doesn't cover Pulsar at center of map on iPhone SE (at least with Timeline hidden)
@@ -165,7 +165,7 @@ const constants = {
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,
-      style: 'Default',
+      style: 'None', // None, Default, etc.
       zoom: 14,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
