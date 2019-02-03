@@ -11,8 +11,6 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import constants from 'lib/constants';
 const colors = constants.colors.geolocationButton;
 const {
-  bottomOffset,
-  leftOffset,
   opacity,
   size
 } = constants.geolocationButton;
@@ -24,7 +22,6 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4,
     width: size,
     height: size,
-    left: leftOffset,
     justifyContent: 'center',
     flexDirection: 'row',
     opacity,
@@ -34,13 +31,14 @@ const Styles = StyleSheet.create({
 import { GeolocationButtonProps } from 'containers/GeolocationButtonContainer';
 
 const modeIcons = [ 'ghost', 'bullseye', 'running', 'bolt' ];
-const modeIconColors = [colors.icon, colors.icon, colors.icon, colors.icon ];
+const modeIconColors = [colors.icon, colors.icon, colors.icon, colors.icon ]; // TODO
 
 const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.open ? colors.underlay : colors.background,
-      bottom: bottomOffset + props.marginBottom,
+      bottom: props.bottomOffset,
+      left: props.leftOffset,
     }]}
     onPress={props.onPress}
     underlayColor={props.open ? colors.background : colors.underlay}

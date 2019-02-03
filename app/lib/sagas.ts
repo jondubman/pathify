@@ -201,7 +201,9 @@ const sagas = {
         yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
       }
       // open the new panel
-      yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
+      if (name) {
+        yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
+      }
     }
   },
 

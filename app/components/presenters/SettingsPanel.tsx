@@ -59,7 +59,7 @@ const Styles = StyleSheet.create({
   panel: {
     borderRadius: constants.buttonSize / 2,
     borderColor: colors.border,
-    borderWidth: 2,
+    borderWidth: 1,
     position: 'absolute',
     left: leftOffset,
     top: topOffset,

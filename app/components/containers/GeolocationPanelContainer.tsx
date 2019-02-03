@@ -1,14 +1,15 @@
 import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
-import log from 'lib/log';
 import { AppState } from 'lib/reducer';
 import { dynamicTimelineHeight } from 'lib/selectors';
 
 import GeolocationPanel from 'presenters/GeolocationPanel';
+import { settings } from 'cluster';
 
 interface GeolocationPanelStateProps {
   marginBottom: number;
+  mode: number,
   open: boolean;
 }
 
@@ -21,6 +22,7 @@ export type GeolocationPanelProps = GeolocationPanelStateProps & GeolocationPane
 const mapStateToProps = (state: AppState): GeolocationPanelStateProps => {
   return {
     marginBottom: dynamicTimelineHeight(state),
+    mode: state.options.geolocationModeId,
     open: state.ui.panels.geolocation.open,
   }
 }
@@ -29,6 +31,7 @@ const mapDispatchToProps = (dispatch: any): GeolocationPanelDispatchProps => {
   const dispatchers = {
     setGeolocationMode: (id: number) => {
       dispatch(newAction(appAction.SET_GEOLOCATION_MODE, id));
+      dispatch(newAction(appAction.TOGGLE_PANEL_VISIBILITY));
     },
   }
   return dispatchers;

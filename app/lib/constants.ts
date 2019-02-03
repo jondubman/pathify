@@ -110,6 +110,7 @@ const colors = {
 
 const constants = {
   appName: 'Pathify',
+  buttonOffset,
   buttonSize,
   colors,
   colorThemes,
@@ -148,12 +149,9 @@ const constants = {
     { id: 3, name: 'MAX TRACKING' },
   ] as GeolocationModeChoice[],
   geolocationPanel: {
-    height: 230, // big enough, and doesn't cover Pulsar at center of map on iPhone SE (at least with Timeline hidden)
+    height: 300,
     leftOffset: buttonOffset,
-    subpanelLeftOffset: buttonOffset,
     bottomOffset: safeAreaBottom + mapLogoHeight,
-    subpanelBottomOffset: safeAreaBottom + mapLogoHeight + buttonSize + buttonOffset,
-    subpanelTopMargin: 10,
   },
   helpButton: {
     opacity: defaultOpacity,

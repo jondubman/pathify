@@ -9,42 +9,40 @@ import {
   View,
 } from 'react-native';
 
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
 import constants, { GeolocationModeChoice } from 'lib/constants';
+import GeolocationButton from 'presenters/GeolocationButton';
 import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import { GeolocationPanelProps } from 'containers/GeolocationPanelContainer';
+
 const colors = constants.colors.geolocationPanel;
-const { bottomOffset, height, leftOffset, subpanelTopMargin } = constants.geolocationPanel;
+const { bottomOffset, height, leftOffset } = constants.geolocationPanel;
 
 const Styles = StyleSheet.create({
   choice: {
-    paddingBottom: 3,
-    paddingTop: 3,
+    padding: 3,
+    paddingLeft: 0,
+    position: 'absolute',
   },
   choiceLabel: {
+    position: 'absolute',
+    bottom: 15,
+    left: constants.buttonSize + constants.buttonOffset * 2,
   },
   choiceLabelText: {
-    color: constants.colors.byName.gray,
-    fontSize: constants.fonts.sizes.choiceLabel,
+    color: constants.colors.byName.yellow,
+    fontSize: 14,
     fontWeight: 'normal',
     marginBottom: 2,
-    alignSelf: 'flex-start',
   },
   chosen: {
-    backgroundColor: constants.colorThemes.geolocation,
   },
   chosenText: {
-    color: 'black',
-  },
-  multiSelect: {
+    color: constants.colors.byName.azure,
   },
   panel: {
-    borderRadius: 5,
-    borderBottomLeftRadius: constants.buttonSize / 2,
-    borderTopRightRadius: height,
+    borderRadius: constants.buttonSize / 2,
     borderColor: colors.border,
-    borderWidth: 2,
+    borderWidth: 1,
     position: 'absolute',
     left: leftOffset,
     bottom: bottomOffset,
@@ -54,26 +52,12 @@ const Styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    paddingLeft: 6,
     width: constants.panelWidth,
-  },
-  subpanel: {
-    display: 'flex',
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    marginTop: subpanelTopMargin,
-  },
-  subpanelContents: {
-    flexDirection: 'column',
-  },
-  subpanels: {
   },
   text: {
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.choice,
-    fontWeight: 'bold',
-    margin: 5,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   view: {
     position: 'absolute',
@@ -81,39 +65,51 @@ const Styles = StyleSheet.create({
   },
 })
 
+const v = (i: number) => (i + 1) * (constants.buttonSize + 10);
+const iconPos = [[0, v(0)], [0, v(1)], [0, v(2)], [0, v(3)]];
+
+const labelOffsetX = constants.buttonSize + constants.buttonOffset * 2;
+const labelOffsetY = 14;
+
 const GeolocationPanel = (props: GeolocationPanelProps) => (
   <View style={Styles.view}>
     {props.open ?
       <View style={Styles.view}>
         <View style={[Styles.panel, { bottom: bottomOffset + props.marginBottom }]}>
-          <View style={Styles.subpanels}>
-            <View style={Styles.subpanel}>
-              <View style={Styles.subpanelContents}>
-                <View style={Styles.choiceLabel}>
-                  <Text style={Styles.choiceLabelText}>
-                    GEOLOCATION
-                  </Text>
-                </View>
-                <View style={Styles.multiSelect}>
-                  {constants.geolocationModeChoices.map((choice: GeolocationModeChoice, index: number) => (
-                    <Fragment
-                      key={index}
-                    >
-                      <TouchableHighlight
-                        onPress={() => { props.setGeolocationMode(index) }}
-                        style={[Styles.choice, (false) ? Styles.chosen : null]}
-                        underlayColor={constants.colors.geolocationPanel.choiceUnderlay}
-                      >
-                          <Text style={[Styles.text, (false) ? Styles.chosenText : null]}>
-                            {choice.name}
-                          </Text>
-                      </TouchableHighlight>
-                    </Fragment>
-                  ))}
-                </View>
-              </View>
-            </View>
+          <View style={Styles.choiceLabel}>
+            <Text style={Styles.choiceLabelText}>
+              GEOLOCATION MODE
+            </Text>
           </View>
+          {constants.geolocationModeChoices.map((choice: GeolocationModeChoice, index: number) => (
+            <Fragment
+              key={index}
+            >
+              <TouchableHighlight
+                onPress={() => { props.setGeolocationMode(index) }}
+                style={[
+                  Styles.choice,
+                  (props.mode === index) ? Styles.chosen : null,
+                  { left: iconPos[index][0] + labelOffsetX, bottom:iconPos[index][1] + labelOffsetY},
+                ]}
+                underlayColor={constants.colors.geolocationPanel.choiceUnderlay}
+              >
+                <Text style={[
+                  Styles.text,
+                  (props.mode === index) ? Styles.chosenText : null
+                ]}>
+                  {choice.name}
+                </Text>
+              </TouchableHighlight>
+              <GeolocationButton
+                bottomOffset={iconPos[index][1]}
+                leftOffset={iconPos[index][0]}
+                mode={index}
+                onPress={() => { props.setGeolocationMode(index) }}
+                open={props.mode === index}
+              />
+            </Fragment>
+          ))}
         </View>
       </View>
       :

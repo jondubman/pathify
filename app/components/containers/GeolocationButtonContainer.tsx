@@ -4,13 +4,15 @@ import {
 import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
+import constants from 'lib/constants';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
 import { dynamicTimelineHeight } from 'lib/selectors';
 import GeolocationButton from 'presenters/GeolocationButton';
 
 interface GeolocationButtonStateProps {
-  marginBottom: number,
+  bottomOffset: number,
+  leftOffset: number,
   mode: number,
   open: boolean,
 }
@@ -23,7 +25,8 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
-    marginBottom: dynamicTimelineHeight(state),
+    bottomOffset: constants.geolocationButton.bottomOffset + dynamicTimelineHeight(state),
+    leftOffset: constants.geolocationButton.leftOffset,
     mode: state.options.geolocationModeId,
     open: state.ui.panels.geolocation.open,
   }

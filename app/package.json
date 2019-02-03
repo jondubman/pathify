@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "devtools": "react-devtools",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
@@ -21,6 +22,7 @@
     "d3": "^5.7.0",
     "prop-types": "^15.6.2",
     "react": "16.6.3",
+    "react-devtools": "^3.6.0",
     "react-native": "^0.58.0",
     "react-native-background-fetch": "^2.4.6",
     "react-native-background-geolocation": "^2.14.2",
