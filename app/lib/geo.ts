@@ -248,9 +248,9 @@ export const Geo = {
         log.debug('BackgroundGeolocation configured and ready', pluginState);
 
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
-        Geo.changePace(true, () => {
-          log.info('BackgroundGeolocation pace manually set to moving');
-        })
+        // Geo.changePace(true, () => {
+        //   log.info('BackgroundGeolocation pace manually set to moving');
+        // })
       }
     }, err => {
       log.error('BackgroundGeolocation failed to configure', err);

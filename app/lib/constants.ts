@@ -143,10 +143,10 @@ const constants = {
     size: buttonSize,
   },
   geolocationModeChoices: [
-    { id: 0, name: 'OFF' },
-    { id: 1, name: 'MAPPING' },
-    { id: 2, name: 'TRACKING' },
-    { id: 3, name: 'MAX TRACKING' },
+    { id: 0, name: '0' },
+    { id: 1, name: '1' },
+    { id: 2, name: '2' },
+    { id: 3, name: '3' },
   ] as GeolocationModeChoice[],
   geolocationPanel: {
     height: 300,

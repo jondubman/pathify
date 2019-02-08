@@ -29,15 +29,15 @@ const Styles = StyleSheet.create({
     left: constants.buttonSize + constants.buttonOffset * 2,
   },
   choiceLabelText: {
-    color: constants.colors.byName.yellow,
-    fontSize: 14,
+    color: 'white',
+    fontFamily: 'Futura',
+    fontSize: 12,
     fontWeight: 'normal',
-    marginBottom: 2,
   },
   chosen: {
   },
   chosenText: {
-    color: constants.colors.byName.azure,
+    color: constants.colors.byName.yellow,
   },
   panel: {
     borderRadius: constants.buttonSize / 2,
@@ -78,7 +78,7 @@ const GeolocationPanel = (props: GeolocationPanelProps) => (
         <View style={[Styles.panel, { bottom: bottomOffset + props.marginBottom }]}>
           <View style={Styles.choiceLabel}>
             <Text style={Styles.choiceLabelText}>
-              GEOLOCATION MODE
+              Geolocation
             </Text>
           </View>
           {constants.geolocationModeChoices.map((choice: GeolocationModeChoice, index: number) => (
