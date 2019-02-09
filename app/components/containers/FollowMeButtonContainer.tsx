@@ -4,7 +4,7 @@ import {
 import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import {
   mapHidden,
 } from 'lib/selectors';
@@ -30,7 +30,7 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): FollowMeBu
   }
 }
 
-const mapDispatchToProps = (dispatch: any): FollowMeButtonDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): FollowMeButtonDispatchProps => {
   const onPress = () => {
     const { followingUser } = store.uiState().flags;
     if (followingUser) { // toggle the state

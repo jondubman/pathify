@@ -30,7 +30,7 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): SettingsPanelDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   const onSelectMapStyle = (mapStyleName: string) => {
     log.debug('SettingsPanel onSelectMapStyle', mapStyleName);
     dispatch(newAction(reducerAction.SET_APP_OPTION, { name: 'mapStyle', value: mapStyleName }));

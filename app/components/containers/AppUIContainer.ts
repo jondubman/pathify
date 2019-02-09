@@ -3,26 +3,28 @@ import { connect } from 'react-redux';
 import AppUI from 'presenters/AppUI';
 import { AppState } from 'lib/state';
 
-interface StateProps {
+interface AppUIStateProps {
   showTimeline: boolean;
 }
 
-interface DispatchProps {
+interface AppUIDispatchProps {
 }
 
-const mapStateToProps = (state: AppState): StateProps => {
+export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
+
+const mapStateToProps = (state: AppState): AppUIStateProps => {
   return {
     showTimeline: !state.ui.flags.mapFullScreen,
   }
 }
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: Function): AppUIDispatchProps => {
   const dispatchers = {
   }
   return dispatchers;
 }
 
-const AppUIContainer = connect<StateProps, DispatchProps>(
+const AppUIContainer = connect<AppUIStateProps, AppUIDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(AppUI as any);

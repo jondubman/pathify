@@ -2,7 +2,6 @@ import React, {
 } from 'react';
 
 import {
-  GestureResponderEvent,
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
@@ -10,12 +9,13 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import constants from 'lib/constants';
+import { HelpButtonProps } from 'containers/HelpButtonContainer';
+
 const colors = constants.colors.helpButton;
 const { opacity, rightOffset, size, topOffset } = constants.helpButton;
 
 const Styles = StyleSheet.create({
   button: {
-    // position, shape (circular) and size
     borderRadius: size / 2,
     position: 'absolute',
     paddingTop: size / 4,
@@ -25,16 +25,9 @@ const Styles = StyleSheet.create({
     top: topOffset,
     justifyContent: 'center',
     flexDirection: 'row',
-
-    // appearance
     opacity,
   },
 })
-
-interface HelpButtonProps {
-  enabled: boolean;
-  onPress: (event: GestureResponderEvent) => void;
-}
 
 const HelpButton = (props: HelpButtonProps) => (
   <TouchableHighlight

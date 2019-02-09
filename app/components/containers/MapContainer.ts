@@ -42,7 +42,7 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): MapAreaDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
   const dispatchers = {
     backgroundTapped: (args: any) => {
       dispatch(newAction(appAction.BACKGROUND_TAPPED, args));

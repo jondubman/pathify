@@ -35,7 +35,7 @@ const mapStateToProps = (state: AppState): CompassButtonStateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): CompassButtonDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): CompassButtonDispatchProps => {
   const onPress = () => {
     log.debug('compass press');
     dispatch(newAction(appAction.REORIENT_MAP));

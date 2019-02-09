@@ -8,21 +8,23 @@ import log from 'lib/log';
 import { AppState } from 'lib/state';
 import HelpButton from 'presenters/HelpButton';
 
-interface StateProps {
+interface HelpButtonStateProps {
   enabled: boolean;
 }
 
-interface DispatchProps {
+interface HelpButtonDispatchProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-const mapStateToProps = (state: AppState): StateProps => {
+export type HelpButtonProps = HelpButtonStateProps & HelpButtonDispatchProps;
+
+const mapStateToProps = (state: AppState): HelpButtonStateProps => {
   return {
     enabled: state.ui.flags.helpEnabled,
   }
 }
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: Function): HelpButtonDispatchProps => {
   const onPress = () => {
     log.debug('HelpButton press');
     dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'helpEnabled'));
@@ -33,7 +35,7 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => {
   return dispatchers;
 }
 
-const HelpButtonContainer = connect<StateProps, DispatchProps>(
+const HelpButtonContainer = connect<HelpButtonStateProps, HelpButtonDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(HelpButton as any);

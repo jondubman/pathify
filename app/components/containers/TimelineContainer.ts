@@ -16,7 +16,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): TimelineDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): TimelineDispatchProps => {
   const dispatchers = {
   }
   return dispatchers;

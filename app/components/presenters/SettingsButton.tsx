@@ -2,7 +2,6 @@ import React, {
 } from 'react';
 
 import {
-  GestureResponderEvent,
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
@@ -10,6 +9,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import constants from 'lib/constants';
+import { SettingsButtonProps } from 'containers/SettingsButtonContainer';
+
 const colors = constants.colors.settingsButton;
 const { leftOffset, opacityWhenClosed, opacityWhenOpen, size, topOffset } = constants.settingsButton;
 
@@ -26,11 +27,6 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
   },
 })
-
-interface SettingsButtonProps {
-  open: boolean;
-  onPress: (event: GestureResponderEvent) => void;
-}
 
 const SettingsButton = (props: SettingsButtonProps) => (
   <TouchableHighlight

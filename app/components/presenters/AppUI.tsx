@@ -12,6 +12,7 @@ import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 
 import constants from 'lib/constants';
 
+import { AppUIProps } from 'containers/AppUIContainer';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
@@ -28,11 +29,7 @@ const AppStyles = StyleSheet.create({
   },
 })
 
-interface Props {
-  showTimeline: boolean;
-}
-
-class AppUI extends Component<Props> {
+class AppUI extends Component<AppUIProps> {
   public render() {
     const showTimeline = this.props.showTimeline;
     return (

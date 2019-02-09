@@ -23,7 +23,7 @@ const mapStateToProps = (state: AppState): GeolocationPanelStateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): GeolocationPanelDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): GeolocationPanelDispatchProps => {
   const dispatchers = {
     setGeolocationMode: (id: number) => {
       dispatch(newAction(appAction.SET_GEOLOCATION_MODE, id));
