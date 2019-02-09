@@ -1,5 +1,6 @@
 import React, {
   Component,
+  Fragment,
 } from 'react';
 
 import {
@@ -14,6 +15,9 @@ Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 import constants from 'lib/constants';
 import log from 'lib/log';
 
+import CompassButtonContainer from 'containers/CompassButtonContainer';
+import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
+import GeolocationPanelContainer from 'containers/GeolocationPanelContainer';
 import { MapAreaProps } from 'containers/MapContainer';
 import Pulsar from 'presenters/Pulsar';
 
@@ -74,22 +78,19 @@ class MapArea extends Component<MapAreaProps> {
       userLoc,
     } = this.props;
 
-    const viewStyle = {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
+    const hiddenStyle = {
+      height,
       opacity,
-      position: 'absolute',
     } as any; // as any: https://github.com/Microsoft/TypeScript/issues/18744
 
-    const opacifier = {
-      opacity,
-    }
     const mapStyle = {
       alignSelf: 'center',
       height,
       width,
+    }
+    const viewStyle = {
+      height,
+      opacity,
     }
     const mapCenterLon = constants.map.default.lon;
     const mapCenterLat = constants.map.default.lat;
@@ -99,52 +100,60 @@ class MapArea extends Component<MapAreaProps> {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
       // onPressIn is instantaneous, unlike onPress which waits for the tap to end.
       return (
-        <TouchableWithoutFeedback
-          onPressIn={backgroundTapped}
-        >
-          <View style={viewStyle} />
-        </TouchableWithoutFeedback>
+        <View style={{ flex: 1 }}>
+          <TouchableWithoutFeedback
+            onPressIn={backgroundTapped}
+          >
+            <View style={hiddenStyle} />
+          </TouchableWithoutFeedback>
+          <GeolocationPanelContainer />
+        </View>
       )
     }
 
     return (
-      <View style={opacifier}>
-        <Mapbox.MapView
-          attributionEnabled={true}
-          centerCoordinate={[ mapCenterLon, mapCenterLat ]}
-          compassEnabled={false}
-          contentInset={[ 0, 0, 0, 0 ]}
-          heading={0}
-          logoEnabled={true}
-          onPress={this.onPress}
-          onRegionDidChange={this.onRegionDidChange}
-          onRegionWillChange={this.onRegionWillChange}
-          pitchEnabled={false}
-          ref={map => {
-            this._map = map;
-            singletonMap = this;
-          }}
-          rotateEnabled={true}
-          scrollEnabled={true}
-          showUserLocation={false}
-          style={mapStyle}
-          styleURL={mapStyleURL}
-          userTrackingMode={Mapbox.UserTrackingModes.None}
-          zoomEnabled={true}
-          zoomLevel={constants.map.default.zoom}
-        >
-          {showUserMarker ?
-            <Pulsar
-              id="userLocationMarker"
-              lon={userLoc!.lon}
-              lat={userLoc!.lat}
-              color={constants.colors.user}
-            />
-            :
-            null
-          }
-        </Mapbox.MapView>
-     </View>
+      <View style={{ flex: 1 }}>
+        <View style={viewStyle}>
+          <Mapbox.MapView
+            attributionEnabled={true}
+            centerCoordinate={[ mapCenterLon, mapCenterLat ]}
+            compassEnabled={false}
+            contentInset={[ 0, 0, 0, 0 ]}
+            heading={0}
+            logoEnabled={true}
+            onPress={this.onPress}
+            onRegionDidChange={this.onRegionDidChange}
+            onRegionWillChange={this.onRegionWillChange}
+            pitchEnabled={false}
+            ref={map => {
+              this._map = map;
+              singletonMap = this;
+            }}
+            rotateEnabled={true}
+            scrollEnabled={true}
+            showUserLocation={false}
+            style={mapStyle}
+            styleURL={mapStyleURL}
+            userTrackingMode={Mapbox.UserTrackingModes.None}
+            zoomEnabled={true}
+            zoomLevel={constants.map.default.zoom}
+          >
+            {showUserMarker ?
+              <Pulsar
+                id="userLocationMarker"
+                lon={userLoc!.lon}
+                lat={userLoc!.lat}
+                color={constants.colors.user}
+              />
+              :
+              null
+            }
+          </Mapbox.MapView>
+        </View>
+        <FollowMeButtonContainer />
+        <CompassButtonContainer />
+        <GeolocationPanelContainer />
+      </View>
     )
   }
 

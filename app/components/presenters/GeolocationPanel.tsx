@@ -75,7 +75,7 @@ const GeolocationPanel = (props: GeolocationPanelProps) => (
   <View style={Styles.view}>
     {props.open ?
       <View style={Styles.view}>
-        <View style={[Styles.panel, { bottom: bottomOffset + props.marginBottom }]}>
+        <View style={[Styles.panel, { bottom: bottomOffset }]}>
           <View style={Styles.choiceLabel}>
             <Text style={Styles.choiceLabelText}>
               Geolocation

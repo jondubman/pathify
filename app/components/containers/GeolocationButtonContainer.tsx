@@ -7,7 +7,6 @@ import { appAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
-import { dynamicTimelineHeight } from 'lib/selectors';
 import GeolocationButton from 'presenters/GeolocationButton';
 
 interface GeolocationButtonStateProps {
@@ -25,7 +24,7 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
-    bottomOffset: constants.geolocationButton.bottomOffset + dynamicTimelineHeight(state),
+    bottomOffset: constants.geolocationButton.bottomOffset,
     leftOffset: constants.geolocationButton.leftOffset,
     mode: state.options.geolocationModeId,
     open: state.ui.panels.geolocation.open,

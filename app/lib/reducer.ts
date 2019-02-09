@@ -27,9 +27,9 @@ export interface AppOptions {
   mapStyle: string;
 }
 const initialAppOptions: AppOptions = {
-  geolocationModeId: 1,
+  geolocationModeId: 0,
   keepMapCenteredWhenFollowing: true,
-  mapOpacity: 1,
+  mapOpacity: 0.5,
   mapStyle: constants.map.default.style,
 }
 export interface AppOption {
@@ -44,11 +44,11 @@ const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
     helpEnabled: false,
-    mapFullScreen: true,
+    mapFullScreen: false,
     mapMoving: false, // is the map currently moving? TODO not currently used
   },
   panels: {
-    geolocation: { open: true },
+    geolocation: { open: false },
     settings: { open: false },
   },
 }

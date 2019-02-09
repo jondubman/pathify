@@ -39,10 +39,6 @@ const TimelineStyles = StyleSheet.create({
   timeline: {
     backgroundColor: constants.colors.timeline.background,
     height: constants.timeline.initialHeight,
-    position: 'absolute',
-    bottom: constants.safeAreaBottom,
-    left: 0,
-    right: 0,
     opacity: 1,
   },
 })

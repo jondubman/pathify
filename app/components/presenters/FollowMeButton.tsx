@@ -37,7 +37,7 @@ const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.active ? colors.background.active : colors.background.inactive,
-      bottom: bottomOffset + props.marginBottom,
+      bottom: bottomOffset,
     }]}
     onPress={props.onPress}
     underlayColor={colors.underlay}

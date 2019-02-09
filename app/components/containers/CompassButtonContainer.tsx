@@ -7,7 +7,6 @@ import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/reducer';
 import {
-  dynamicTimelineHeight,
   mapHidden,
 } from 'lib/selectors';
 
@@ -16,7 +15,6 @@ import CompassButton from 'presenters/CompassButton';
 interface CompassButtonStateProps {
   heading: number | null;
   hidden: boolean;
-  marginBottom: number,
 }
 
 interface CompassButtonDispatchProps {
@@ -34,7 +32,6 @@ const mapStateToProps = (state: AppState): CompassButtonStateProps => {
   return {
     heading,
     hidden: mapHidden(state),
-    marginBottom: dynamicTimelineHeight(state),
   }
 }
 

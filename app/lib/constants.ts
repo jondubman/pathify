@@ -48,7 +48,7 @@ const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
 const mapLogoHeight = 34; // mapbox logo
-const initialTimelineHeight = 150;
+const initialTimelineHeight = 100; // thinking 150 max
 const panelWidth = 252; // fits on iPhone SE
 
 const dec1ToHexFF = (dec: number) => Math.round(dec * 255).toString(16); // dec between 0 and 1; e.g. 0.8 => 'cc'
@@ -163,7 +163,7 @@ const constants = {
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,
-      style: 'None', // None, Default, etc.
+      style: 'Topo', // None, Default, etc.
       zoom: 14,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { appAction, newAction } from 'lib/actions';
 import { AppState } from 'lib/reducer';
 import {
-  dynamicTimelineHeight,
   mapHidden,
 } from 'lib/selectors';
 import store from 'lib/store';
@@ -16,7 +15,6 @@ import FollowMeButton from 'presenters/FollowMeButton';
 interface FollowMeButtonStateProps {
   active: boolean;
   hidden: boolean;
-  marginBottom: number;
 }
 
 interface FollowMeButtonDispatchProps {
@@ -29,7 +27,6 @@ const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): FollowMeBu
   return {
     active: state.ui.flags.followingUser,
     hidden: mapHidden(state),
-    marginBottom: dynamicTimelineHeight(state),
   }
 }
 
