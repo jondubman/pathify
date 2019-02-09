@@ -99,10 +99,8 @@ const colors = {
     axisLabels: namedColors.gray,
     background: colorThemes.background,
     bars: [
-      namedColors.red,
-      namedColors.orange,
-      namedColors.yellow,
-      namedColors.purple,
+      withOpacity(namedColors.green, 0.35),
+      withOpacity(namedColors.yellow, 0.35),
     ],
   },
   user: namedColors.azure,
@@ -193,11 +191,12 @@ const constants = {
     topOffset: safeAreaTop + buttonOffset,
   },
   timeline: {
-    barHeight: 20,
+    barHeight: 40,
     // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForAxis,
     bottomPaddingForBars: 2,
     initialHeight: initialTimelineHeight,
+    refTimespanPadding: 100000, // msec
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
   },
