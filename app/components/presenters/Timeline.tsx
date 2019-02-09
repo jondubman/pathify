@@ -19,6 +19,7 @@ import {
 // import constants from 'lib/constants';
 
 import constants from 'lib/constants';
+import { TimelinePanelProps } from 'containers/TimelineContainer';
 import Timespans from 'presenters/Timespans';
 
 const initialState = {
@@ -32,9 +33,6 @@ const tickFormat = (t: Date) => {
   return d3.timeFormat('%-I:%M:%S')(t);
 }
 
-interface Props {
-}
-
 const TimelineStyles = StyleSheet.create({
   timeline: {
     backgroundColor: constants.colors.timeline.background,
@@ -43,7 +41,7 @@ const TimelineStyles = StyleSheet.create({
   },
 })
 
-class Timeline extends Component<Props> {
+class Timeline extends Component<TimelinePanelProps> {
 
   public readonly state: State = initialState;
   public renderCount: number = 0;
@@ -98,8 +96,7 @@ class Timeline extends Component<Props> {
       tickLabels: { fontSize: constants.timeline.tickLabelFontSize, padding: 0, stroke: constants.colors.timeline.axis },
     }
     const axisLabelStyle = {
-      // fill: constants.colors.timeline.axisLabels,
-      fontFamily: 'Verdana',
+      fontFamily: 'Verdana', //
       fontSize: 10,
       letterSpacing: 'normal',
       padding: 0,

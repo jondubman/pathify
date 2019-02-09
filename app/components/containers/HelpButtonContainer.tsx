@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { newAction, reducerAction } from 'lib/actions';
 import log from 'lib/log';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import HelpButton from 'presenters/HelpButton';
 
 interface StateProps {

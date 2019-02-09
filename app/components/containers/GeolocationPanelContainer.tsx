@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 
 import GeolocationPanel from 'presenters/GeolocationPanel';
 

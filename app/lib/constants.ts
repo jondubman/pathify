@@ -194,12 +194,12 @@ const constants = {
   },
   timeline: {
     barHeight: 20,
-     // TODO empirically determined so as not to cut off the horizontal (time) axis
+    // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForAxis,
     bottomPaddingForBars: 2,
     initialHeight: initialTimelineHeight,
     tickCount: 5, // target number of ticks on the axis (approximate)
-    tickLabelFontSize: 12, // anything smaller is hard to read; anything bigger takes up too much room
+    tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
   },
 }
 

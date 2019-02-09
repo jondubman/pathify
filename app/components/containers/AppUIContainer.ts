@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import AppUI from 'presenters/AppUI';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 
 interface StateProps {
   showTimeline: boolean;

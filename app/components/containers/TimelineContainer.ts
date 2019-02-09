@@ -1,27 +1,30 @@
 import { connect } from 'react-redux';
 
+import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
 
-interface StateProps {
+export interface TimelineStateProps {
 }
 
-interface DispatchProps {
+export interface TimelineDispatchProps {
 }
 
-const mapStateToProps = (state: any): StateProps => {
+export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
+
+const mapStateToProps = (state: AppState): TimelineStateProps => {
   return {
   }
 }
 
-const mapDispatchToProps = (dispatch: any): DispatchProps => {
+const mapDispatchToProps = (dispatch: any): TimelineDispatchProps => {
   const dispatchers = {
   }
   return dispatchers;
 }
 
-const AppUIContainer = connect<StateProps, DispatchProps>(
-  mapStateToProps,
+const TimelineContainer = connect<TimelineStateProps, TimelineDispatchProps>(
+  mapStateToProps as any,
   mapDispatchToProps
 )(Timeline as any);
 
-export default AppUIContainer;
+export default TimelineContainer;

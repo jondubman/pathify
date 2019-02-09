@@ -1,3 +1,5 @@
+// simple singleton Redux store
+
 import {
   applyMiddleware,
   createStore,
@@ -9,12 +11,13 @@ import {
   Action,
 } from 'lib/actions';
 
-import reducer, {
+import reducer from 'lib/reducer';
+import sagas from 'lib/sagas';
+import {
   AppOptions,
   AppState,
   AppUIState
-} from 'lib/reducer';
-import sagas from 'lib/sagas';
+} from 'lib/state';
 
 let reduxStore: Store<AppState, Action>; // global singleton Redux store
 
@@ -30,23 +33,27 @@ const store = {
     return reduxStore;
   },
 
+  // wrapper with guard
   dispatch: (action: Action) => {
     store.create();
     reduxStore.dispatch(action);
   },
 
+  // wrapper with guard
   getState: (): AppState => {
-    store.create();
+    store.create(); // guard
     return reduxStore.getState();
   },
 
+  // for convenience
   options: (): AppOptions => {
-    store.create();
+    store.create(); // guard
     return reduxStore.getState().options;
   },
 
+  // for convenience
   uiState: (): AppUIState => {
-    store.create();
+    store.create(); // guard
     return reduxStore.getState().ui;
   }
 }

@@ -7,69 +7,13 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import constants from 'lib/constants';
-import { LocationEvent } from 'lib/geo';
+import { LocationEvent } from 'lib/geo'; // TODO update
 
-// TODO
-interface AppEvent {
-  type: string;
-  time: string;
-}
-
-// Canonical interface for AppOptions included in AppState.
-// AppOptions are modifiable via the API by name. These include, but are not limited to,
-// all the options that are modifiable via Settings in the UI.
-
-export interface AppOptions {
-  geolocationModeId: number;
-  keepMapCenteredWhenFollowing: boolean;
-  mapOpacity: number; // 0 to 1
-  mapStyle: string;
-}
-const initialAppOptions: AppOptions = {
-  geolocationModeId: 0,
-  keepMapCenteredWhenFollowing: true,
-  mapOpacity: 0.5,
-  mapStyle: constants.map.default.style,
-}
-export interface AppOption {
-  name: string;
-  value: any;
-}
-
-// Canonical interface for AppUIState included in AppState.
-// AppUIState is for transient, user-initiated state changes, e.g. for menus.
-
-const initialAppUIState = {
-  flags: {
-    followingUser: true, // should map follow user?
-    helpEnabled: false,
-    mapFullScreen: false,
-    mapMoving: false, // is the map currently moving? TODO not currently used
-  },
-  panels: {
-    geolocation: { open: false },
-    settings: { open: false },
-  },
-}
-export type AppUIState = typeof initialAppUIState;
-
-// Canonical interface for AppState, the contents of the Redux store
-
-export interface AppState {
-  loc?: LocationEvent;
-  mapRegion: Feature | null;
-  options: AppOptions;
-  ui: AppUIState;
-}
-
-const initialAppState: AppState = {
-  options: initialAppOptions,
-  mapRegion: null,
-  ui: initialAppUIState,
-}
-
-// The one and only Redux Reducer.
+import {
+  initialAppState,
+  AppOption,
+  AppState,
+} from 'lib/state';
 
 const reducer = (state: AppState = initialAppState, action: Action): AppState => {
   const newState = { ...state }; // shallow copy for now

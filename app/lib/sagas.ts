@@ -29,7 +29,7 @@ import {
 
 import { Geo, LocationEvent } from 'lib/geo';
 import log from 'lib/log';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 
 import {

@@ -1,6 +1,6 @@
 //  Selector functions for Redux reducer
 
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import constants, { MapStyle } from './constants';
 import utils from 'lib/utils';
 

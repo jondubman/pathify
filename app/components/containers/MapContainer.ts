@@ -2,7 +2,7 @@
 
 import { connect } from 'react-redux';
 
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 
 import { appAction, newAction } from 'lib/actions';

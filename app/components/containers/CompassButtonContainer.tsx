@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import {
   mapHidden,
 } from 'lib/selectors';

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { newAction, reducerAction } from 'lib/actions';
 import { MapStyle } from 'lib/constants';
 import log from 'lib/log';
-import { AppState } from 'lib/reducer';
+import { AppState } from 'lib/state';
 import {
   dynamicMapStyle,
 } from 'lib/selectors';
