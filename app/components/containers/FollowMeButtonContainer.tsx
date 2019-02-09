@@ -4,10 +4,10 @@ import {
 import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
-import { AppState } from 'lib/state';
 import {
   mapHidden,
 } from 'lib/selectors';
+import { AppState } from 'lib/state';
 import store from 'lib/store';
 
 import FollowMeButton from 'presenters/FollowMeButton';

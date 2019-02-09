@@ -1,14 +1,12 @@
 // Note this is the container for MapArea but for brevity, it's called MapContainer instead of MapAreaContainer.
-
 import { connect } from 'react-redux';
-
-import { AppState } from 'lib/state';
-import utils from 'lib/utils';
 
 import { appAction, newAction } from 'lib/actions';
 import { LocationEvent } from 'lib/geo';
 import MapArea from 'components/MapArea';
 import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
+import { AppState } from 'lib/state';
+import utils from 'lib/utils';
 
 interface MapAreaStateProps {
   height: number;

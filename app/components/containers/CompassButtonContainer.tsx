@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
-import { AppState } from 'lib/state';
 import {
   mapHidden,
 } from 'lib/selectors';
+import { AppState } from 'lib/state';
 
 import CompassButton from 'presenters/CompassButton';
 
