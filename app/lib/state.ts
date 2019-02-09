@@ -48,8 +48,9 @@ const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
     helpEnabled: false,
-    mapFullScreen: false,
+    mapFullScreen: false, // is the map occupying the full screen, with timeline hidden?
     mapMoving: false, // is the map currently moving? TODO not currently used
+    timelineNow: false, // is the timeline continuously scrolling to show the current time?
   },
   panels: {
     geolocation: { open: false },
@@ -64,11 +65,13 @@ export interface AppState {
   loc?: LocationEvent;
   mapRegion: Feature | null;
   options: AppOptions;
+  refTime: number;
   ui: AppUIState;
 }
 
 export const initialAppState: AppState = {
   options: initialAppOptions,
   mapRegion: null,
+  refTime: Date.now(), // TODO
   ui: initialAppUIState,
 }

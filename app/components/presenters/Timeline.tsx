@@ -61,32 +61,28 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    // this.renderCount++;
-    // if (this.renderCount % 10 == 0) {
-    //   log.debug('Timeline', this.renderCount);
-    // }
-    const now = Date.now()
+    const { refTime } = this.props;
     const timespanPadding = 100000;
     const timespansData = [
       {
-        t1: now - 10000, // start
-        t2: now, // end
+        t1: refTime - 10000, // start
+        t2: refTime, // end
       },
       {
-        t1: now - 20000, // start
-        t2: now, // end
+        t1: refTime - 20000, // start
+        t2: refTime, // end
       },
       {
-        t1: now - 30000, // start
-        t2: now + 5000, // end
+        t1: refTime - 30000, // start
+        t2: refTime + 5000, // end
       },
       {
-        t1: now - 40000, // start
-        t2: now + 10000, // end
+        t1: refTime - 40000, // start
+        t2: refTime + 10000, // end
       },
     ]
     const initialZoomDomain = {
-      x: [now - timespanPadding, now + timespanPadding],
+      x: [refTime - timespanPadding, refTime + timespanPadding],
       y: [0, 10]
     }
     const axisStyle = {

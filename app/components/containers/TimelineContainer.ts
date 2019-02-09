@@ -4,6 +4,7 @@ import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
 
 export interface TimelineStateProps {
+  refTime: number;
 }
 
 export interface TimelineDispatchProps {
@@ -13,6 +14,7 @@ export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   return {
+    refTime: state.refTime,
   }
 }
 
