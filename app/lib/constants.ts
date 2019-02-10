@@ -24,18 +24,18 @@ const namedColors = {
   azure: '#007fff',
   blue: '#0074d9',
   fuschia: '#f012be',
-  gray: '#aaa',
+  gray: '#aaaaaa',
   green: '#2ecc40',
   maroon: '#85144b',
   navy: '#001f3f',
   orange: '#ff851b',
   purple: '#b10dc9',
   red: '#ff4136',
-  silver: '#ddd',
+  silver: '#dddddd',
   teal: '#39cccc',
   yellow: '#ffdc00',
 
-  darkerGray: '#888',
+  darkerGray: '#888888',
 }
 
 const colorThemes = {
@@ -100,8 +100,9 @@ const colors = {
     background: colorThemes.background,
     bars: [
       withOpacity(namedColors.green, 0.35),
-      withOpacity(namedColors.yellow, 0.35),
+      withOpacity(namedColors.green, 0.55),
     ],
+    topLine: withOpacity(namedColors.gray, 0.5),
   },
   user: namedColors.azure,
 }
@@ -191,14 +192,15 @@ const constants = {
     topOffset: safeAreaTop + buttonOffset,
   },
   timeline: {
-    barHeight: 40,
+    barHeight: 44,
     // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForAxis,
-    bottomPaddingForBars: 2,
+    bottomPaddingForBars: 0,
     initialHeight: initialTimelineHeight,
     refTimespanPadding: 100000, // msec
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
+    topLineHeight: 1,
   },
 }
 

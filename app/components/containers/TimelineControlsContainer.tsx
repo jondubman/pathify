@@ -2,8 +2,10 @@ import { connect } from 'react-redux';
 
 import { AppState } from 'lib/state';
 import TimelineControls from 'presenters/TimelineControls';
+import { dynamicTimelineHeight } from 'lib/selectors';
 
 interface TimelineControlsStateProps {
+  bottom: number;
 }
 
 interface TimelineControlsDispatchProps {
@@ -13,6 +15,7 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
+    bottom: dynamicTimelineHeight(state),
   }
 }
 

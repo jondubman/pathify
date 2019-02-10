@@ -10,7 +10,7 @@ interface TimespansProps extends Victory.VictoryCommonProps, Victory.VictoryData
 
 class Timespans extends React.Component<TimespansProps> {
 
-  public renderCount: number = 0;
+  // public renderCount: number = 0;
 
   constructor(props: any) {
     super(props);

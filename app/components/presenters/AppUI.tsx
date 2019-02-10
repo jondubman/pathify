@@ -17,6 +17,7 @@ import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import TimelineContainer from 'containers/TimelineContainer';
+import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 
 const AppStyles = StyleSheet.create({
   containingAppView: {
@@ -31,17 +32,17 @@ const AppStyles = StyleSheet.create({
 
 class AppUI extends Component<AppUIProps> {
   public render() {
-    const showTimeline = this.props.showTimeline;
+    const { showTimeline } = this.props;
     return (
       <View style={AppStyles.containingAppView}>
         <StatusBar
-          backgroundColor={constants.colors.byName.navy}
+          backgroundColor={constants.colors.appBackground}
           barStyle="light-content"
         />
         <SafeAreaView style={AppStyles.safeAreaView}>
           <MapContainer />
           {showTimeline ? <TimelineContainer /> : null}
-
+          {showTimeline ? <TimelineControlsContainer /> : null}
           <HelpButtonContainer />
           <SettingsPanelContainer />
         </SafeAreaView>
