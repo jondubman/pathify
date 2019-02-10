@@ -104,7 +104,7 @@ const colors = {
       withOpacity(namedColors.green, 0.35),
       withOpacity(namedColors.green, 0.55),
     ],
-    centerLine: withOpacity(namedColors.white, 0.75),
+    centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),
   },
   user: namedColors.azure,
@@ -203,7 +203,7 @@ const constants = {
     barHeight: 44,
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
-    centerLineWidth: 2,
+    centerLineWidth: 3,
     initialHeight: initialTimelineHeight,
     refTimespanPadding: 100000, // msec
     tickCount: 5, // target number of ticks on the axis (approximate)
