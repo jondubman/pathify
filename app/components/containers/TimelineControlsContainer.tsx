@@ -5,7 +5,7 @@ import TimelineControls from 'presenters/TimelineControls';
 import { dynamicTimelineHeight } from 'lib/selectors';
 
 interface TimelineControlsStateProps {
-  bottom: number;
+  timelineHeight: number;
 }
 
 interface TimelineControlsDispatchProps {
@@ -15,7 +15,7 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
-    bottom: dynamicTimelineHeight(state),
+    timelineHeight: dynamicTimelineHeight(state),
   }
 }
 

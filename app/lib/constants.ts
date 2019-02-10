@@ -18,7 +18,7 @@ export interface MapStyle {
   url: string;
 }
 
-const namedColors = {
+const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 digit abbreviation
   // https://clrs.cc
   aqua: '#7fdbff',
   azure: '#007fff',
@@ -36,6 +36,8 @@ const namedColors = {
   yellow: '#ffdc00',
 
   darkerGray: '#888888',
+  black: '#000000',
+  white: '#ffffff',
 }
 
 const colorThemes = {
@@ -102,6 +104,7 @@ const colors = {
       withOpacity(namedColors.green, 0.35),
       withOpacity(namedColors.green, 0.55),
     ],
+    centerLine: withOpacity(namedColors.white, 0.75),
     topLine: withOpacity(namedColors.gray, 0.5),
   },
   user: namedColors.azure,
@@ -175,6 +178,11 @@ const constants = {
     { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
   panelWidth,
+  refTime: {
+    bottomMargin: 5,
+    height: 44,
+    width: 125, // fits on iPhone SE
+  },
   safeAreaBottom,
   safeAreaTop,
   settingsButton: {
@@ -193,9 +201,9 @@ const constants = {
   },
   timeline: {
     barHeight: 44,
-    // TODO empirically determined so as not to cut off the horizontal (time) axis
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
+    centerLineWidth: 2,
     initialHeight: initialTimelineHeight,
     refTimespanPadding: 100000, // msec
     tickCount: 5, // target number of ticks on the axis (approximate)
