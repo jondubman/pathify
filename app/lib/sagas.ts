@@ -153,6 +153,8 @@ const sagas = {
     if (map) {
       log.debug('saga reorientMap');
       const obj = { heading: 0, duration: constants.map.reorientationTime };
+      yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
+      yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapReorienting'));
       map.setCamera(obj);
     }
   },
@@ -161,6 +163,7 @@ const sagas = {
     log.trace('saga mapRegionChanged', action.params);
     yield put(newAction(reducerAction.MAP_REGION, action.params as Feature));
     yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapMoving'));
+    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
   },
 
   mapRegionChanging: function* (action: Action) {

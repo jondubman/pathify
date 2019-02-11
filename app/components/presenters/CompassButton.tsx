@@ -39,7 +39,7 @@ const CompassButton = (props: CompassButtonProps) => (props.hidden ? null : (
     (
     <TouchableHighlight
       style={[Styles.button, {
-        backgroundColor: colors.background,
+        backgroundColor: props.reorienting ? colors.underlay : colors.background,
         bottom: bottomOffset,
       }]}
       onPress={props.onPress}

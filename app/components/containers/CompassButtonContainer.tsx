@@ -15,6 +15,7 @@ import CompassButton from 'presenters/CompassButton';
 interface CompassButtonStateProps {
   heading: number | null;
   hidden: boolean;
+  reorienting: boolean;
 }
 
 interface CompassButtonDispatchProps {
@@ -29,9 +30,11 @@ const mapStateToProps = (state: AppState): CompassButtonStateProps => {
     const r = state.mapRegion;
     heading = r.properties!.heading;
   }
+  const reorienting = state.ui.flags.mapMoving && state.ui.flags.mapReorienting;
   return {
     heading,
     hidden: mapHidden(state),
+    reorienting,
   }
 }
 
