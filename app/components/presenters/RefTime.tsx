@@ -17,7 +17,18 @@ const colors = constants.colors.refTime;
 const Styles = StyleSheet.create({
   leftHalf: {
     backgroundColor: 'transparent', // nothing left of the centerline, for now
+    flexDirection: 'row-reverse',
     width: constants.refTime.width,
+  },
+  leftContents: {
+    backgroundColor: colors.background,
+    borderLeftColor: colors.border,
+    borderLeftWidth: 1,
+    borderTopColor: colors.border,
+    borderTopLeftRadius: constants.refTime.height,
+    borderTopWidth: 1,
+    height: constants.refTime.height,
+    width: 65,
   },
   refTimeContainer: {
     alignSelf: 'center',
@@ -64,9 +75,18 @@ const Styles = StyleSheet.create({
 
 const RefTime = (props: RefTimeProps) => (
   <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
-    <View style={Styles.leftHalf} />
+    <View style={Styles.leftHalf}>
+      <TouchableHighlight
+        onPress={() => { console.log('TODO-button') }}
+        style={Styles.leftContents}
+        underlayColor={colors.underlay}
+      >
+        <View>
+        </View>
+      </TouchableHighlight>
+    </View>
     <TouchableHighlight
-      onPress={() => { console.log('TODO') }}
+      onPress={() => { console.log('TODO-ref') }}
       style={Styles.rightHalf}
       underlayColor={colors.underlay}
     >
@@ -83,7 +103,7 @@ const RefTime = (props: RefTimeProps) => (
           </Text>
         </View>
         <Text style={Styles.subText}>
-          PM SAT FEB 9, 2019
+          PM SAT FEB 29, 2019
         </Text>
       </Fragment>
     </TouchableHighlight>

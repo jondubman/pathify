@@ -1,4 +1,5 @@
 // constants module
+
 import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 const getInset = (SafeAreaView as any).getInset;
 const safeAreaTop =  getInset('top');
@@ -15,7 +16,7 @@ export interface GeolocationModeChoice {
 export interface MapStyle {
   name: string;
   opacity: number;
-  url: string;
+  url: string; // Mapbox style
 }
 
 const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 digit abbreviation
@@ -181,10 +182,10 @@ const constants = {
     reorientationTime: 500, // msec
   },
   mapStyles: [
-    { name: 'None', url: '' },
-    { name: 'Default', url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
-    { name: 'Topo', url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
-    { name: 'Satellite', url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
+    { name: 'None', opacity: 1, url: '' },
+    { name: 'Default', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
+    { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
+    { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
   panelWidth,
   refTime: {
@@ -214,7 +215,7 @@ const constants = {
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     initialHeight: initialTimelineHeight,
-    refTimespanPadding: 100000, // msec
+    initialSpan: 1000 * 1000, // msec
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
