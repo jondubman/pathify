@@ -85,6 +85,15 @@ const colors = {
     icon: 'black',
     underlay: namedColors.yellow,
   },
+  refTime: {
+    background: withOpacity(namedColors.navy, 0.75),
+    border: withOpacity(namedColors.white, 0.5),
+    hoursMinutes: namedColors.white,
+    seconds: withOpacity(namedColors.gray, 1),
+    msec: withOpacity(namedColors.gray, 0.5),
+    subText: namedColors.gray,
+    underlay: withOpacity(namedColors.maroon, 0.5),
+  },
   settingsButton: {
     background: 'white',
     icon: 'black',
@@ -181,7 +190,7 @@ const constants = {
   refTime: {
     bottomMargin: 5,
     height: 44,
-    width: 125, // fits on iPhone SE
+    width: 120, // fits on iPhone SE
   },
   safeAreaBottom,
   safeAreaTop,
