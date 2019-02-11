@@ -57,6 +57,18 @@ const panelWidth = 252; // fits on iPhone SE
 const dec1ToHexFF = (dec: number) => Math.round(dec * 255).toString(16); // dec between 0 and 1; e.g. 0.8 => 'cc'
 const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
 
+const timeInterval = { // in msec
+  oneSecond: 1000,
+  oneMinute: 1000 * 60,
+  oneHour:   1000 * 60 * 60,
+  oneDay:    1000 * 60 * 60 * 24,
+
+  seconds: (n: number) => timeInterval.oneSecond * n,
+  minutes: (n: number) => timeInterval.oneMinute * n,
+  hours: (n: number) => timeInterval.oneHour * n,
+  days: (n: number) => timeInterval.oneDay * n,
+}
+
 const colors = {
   appBackground: colorThemes.background,
   appText: 'black',
@@ -133,6 +145,9 @@ const constants = {
     opacity: defaultOpacity,
     size: buttonSize,
   },
+  days: [
+    'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'
+  ],
   followMeButton: {
     bottomOffset: mapLogoHeight + safeAreaBottom,
     opacity: defaultOpacity,
@@ -187,12 +202,15 @@ const constants = {
     { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
+  months: [
+    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+  ],
   panelWidth,
   refTime: {
     bottomMargin: 5,
     height: 44,
     leftContentsWidth: 60,
-    width: 120,
+    width: 126,
   },
   safeAreaBottom,
   safeAreaTop,
@@ -216,7 +234,7 @@ const constants = {
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     initialHeight: initialTimelineHeight,
-    initialSpan: 1000 * 1000, // msec
+    initialSpan: timeInterval.days(366),
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,

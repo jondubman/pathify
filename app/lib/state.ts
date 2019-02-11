@@ -4,6 +4,7 @@ import { Feature } from "@turf/helpers";
 
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo'; // TODO update
+import { number } from "prop-types";
 
 export interface AppEvent {
   data: object;
@@ -29,16 +30,20 @@ export interface AppOptions {
   keepMapCenteredWhenFollowing: boolean;
   mapOpacity: number; // 0 to 1
   mapStyle: string;
+  refTime: number,
+  startupTime: number,
 }
 const initialAppOptions: AppOptions = {
   geolocationModeId: 0,
   keepMapCenteredWhenFollowing: true,
   mapOpacity: 0.5,
   mapStyle: constants.map.default.style,
+  refTime: Date.now(), // TODO
+  startupTime: Date.now(),
 }
 export interface AppOption {
   name: string;
-  value: any;
+  value: any; // could be an object
 }
 
 // Canonical interface for AppUIState included in AppState.
@@ -65,13 +70,11 @@ export interface AppState {
   loc?: LocationEvent;
   mapRegion: Feature | null;
   options: AppOptions;
-  refTime: number;
   ui: AppUIState;
 }
 
 export const initialAppState: AppState = {
   options: initialAppOptions,
   mapRegion: null,
-  refTime: Date.now(), // TODO
   ui: initialAppUIState,
 }

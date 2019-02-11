@@ -2,12 +2,6 @@ import {
   Dimensions,
 } from 'react-native';
 
-import {
-  // Action,
-  appAction,
-  newAction,
-} from 'lib/actions';
-
 import constants from 'lib/constants';
 
 interface LatLon {
@@ -60,6 +54,12 @@ const utils = {
 
   safeAreaHeight: () => {
     return utils.windowSize().height - (constants.safeAreaBottom + constants.safeAreaTop);
+  },
+
+  twoDigitString: (n: number) => {
+    if (!n) return '00';
+    if (n < 10) return '0' + n;
+    return n.toString();
   },
 
   windowSize: () => {

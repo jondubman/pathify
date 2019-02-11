@@ -4,10 +4,21 @@ import { dynamicTimelineHeight } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import RefTime from 'presenters/RefTime';
 import constants from 'lib/constants';
+import utils from 'lib/utils';
 
 interface RefTimeStateProps {
   bottom: number;
   refTime: number;
+  hours: string;
+  minutes: string;
+  seconds: string;
+  hundredths: string;
+  ampm: string,
+  day: string,
+  month: string,
+  dayOfMonth: string,
+  year: string,
+
 }
 
 interface RefTimeDispatchProps {
@@ -16,9 +27,32 @@ interface RefTimeDispatchProps {
 export type RefTimeProps = RefTimeStateProps & RefTimeDispatchProps;
 
 const mapStateToProps = (state: AppState): RefTimeStateProps => {
+  const { refTime } = state.options;
+  const d = new Date(refTime);
+  const { twoDigitString } = utils;
+  const hours24 = d.getHours(); // TODO 24-hour clock
+  const hours = (hours24 % 12) ? hours24 % 12 : '12'; // '12' for hours24 of 0 or 12
+  const minutes = twoDigitString(d.getMinutes());
+  const seconds = twoDigitString(d.getSeconds());
+  const hundredths = twoDigitString(d.getMilliseconds() / 10).substr(0, 2);
+  const ampm = (hours24 >= 12) ? 'PM' : 'AM';
+  const day = constants.days[d.getDay()];
+  const month = constants.months[d.getMonth()];
+  const dayOfMonth = d.getDate().toString();
+  const year = d.getFullYear().toString();
+
   return {
     bottom: dynamicTimelineHeight(state) + constants.refTime.bottomMargin,
-    refTime: state.refTime,
+    refTime,
+    hours,
+    minutes,
+    seconds,
+    hundredths,
+    ampm,
+    day,
+    month,
+    dayOfMonth,
+    year,
   }
 }
 

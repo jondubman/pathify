@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import {
+  DomainPropType,
   VictoryAxis,
   VictoryChart,
   VictoryLabel,
@@ -49,8 +50,9 @@ class Timeline extends Component<TimelinePanelProps> {
     this.handleZoom = this.handleZoom.bind(this);
   }
 
-  public handleZoom(domain: any, props: any) {
+  public handleZoom(domain: DomainPropType, props: any) {
     this.setState({ zoomDomain: domain }, () => {
+      this.props.zoomDomainChanged(domain);
       const timespans = (this as any)._timespans as any;
       if (timespans) {
         timespans.forceUpdate();
@@ -59,19 +61,19 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { refTime } = this.props;
+    const { refTime, startupTime } = this.props;
     const { initialSpan } = constants.timeline;
     const timespansData = [
       {
-        t1: refTime - 90000, // start
-        t2: refTime, // end
+        t1: startupTime - 90000, // start
+        t2: startupTime, // end
       },
       {
-        t1: refTime - 60000, // start
-        t2: refTime, // end
+        t1: startupTime - 60000, // start
+        t2: startupTime, // end
       },
     ]
-    const initialZoomDomain = {
+    const initialZoomDomain: DomainPropType = {
       x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
       y: [0, 10]
     }
@@ -82,7 +84,7 @@ class Timeline extends Component<TimelinePanelProps> {
       tickLabels: { fontSize: constants.timeline.tickLabelFontSize, padding: 0, stroke: constants.colors.timeline.axis },
     }
     const axisLabelStyle = {
-      fontFamily: 'Verdana', //
+      fontFamily: 'Verdana', // Futura at this scale is hard to read on the axis
       fontSize: 10,
       letterSpacing: 'normal',
       padding: 0,
@@ -96,11 +98,11 @@ class Timeline extends Component<TimelinePanelProps> {
               minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"
-              zoomDomain={this.state.zoomDomain as any}
+              zoomDomain={this.state.zoomDomain}
               onZoomDomainChange={this.handleZoom}
             /> as any
           }
-          domain={initialZoomDomain as any}
+          domain={initialZoomDomain}
           height={constants.timeline.initialHeight}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >

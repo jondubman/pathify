@@ -57,6 +57,7 @@ const sagas = {
     yield takeEvery(appAction.TOGGLE_PANEL_VISIBILITY, sagas.togglePanelVisiblity);
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
+    yield takeEvery(appAction.TIMELINE_ZOOMED, sagas.timelineZoomed);
   },
 
   // This has the side effect of panning the map component imperatively.
@@ -211,6 +212,14 @@ const sagas = {
     log.trace('saga backgroundTapped');
     yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
     yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
+  },
+
+  timelineZoomed: function* (action: Action) {
+    const newZoom = action.params as any;
+    const x = newZoom.x as number[];
+    const refTime = (x[0] + x[1]) / 2;
+    yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
+    log.trace('saga timelineZoomed', refTime);
   },
 }
 

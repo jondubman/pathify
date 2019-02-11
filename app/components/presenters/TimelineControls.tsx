@@ -29,10 +29,10 @@ const Styles = StyleSheet.create({
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
     <RefTimeContainer />
-    <View style={[Styles.topLine, { bottom: props.timelineHeight }]} />
-    <View style={[Styles.topLine, { bottom: props.timelineHeight + 2 * constants.timeline.topLineHeight }]} />
-    <View style={[Styles.topLine, { bottom: props.timelineHeight + 4 * constants.timeline.topLineHeight }]} />
-    <View style={[Styles.centerLine, {
+    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
+    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * constants.timeline.topLineHeight }]} />
+    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * constants.timeline.topLineHeight }]} />
+    <View pointerEvents="none" style={[Styles.centerLine, {
       height: props.timelineHeight
               + constants.refTime.height
               + constants.refTime.bottomMargin

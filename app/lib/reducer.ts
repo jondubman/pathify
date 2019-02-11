@@ -63,7 +63,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.SET_APP_OPTION:
+    case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
         const { name, value } = params as AppOption;
         newState.options = {

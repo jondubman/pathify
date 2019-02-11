@@ -43,7 +43,7 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
   },
   refTimeText: {
-    fontFamily: 'futura',
+    fontFamily: 'Futura',
     fontSize: 15,
   },
   rightHalf: {
@@ -54,14 +54,14 @@ const Styles = StyleSheet.create({
     borderTopRightRadius: height,
     borderTopWidth: 1,
     height,
-    paddingLeft: 3,
+    paddingLeft: 5,
     paddingTop: 5,
     width,
   },
   subText: {
     color: colors.subText,
-    fontFamily: 'futura',
-    fontSize: 11,
+    fontFamily: 'Futura',
+    fontSize: 10,
   },
   hoursMinutes: {
     color: colors.hoursMinutes,
@@ -94,17 +94,17 @@ const RefTime = (props: RefTimeProps) => (
       <Fragment>
         <View style={Styles.refTimeFull}>
           <Text style={[Styles.refTimeText, Styles.hoursMinutes]}>
-            10:23
+            {props.hours}:{props.minutes}
           </Text>
           <Text style={[Styles.refTimeText, Styles.seconds]}>
-            :45
+            :{props.seconds}
           </Text>
           <Text style={[Styles.refTimeText, Styles.msec]}>
-            :67
+            :{props.hundredths}
           </Text>
         </View>
         <Text style={Styles.subText}>
-          PM SAT FEB 29, 2019
+          {props.ampm} {props.day} {props.month} {props.dayOfMonth}, {props.year}
         </Text>
       </Fragment>
     </TouchableHighlight>
