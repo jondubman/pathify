@@ -16,8 +16,6 @@ import {
   VictoryZoomContainer,
 } from 'victory-native';
 
-// import constants from 'lib/constants';
-
 import constants from 'lib/constants';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import Timespans from 'presenters/Timespans';

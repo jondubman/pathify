@@ -13,30 +13,31 @@ import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
 
 const colors = constants.colors.refTime;
+const { height, leftContentsWidth, width } = constants.refTime;
 
 const Styles = StyleSheet.create({
   leftHalf: {
     backgroundColor: 'transparent', // nothing left of the centerline, for now
     flexDirection: 'row-reverse',
-    width: constants.refTime.width,
+    width,
   },
   leftContents: {
     backgroundColor: colors.background,
     borderLeftColor: colors.border,
     borderLeftWidth: 1,
     borderTopColor: colors.border,
-    borderTopLeftRadius: constants.refTime.height,
+    borderTopLeftRadius: height,
     borderTopWidth: 1,
-    height: constants.refTime.height,
-    width: 65,
+    height,
+    width: leftContentsWidth,
   },
   refTimeContainer: {
     alignSelf: 'center',
-    height: constants.refTime.height,
+    height,
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
-    width: constants.refTime.width * 2,
+    width: width * 2,
   },
   refTimeFull: {
     flexDirection: 'row',
@@ -50,12 +51,12 @@ const Styles = StyleSheet.create({
     borderRightColor: colors.border,
     borderRightWidth: 1,
     borderTopColor: colors.border,
-    borderTopRightRadius: constants.refTime.height,
+    borderTopRightRadius: height,
     borderTopWidth: 1,
-    height: constants.refTime.height,
+    height,
     paddingLeft: 3,
     paddingTop: 5,
-    width: constants.refTime.width,
+    width,
   },
   subText: {
     color: colors.subText,

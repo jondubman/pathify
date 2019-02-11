@@ -191,7 +191,8 @@ const constants = {
   refTime: {
     bottomMargin: 5,
     height: 44,
-    width: 120, // fits on iPhone SE
+    leftContentsWidth: 60,
+    width: 120,
   },
   safeAreaBottom,
   safeAreaTop,
