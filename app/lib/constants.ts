@@ -234,7 +234,7 @@ const constants = {
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     initialHeight: initialTimelineHeight,
-    initialSpan: timeInterval.days(366),
+    initialSpan: timeInterval.days(1),
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,

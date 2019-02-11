@@ -18,6 +18,7 @@ import {
 } from 'victory-native';
 
 import constants from 'lib/constants';
+import log from 'lib/log';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import Timespans from 'presenters/Timespans';
 
@@ -43,7 +44,7 @@ const TimelineStyles = StyleSheet.create({
 class Timeline extends Component<TimelinePanelProps> {
 
   public readonly state: State = initialState;
-  public renderCount: number = 0;
+  // public renderCount: number = 0;
 
   constructor(props: any) {
     super(props);
@@ -73,8 +74,9 @@ class Timeline extends Component<TimelinePanelProps> {
         t2: startupTime, // end
       },
     ]
+    log.trace('timespansData', timespansData);
     const initialZoomDomain: DomainPropType = {
-      x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
+      x: [startupTime - initialSpan / 2, startupTime + initialSpan / 2],
       y: [0, 10]
     }
     const axisStyle = {
@@ -84,11 +86,12 @@ class Timeline extends Component<TimelinePanelProps> {
       tickLabels: { fontSize: constants.timeline.tickLabelFontSize, padding: 0, stroke: constants.colors.timeline.axis },
     }
     const axisLabelStyle = {
-      fontFamily: 'Verdana', // Futura at this scale is hard to read on the axis
+      fontFamily: 'Futura',
       fontSize: 10,
       letterSpacing: 'normal',
       padding: 0,
-      stroke: constants.colors.timeline.axisLabels,
+      fill: constants.colors.timeline.axisLabels,
+      style: { strokeWidth: 0 },
     }
     return (
       <View style={TimelineStyles.timeline}>

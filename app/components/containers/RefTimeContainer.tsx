@@ -31,7 +31,7 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   const d = new Date(refTime);
   const { twoDigitString } = utils;
   const hours24 = d.getHours(); // TODO 24-hour clock
-  const hours = (hours24 % 12) ? hours24 % 12 : '12'; // '12' for hours24 of 0 or 12
+  const hours = (hours24 % 12) ? (hours24 % 12).toString() : '12'; // '12' for hours24 of 0 or 12
   const minutes = twoDigitString(d.getMinutes());
   const seconds = twoDigitString(d.getSeconds());
   const hundredths = twoDigitString(d.getMilliseconds() / 10).substr(0, 2);
