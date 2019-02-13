@@ -9,6 +9,7 @@ import {
   Text,
 } from 'react-native';
 
+import ClockContainer from 'containers/ClockContainer';
 import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
 
@@ -83,6 +84,7 @@ const RefTime = (props: RefTimeProps) => (
         underlayColor={colors.underlay}
       >
         <View>
+            <ClockContainer />
         </View>
       </TouchableHighlight>
     </View>

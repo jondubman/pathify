@@ -54,7 +54,11 @@ const mapLogoHeight = 34; // mapbox logo
 const initialTimelineHeight = 100; // thinking 150 max
 const panelWidth = 252; // fits on iPhone SE
 
-const dec1ToHexFF = (dec: number) => Math.round(dec * 255).toString(16); // dec between 0 and 1; e.g. 0.8 => 'cc'
+// helper: pad with zeros as needed
+const zeroPrefix = (s: string) => (s.length ? (s.length == 1 ? '0' + s : s) : '00')
+// helper: dec should be between 0 and 1; e.g. 0.8 => 'cc'
+const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(16));
+
 const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
 
 const timeInterval = { // in msec
@@ -73,6 +77,15 @@ const colors = {
   appBackground: colorThemes.background,
   appText: 'black',
   byName: namedColors, // all of them
+  clock: {
+    background: withOpacity(namedColors.azure, 0.2),
+    border: withOpacity(namedColors.white, 0.5),
+    centerCircle: withOpacity(namedColors.white, 0.5),
+    hourHand: withOpacity(namedColors.blue, 0.5),
+    minuteHand: withOpacity(namedColors.white, 0.5),
+    secondHand: withOpacity(namedColors.white, 0.5),
+    underlay: withOpacity(namedColors.purple, 0.5),
+  },
   compassButton: {
     background: 'white',
     icon: 'black',
@@ -136,6 +149,31 @@ const constants = {
   appName: 'Pathify',
   buttonOffset,
   buttonSize,
+  clock: {
+    borderWidth: 1,
+    centerCircle: {
+      color: withOpacity(colors.byName.red, 1),
+      radius: 2,
+    },
+    height: 44,
+    hourHand: {
+      color: withOpacity(colors.byName.white, 0.6),
+      endRadius: 1,
+      lengthRatio: 0.65,
+      thickness: 3,
+    },
+    minuteHand: {
+      color: withOpacity(colors.byName.white, 0.6),
+      lengthRatio: 1,
+      thickness: 2,
+    },
+    secondHand: {
+      color: withOpacity(colors.byName.red, 1),
+      lengthRatio: 1,
+      thickness: 1,
+    },
+    margin: 2,
+  },
   colors,
   colorThemes,
   compassButton: {
