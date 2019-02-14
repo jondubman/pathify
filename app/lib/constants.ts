@@ -53,6 +53,8 @@ const defaultOpacity = 0.65;
 const mapLogoHeight = 34; // mapbox logo
 const initialTimelineHeight = 100; // thinking 150 max
 const panelWidth = 252; // fits on iPhone SE
+const clockHeight = 68;
+const clockMargin = 4;
 
 // helper: pad with zeros as needed
 const zeroPrefix = (s: string) => (s.length ? (s.length == 1 ? '0' + s : s) : '00')
@@ -78,12 +80,8 @@ const colors = {
   appText: 'black',
   byName: namedColors, // all of them
   clock: {
-    background: withOpacity(namedColors.azure, 0.2),
-    border: withOpacity(namedColors.blue, 0.5),
-    centerCircle: withOpacity(namedColors.white, 0.5),
-    hourHand: withOpacity(namedColors.blue, 0.5),
-    minuteHand: withOpacity(namedColors.white, 0.5),
-    secondHand: withOpacity(namedColors.white, 0.5),
+    background: withOpacity(namedColors.black, 0.5),
+    border: withOpacity(namedColors.azure, 0.5),
     underlay: withOpacity(namedColors.purple, 0.5),
   },
   compassButton: {
@@ -113,11 +111,11 @@ const colors = {
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
-    border: withOpacity(namedColors.white, 0.5),
+    border: withOpacity(namedColors.white, 0.5), // TODO
     hoursMinutes: namedColors.white,
-    seconds: withOpacity(namedColors.gray, 1),
-    msec: withOpacity(namedColors.gray, 0.5),
-    subText: namedColors.gray,
+    seconds: withOpacity(namedColors.white, 0.75),
+    msec: withOpacity(namedColors.white, 0.5),
+    subText: withOpacity(namedColors.white, 0.75),
     underlay: withOpacity(namedColors.maroon, 0.5),
   },
   settingsButton: {
@@ -150,20 +148,23 @@ const constants = {
   buttonOffset,
   buttonSize,
   clock: {
-    borderWidth: 1,
+    border: {
+      width: 1,
+      color: withOpacity(colors.byName.azure, 1),
+    },
     centerCircle: {
       color: withOpacity(colors.byName.red, 1),
       radius: 3,
     },
-    height: 44,
-    margin: 2,
+    height: clockHeight,
+    margin: clockMargin,
     hourHand: {
-      color: withOpacity(colors.byName.white, 0.8),
+      color: withOpacity(colors.byName.white, 1),
       lengthRatio: 0.6,
       thickness: 3,
     },
     minuteHand: {
-      color: withOpacity(colors.byName.white, 0.8),
+      color: withOpacity(colors.byName.white, 1),
       lengthRatio: 1,
       thickness: 2,
     },
@@ -175,12 +176,14 @@ const constants = {
     ticks: {
       count: 60,
       major: {
-        color: withOpacity(colors.byName.blue, 1),
-        length: 4,
+        color: withOpacity(colors.byName.white, 0.65),
+        length: 10,
+        width: 1,
       },
       minor: {
         color: withOpacity(colors.byName.blue, 1),
-        length: 2,
+        length: 5,
+        width: 1,
       },
     },
   },
@@ -256,7 +259,7 @@ const constants = {
   panelWidth,
   refTime: {
     bottomMargin: 5,
-    height: 44,
+    height: clockHeight + clockMargin,
     leftContentsWidth: 60,
     width: 126,
   },

@@ -10,7 +10,7 @@ import {
 import constants from 'lib/constants';
 const colors = constants.colors.clock;
 const {
-  borderWidth,
+  border,
   centerCircle,
   height,
   margin,
@@ -22,24 +22,25 @@ const {
 
 import { ClockProps } from 'containers/ClockContainer';
 
+const degreesPerHour = 360 / 12;
+const degreesPerMinuteOrSecond = 360 / 60;
+
 // derived quantities
-const diameter = height - margin * 2;
+const borderWidth = border.width;
+const diameter = height;
 const radius = diameter / 2;
 const hourHandLength = (radius - borderWidth) * hourHand.lengthRatio;
 const minuteOrSecondHandLength = (radius - borderWidth) * minuteHand.lengthRatio;
-
-const degreesPerHour = 360 / 12;
-const degreesPerMinuteOrSecond = 360 / 60;
 
 const Styles = StyleSheet.create({
   clock: {
     alignSelf: 'flex-end',
     backgroundColor: colors.background,
-    borderColor: colors.border,
+    borderColor: border.color,
     borderWidth,
     borderRadius: radius,
     justifyContent: 'flex-end',
-    marginTop: margin,
+    marginBottom: margin,
     marginRight: margin,
     height: diameter,
     width: diameter,
@@ -50,10 +51,10 @@ const Styles = StyleSheet.create({
     bottom: radius - borderWidth,
     right: radius - borderWidth - hourHand.thickness / 2,
     paddingHorizontal: hourHand.thickness / 2,
-    paddingTop: (radius - borderWidth) * hourHand.lengthRatio,
+    paddingTop: (radius - borderWidth) * hourHand.lengthRatio + hourHand.thickness / 2,
     borderRadius: hourHand.thickness / 2,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    // borderBottomLeftRadius: 0,
+    // borderBottomRightRadius: 0,
   },
   minuteHand: {
     position: 'absolute',
@@ -63,8 +64,8 @@ const Styles = StyleSheet.create({
     paddingHorizontal: minuteHand.thickness / 2,
     paddingTop: (radius - borderWidth) * minuteHand.lengthRatio,
     borderRadius: minuteHand.thickness / 2,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    // borderBottomLeftRadius: 0,
+    // borderBottomRightRadius: 0,
   },
   secondHand: {
     position: 'absolute',
@@ -80,7 +81,7 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: centerCircle.color,
     height: centerCircle.radius,
-    bottom: radius - margin - borderWidth + 1,
+    bottom: radius - borderWidth,
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
   },
@@ -89,16 +90,16 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: ticks.major.color,
     bottom: radius - borderWidth + (radius - ticks.major.length),
-    height: ticks.major.length,
-    width: 1,
+    height: ticks.major.length - borderWidth,
+    width: ticks.major.width,
   },
   minorTick: {
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: ticks.minor.color,
     bottom: radius - borderWidth + (radius - ticks.minor.length),
-    height: ticks.minor.length,
-    width: 1,
+    height: ticks.minor.length - borderWidth,
+    width: ticks.minor.width,
   },
 })
 
@@ -130,7 +131,7 @@ const ClockTicks = () => {
     const isMajor = !(i % 5);
     const length = isMajor ? ticks.major.length : ticks.minor.length;
     const degrees = i * (360 / ticks.count);
-    const translate = radius + margin / 2 - length + (length - 2) / 2; // TODO explain this formula!
+    const translate = radius - length / 2;
     const styles = [
       isMajor ? Styles.majorTick : Styles.minorTick,
       {
