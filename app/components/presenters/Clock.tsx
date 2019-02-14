@@ -52,6 +52,8 @@ const Styles = StyleSheet.create({
     paddingHorizontal: hourHand.thickness / 2,
     paddingTop: (radius - borderWidth) * hourHand.lengthRatio,
     borderRadius: hourHand.thickness / 2,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   minuteHand: {
     position: 'absolute',
@@ -61,6 +63,8 @@ const Styles = StyleSheet.create({
     paddingHorizontal: minuteHand.thickness / 2,
     paddingTop: (radius - borderWidth) * minuteHand.lengthRatio,
     borderRadius: minuteHand.thickness / 2,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   secondHand: {
     position: 'absolute',
@@ -84,7 +88,7 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: ticks.major.color,
-    bottom: radius + (radius - ticks.major.length) - borderWidth,
+    bottom: radius - borderWidth + (radius - ticks.major.length),
     height: ticks.major.length,
     width: 1,
   },
@@ -92,7 +96,7 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: ticks.minor.color,
-    bottom: radius + (radius - ticks.minor.length) - borderWidth,
+    bottom: radius - borderWidth + (radius - ticks.minor.length),
     height: ticks.minor.length,
     width: 1,
   },
@@ -126,7 +130,7 @@ const ClockTicks = () => {
     const isMajor = !(i % 5);
     const length = isMajor ? ticks.major.length : ticks.minor.length;
     const degrees = i * (360 / ticks.count);
-    const translate = radius + borderWidth - length + (length - 2) / 2; // TODO explain this formula!
+    const translate = radius + margin / 2 - length + (length - 2) / 2; // TODO explain this formula!
     const styles = [
       isMajor ? Styles.majorTick : Styles.minorTick,
       {
@@ -153,11 +157,11 @@ const Clock = (props: ClockProps) => (
     underlayColor={colors.underlay}
   >
     <View>
+      <ClockTicks />
       <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
       <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes)]} />
       <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds)]} />
       <View style={Styles.centerCircle} />
-      <ClockTicks />
     </View>
   </TouchableHighlight>
 )

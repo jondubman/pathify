@@ -79,7 +79,7 @@ const colors = {
   byName: namedColors, // all of them
   clock: {
     background: withOpacity(namedColors.azure, 0.2),
-    border: withOpacity(namedColors.blue, 1),
+    border: withOpacity(namedColors.blue, 0.5),
     centerCircle: withOpacity(namedColors.white, 0.5),
     hourHand: withOpacity(namedColors.blue, 0.5),
     minuteHand: withOpacity(namedColors.white, 0.5),
@@ -158,7 +158,7 @@ const constants = {
     height: 44,
     margin: 2,
     hourHand: {
-      color: withOpacity(colors.byName.white, 0.9),
+      color: withOpacity(colors.byName.white, 0.8),
       lengthRatio: 0.6,
       thickness: 3,
     },
@@ -238,7 +238,7 @@ const constants = {
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,
-      style: 'None', // None, Default, etc. See mapStyles.
+      style: 'Satellite', // None, Default, etc. See mapStyles.
       zoom: 14,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
