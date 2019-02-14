@@ -153,7 +153,7 @@ const constants = {
     borderWidth: 1,
     centerCircle: {
       color: withOpacity(colors.byName.red, 1),
-      radius: 2,
+      radius: 3,
     },
     height: 44,
     margin: 2,

@@ -47,7 +47,7 @@ const Styles = StyleSheet.create({
   hourHand: {
     position: 'absolute',
     backgroundColor: hourHand.color,
-    bottom: radius - margin - borderWidth,
+    bottom: radius - borderWidth,
     right: radius - borderWidth - hourHand.thickness / 2,
     paddingHorizontal: hourHand.thickness / 2,
     paddingTop: (radius - borderWidth) * hourHand.lengthRatio,
@@ -58,7 +58,7 @@ const Styles = StyleSheet.create({
   minuteHand: {
     position: 'absolute',
     backgroundColor: minuteHand.color,
-    bottom: radius - margin - borderWidth,
+    bottom: radius - borderWidth,
     right: radius - borderWidth - minuteHand.thickness / 2,
     paddingHorizontal: minuteHand.thickness / 2,
     paddingTop: (radius - borderWidth) * minuteHand.lengthRatio,
@@ -69,7 +69,7 @@ const Styles = StyleSheet.create({
   secondHand: {
     position: 'absolute',
     backgroundColor: secondHand.color,
-    bottom: radius - margin - borderWidth,
+    bottom: radius - borderWidth,
     right: radius - borderWidth - secondHand.thickness / 2,
     paddingHorizontal: secondHand.thickness / 2,
     paddingTop: (radius - borderWidth) * secondHand.lengthRatio,
@@ -80,7 +80,7 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: centerCircle.color,
     height: centerCircle.radius,
-    bottom: radius - margin - borderWidth,
+    bottom: radius - margin - borderWidth + 1,
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
   },
