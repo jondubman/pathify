@@ -102,7 +102,7 @@ const RefTime = (props: RefTimeProps) => (
             :{props.seconds}
           </Text>
           <Text style={[Styles.refTimeText, Styles.msec]}>
-            :{props.hundredths}
+            .{props.hundredths}
           </Text>
         </View>
         <Text style={Styles.subText}>

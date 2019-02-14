@@ -52,7 +52,7 @@ export interface AppOption {
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
-    helpEnabled: false,
+    helpEnabled: true,
     mapFullScreen: false, // is the map occupying the full screen, with timeline hidden?
     mapMoving: false, // is the map currently moving?
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)

@@ -17,6 +17,7 @@ const {
   hourHand,
   minuteHand,
   secondHand,
+  ticks,
 } = constants.clock;
 
 import { ClockProps } from 'containers/ClockContainer';
@@ -24,12 +25,11 @@ import { ClockProps } from 'containers/ClockContainer';
 // derived quantities
 const diameter = height - margin * 2;
 const radius = diameter / 2;
-const hourHandLength = (radius - margin) * hourHand.lengthRatio;
-const minuteHandLength = (radius - margin) * minuteHand.lengthRatio;
+const hourHandLength = (radius - borderWidth) * hourHand.lengthRatio;
+const minuteOrSecondHandLength = (radius - borderWidth) * minuteHand.lengthRatio;
 
 const degreesPerHour = 360 / 12;
-const degreesPerMinute = 360 / 60;
-const degreesPerSecond = degreesPerMinute;
+const degreesPerMinuteOrSecond = 360 / 60;
 
 const Styles = StyleSheet.create({
   clock: {
@@ -47,28 +47,28 @@ const Styles = StyleSheet.create({
   hourHand: {
     position: 'absolute',
     backgroundColor: hourHand.color,
-    bottom: radius - margin,
-    right: radius - margin + borderWidth - hourHand.thickness / 2,
+    bottom: radius - margin - borderWidth,
+    right: radius - borderWidth - hourHand.thickness / 2,
     paddingHorizontal: hourHand.thickness / 2,
-    paddingTop: radius * hourHand.lengthRatio,
+    paddingTop: (radius - borderWidth) * hourHand.lengthRatio,
     borderRadius: hourHand.thickness / 2,
   },
   minuteHand: {
     position: 'absolute',
     backgroundColor: minuteHand.color,
-    bottom: radius - margin,
-    right: radius - margin + borderWidth - minuteHand.thickness / 2,
+    bottom: radius - margin - borderWidth,
+    right: radius - borderWidth - minuteHand.thickness / 2,
     paddingHorizontal: minuteHand.thickness / 2,
-    paddingTop: radius * minuteHand.lengthRatio,
+    paddingTop: (radius - borderWidth) * minuteHand.lengthRatio,
     borderRadius: minuteHand.thickness / 2,
   },
   secondHand: {
     position: 'absolute',
     backgroundColor: secondHand.color,
-    bottom: radius - margin,
-    right: radius - margin + borderWidth - secondHand.thickness / 2,
+    bottom: radius - margin - borderWidth,
+    right: radius - borderWidth - secondHand.thickness / 2,
     paddingHorizontal: secondHand.thickness / 2,
-    paddingTop: radius * secondHand.lengthRatio,
+    paddingTop: (radius - borderWidth) * secondHand.lengthRatio,
     borderRadius: secondHand.thickness / 2,
   },
   centerCircle: {
@@ -76,9 +76,25 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: centerCircle.color,
     height: centerCircle.radius,
-    bottom: radius - margin,
+    bottom: radius - margin - borderWidth,
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
+  },
+  majorTick: {
+    position: 'absolute',
+    alignSelf: 'center',
+    backgroundColor: ticks.major.color,
+    bottom: radius + (radius - ticks.major.length) - borderWidth,
+    height: ticks.major.length,
+    width: 1,
+  },
+  minorTick: {
+    position: 'absolute',
+    alignSelf: 'center',
+    backgroundColor: ticks.minor.color,
+    bottom: radius + (radius - ticks.minor.length) - borderWidth,
+    height: ticks.minor.length,
+    width: 1,
   },
 })
 
@@ -93,20 +109,42 @@ const hourHandRotation = (hours: number, minutes: number) => ({
   ]
 })
 
-const minutesDeg = (minutes: number) => (
-  minutes * degreesPerMinute
+const minutesOrSecondsDegrees = (minutesOrSeconds: number) => (
+  minutesOrSeconds * degreesPerMinuteOrSecond
 )
-const minuteHandRotation = (minutes: number) => ({
+const minuteOrSecondHandRotation = (minutesOrSeconds: number) => ({
   transform: [
-    { translateY: minuteHandLength / 2 },
-    { rotate: `${minutesDeg(minutes)}deg` },
-    { translateY: -(minuteHandLength / 2) },
+    { translateY: minuteOrSecondHandLength / 2 },
+    { rotate: `${minutesOrSecondsDegrees(minutesOrSeconds)}deg` },
+    { translateY: -(minuteOrSecondHandLength / 2) },
   ]
 })
 
-const secondsDeg = (seconds: number) => (
-  seconds * degreesPerSecond
-)
+const ClockTicks = () => {
+  const clockTicks = [] as any;
+  for (let i = 0; i < ticks.count; i++) {
+    const isMajor = !(i % 5);
+    const length = isMajor ? ticks.major.length : ticks.minor.length;
+    const degrees = i * (360 / ticks.count);
+    const translate = radius + borderWidth - length + (length - 2) / 2; // TODO explain this formula!
+    const styles = [
+      isMajor ? Styles.majorTick : Styles.minorTick,
+      {
+        transform: [
+          { translateY: translate },
+          { rotate: `${degrees}deg` },
+          { translateY: -translate },
+        ]
+      }
+    ]
+    clockTicks.push(<View style={styles} />);
+  }
+  return (
+    <View>
+      {clockTicks}
+    </View>
+  )
+}
 
 const Clock = (props: ClockProps) => (
   <TouchableHighlight
@@ -115,10 +153,11 @@ const Clock = (props: ClockProps) => (
     underlayColor={colors.underlay}
   >
     <View>
-      <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)] } />
-      <View style={[Styles.minuteHand, minuteHandRotation(props.minutes)] } />
-      <View style={[Styles.secondHand, minuteHandRotation(props.seconds)]} />
+      <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
+      <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes)]} />
+      <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds)]} />
       <View style={Styles.centerCircle} />
+      <ClockTicks />
     </View>
   </TouchableHighlight>
 )
