@@ -36,6 +36,33 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
+    case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
+      {
+        const { name, value } = params as AppOption;
+        newState.options = {
+          ...state.options,
+          [name]: value,
+        }
+      }
+      break;
+
+    case reducerAction.SET_PANEL_VISIBILITY:
+      {
+        const panelName = params.name as string;
+        const open = params.open as boolean;
+        newState.ui = { ...state.ui };
+        newState.ui.panels = { ...state.ui.panels };
+        newState.ui.panels[panelName].open = open;
+      }
+      break;
+
+    case reducerAction.SET_TIMER_TICK_INTERVAL:
+      {
+        const interval = params as number;
+        newState.timerTickInterval = interval;
+      }
+      break;
+
     case reducerAction.UI_FLAG_DISABLE:
       {
         const flagName = params as string;
@@ -60,26 +87,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         newState.ui = { ...state.ui };
         newState.ui.flags = { ...state.ui.flags };
         newState.ui.flags[flagName] = !state.ui.flags[flagName];
-      }
-      break;
-
-    case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
-      {
-        const { name, value } = params as AppOption;
-        newState.options = {
-          ...state.options,
-          [name]: value,
-        }
-      }
-      break;
-
-    case reducerAction.SET_PANEL_VISIBILITY:
-      {
-        const panelName = params.name as string;
-        const open = params.open as boolean;
-        newState.ui = { ...state.ui };
-        newState.ui.panels = { ...state.ui.panels };
-        newState.ui.panels[panelName].open = open;
       }
       break;
 

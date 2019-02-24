@@ -241,7 +241,7 @@ const constants = {
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,
-      style: 'Satellite', // None, Default, etc. See mapStyles.
+      style: 'Default', // e.g. None, Default, Topo, Satellite. See mapStyles name
       zoom: 14,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
@@ -285,7 +285,7 @@ const constants = {
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     initialHeight: initialTimelineHeight,
-    initialSpan: timeInterval.days(1),
+    initialSpan: timeInterval.minutes(1),
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,

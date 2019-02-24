@@ -9,6 +9,7 @@ import Timeline from 'presenters/Timeline';
 export interface TimelineStateProps {
   refTime: number;
   startupTime: number;
+  timelineNow: boolean;
 }
 
 export interface TimelineDispatchProps {
@@ -21,6 +22,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   return {
     refTime: state.options.refTime,
     startupTime: state.options.startupTime,
+    timelineNow: state.ui.flags.timelineNow,
   }
 }
 

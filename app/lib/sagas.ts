@@ -42,6 +42,7 @@ import {
 import { MapUtils } from 'components/MapArea';
 import { Feature } from '@turf/helpers';
 import constants from './constants';
+import { Numeric } from 'd3';
 
 const sagas = {
   root: function* () {
@@ -58,6 +59,7 @@ const sagas = {
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
     yield takeEvery(appAction.TIMELINE_ZOOMED, sagas.timelineZoomed);
+    yield takeEvery(appAction.TIMER_TICK, sagas.timerTick);
   },
 
   // This has the side effect of panning the map component imperatively.
@@ -223,6 +225,15 @@ const sagas = {
     const refTime = (x[0] + x[1]) / 2;
     yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
     log.trace('saga timelineZoomed', refTime);
+  },
+
+  timerTick: function* (action: Action) {
+    const now = action.params as number;
+    // log.trace('timerTick', now);
+    const timelineNow = yield select((state: AppState) => state.ui.flags.timelineNow);
+    if (timelineNow) {
+      yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: now }));
+    }
   },
 }
 

@@ -2,7 +2,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-// import { appAction, newAction } from 'lib/actions';
+import { newAction, reducerAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
 
@@ -31,7 +31,8 @@ const mapStateToProps = (state: AppState): ClockStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): ClockDispatchProps => {
   const onPress = () => {
-    log.debug('clock press');
+    log.debug('clock press'); // TODO for now, pressing the clock toggles timelineNow mode
+    dispatch(newAction(reducerAction.UI_FLAG_TOGGLE, 'timelineNow'));
   }
   const dispatchers = {
     onPress,

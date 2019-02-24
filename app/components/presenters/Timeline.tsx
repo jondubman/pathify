@@ -54,10 +54,6 @@ class Timeline extends Component<TimelinePanelProps> {
   public handleZoom(domain: DomainPropType, props: any) {
     this.setState({ zoomDomain: domain }, () => {
       this.props.zoomDomainChanged(domain);
-      const timespans = (this as any)._timespans as any;
-      if (timespans) {
-        timespans.forceUpdate();
-      }
     })
   }
 
@@ -65,25 +61,29 @@ class Timeline extends Component<TimelinePanelProps> {
     const { refTime, startupTime } = this.props;
     const { initialSpan } = constants.timeline;
     const timespansData = [
-      {
-        t1: startupTime - 90000, // start
-        t2: startupTime, // end
+      { // bottom line: fixed startupTime to dynamic refTime
+        t1: startupTime, // start
+        t2: refTime, // end
       },
-      {
+      { // top line: the minute before startup
         t1: startupTime - 60000, // start
         t2: startupTime, // end
       },
     ]
     log.trace('timespansData', timespansData);
     const initialZoomDomain: DomainPropType = {
-      x: [startupTime - initialSpan / 2, startupTime + initialSpan / 2],
+      x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
       y: [0, 10]
     }
     const axisStyle = {
       axis: { stroke: constants.colors.timeline.axis },
       grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
       // ticks: { stroke: 'gray', size: 5 }, // appears below axis, not needed
-      tickLabels: { fontSize: constants.timeline.tickLabelFontSize, padding: 0, stroke: constants.colors.timeline.axis },
+      tickLabels: {
+        fontSize: constants.timeline.tickLabelFontSize,
+        padding: 0,
+        stroke: constants.colors.timeline.axis
+      },
     }
     const axisLabelStyle = {
       fontFamily: 'Futura',
@@ -98,6 +98,8 @@ class Timeline extends Component<TimelinePanelProps> {
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
+              allowPan={true}
+              allowZoom={true}
               minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"
