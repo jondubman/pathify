@@ -9,7 +9,6 @@ import {
   Text,
 } from 'react-native';
 
-import ClockContainer from 'containers/ClockContainer';
 import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
 import log from 'lib/log';
@@ -24,12 +23,6 @@ const Styles = StyleSheet.create({
     width,
   },
   leftContents: {
-    // backgroundColor: colors.background,
-    // borderLeftColor: colors.border,
-    // borderLeftWidth: 1,
-    // borderTopColor: colors.border,
-    // borderTopLeftRadius: height,
-    // borderTopWidth: 1,
     height,
     justifyContent: 'flex-end',
     width: leftContentsWidth,
@@ -50,12 +43,6 @@ const Styles = StyleSheet.create({
     fontSize: 15,
   },
   rightHalf: {
-    // backgroundColor: colors.background,
-    // borderRightColor: colors.border,
-    // borderRightWidth: 1,
-    // borderTopColor: colors.border,
-    // borderTopRightRadius: height,
-    // borderTopWidth: 1,
     height,
     justifyContent: 'flex-end',
     paddingLeft: 5,
@@ -87,7 +74,6 @@ const RefTime = (props: RefTimeProps) => (
         underlayColor={colors.underlay}
       >
         <View>
-            <ClockContainer />
         </View>
       </TouchableHighlight>
     </View>

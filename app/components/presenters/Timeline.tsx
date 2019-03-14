@@ -60,7 +60,7 @@ class Timeline extends Component<TimelinePanelProps> {
   public render() {
     const { refTime, startupTime } = this.props;
     const { initialSpan } = constants.timeline;
-    const timespansData = [
+    const timespansData = [ // TODO
       { // bottom line: fixed startupTime to dynamic refTime
         t1: startupTime, // start
         t2: refTime, // end

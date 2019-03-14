@@ -53,7 +53,7 @@ const defaultOpacity = 0.65;
 const mapLogoHeight = 34; // mapbox logo
 const initialTimelineHeight = 100; // thinking 150 max
 const panelWidth = 252; // fits on iPhone SE
-const clockHeight = 68;
+const clockHeight = 70;
 const clockMargin = 4;
 
 // helper: pad with zeros as needed
@@ -156,7 +156,7 @@ const constants = {
       color: withOpacity(colors.byName.red, 1),
       radius: 3,
     },
-    height: clockHeight,
+    height: clockHeight, // which is also width
     margin: clockMargin,
     hourHand: {
       color: withOpacity(colors.byName.white, 1),
@@ -259,7 +259,7 @@ const constants = {
   panelWidth,
   refTime: {
     bottomMargin: 5,
-    height: clockHeight + clockMargin,
+    height: 44,
     leftContentsWidth: 60,
     width: 126,
   },
