@@ -4,9 +4,7 @@ import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 const getInset = (SafeAreaView as any).getInset;
 const safeAreaTop =  getInset('top');
 const safeAreaBottom = getInset('bottom');
-// const safeAreaLeft = getInset('left');
-// const safeAreaRight = getInset('right');
-const bottomPaddingForAxis = safeAreaBottom ? 10 : 14;
+const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized for displays with/without home button
 
 export interface GeolocationModeChoice {
   id: number;

@@ -44,9 +44,8 @@ const Styles = StyleSheet.create({
   },
   rightHalf: {
     height,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     paddingLeft: 5,
-    paddingTop: 5,
     width,
   },
   subText: {

@@ -5,7 +5,7 @@ import constants, { MapStyle } from './constants';
 import utils from 'lib/utils';
 
 export const dynamicMapHeight = (state: AppState): number => {
-  return utils.safeAreaHeight() - dynamicTimelineHeight(state);
+  return utils.windowSize().height - dynamicTimelineHeight(state);
 }
 
 export const dynamicTimelineHeight = (state: AppState): number => {

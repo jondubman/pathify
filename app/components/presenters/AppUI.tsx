@@ -8,8 +8,6 @@ import {
   View,
 } from 'react-native';
 
-import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
-
 import constants from 'lib/constants';
 
 import { AppUIProps } from 'containers/AppUIContainer';
@@ -24,7 +22,7 @@ const AppStyles = StyleSheet.create({
     backgroundColor: constants.colors.appBackground,
     flex: 1,
   },
-  safeAreaView: {
+  safeAreaView: { // TODO this used to be a SafeAreaView; is now just View
     flex: 1,
     flexDirection: 'column',
   },
@@ -39,13 +37,13 @@ class AppUI extends Component<AppUIProps> {
           backgroundColor={constants.colors.appBackground}
           barStyle="light-content"
         />
-        <SafeAreaView style={AppStyles.safeAreaView}>
+        <View style={AppStyles.safeAreaView}>
           <MapContainer />
           {showTimeline ? <TimelineContainer /> : null}
           {showTimeline ? <TimelineControlsContainer /> : null}
           <HelpButtonContainer />
           <SettingsPanelContainer />
-        </SafeAreaView>
+        </View>
       </View>
     )
   }

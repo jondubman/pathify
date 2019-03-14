@@ -52,10 +52,6 @@ const utils = {
     return otherKeys;
   },
 
-  safeAreaHeight: () => {
-    return utils.windowSize().height - (constants.safeAreaBottom + constants.safeAreaTop);
-  },
-
   twoDigitString: (n: number) => {
     if (!n) return '00';
     if (n < 10) return '0' + n;
