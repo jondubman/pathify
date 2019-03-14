@@ -18,7 +18,6 @@ interface RefTimeStateProps {
   month: string,
   dayOfMonth: string,
   year: string,
-
 }
 
 interface RefTimeDispatchProps {

@@ -116,7 +116,7 @@ const colors = {
     seconds: withOpacity(namedColors.white, 0.75),
     msec: withOpacity(namedColors.white, 0.5),
     subText: withOpacity(namedColors.white, 0.75),
-    underlay: withOpacity(namedColors.maroon, 0.5),
+    underlay: withOpacity(namedColors.gray, 0.5),
   },
   settingsButton: {
     background: 'white',

@@ -12,6 +12,7 @@ import {
 import ClockContainer from 'containers/ClockContainer';
 import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
+import log from 'lib/log';
 
 const colors = constants.colors.refTime;
 const { height, leftContentsWidth, width } = constants.refTime;
@@ -81,7 +82,7 @@ const RefTime = (props: RefTimeProps) => (
   <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
     <View style={Styles.leftHalf}>
       <TouchableHighlight
-        onPress={() => { console.log('TODO-button') }}
+        onPress={() => { log.info('TODO-leftHalf') }}
         style={Styles.leftContents}
         underlayColor={colors.underlay}
       >
@@ -91,7 +92,7 @@ const RefTime = (props: RefTimeProps) => (
       </TouchableHighlight>
     </View>
     <TouchableHighlight
-      onPress={() => { console.log('TODO-ref') }}
+      onPress={() => { log.info('TODO-rightHalf') }}
       style={Styles.rightHalf}
       underlayColor={colors.underlay}
     >
