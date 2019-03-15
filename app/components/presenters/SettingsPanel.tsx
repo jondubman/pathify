@@ -3,12 +3,14 @@ import React, {
 
 import {
   // GestureResponderEvent,
-  Slider,
+  // Slider,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
 } from 'react-native';
+
+import Slider from '@react-native-community/slider';
 
 import constants, { MapStyle } from 'lib/constants';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';

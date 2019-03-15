@@ -137,6 +137,11 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-background-geolocation')
+    implementation project(':react-native-background-fetch')
+    implementation project(':@react-native-community_slider')
+    implementation project(':@mapbox_react-native-mapbox-gl')
+    implementation project(':@react-native-community_async-storage')
     compile project(':react-native-vector-icons')
     compile project(':react-native-svg')
     implementation fileTree(dir: "libs", include: ["*.jar"])

@@ -37,6 +37,10 @@ target 'Pathify' do
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'react-native-async-storage', :path => '../node_modules/@react-native-community/async-storage'
+
+  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
+
   target 'PathifyTests' do
     inherit! :search_paths
     # Pods for testing

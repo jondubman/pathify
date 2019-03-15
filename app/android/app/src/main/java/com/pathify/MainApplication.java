@@ -3,6 +3,11 @@ package com.pathify;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.transistorsoft.rnbackgroundgeolocation.RNBackgroundGeolocation;
+import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
+import com.reactnativecommunity.slider.ReactSliderPackage;
+import com.mapbox.rctmgl.RCTMGLPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +30,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNBackgroundGeolocation(),
+            new RNBackgroundFetchPackage(),
+            new ReactSliderPackage(),
+            new RCTMGLPackage(),
+            new AsyncStoragePackage(),
             new VectorIconsPackage(),
             new SvgPackage()
       );
