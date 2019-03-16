@@ -22,6 +22,7 @@ export default class App extends Component {
     log.info('----- App starting up! (device log)');
     log.debug('windowSize', utils.windowSize());
     store.create(); // proactively create Redux store instance
+
     Geo.initializeGeolocation(store); // TODO use only when needed
     Geo.resetOdometer();
     store.dispatch(newAction(appAction.START_FOLLOWING_USER));

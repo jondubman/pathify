@@ -35,7 +35,7 @@ export interface AppOptions {
   timerTickIntervalMsec: number;
 }
 const initialAppOptions: AppOptions = {
-  geolocationModeId: 0,
+  geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
   keepMapCenteredWhenFollowing: true,
   mapOpacity: 0.5,
   mapStyle: constants.map.default.style,
