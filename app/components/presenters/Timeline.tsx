@@ -99,7 +99,7 @@ class Timeline extends Component<TimelinePanelProps> {
           containerComponent={
             <VictoryZoomContainer
               allowPan={true}
-              allowZoom={true}
+              allowZoom={false}
               minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"

@@ -21,7 +21,8 @@ export enum AppEventType {
 }
 
 // Canonical interface for AppOptions included in AppState.
-// AppOptions are modifiable via the API by name. These include, but are not limited to,
+// AppOptions are potentially modifiable via the API by name, so they need to be the sorts of things one can change
+// at any time. These include, but are not limited to,
 // all the options that are modifiable via Settings in the UI.
 
 export interface AppOptions {
@@ -40,7 +41,7 @@ const initialAppOptions: AppOptions = {
   mapStyle: constants.map.default.style,
   refTime: Date.now(),
   startupTime: Date.now(),
-  timerTickIntervalMsec: 1000, // TODO should probably be more like 1000
+  timerTickIntervalMsec: 1000,
 }
 export interface AppOption {
   name: string;

@@ -13,10 +13,10 @@
 
 export enum reducerAction {
   'GEOLOCATION' = 'GEOLOCATION',
-  'MAP_REGION' = 'MAP_REGION',
+  'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'SET_APP_OPTION' = 'SET_APP_OPTION',
   'SET_PANEL_VISIBILITY' = 'SET_PANEL_VISIBILITY',
-  'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL',
+  'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
   'UI_FLAG_DISABLE' = 'UI_FLAG_DISABLE',
   'UI_FLAG_ENABLE' = 'UI_FLAG_ENABLE',
   'UI_FLAG_TOGGLE' = 'UI_FLAG_TOGGLE',
@@ -33,6 +33,7 @@ export enum appAction {
   'MAP_REGION_CHANGED' = 'async_MAP_REGION_CHANGED',
   'MAP_REGION_CHANGING' = 'async_MAP_REGION_CHANGING',
   'MAP_TAPPED' = 'async_MAP_TAPPED',
+  'SET_APP_OPTION' = 'async_SET_APP_OPTION', // Use appAction.SET_APP_OPTION to allow for side effects
   'SET_GEOLOCATION_MODE' = 'async_SET_GEOLOCATION_MODE',
   'START_FOLLOWING_USER' = 'async_START_FOLLOWING_USER',
   'STOP_FOLLOWING_USER' = 'async_STOP_FOLLOWING_USER',

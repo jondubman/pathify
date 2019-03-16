@@ -42,9 +42,9 @@ import {
 import { MapUtils } from 'components/MapArea';
 import { Feature } from '@turf/helpers';
 import constants from './constants';
-import { Numeric } from 'd3';
 
 const sagas = {
+  // root is boilerplate
   root: function* () {
     yield takeEvery(appAction.CENTER_MAP_ON_USER, sagas.centerMapOnUser);
     yield takeEvery(appAction.GEOLOCATION, sagas.geolocation);
@@ -56,11 +56,14 @@ const sagas = {
     yield takeEvery(appAction.MAP_TAPPED, sagas.mapTapped);
     yield takeEvery(appAction.BACKGROUND_TAPPED, sagas.backgroundTapped);
     yield takeEvery(appAction.TOGGLE_PANEL_VISIBILITY, sagas.togglePanelVisiblity);
+    yield takeEvery(appAction.SET_APP_OPTION, sagas.setAppOption);
     yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
     yield takeEvery(appAction.TIMELINE_ZOOMED, sagas.timelineZoomed);
     yield takeEvery(appAction.TIMER_TICK, sagas.timerTick);
   },
+
+  // TODO for now these are more or less in order of when they were added. Maybe alphabetize.
 
   // This has the side effect of panning the map component imperatively.
   centerMapOnUser: function* () {
@@ -234,6 +237,12 @@ const sagas = {
     if (timelineNow) {
       yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: now }));
     }
+  },
+
+  setAppOption: function* (action: Action) {
+    // for now, a pass through
+    log.debug('saga setAppOption', action);
+    yield put(newAction(reducerAction.SET_APP_OPTION, action));
   },
 }
 

@@ -31,7 +31,7 @@ const Styles = StyleSheet.create({
 import { GeolocationButtonProps } from 'containers/GeolocationButtonContainer';
 
 const modeIcons = [ 'ghost', 'bullseye', 'running', 'bolt' ];
-const modeIconColors = [colors.icon, colors.icon, colors.icon, colors.icon ]; // TODO
+const modeIconColors = [ colors.icon, colors.icon, colors.icon, colors.icon ]; // TODO
 
 const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight

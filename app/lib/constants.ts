@@ -109,7 +109,6 @@ const colors = {
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
-    border: withOpacity(namedColors.white, 0.5), // TODO
     hoursMinutes: namedColors.white,
     seconds: withOpacity(namedColors.white, 0.75),
     msec: withOpacity(namedColors.white, 0.5),
