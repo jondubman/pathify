@@ -242,7 +242,7 @@ const sagas = {
   setAppOption: function* (action: Action) {
     // for now, a pass through
     log.debug('saga setAppOption', action);
-    yield put(newAction(reducerAction.SET_APP_OPTION, action));
+    yield put(newAction(reducerAction.SET_APP_OPTION, action.params));
   },
 }
 

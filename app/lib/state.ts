@@ -37,7 +37,7 @@ export interface AppOptions {
 const initialAppOptions: AppOptions = {
   geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
   keepMapCenteredWhenFollowing: true,
-  mapOpacity: 0.5,
+  mapOpacity: 1, // TODO usual default is 0.5,
   mapStyle: constants.map.default.style,
   refTime: Date.now(),
   startupTime: Date.now(),
@@ -54,11 +54,11 @@ export interface AppOption {
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
-    helpEnabled: true,
-    mapFullScreen: false, // is the map occupying the full screen, with timeline hidden?
+    helpEnabled: false,
+    mapFullScreen: true, // is the map occupying the full screen, with timeline hidden?
     mapMoving: false, // is the map currently moving?
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    timelineNow: true, // is the timeline continuously scrolling to show the current time?
+    timelineNow: false, // is the timeline continuously scrolling to show the current time?
   },
   panels: {
     geolocation: { open: false },

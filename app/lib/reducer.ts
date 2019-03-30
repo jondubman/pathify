@@ -8,6 +8,7 @@ import {
 } from 'lib/actions';
 
 import { LocationEvent } from 'lib/geo'; // TODO update
+import log from 'lib/log';
 
 import {
   initialAppState,
@@ -39,6 +40,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
         const { name, value } = params as AppOption;
+        log.info('reducerAction.SET_APP_OPTION', name, value);
         newState.options = {
           ...state.options,
           [name]: value,
