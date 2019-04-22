@@ -51,6 +51,9 @@
         ],
         /* See also: package.json _moduleAliases, which must be kept in sync for these import paths to work! */
         /* Also, must require('module-alias/register') */
+        "config/*": [
+            "src/config/*"
+        ],
         "lib/*": [
             "src/lib/*"
         ],
