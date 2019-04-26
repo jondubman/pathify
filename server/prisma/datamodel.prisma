@@ -1,0 +1,19 @@
+# datamodel.prisma
+# See https://www.prisma.io/docs/datamodel-and-migrations/datamodel-MONGO-knun/
+
+type Meta @embedded { # Note use of embedded type courtesy of Prisma MongoDB connector
+  created_at: DateTime! @createdAt # using Prisma system field directive
+  updated_at: DateTime! @updatedAt # using Prisma system field directive
+  source: String # optional clientId that originated the event. Missing implies server is the source of the event.
+  sync: String # optional clientId to sync with, for server-sourced events
+  t_sent: Int # if sync is specified, this timestamp is set when event is sent to client
+  t_received: Int # if sync is specified, set if/when client confirmed receipt
+}
+
+type Event {
+  id: ID! @id # auto-assigned, readonly, using Prisma directive
+  t: Int! # canonical event timestamp (required)
+  data: Json! @default(value: "{}") # untyped, valid JSON associated with this event
+  meta: Meta! # embedded, above
+  type: String! @default(value: "") # helps us interpret data field
+}

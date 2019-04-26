@@ -8,3 +8,5 @@ node_modules
 secrets
 ref.txt
 shared
+generated
+src/prisma-client
