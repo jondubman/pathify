@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Pathify server",
   "scripts": {
-    "build": "rm -rf dist; mkdir dist 2>/dev/null; cp -R prisma/generated/prisma-client src; tsc; cp -R src/config dist; echo 'built to /server/dist'; ls -l dist",
+    "build": "rm -rf dist; mkdir dist 2>/dev/null; cp -R prisma/generated/prisma-client src; tsc; cp -R src/config dist; echo 'built to /server/dist'; ls -l dist; yarn test",
     "launch": "NODE_ENV=development node dist/server.js",
     "test": "NODE_ENV=development mocha dist/test/*.js",
     "start": "echo \"launching nodemon, watching src...\"; NODE_ENV=development nodemon --watch src -e ts,json5 --exec 'echo \"rebuilding server...\"; yarn build; echo \"running tests...\"; yarn test; echo \"relaunching server...\"; yarn launch'"

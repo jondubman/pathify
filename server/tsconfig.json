@@ -61,7 +61,7 @@
             "src/routers/*"
         ],
         "prisma-client/*": [
-            "src/generated/prisma-client/*"
+            "src/prisma-client/*"
         ],
         "shared/*": [
             "src/shared/*"
