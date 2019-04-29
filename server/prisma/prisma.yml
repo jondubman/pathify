@@ -5,3 +5,7 @@ databaseType: document
 generate:
   - generator: typescript-client
     output: ./generated/prisma-client/
+
+# Seeds initial data into the database by running a script.
+seed:
+  run: yarn ts-node seed.ts
