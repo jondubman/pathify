@@ -22,14 +22,14 @@
   integrity sha512-ROomEm+QHlUmcQoDr3CBo3GRm0w4PVoFYjVT9YcfyBha/Per4deb1IpvHU7KTK7YBZCIvOYbSADoEyDnFgaWLA==
 
 "@types/node@*":
-  version "11.13.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-11.13.6.tgz#37ec75690830acb0d74ce3c6c43caab787081e85"
-  integrity sha512-Xoo/EBzEe8HxTSwaZNLZjaW6M6tA/+GmD3/DZ6uo8qSaolE/9Oarko0oV1fVfrLqOz0tx0nXJB4rdD5c+vixLw==
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.0.0.tgz#d11813b9c0ff8aaca29f04cbc12817f4c7d656e5"
+  integrity sha512-Jrb/x3HT4PTJp6a4avhmJCDEVrPdqLfl3e8GGMbpkGGdwAV5UGlIs4vVEfsHHfylZVOKZWpOqmqFH8CbfOZ6kg==
 
 "@types/node@^10.12.0":
-  version "10.14.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.5.tgz#27733a949f5d9972d87109297cffb62207ace70f"
-  integrity sha512-Ja7d4s0qyGFxjGeDq5S7Si25OFibSAHUi6i17UWnwNnpitADN7hah9q0Tl25gxuV5R1u2Bx+np6w4LHXfHyj/g==
+  version "10.14.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.6.tgz#9cbfcb62c50947217f4d88d4d274cc40c22625a9"
+  integrity sha512-Fvm24+u85lGmV4hT5G++aht2C5I4Z4dYlWZIh62FAfFO/TfzXtPpoLI6I7AuBWkIFqZCnhFOoTT7RjjaIL5Fjg==
 
 "@types/prettier@^1.13.2":
   version "1.16.3"
@@ -155,9 +155,9 @@ ecdsa-sig-formatter@1.0.11:
     safe-buffer "^5.0.1"
 
 eventemitter3@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.0.tgz#090b4d6cdbd645ed10bf750d4b5407942d7ba163"
-  integrity sha512-ivIvhpq/Y0uSjcHDcOIccjmYjGLcP09MFGE7ysAwkAvkXfpZlC985pH2/ui64DKazbTW/4kN3yqozUxlXzI6cA==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
+  integrity sha512-tvtQIeLVHjDkJYnzf2dgVMxfuSGJeM/7UCG17TT4EumTfNtF+0nebF/4zWOIkCreAbtNqhGEboB6BWrwqNaw4Q==
 
 fast-json-stable-stringify@^2.0.0:
   version "2.0.0"
@@ -183,10 +183,10 @@ graphql-tag@^2.10.0:
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.10.1.tgz#10aa41f1cd8fae5373eaf11f1f67260a3cad5e02"
   integrity sha512-jApXqWBzNXQ8jYa/HLkZJaVw9jgwNqZkywa2zfFn16Iv1Zb7ELNHkJaXHR7Quvd5SIGsy6Ny7SUKATgnu05uEg==
 
-graphql@^14.0.2, graphql@^14.2.1:
-  version "14.2.1"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.2.1.tgz#779529bf9a01e7207b977a54c20670b48ca6e95c"
-  integrity sha512-2PL1UbvKeSjy/lUeJqHk+eR9CvuErXoCNwJI4jm3oNFEeY+9ELqHNKO1ZuSxAkasPkpWbmT/iMRMFxd3cEL3tQ==
+graphql@^14.0.2, graphql@^14.3.0:
+  version "14.3.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.3.0.tgz#34dd36faa489ff642bcd25df6c3b4f988a1a2f3e"
+  integrity sha512-MdfI4v7kSNC3NhB7cF8KNijDsifuWO2XOtzpyququqaclO8wVuChYv+KogexDwgP5sp7nFI9Z6N4QHgoLkfjrg==
   dependencies:
     iterall "^1.2.2"
 
@@ -340,15 +340,15 @@ popsicle@10:
     make-error-cause "^1.2.1"
     tough-cookie "^2.0.0"
 
-prettier@1.16.4:
-  version "1.16.4"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.16.4.tgz#73e37e73e018ad2db9c76742e2647e21790c9717"
-  integrity sha512-ZzWuos7TI5CKUeQAtFd6Zhm2s6EpAD/ZLApIhsF9pRvRtM1RFo61dM/4MSRUA0SuLugA/zgrZD8m0BaY46Og7g==
+prettier@1.14.3:
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.3.tgz#90238dd4c0684b7edce5f83b0fb7328e48bd0895"
+  integrity sha512-qZDVnCrnpsRJJq5nSsiHCE3BYMED2OtsI+cmzIzF1QIfqm5ALf8tEJcO27zV1gKNKRPdhjO0dNWnrzssDQ1tFg==
 
-prisma-client-lib@^1.31.1:
-  version "1.31.1"
-  resolved "https://registry.yarnpkg.com/prisma-client-lib/-/prisma-client-lib-1.31.1.tgz#d953503815bbb76c0ff398aa82632660eec84fa8"
-  integrity sha512-ttmFDyVso/XnoeShNjxKEjrGpSLd9lrSrssUSznmczeKG0kMkB7g4Qc9gnFfLT5aqAgbFScziX9NryzpTlySvA==
+prisma-client-lib@^1.30.4:
+  version "1.30.4"
+  resolved "https://registry.yarnpkg.com/prisma-client-lib/-/prisma-client-lib-1.30.4.tgz#ac0d78a9cc14d0dcdc330a8c02427de4de8fd27b"
+  integrity sha512-M9hXVxf0gkijWZd9iiAxnj91T4nQmsTcoElJlClyz+Afq+ln+ybQHsJi5Fh4g957TTnpMeU0GziGHhgoVlv95g==
   dependencies:
     "@types/node" "^10.12.0"
     "@types/prettier" "^1.13.2"
@@ -358,32 +358,32 @@ prisma-client-lib@^1.31.1:
     http-link-dataloader "^0.1.6"
     jsonwebtoken "^8.3.0"
     lodash.flatten "^4.4.0"
-    prettier "1.16.4"
-    prisma-datamodel "1.31.1"
-    prisma-generate-schema "1.31.1"
+    prettier "1.14.3"
+    prisma-datamodel "1.30.4"
+    prisma-generate-schema "1.30.4"
     subscriptions-transport-ws "^0.9.15"
     uppercamelcase "^3.0.0"
     ws "^6.1.0"
     zen-observable "^0.8.10"
 
-prisma-datamodel@1.31.1:
-  version "1.31.1"
-  resolved "https://registry.yarnpkg.com/prisma-datamodel/-/prisma-datamodel-1.31.1.tgz#a207b9d800303fd1af9316841fa887a7a1286672"
-  integrity sha512-aLtPj3B8waUMvazwlzIwx3cnMcd7OYgfne7YSn8gjCz3HHDObS++kKppAkKxNQRUN5w2FgPRDp/+CnuGcmZq3A==
+prisma-datamodel@1.30.4:
+  version "1.30.4"
+  resolved "https://registry.yarnpkg.com/prisma-datamodel/-/prisma-datamodel-1.30.4.tgz#fc21cb670498d634db0a63cb440ad4ab29a831a4"
+  integrity sha512-hP4/cuZRF6H+Qc4Hy9Mtg9+rYfVqC7C/wSKr6VCCziY/zUI6vS73A0gQcRLQkGyrDFY4AOpfEMQDnoLJm5i4Yw==
   dependencies:
     graphql "^14.0.2"
     pluralize "^7.0.0"
     popsicle "10"
 
-prisma-generate-schema@1.31.1:
-  version "1.31.1"
-  resolved "https://registry.yarnpkg.com/prisma-generate-schema/-/prisma-generate-schema-1.31.1.tgz#06c82712b0ec59239d95a3448cb4e1c56342ac7f"
-  integrity sha512-syFsRJSIF/13t3HuY7fUPCTaWwiBAu+vj9+L6/zuOBN/ARm1X9rrq/dUyqZ9H2Pn85Hi/PCVX3SOU3puSM0h7A==
+prisma-generate-schema@1.30.4:
+  version "1.30.4"
+  resolved "https://registry.yarnpkg.com/prisma-generate-schema/-/prisma-generate-schema-1.30.4.tgz#ee0cd9101bf90cdd594d3240aab7b5b3a3d1508e"
+  integrity sha512-MvreEwsrKmBF7yi7/AmktdLuQuvinx7U+foCG1Pg2gpONnTMqt3h/S8y+D3k0dA8/yfy3dLnOczVfMlp38ppxg==
   dependencies:
     graphql "^14.0.2"
     pluralize "^7.0.0"
     popsicle "10"
-    prisma-datamodel "1.31.1"
+    prisma-datamodel "1.30.4"
 
 process-nextick-args@~2.0.0:
   version "2.0.0"

@@ -10,7 +10,7 @@ import { constants } from 'lib/constants';
 // ----------------------
 
 describe('category-warmup', function() {
-  it(`should confirm server port number ${constants.defaultPort}`, async function() {
+  it(`should confirm server config port number ${constants.defaultPort}`, async function() {
     console.log('hello');
     expect(constants.defaultPort).to.exist;
   })

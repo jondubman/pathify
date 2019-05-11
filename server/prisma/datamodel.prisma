@@ -2,15 +2,16 @@
 # See https://www.prisma.io/docs/datamodel-and-migrations/datamodel-MONGO-knun/
 
 enum EventType {
-  APP # category that includes any app/user/UI actions via client other than location updates
+  APP # any app/user/UI actions via client other than location updates
   LOC # an individual location update
-  NONE # default
+  NONE # default (useful as a placeholder)
   OTHER # catch-all for anything else
-  SERVER # notable system events
+  SYSTEM # server events
 }
 
 type Event {
   id: ID! @id # auto-assigned, readonly, using Prisma directive (auto-generated)
+
   t: Int! # canonical event timestamp. This is the only field that is strictly required to create.
   t_created: DateTime! @createdAt # using Prisma system field directive (auto-generated)
   t_updated: DateTime! @updatedAt # using Prisma system field directive (auto-generated)
@@ -19,6 +20,7 @@ type Event {
 
   data: Json @default(value: "{}") # optional untyped, valid JSON associated with this event
   type: EventType @default(value: NONE) # helps interpret data field
-  source: String # optional clientId that originated the event. Missing implies server is the source of the event.
-  sync: String # optional clientId to sync with, for server-sourced events
+
+  source: String # optional clientId that originated the event. Missing means the [sole] server is source of the event.
+  sync: String # optional clientId to sync with, for server-sourced events. Missing means not synced with any client.
 }
