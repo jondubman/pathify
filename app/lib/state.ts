@@ -3,24 +3,7 @@
 import { Feature } from "@turf/helpers";
 
 import constants from 'lib/constants';
-import { LocationEvent } from 'lib/geo'; // TODO update
-
-// TODO clean up AppEvent stuff
-
-export interface AppEvent {
-  data: object;
-  type: string;
-  t: number; // timestamp (msec)
-  tr: number; // time received by server (msec) | 0
-  ts: number; // time sent to server (msec) | 0
-}
-
-export enum AppEventType {
-  'ACTIVITY_CHANGE' = 'activity',
-  'APP_EVENT' = 'app',
-  'LOCATION' = 'location',
-  'MOTION_CHANGE' = 'motion',
-}
+import { LocationEvent } from 'lib/geo';
 
 // Canonical interface for AppOptions included in AppState.
 // AppOptions are potentially modifiable via the API by name, so they need to be the sorts of things one can change
@@ -70,7 +53,14 @@ export type AppUIState = typeof initialAppUIState;
 
 // Canonical interface for AppState, the contents of the Redux store
 
+export interface GenericEvent {
+  t: number,
+  type: string,
+  data: object,
+}
+
 export interface AppState {
+  events: GenericEvent[];
   loc?: LocationEvent;
   mapRegion: Feature | null;
   options: AppOptions;
@@ -79,6 +69,7 @@ export interface AppState {
 }
 
 export const initialAppState: AppState = {
+  events: [],
   mapRegion: null,
   options: initialAppOptions,
   ui: initialAppUIState,

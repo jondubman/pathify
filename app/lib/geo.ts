@@ -181,35 +181,36 @@ const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
 
 // TODO geolocationOptions_maxPower
 
-
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
 const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
 // TODO consolidate this and future event interface declarations? Or just have them all inherit a shared interface?
 export interface LocationEvent {
+  t: number,
   type: string,
-  time: string,
-
-  ele: number | undefined,
-  heading: number | undefined,
-  lat: number,
-  lon: number,
-  odo: number,
-  speed: number | undefined,
+  data: {
+    ele: number | undefined,
+    heading: number | undefined,
+    lat: number,
+    lon: number,
+    odo: number,
+    speed: number | undefined,
+  },
 }
 
 const locationEventFromLocation = (info: Location): LocationEvent => {
   const loc: LocationEvent = {
-    type: 'loc',
-    time: info.timestamp,
-
-    ele: info.coords.altitude,
-    heading: info.coords.heading,
-    lat: info.coords.latitude,
-    lon: info.coords.longitude,
-    odo: info.odometer,
-    speed: info.coords.speed,
+    t: new Date(info.timestamp).getTime(),
+    type: 'LOC',
+    data: {
+      ele: info.coords.altitude,
+      heading: info.coords.heading,
+      lat: info.coords.latitude,
+      lon: info.coords.longitude,
+      odo: info.odometer,
+      speed: info.coords.speed,
+    }
   }
   return loc;
 }

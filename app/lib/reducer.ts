@@ -24,8 +24,9 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case reducerAction.GEOLOCATION:
       {
         const locationEvent = params as LocationEvent;
-        if (locationEvent.lon && locationEvent.lat && locationEvent.time) {
+        if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t) {
           newState.loc = locationEvent;
+          newState.events = [...newState.events, locationEvent];
         }
       }
       break;
