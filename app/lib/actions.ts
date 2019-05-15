@@ -63,8 +63,8 @@ export interface Action {
 // -- If it's an appAction, it should be handled by one of the sagas (and it just passes through the reducer)
 //    appActions may yield other appActions and/or reducerActions.
 
+// This simple helper just forms an action with type and params properties.
 // Note type could be an appAction or reducerAction.
-
 export const newAction = (type: ActionType, params: any = null) => ({
   type,
   params,

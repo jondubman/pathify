@@ -1,9 +1,11 @@
-// Interfaces and constants related to the AppState used by the reducer
+// Interfaces and constants related to the AppState used by the Redux reducer
 
 import { Feature } from "@turf/helpers";
 
 import constants from 'lib/constants';
 import { LocationEvent } from 'lib/geo'; // TODO update
+
+// TODO clean up AppEvent stuff
 
 export interface AppEvent {
   data: object;
@@ -22,8 +24,7 @@ export enum AppEventType {
 
 // Canonical interface for AppOptions included in AppState.
 // AppOptions are potentially modifiable via the API by name, so they need to be the sorts of things one can change
-// at any time. These include, but are not limited to,
-// all the options that are modifiable via Settings in the UI.
+// at any time. These include, but are not limited to, all the options that are modifiable via Settings in the UI.
 
 export interface AppOptions {
   geolocationModeId: number;
@@ -41,7 +42,7 @@ const initialAppOptions: AppOptions = {
   mapStyle: constants.map.default.style,
   refTime: Date.now(),
   startupTime: Date.now(),
-  timerTickIntervalMsec: 1000,
+  timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
 }
 export interface AppOption {
   name: string;

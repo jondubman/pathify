@@ -37,13 +37,24 @@ target 'Pathify' do
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  pod 'react-native-async-storage', :path => '../node_modules/@react-native-community/async-storage'
+  # https://github.com/react-native-community/react-native-async-storage/issues/78
+  # pod 'react-native-async-storage', :path => '../node_modules/@react-native-community/async-storage'
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
   pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
 
   target 'PathifyTests' do
     inherit! :search_paths
     # Pods for testing
+  end
+
+  # workaround (hopefully temporary) per https://github.com/facebook/react-native/issues/24192
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      if target.name == "React"
+        target.remove_from_project
+      end
+    end
   end
 end
 

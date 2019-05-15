@@ -177,10 +177,13 @@ const geolocationOptions_highPower: Config = {
   stopTimeout: 5, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
 }
 
+const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
+
 // TODO geolocationOptions_maxPower
 
+
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
-const haveReason = () => Object.values(reasons).includes(true); // for backgroundGeolocation
+const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
 const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
 // TODO consolidate this and future event interface declarations? Or just have them all inherit a shared interface?
@@ -217,7 +220,7 @@ export const Geo = {
     log.debug('initializeGeolocation');
 
     // Now, configure the plugin, using those options.
-    BackgroundGeolocation.ready(geolocationOptions_lowPower, pluginState => {
+    BackgroundGeolocation.ready(geolocationOptions_default, pluginState => {
 
       const onActivityChange = (event: MotionActivityEvent) => {
       }
@@ -265,15 +268,18 @@ export const Geo = {
     log.debug('setGeolocationMode', id);
     switch (id) {
       case 0:
-        BackgroundGeolocation.stop();
+        Geo.stopBackgroundGeolocation('following');
         break;
       case 1:
+        Geo.startBackgroundGeolocation('following');
         BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
         break;
       case 2:
-        BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
+        Geo.startBackgroundGeolocation('following');
+        BackgroundGeolocation.setConfig(geolocationOptions_highPower);
         break;
       case 3:
+        Geo.startBackgroundGeolocation('following');
         BackgroundGeolocation.setConfig(geolocationOptions_highPower);
         break;
       default:

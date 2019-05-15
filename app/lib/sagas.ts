@@ -1,22 +1,23 @@
 // For use with redux-saga. Coordination around app actions defined in actionTypes module.
 // This is where we trigger possibly-asynchronous side effects for app actions.
 // These may include other (cascading) app actions and/or reducer actions.
+// A lot of the interactive behaviors of the app are defined here.
 //
 // Note reducers, unlike sagas, must always be synchronous.
 //
 // appActions are actually run through the reducer before any sagas are run, but the reducer ignores them.
 //
 // The fact that redux-sagas makes extensive use of JS generators is not the only thing to keep in mind.
-
+//
 // Blocking:
-// Use yield call to call an async function instead of calling it directly (yield the call effect)
-// yield take
-// yield join
+//   Use yield call to call an async function instead of calling it directly (yield the call effect)
+//   yield take
+//   yield join
 
 // Non-blocking:
-// Use yield put instead of dispatch to issue a Redux action (be it an appAction or reducerAction.)
-// yield fork
-// yield cancel
+//   Use yield put instead of dispatch to issue a Redux action (be it an appAction or reducerAction.)
+//   yield fork
+//   yield cancel
 
 // Use yield select instead of accessing the store directly (yield the select effect)
 
@@ -226,8 +227,8 @@ const sagas = {
     const newZoom = action.params as any;
     const x = newZoom.x as number[];
     const refTime = (x[0] + x[1]) / 2;
-    yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
     log.trace('saga timelineZoomed', refTime);
+    yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
   },
 
   timerTick: function* (action: Action) {
@@ -240,7 +241,7 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-    // for now, a pass through
+    // for now, this is just a pass through to the reducer.
     log.debug('saga setAppOption', action);
     yield put(newAction(reducerAction.SET_APP_OPTION, action.params));
   },

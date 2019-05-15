@@ -140,6 +140,8 @@ const colors = {
   user: namedColors.azure,
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 const constants = {
   appName: 'Pathify',
   buttonOffset,
