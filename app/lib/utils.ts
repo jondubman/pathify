@@ -7,6 +7,9 @@ interface LatLon {
   lon: number;
 }
 
+import log from 'lib/log';
+import { GenericEvent } from 'lib/state';
+
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
 
 const utils = {
@@ -44,6 +47,31 @@ const utils = {
   },
 
   mapArea: null, // reference to the singleton MapArea component
+
+  // local/private by default (i.e. not synced with the server)
+  // timestamped now unless a timestamp is provided.
+  newEvent: (t: number): GenericEvent => {
+    const timestamp = t || Date.now();
+    return {
+      t: timestamp,
+      // these are placeholders to be overridden
+      type: 'OTHER',
+      data: {},
+    }
+  },
+
+  // A synced event will be synchronized with the server (i.e. not private)
+  // timestamped now unless a timestamp is provided.
+  newSyncedEvent: (t: number): GenericEvent => {
+    const timestamp = t || Date.now();
+    return {
+      ...utils.newEvent(timestamp),
+      sync: {
+        changed: utils.uniqify(timestamp),
+        source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
+      },
+    }
+  },
 
   objectWithoutKey: (object: any, key: string) => {
     const { [key]: deletedKey, ...otherKeys } = object;

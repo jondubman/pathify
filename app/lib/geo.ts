@@ -188,18 +188,19 @@ const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutK
 
 export interface LocationEvent extends GenericEvent {
   data: {
-    ele: number | undefined;
-    heading: number | undefined;
+    ele?: number;
+    heading?: number;
     lat: number;
     lon: number;
-    odo: number | undefined;
-    speed: number | undefined;
+    odo?: number;
+    speed?: number;
   }
 }
 
 const locationEventFromLocation = (info: Location): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
   const loc: LocationEvent = {
+    ...utils.newSyncedEvent(t),
     type: 'LOC',
     data: {
       ele: info.coords.altitude,
@@ -208,12 +209,6 @@ const locationEventFromLocation = (info: Location): LocationEvent => {
       lon: info.coords.longitude,
       odo: info.odometer,
       speed: info.coords.speed,
-    },
-    // TODO move rest of this into common utility function
-    t,
-    sync: {
-      changed: utils.uniqify(t),
-      source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
     },
   }
   return loc;
