@@ -19,6 +19,7 @@ import BackgroundGeolocation, {
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
+import { GenericEvent } from 'lib/state';
 import { Store } from 'lib/store';
 import utils from 'lib/utils';
 
@@ -185,23 +186,20 @@ const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolo
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
 const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
-// TODO consolidate this and future event interface declarations? Or just have them all inherit a shared interface?
-export interface LocationEvent {
-  t: number,
-  type: string,
+export interface LocationEvent extends GenericEvent {
   data: {
-    ele: number | undefined,
-    heading: number | undefined,
-    lat: number,
-    lon: number,
-    odo: number,
-    speed: number | undefined,
-  },
+    ele: number | undefined;
+    heading: number | undefined;
+    lat: number;
+    lon: number;
+    odo: number | undefined;
+    speed: number | undefined;
+  }
 }
 
 const locationEventFromLocation = (info: Location): LocationEvent => {
+  const t = new Date(info.timestamp).getTime();
   const loc: LocationEvent = {
-    t: new Date(info.timestamp).getTime(),
     type: 'LOC',
     data: {
       ele: info.coords.altitude,
@@ -210,7 +208,13 @@ const locationEventFromLocation = (info: Location): LocationEvent => {
       lon: info.coords.longitude,
       odo: info.odometer,
       speed: info.coords.speed,
-    }
+    },
+    // TODO move rest of this into common utility function
+    t,
+    sync: {
+      changed: utils.uniqify(t),
+      source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
+    },
   }
   return loc;
 }

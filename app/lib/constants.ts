@@ -264,6 +264,7 @@ const constants = {
   },
   safeAreaBottom,
   safeAreaTop,
+  serverSyncIntervalDefault: 10000, // msec
   settingsButton: {
     leftOffset: buttonOffset,
     opacityWhenClosed: defaultOpacity,

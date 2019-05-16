@@ -14,6 +14,7 @@ import {
   initialAppState,
   AppOption,
   AppState,
+  GenericEvent,
 } from 'lib/state';
 
 const reducer = (state: AppState = initialAppState, action: Action): AppState => {
@@ -24,9 +25,10 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case reducerAction.GEOLOCATION:
       {
         const locationEvent = params as LocationEvent;
-        if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t) {
+        if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t && locationEvent.type === 'LOC') {
           newState.loc = locationEvent;
           newState.events = [...newState.events, locationEvent];
+          log.trace(`${newState.events.length} events`);
         }
       }
       break;
@@ -35,6 +37,18 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         const mapRegion = params as Feature;
         newState.mapRegion = mapRegion;
+      }
+      break;
+
+    case reducerAction.SERVER_SYNC_COMPLETED:
+      {
+        const timestamps = params as number[];
+        const lengthPrev = newState.events.length;
+        newState.events = newState.events.filter((event: GenericEvent) => {
+          return !(event.sync && event.sync.changed && timestamps.includes(event.sync.changed))
+        })
+        const countSynced = lengthPrev - newState.events.length;
+        log.debug(`SERVER_SYNC_COMPLETED: ${countSynced} synced, ${newState.events.length} remaining`);
       }
       break;
 

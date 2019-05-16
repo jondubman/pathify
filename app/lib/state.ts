@@ -17,6 +17,8 @@ export interface AppOptions {
   refTime: number,
   startupTime: number,
   timerTickIntervalMsec: number;
+  serverSyncInterval: number; // msec, how often to sync with server
+  serverSyncTime: number; // time of last server sync (or 0 if never)
 }
 const initialAppOptions: AppOptions = {
   geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
@@ -26,6 +28,8 @@ const initialAppOptions: AppOptions = {
   refTime: Date.now(),
   startupTime: Date.now(),
   timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
+  serverSyncInterval: constants.serverSyncIntervalDefault,
+  serverSyncTime: 0,
 }
 export interface AppOption {
   name: string;
@@ -54,9 +58,13 @@ export type AppUIState = typeof initialAppUIState;
 // Canonical interface for AppState, the contents of the Redux store
 
 export interface GenericEvent {
-  t: number,
-  type: string,
-  data: object,
+  t: number;
+  type: string;
+  data: object | undefined;
+  sync: {
+    changed: number | undefined; // timestamp if/when last changed. Used locally to identify events to sync with server.
+    source: string | undefined; // generally either our own client ID, or something else if from server (like 'server')
+  } | undefined; // undefined for private/local events which do not get uploaded
 }
 
 export interface AppState {

@@ -30,7 +30,7 @@ import {
 
 import { Geo, LocationEvent } from 'lib/geo';
 import log from 'lib/log';
-import { AppState } from 'lib/state';
+import { AppState, GenericEvent } from 'lib/state';
 import utils from 'lib/utils';
 
 import {
@@ -62,6 +62,7 @@ const sagas = {
     yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
     yield takeEvery(appAction.TIMELINE_ZOOMED, sagas.timelineZoomed);
     yield takeEvery(appAction.TIMER_TICK, sagas.timerTick);
+    yield takeEvery(appAction.SERVER_SYNC, sagas.serverSync);
   },
 
   // TODO for now these are more or less in order of when they were added. Maybe alphabetize.
@@ -115,7 +116,6 @@ const sagas = {
       // Potential cascading appAction.CENTER_MAP_ON_USER:
       const map = MapUtils();
       if (map) {
-        // TODO use a more concise way
         const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: any) => ({
           followingUser: state.ui.flags.followingUser,
           keepMapCenteredWhenFollowing: state.options.keepMapCenteredWhenFollowing,
@@ -238,12 +238,44 @@ const sagas = {
     if (timelineNow) {
       yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: now }));
     }
+    const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
+    const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
+    if (now >= serverSyncTime + serverSyncInterval) {
+      yield put(newAction(appAction.SERVER_SYNC, now));
+    }
   },
 
   setAppOption: function* (action: Action) {
     // for now, this is just a pass through to the reducer.
     log.debug('saga setAppOption', action);
     yield put(newAction(reducerAction.SET_APP_OPTION, action.params));
+  },
+
+  serverSync: function* (action: Action) {
+    const now = action.params as number;
+    yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'serverSyncTime', value: now }));
+
+    const events: GenericEvent[] = yield select((state: AppState) => state.events);
+    const changedEvents: GenericEvent[] = [];
+    const timestamps: number[] = [];
+
+    // For now, just loop through the whole array and accumulate the changed ones.
+    // This simple approach will work fine until we have a large volume of data.
+    events.forEach(event => {
+      const sync = event.sync;
+      if (sync && sync.changed) {
+        changedEvents.push(event);
+        timestamps.push(sync.changed);
+      }
+    })
+    log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
+
+    // TODO Send these changed events to the server.
+
+    // TODO If server responds, confirming receipt, clear the 'changed' flag on the corresponding events.
+    // How do we identify the corresponding events given changedEvents?
+    yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));
+
   },
 }
 

@@ -2,8 +2,6 @@ import {
   Dimensions,
 } from 'react-native';
 
-import constants from 'lib/constants';
-
 interface LatLon {
   lat: number;
   lon: number;
@@ -61,6 +59,12 @@ const utils = {
   windowSize: () => {
     const dim = Dimensions.get('window');
     return dim; // { height, width }
+  },
+
+  // Make an integer time value (msec precision) 'unique' by adding a random number between 0 and 1 to it.
+  // This makes it easier to filter out a subset of events from the global event list.
+  uniqify: (t: number) => {
+    return t + Math.random();
   },
 }
 

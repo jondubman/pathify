@@ -172,7 +172,6 @@ class MapArea extends Component<MapAreaProps> {
     if (this._map) {
       const mapView = this._map as any;
       const bounds = await mapView.getVisibleBounds();
-      log.trace('bounds', bounds);
       return bounds;
     }
   }
