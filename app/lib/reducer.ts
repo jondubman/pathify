@@ -7,14 +7,13 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import { LocationEvent } from 'lib/geo'; // TODO update
+import { GenericEvent, LocationEvent } from 'lib/timeseries'; // TODO update
 import log from 'lib/log';
 
 import {
   initialAppState,
   AppOption,
   AppState,
-  GenericEvent,
 } from 'lib/state';
 
 const reducer = (state: AppState = initialAppState, action: Action): AppState => {
@@ -45,7 +44,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         const timestamps = params as number[];
         const lengthPrev = newState.events.length;
         newState.events = newState.events.filter((event: GenericEvent) => {
-          return !(event.sync && event.sync.changed && timestamps.includes(event.sync.changed))
+          return !(event.changed && timestamps.includes(event.changed))
         })
         const countSynced = lengthPrev - newState.events.length;
         log.debug(`SERVER_SYNC_COMPLETED: ${countSynced} synced, ${newState.events.length} remaining`);

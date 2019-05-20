@@ -11,16 +11,11 @@ enum EventType {
 
 type Event {
   id: ID! @id # auto-assigned, readonly, using Prisma directive (auto-generated)
-
-  t: Int! # canonical event timestamp. This is the only field that is strictly required to create.
   t_created: DateTime! @createdAt # using Prisma system field directive (auto-generated)
   t_updated: DateTime! @updatedAt # using Prisma system field directive (auto-generated)
-  t_sent: Int # if sync is specified, this timestamp is set when event is sent to client
-  t_received: Int # if sync is specified, set if/when client confirmed receipt
 
+  t: Int! # canonical event timestamp. This is the only field that is strictly required to create.
   data: Json @default(value: "{}") # optional untyped, valid JSON associated with this event
   type: EventType @default(value: NONE) # helps interpret data field
-
-  source: String # optional clientId that originated the event. Missing means the [sole] server is source of the event.
-  sync: String # optional clientId to sync with, for server-sourced events. Missing means not synced with any client.
+  source: String # optional clientId that originated the event. Missing means the server is source of the event.
 }

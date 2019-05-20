@@ -273,11 +273,11 @@ const sagas = {
 
     // For now, just loop through the whole array and accumulate the changed ones.
     // This simple approach will work fine until we have quite a large volume of data.
+    // TODO use classical for loop for better perf?
     events.forEach(event => {
-      const sync = event.sync;
-      if (sync && sync.changed) {
+      if (event.changed) {
         changedEvents.push(event);
-        timestamps.push(sync.changed);
+        timestamps.push(event.changed);
       }
     })
     log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
