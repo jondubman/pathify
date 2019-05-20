@@ -1,25 +1,23 @@
-// For use with redux-saga. Coordination around app actions defined in actionTypes module.
-// This is where we trigger possibly-asynchronous side effects for app actions.
+// For use with redux-saga.
+//
+// These are the asynchronous handlers for app actions defined in actionTypes module.
 // These may include other (cascading) app actions and/or reducer actions.
 // A lot of the interactive behaviors of the app are defined here.
-//
 // Note reducers, unlike sagas, must always be synchronous.
-//
 // appActions are actually run through the reducer before any sagas are run, but the reducer ignores them.
-//
-// The fact that redux-sagas makes extensive use of JS generators is not the only thing to keep in mind.
+// redux-saga makes extensive use of the JS concept of generators; these generators yield descriptors of effects.
 //
 // Blocking:
 //   Use yield call to call an async function instead of calling it directly (yield the call effect)
 //   yield take
 //   yield join
-
+//
 // Non-blocking:
 //   Use yield put instead of dispatch to issue a Redux action (be it an appAction or reducerAction.)
 //   yield fork
 //   yield cancel
-
-// Use yield select instead of accessing the store directly (yield the select effect)
+//
+// Note you must use yield select instead of accessing the store directly (yield the select effect)
 
 import {
   call,
@@ -28,9 +26,10 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import { Geo, LocationEvent } from 'lib/geo';
+import { Geo } from 'lib/geo';
 import log from 'lib/log';
-import { AppState, GenericEvent } from 'lib/state';
+import { AppState } from 'lib/state';
+import { GenericEvent, LocationEvent } from 'lib/timeseries';
 import utils from 'lib/utils';
 
 import {
@@ -131,12 +130,14 @@ const sagas = {
     }
   },
 
+  // This determines whether geolocation should be active when running the app in the background,
+  // just in the foreground, or not at all (ghost mode)
   setGeolocationMode: function* (action: Action) {
     try {
       const id = action.params as number;
       yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'geolocationModeId', value: id }));
 
-      // And here is the side-effect that belongs outside the reducer:
+      // This is the side-effect that belongs outside the reducer:
       Geo.setGeolocationMode(id);
     } catch (err) {
       log.error('setGeolocationMode', err);
@@ -153,7 +154,7 @@ const sagas = {
     }
   },
 
-  // Set map bearing to 0 (true north)
+  // Set map bearing to 0 (true north) typically in response to user action (button).
   reorientMap: function* () {
     const map = MapUtils();
     if (map) {
@@ -165,6 +166,7 @@ const sagas = {
     }
   },
 
+  // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     log.trace('saga mapRegionChanged', action.params);
     yield put(newAction(reducerAction.MAP_REGION, action.params as Feature));
@@ -172,6 +174,7 @@ const sagas = {
     yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
   },
 
+  // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
     log.trace('saga mapRegionChanging', action.params);
     yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
@@ -223,6 +226,7 @@ const sagas = {
     yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
   },
 
+  // Respond to timeline pan/zoom.
   timelineZoomed: function* (action: Action) {
     const newZoom = action.params as any;
     const x = newZoom.x as number[];
@@ -231,6 +235,9 @@ const sagas = {
     yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
   },
 
+  // This goes off once a second like the tick of a mechanical watch.
+  // One second is the approximate frequency of location updates
+  // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
     const now = action.params as number;
     // log.trace('timerTick', now);
@@ -238,6 +245,9 @@ const sagas = {
     if (timelineNow) {
       yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: now }));
     }
+    // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
+    // rather than depend on a separate long-running timer. That could also work, but this is sufficient
+    // when we don't need sub-second precision.
     const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
     const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
     if (now >= serverSyncTime + serverSyncInterval) {
@@ -251,6 +261,8 @@ const sagas = {
     yield put(newAction(reducerAction.SET_APP_OPTION, action.params));
   },
 
+  // Initiate or continue syncing data with the server.
+  // This doesn't neecssarily sync everything that is pending at once, particularly with a big backlog.
   serverSync: function* (action: Action) {
     const now = action.params as number;
     yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'serverSyncTime', value: now }));
@@ -260,7 +272,7 @@ const sagas = {
     const timestamps: number[] = [];
 
     // For now, just loop through the whole array and accumulate the changed ones.
-    // This simple approach will work fine until we have a large volume of data.
+    // This simple approach will work fine until we have quite a large volume of data.
     events.forEach(event => {
       const sync = event.sync;
       if (sync && sync.changed) {
@@ -269,13 +281,9 @@ const sagas = {
       }
     })
     log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
+    // TODO Actually send these changed events to the server
 
-    // TODO Send these changed events to the server.
-
-    // TODO If server responds, confirming receipt, clear the 'changed' flag on the corresponding events.
-    // How do we identify the corresponding events given changedEvents?
     yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));
-
   },
 }
 

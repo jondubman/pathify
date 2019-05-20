@@ -3,7 +3,7 @@
 import { Feature } from "@turf/helpers";
 
 import constants from 'lib/constants';
-import { LocationEvent } from 'lib/geo';
+import { GenericEvent, LocationEvent } from 'lib/timeseries';
 
 // Canonical interface for AppOptions included in AppState.
 // AppOptions are potentially modifiable via the API by name, so they need to be the sorts of things one can change
@@ -56,18 +56,6 @@ const initialAppUIState = {
 export type AppUIState = typeof initialAppUIState;
 
 // Canonical interface for AppState, the contents of the Redux store
-
-interface GenericEventSyncInfo {
-  changed?: number; // timestamp if/when last changed. Used locally to identify events to sync with server.
-  source?: string; // generally either our own client ID, or something else if from server (like 'server')
-}
-
-export interface GenericEvent {
-  t: number;
-  type: string;
-  data?: object;
-  sync?: GenericEventSyncInfo; // undefined for private/local events which do not get uploaded
-}
 
 export interface AppState {
   events: GenericEvent[];

@@ -19,8 +19,8 @@ import BackgroundGeolocation, {
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
-import { GenericEvent } from 'lib/state';
 import { Store } from 'lib/store';
+import timeseries, { GenericEvent, LocationEvent } from 'lib/timeseries';
 import utils from 'lib/utils';
 
 const geolocationOptions: Config = {
@@ -186,21 +186,10 @@ const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolo
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
 const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
-export interface LocationEvent extends GenericEvent {
-  data: {
-    ele?: number;
-    heading?: number;
-    lat: number;
-    lon: number;
-    odo?: number;
-    speed?: number;
-  }
-}
-
 const locationEventFromLocation = (info: Location): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
   const loc: LocationEvent = {
-    ...utils.newSyncedEvent(t),
+    ...timeseries.newSyncedEvent(t),
     type: 'LOC',
     data: {
       ele: info.coords.altitude,
