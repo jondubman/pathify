@@ -29,7 +29,7 @@ import {
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
-import { GenericEvent, LocationEvent } from 'lib/timeseries';
+import { GenericEvent, LocationEvent } from 'shared/timeseries';
 import utils from 'lib/utils';
 
 import {

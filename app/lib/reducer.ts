@@ -7,7 +7,7 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import { GenericEvent, LocationEvent } from 'lib/timeseries'; // TODO update
+import { GenericEvent, LocationEvent } from 'shared/timeseries'; // TODO update
 import log from 'lib/log';
 
 import {

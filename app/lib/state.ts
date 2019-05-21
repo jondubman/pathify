@@ -3,7 +3,7 @@
 import { Feature } from "@turf/helpers";
 
 import constants from 'lib/constants';
-import { GenericEvent, LocationEvent } from 'lib/timeseries';
+import { GenericEvent, LocationEvent } from 'shared/timeseries';
 
 // Canonical interface for AppOptions included in AppState.
 // AppOptions are potentially modifiable via the API by name, so they need to be the sorts of things one can change
