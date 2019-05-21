@@ -72,8 +72,8 @@ const sagas = {
       const map = MapUtils();
       if (map && map.flyTo) {
         const loc = yield select((state: AppState) => state.loc);
-        if (loc && loc.lon && loc.lat) {
-          const coordinates = [loc.lon, loc.lat];
+        if (loc && loc.data && loc.data.lon && loc.data.lat) {
+          const coordinates = [loc.data.lon, loc.data.lat];
           yield call(map.flyTo as any, coordinates);
         }
       }
@@ -281,11 +281,11 @@ const sagas = {
       }
     })
     if (changedEvents.length) {
-      log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
-    }
-    // TODO Actually send these changed events to the server
+      // TODO Actually send these changed events to the server!
 
-    yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));
+      log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
+      yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));
+    }
   },
 }
 

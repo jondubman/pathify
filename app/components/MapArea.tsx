@@ -141,8 +141,8 @@ class MapArea extends Component<MapAreaProps> {
             {showUserMarker ?
               <Pulsar
                 id="userLocationMarker"
-                lon={userLoc!.lon}
-                lat={userLoc!.lat}
+                lon={userLoc!.data.lon}
+                lat={userLoc!.data.lat}
                 color={constants.colors.user}
               />
               :
