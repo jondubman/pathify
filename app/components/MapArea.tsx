@@ -205,7 +205,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onRegionWillChange(...args) {
-    log.trace('onRegionWillChange', args);
+    // log.trace('onRegionWillChange', args);
 
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
@@ -215,12 +215,12 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onRegionDidChange(...args) {
-    log.trace('onRegionDidChange', args);
+    // log.trace('onRegionDidChange', args);
     this.props.mapRegionChanged(args[0]);
   }
 
   onDidFinishRenderingMapFully(...args) {
-    log.trace('onDidFinishRenderingMapFully', args);
+    // log.trace('onDidFinishRenderingMapFully', args);
   }
 
   // [{ geometry:

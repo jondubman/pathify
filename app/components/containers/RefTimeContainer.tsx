@@ -41,7 +41,7 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   const year = d.getFullYear().toString();
 
   return {
-    bottom: dynamicTimelineHeight(state) + constants.refTime.bottomMargin,
+    bottom: dynamicTimelineHeight(state),
     refTime,
     hours,
     minutes,

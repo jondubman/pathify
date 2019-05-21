@@ -61,14 +61,14 @@ class Timeline extends Component<TimelinePanelProps> {
     const { refTime, startupTime } = this.props;
     const { initialSpan } = constants.timeline;
     const timespansData = [ // TODO
-      { // bottom line: fixed startupTime to dynamic refTime
-        t1: startupTime, // start
-        t2: refTime, // end
-      },
-      { // top line: the minute before startup
-        t1: startupTime - 60000, // start
-        t2: startupTime, // end
-      },
+      [ // bottom line: fixed startupTime to dynamic refTime
+        startupTime, // start
+        refTime, // end
+      ],
+      [ // top line: the minute before startup
+        startupTime - 60000, // start
+        startupTime, // end
+      ],
     ]
     // log.trace('timespansData', timespansData);
     const initialZoomDomain: DomainPropType = {

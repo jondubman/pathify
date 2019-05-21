@@ -168,7 +168,7 @@ const sagas = {
 
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
-    log.trace('saga mapRegionChanged', action.params);
+    // log.trace('saga mapRegionChanged', action.params);
     yield put(newAction(reducerAction.MAP_REGION, action.params as Polygon));
     yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapMoving'));
     yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
@@ -176,7 +176,7 @@ const sagas = {
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
-    log.trace('saga mapRegionChanging', action.params);
+    // log.trace('saga mapRegionChanging', action.params);
     yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
   },
 

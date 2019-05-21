@@ -280,7 +280,7 @@ const constants = {
     topOffset: safeAreaTop + buttonOffset,
   },
   timeline: {
-    barHeight: 44,
+    barHeight: 35,
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
