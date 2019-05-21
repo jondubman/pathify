@@ -1,6 +1,6 @@
 //  Redux reducer for the app
 
-import { Feature } from "@turf/helpers";
+import { Polygon } from "@turf/helpers";
 
 import {
   Action,
@@ -27,14 +27,14 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t && locationEvent.type === 'LOC') {
           newState.loc = locationEvent;
           newState.events = [...newState.events, locationEvent];
-          log.trace(`${newState.events.length} events`);
+          // log.trace(`${newState.events.length} events`);
         }
       }
       break;
 
     case reducerAction.MAP_REGION:
       {
-        const mapRegion = params as Feature;
+        const mapRegion = params as Polygon;
         newState.mapRegion = mapRegion;
       }
       break;

@@ -1,6 +1,6 @@
 // Interfaces and constants related to the AppState used by the Redux reducer
 
-import { Feature } from "@turf/helpers";
+import { Polygon } from "@turf/helpers";
 
 import constants from 'lib/constants';
 import { GenericEvent, LocationEvent } from 'shared/timeseries';
@@ -43,10 +43,10 @@ const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
     helpEnabled: false,
-    mapFullScreen: true, // is the map occupying the full screen, with timeline hidden?
+    mapFullScreen: false, // is the map occupying the full screen? If true, timeline is hidden.
     mapMoving: false, // is the map currently moving?
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    timelineNow: false, // is the timeline continuously scrolling to show the current time?
+    timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
   panels: {
     geolocation: { open: false },
@@ -60,7 +60,7 @@ export type AppUIState = typeof initialAppUIState;
 export interface AppState {
   events: GenericEvent[];
   loc?: LocationEvent;
-  mapRegion: Feature | null;
+  mapRegion: Polygon | null;
   options: AppOptions;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
   ui: AppUIState;

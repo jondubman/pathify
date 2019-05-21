@@ -15,7 +15,7 @@ export type TimeRange = [number, number];
 // TODO Could calculate Tracks and then check that the sum of the counts of each Track equals the count of LOC updates.
 export interface Track { // singular
   tr: TimeRange;
-  count: number; // count of LOC updates (other event types not counted)
+  count: number; // count of LOC updates within that TimeRange, inclusive of endpoints (other event types not counted)
   // TODO distance? power used? max time/distance gap? Index of first or last event in the range? etc.
   // These are things that could be calculated post facto...
 }
@@ -50,11 +50,16 @@ const timeseries = {
 
   // Continuous tracks are series of TimeRanges such that there is no time gap > maxTimeGap between LOC updates.
   // maxTimeGap is a threshold, in msec (like the other time quantities). Increasing this may decrease the # of tracks.
-  // TimeRange tr determines the events to evaluate. Events outside that range are ignored.
-  // It's possible there could be only one LOC update in a track (a valid track with net distance 0), but never 0 LOCs.
+  //
+  // Optional TimeRange tr filters the events to evaluate. Events outside that range are ignored.
+  // Tracks are thus constrained to the TimeRange even if a session started before and/or continues after the TimeRange.
+  //
+  // It's possible there could be only one LOC update in a track (a valid track with no length), but never 0 LOCs.
+  //
   // TODO *Contiguous* tracks, which add the requirement that consecutive LOC updates be in close proximity.
+  //
   continuousTracks: (events: GenericEvent[], maxTimeGap: number, tr: TimeRange = [0, Infinity]): Tracks => {
-    let tracks: Tracks = [];
+    let tracks: Tracks = []; // to return
     let count = 0; // count of LOC updates per track
     let t_trackStart = 0; // timestamp of the start of the current track. 0 means no current track.
     let t_prevLocUpdate = 0; // timestamp of previous LOC update in a track that has been started. 0 means none yet.
@@ -66,11 +71,10 @@ const timeseries = {
       }
       if (event.t > tr[1]) {
          // passed the end of the TimeRange
-         if (t_trackStart) {
-          // complete the current track
-          const t_trackEnd = t_prevLocUpdate; // this should be nonzero
-          tracks.push({ tr: [t_trackStart, t_trackEnd], count }); // This will be the last. Could return tracks now.
-          t_trackStart = 0; // This skips the block at the end. count and t_prevLocUpdate are no longer relevant.
+         if (t_trackStart) { // if there is a current track, complete it
+          const t_trackEnd = t_prevLocUpdate; // t_prevLocUpdate will be nonzero if t_trackStart is nonzero.
+          tracks.push({ tr: [t_trackStart, t_trackEnd], count });
+          return tracks; // Done
         }
         break;
       }
@@ -82,16 +86,16 @@ const timeseries = {
           tracks.push({ tr: [t_trackStart, t_trackEnd], count });
           count = 0; // reset
         }
-        t_trackStart = 0;  // reset
-        t_prevLocUpdate = 0;  // reset
+        t_trackStart = 0; // reset
+        t_prevLocUpdate = 0; // reset
       }
       if (!t_prevLocUpdate || event.t - t_prevLocUpdate <= maxTimeGap) {
         if (event.type === 'LOC') { // This is the only place the event type is checked.
           // found a LOC event not just within the TimeRange, but within maxTimeGap
           count++; // This is the only place count is incremented. Only LOC events are counted.
-          t_prevLocUpdate = event.t; // This is the only place this gets set to nonzero.
+          t_prevLocUpdate = event.t; // This is the only place this is set to nonzero.
           if (!t_trackStart) { // If a track wasn't started before, it is now.
-            t_trackStart = event.t;
+            t_trackStart = event.t; // This is the only place this is set to nonzero.
           }
         } // else continue. Ignore non-LOC events within the TimeRange.
       }
@@ -120,7 +124,7 @@ const timeseries = {
     return count;
   },
 
-  // Return the list of events whose t is within the given TimeRange, with optional type filter
+  // Return events whose t is within the given TimeRange, with optional type filter
   findEvents: (events: GenericEvent[], tr: TimeRange = [0, Infinity], type: string = ''): GenericEvent[] => {
     const results: GenericEvent[] = [];
     for (let i = 0; i < events.length; i++) {
@@ -131,7 +135,7 @@ const timeseries = {
         }
       }
     }
-    return results; // TODO
+    return results;
   },
 
   // local/private by default (i.e. not synced with the server)
@@ -158,6 +162,9 @@ const timeseries = {
   },
 
   // Confirm that the given events are sorted by t, where t is non-negative.
+  // TODO obtain performance benefit of sorted events by migrating to boolean search for timepoints where possible.
+  // In practice this should not actually make a huge difference until there are a large number of events which should
+  // take a long time when the event log basically consists of LOC updates (order of once per second) and user actions.
   sortedByTime: (events: GenericEvent[]): boolean => {
     let t = 0;
     for (let i = 0; i < events.length; i++) {
@@ -170,7 +177,7 @@ const timeseries = {
     return true;
   },
 
-  // helper function for readability
+  // simple helper function to improve readability
   timeInRange: (t: number, tr: TimeRange): boolean => {
     return (tr[0] <= t && t <= tr[1]);
   },

@@ -40,7 +40,7 @@ import {
 } from 'lib/actions';
 
 import { MapUtils } from 'components/MapArea';
-import { Feature } from '@turf/helpers';
+import { Polygon } from '@turf/helpers';
 import constants from './constants';
 
 const sagas = {
@@ -169,7 +169,7 @@ const sagas = {
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     log.trace('saga mapRegionChanged', action.params);
-    yield put(newAction(reducerAction.MAP_REGION, action.params as Feature));
+    yield put(newAction(reducerAction.MAP_REGION, action.params as Polygon));
     yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapMoving'));
     yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
   },

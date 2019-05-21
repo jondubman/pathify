@@ -98,10 +98,6 @@ process
 // Important: Actually start the server!
 console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
 
-// test ability to use code from shared folder
-import testMessage from 'shared/test'
-console.log(testMessage); // 'It works!'
-
 startServer();
 
 // TODO - experimental timer-based failure injection
