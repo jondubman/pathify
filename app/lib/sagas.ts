@@ -280,7 +280,9 @@ const sagas = {
         timestamps.push(event.changed);
       }
     })
-    log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
+    if (changedEvents.length) {
+      log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
+    }
     // TODO Actually send these changed events to the server
 
     yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));

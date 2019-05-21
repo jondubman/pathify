@@ -54,7 +54,9 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
         const { name, value } = params as AppOption;
-        log.info('reducerAction.SET_APP_OPTION', name, value);
+        if (name !== 'refTime') {
+          log.info('reducerAction.SET_APP_OPTION', name, value);
+        }
         newState.options = {
           ...state.options,
           [name]: value,

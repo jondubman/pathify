@@ -23,7 +23,7 @@ export interface AppOptions {
 const initialAppOptions: AppOptions = {
   geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
   keepMapCenteredWhenFollowing: true,
-  mapOpacity: 1, // TODO usual default is 0.5,
+  mapOpacity: 0.5, // usual default is 0.5
   mapStyle: constants.map.default.style,
   refTime: Date.now(),
   startupTime: Date.now(),

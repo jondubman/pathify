@@ -111,7 +111,7 @@ const colors = {
     background: withOpacity(namedColors.navy, 0.75),
     hoursMinutes: namedColors.white,
     seconds: withOpacity(namedColors.white, 0.75),
-    msec: withOpacity(namedColors.white, 0.5),
+    msec: withOpacity(namedColors.white, 0), // TODO show sometimes
     subText: withOpacity(namedColors.white, 0.75),
     underlay: withOpacity(namedColors.gray, 0.5),
   },

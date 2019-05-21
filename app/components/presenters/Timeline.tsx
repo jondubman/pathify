@@ -70,7 +70,7 @@ class Timeline extends Component<TimelinePanelProps> {
         t2: startupTime, // end
       },
     ]
-    log.trace('timespansData', timespansData);
+    // log.trace('timespansData', timespansData);
     const initialZoomDomain: DomainPropType = {
       x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
       y: [0, 10]
