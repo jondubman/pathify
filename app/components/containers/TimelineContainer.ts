@@ -3,13 +3,16 @@ import { DomainPropType } from 'victory-native';
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
+import { trackList } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
+import { TimeRange } from 'shared/timeseries';
 
 export interface TimelineStateProps {
   refTime: number;
   startupTime: number;
   timelineNow: boolean;
+  timespansData: TimeRange[];
 }
 
 export interface TimelineDispatchProps {
@@ -23,6 +26,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     refTime: state.options.refTime,
     startupTime: state.options.startupTime,
     timelineNow: state.ui.flags.timelineNow,
+    timespansData: trackList(state).map(track => track.tr),
   }
 }
 

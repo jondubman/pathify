@@ -4,6 +4,8 @@ import { AppState } from 'lib/state';
 import constants, { MapStyle } from './constants';
 import utils from 'lib/utils';
 
+import timeseries, { TimeRange, Tracks } from 'shared/timeseries';
+
 export const dynamicMapHeight = (state: AppState): number => {
   return utils.windowSize().height - dynamicTimelineHeight(state);
 }
@@ -22,3 +24,8 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
 export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '')
 )
+
+export const trackList = (state: AppState): Tracks => {
+  const tr: TimeRange = [0, Date.now()];
+  return timeseries.continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
+}

@@ -27,7 +27,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t && locationEvent.type === 'LOC') {
           newState.loc = locationEvent;
           newState.events = [...newState.events, locationEvent];
-          // log.trace(`${newState.events.length} events`);
+          log.trace(`count of ${newState.events.length} total events`);
         }
       }
       break;
@@ -42,12 +42,14 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case reducerAction.SERVER_SYNC_COMPLETED:
       {
         const timestamps = params as number[];
-        const lengthPrev = newState.events.length;
-        newState.events = newState.events.filter((event: GenericEvent) => {
-          return !(event.changed && timestamps.includes(event.changed))
-        })
-        const countSynced = lengthPrev - newState.events.length;
-        log.debug(`SERVER_SYNC_COMPLETED: ${countSynced} synced, ${newState.events.length} remaining`);
+        const events = [ ...newState.events ];
+        for (let i = 0; i < events.length; i++) {
+          if (timestamps.includes(events[i].t)) {
+            events[i].changed = 0; // This is where it is reset.
+          }
+        }
+        newState.events = events;
+        log.debug(`SERVER_SYNC_COMPLETED: ${timestamps.length} synced, ${events.length - timestamps.length} remaining`);
       }
       break;
 

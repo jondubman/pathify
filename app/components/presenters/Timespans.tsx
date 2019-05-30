@@ -12,8 +12,6 @@ interface TimespansProps extends Victory.VictoryCommonProps, Victory.VictoryData
 
 class Timespans extends React.Component<TimespansProps> {
 
-  // public renderCount: number = 0;
-
   constructor(props: any) {
     super(props);
   }
@@ -28,17 +26,21 @@ class Timespans extends React.Component<TimespansProps> {
     return data.map((tr: TimeRange, index: number) => (
       <Rect
         key={`Rect${index}`}
-        style={{ fill: constants.colors.timeline.bars[index] }}
+        style={{ fill: constants.colors.timeline.bars[0] }}
         x={scale.x(tr[0])}
-        y={
-          (timeline.initialHeight - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) -
-          (timeline.barHeight * (index + 1))
-        }
+        y={(timeline.initialHeight - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) - timeline.barHeight}
         width={scale.x(tr[1]) - scale.x(tr[0])}
         height={constants.timeline.barHeight}
       />
     ))
   }
 }
+
+/*
+        y={
+          (timeline.initialHeight - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) -
+          (timeline.barHeight * (index + 1))
+        }
+*/
 
 export default Timespans;

@@ -102,10 +102,10 @@ const timeseries = {
     }
     // Done with all the events. But maybe not done making tracks. If a track is started (which implies not ended),
     // we must not have passed the end of the TimeRange (where t_trackStart is zeroed), so we have an open-ended track.
-    if (t_trackStart) {
+    if (t_trackStart && t_prevLocUpdate) {
       // complete the current track
-      const t_trackEnd = Math.min(tr[1], Infinity); // never include time past the end of the TimeRange
-      tracks.push({ tr: [t_trackStart, t_trackEnd], count });
+      // TODO could note which tracks are open-ended... does it matter?
+      tracks.push({ tr: [t_trackStart, t_prevLocUpdate], count });
     }
     return tracks;
   },

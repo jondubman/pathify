@@ -58,19 +58,13 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { refTime, startupTime } = this.props;
-    const { initialSpan } = constants.timeline;
-    const timespansData = [ // TODO
-      [ // bottom line: fixed startupTime to dynamic refTime
-        startupTime, // start
-        refTime, // end
-      ],
-      [ // top line: the minute before startup
-        startupTime - 60000, // start
-        startupTime, // end
-      ],
-    ]
+    const { refTime, startupTime, timespansData } = this.props;
     // log.trace('timespansData', timespansData);
+    const { initialSpan } = constants.timeline;
+    const initialDomain: DomainPropType = {
+      x: [refTime - initialSpan * 100, refTime + initialSpan * 100],
+      y: [0, 10]
+    }
     const initialZoomDomain: DomainPropType = {
       x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
       y: [0, 10]
@@ -103,11 +97,11 @@ class Timeline extends Component<TimelinePanelProps> {
               minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"
-              zoomDomain={this.state.zoomDomain}
+              zoomDomain={this.state.zoomDomain || initialZoomDomain}
               onZoomDomainChange={this.handleZoom}
             /> as any
           }
-          domain={initialZoomDomain}
+          domain={initialDomain}
           height={constants.timeline.initialHeight}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
