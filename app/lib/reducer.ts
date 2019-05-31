@@ -43,13 +43,20 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         const timestamps = params as number[];
         const events = [ ...newState.events ];
+        let countChanged = 0, countSynced = 0;
         for (let i = 0; i < events.length; i++) {
-          if (timestamps.includes(events[i].t)) {
-            events[i].changed = 0; // This is where it is reset.
+          const { changed } = events[i];
+          if (changed) {
+            countChanged++;
+            if (timestamps.includes(changed)) {
+              events[i].changed = 0; // This is where it is reset.
+              countSynced++;
+            }
           }
         }
         newState.events = events;
-        log.debug(`SERVER_SYNC_COMPLETED: ${timestamps.length} synced, ${events.length - timestamps.length} remaining`);
+        const pending = countChanged - countSynced;
+        log.debug(`SERVER_SYNC_COMPLETED: ${countSynced}/${timestamps.length} synced, ${pending} pending`);
       }
       break;
 

@@ -32,6 +32,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): TimelineDispatchProps => {
   const zoomDomainChanged = (domain: DomainPropType) => {
+    // This responds to user interaction, adjusting the refTime. Not needed for programmatic adjustments to Timeline.
     log.trace('zoomDomainChanged', domain);
     dispatch(newAction(appAction.TIMELINE_ZOOMED, domain));
   }

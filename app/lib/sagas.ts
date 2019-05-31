@@ -275,7 +275,7 @@ const sagas = {
     // This simple approach will work fine until we have quite a large volume of data.
     // TODO use classical for loop for better perf?
     events.forEach(event => {
-      if (event.changed) {
+      if (event.changed && Math.random() > 0.8) {
         changedEvents.push(event);
         timestamps.push(event.changed);
       }

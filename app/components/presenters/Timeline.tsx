@@ -61,11 +61,11 @@ class Timeline extends Component<TimelinePanelProps> {
     const { refTime, startupTime, timespansData } = this.props;
     // log.trace('timespansData', timespansData);
     const { initialSpan } = constants.timeline;
-    const initialDomain: DomainPropType = {
+    const initialDomain: DomainPropType = { // the entire navigable domain of the Timeline
       x: [refTime - initialSpan * 100, refTime + initialSpan * 100],
       y: [0, 10]
     }
-    const initialZoomDomain: DomainPropType = {
+    const initialZoomDomain: DomainPropType = { // the visible domain of the Timeline
       x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
       y: [0, 10]
     }
