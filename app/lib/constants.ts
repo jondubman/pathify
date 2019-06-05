@@ -1,6 +1,8 @@
 // constants module
 
 import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
+import { DomainTuple } from 'victory-native';
+
 const getInset = (SafeAreaView as any).getInset;
 const safeAreaTop =  getInset('top');
 const safeAreaBottom = getInset('bottom');
@@ -240,6 +242,7 @@ const constants = {
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,
+      opacity: 1,
       style: 'Default', // e.g. None, Default, Topo, Satellite. See mapStyles name
       zoom: 14,
     },
@@ -285,11 +288,26 @@ const constants = {
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
-    initialHeight: initialTimelineHeight,
+    default: {
+      height: initialTimelineHeight,
+      zoomLevelIndex: 1,
+    },
     initialSpan: timeInterval.minutes(1),
     tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
+    yDomain: [0, 10] as DomainTuple, // 10 is somewhat arbitrary
+    zoomLevels: [
+      timeInterval.seconds(15),
+      timeInterval.minutes(1), // default
+      timeInterval.minutes(5),
+      timeInterval.minutes(30),
+      timeInterval.minutes(120), // hours(2)
+      timeInterval.hours(12),
+      timeInterval.hours(36),
+      timeInterval.days(7),
+      timeInterval.days(30),
+    ],
   },
 }
 

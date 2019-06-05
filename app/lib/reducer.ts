@@ -27,7 +27,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t && locationEvent.type === 'LOC') {
           newState.loc = locationEvent;
           newState.events = [...newState.events, locationEvent];
-          log.trace(`count of ${newState.events.length} total events`);
+          log.trace(`${newState.events.length} total events`);
         }
       }
       break;

@@ -18,7 +18,6 @@ import {
 } from 'victory-native';
 
 import constants from 'lib/constants';
-import log from 'lib/log';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import Timespans from 'presenters/Timespans';
 
@@ -36,7 +35,7 @@ const tickFormat = (t: Date) => {
 const TimelineStyles = StyleSheet.create({
   timeline: {
     backgroundColor: constants.colors.timeline.background,
-    height: constants.timeline.initialHeight,
+    height: constants.timeline.default.height,
     opacity: 1,
   },
 })
@@ -51,23 +50,23 @@ class Timeline extends Component<TimelinePanelProps> {
     this.handleZoom = this.handleZoom.bind(this);
   }
 
-  public handleZoom(domain: DomainPropType, props: any) {
+  public handleZoom(domain: DomainPropType, props: any) { // responds to user interaction
     this.setState({ zoomDomain: domain }, () => {
       this.props.zoomDomainChanged(domain);
     })
   }
 
   public render() {
-    const { refTime, startupTime, timespansData } = this.props;
+    const { refTime, timespansData } = this.props;
     // log.trace('timespansData', timespansData);
-    const { initialSpan } = constants.timeline;
+    const { initialSpan, yDomain } = constants.timeline;
     const initialDomain: DomainPropType = { // the entire navigable domain of the Timeline
       x: [refTime - initialSpan * 100, refTime + initialSpan * 100],
-      y: [0, 10]
+      y: yDomain,
     }
     const initialZoomDomain: DomainPropType = { // the visible domain of the Timeline
       x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
-      y: [0, 10]
+      y: yDomain,
     }
     const axisStyle = {
       axis: { stroke: constants.colors.timeline.axis },
@@ -102,7 +101,7 @@ class Timeline extends Component<TimelinePanelProps> {
             /> as any
           }
           domain={initialDomain}
-          height={constants.timeline.initialHeight}
+          height={constants.timeline.default.height}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
           <VictoryAxis

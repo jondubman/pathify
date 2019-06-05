@@ -182,6 +182,14 @@ const timeseries = {
     return (tr[0] <= t && t <= tr[1]);
   },
 
+  // When events are sorted by time, finding the total time range is easy.
+  timeRangeOfEvents: (events: GenericEvent[]): TimeRange => {
+    if (events.length < 1) {
+      return [0, 0]; // no events passed in
+    }
+    return [events[0].t, events[events.length - 1].t];
+  },
+
   // Make an integer timestamp (msec precision) 'unique' by adding a random number between 0 and 1 to it.
   // 'uniqified' timepoints make it easier to precisely filter discrete events from the global event list.
   // (Otherwise there might be multiple matches for a given timepoint.)

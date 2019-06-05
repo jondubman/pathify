@@ -23,12 +23,17 @@ class Timespans extends React.Component<TimespansProps> {
     } = this.props as any;
 
     const { timeline } = constants;
+
+    // TODO for now, all Timespans appear at the same height
+    const y = (timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars)
+            - timeline.barHeight;
+
     return data.map((tr: TimeRange, index: number) => (
       <Rect
         key={`Rect${index}`}
         style={{ fill: constants.colors.timeline.bars[0] }}
         x={scale.x(tr[0])}
-        y={(timeline.initialHeight - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) - timeline.barHeight}
+        y={y}
         width={scale.x(tr[1]) - scale.x(tr[0])}
         height={constants.timeline.barHeight}
       />

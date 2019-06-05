@@ -26,6 +26,8 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
+import { DomainPropType } from 'victory-native';
+
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
@@ -228,8 +230,8 @@ const sagas = {
 
   // Respond to timeline pan/zoom.
   timelineZoomed: function* (action: Action) {
-    const newZoom = action.params as any;
-    const x = newZoom.x as number[];
+    const newZoom = action.params as DomainPropType;
+    const x = (newZoom as any).x as [number, number]; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
     log.trace('saga timelineZoomed', refTime);
     yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
@@ -275,15 +277,14 @@ const sagas = {
     // This simple approach will work fine until we have quite a large volume of data.
     // TODO use classical for loop for better perf?
     events.forEach(event => {
-      if (event.changed && Math.random() > 0.8) {
+      if (event.changed) {
         changedEvents.push(event);
         timestamps.push(event.changed);
       }
     })
     if (changedEvents.length) {
       // TODO Actually send these changed events to the server!
-
-      log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length}`);
+      log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
       yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));
     }
   },

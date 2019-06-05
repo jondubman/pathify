@@ -14,7 +14,7 @@ export const dynamicTimelineHeight = (state: AppState): number => {
   return state.ui.flags.mapFullScreen ?
     0
     :
-    constants.timeline.initialHeight
+    constants.timeline.default.height
 }
 
 export const dynamicMapStyle = (state: AppState): MapStyle => (
