@@ -67,7 +67,7 @@ const startServer = () => {
   let server: any;
   let via: string;
 
-  const cert = utils.getSecret('pathify-app.ca-bundle');
+  const cert = utils.getSecret('pathify-app.crt');
   const key = utils.getSecret('pathify.app.key');
   if (cert && key) {
     log.info('Launching secure server');
