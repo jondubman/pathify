@@ -1,4 +1,5 @@
-//  Redux reducer for the app
+// Redux reducer for the app
+// TODO reorganize using combineReducers or something better
 
 import { Polygon } from "@turf/helpers";
 
@@ -7,7 +8,7 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import { GenericEvent, LocationEvent } from 'shared/timeseries'; // TODO update
+import { LocationEvent } from 'shared/timeseries';
 import log from 'lib/log';
 
 import {
@@ -15,6 +16,9 @@ import {
   AppOption,
   AppState,
 } from 'lib/state';
+
+// This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.
+// Expressions like { ...state, modifiedProp: newValue } help to form newState, which is returned at the end..
 
 const reducer = (state: AppState = initialAppState, action: Action): AppState => {
   const newState = { ...state }; // shallow copy for now

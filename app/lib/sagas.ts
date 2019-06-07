@@ -31,7 +31,7 @@ import { DomainPropType } from 'victory-native';
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
-import { GenericEvent, LocationEvent } from 'shared/timeseries';
+import { GenericEvent, LocationEvent, TimeRange } from 'shared/timeseries';
 import utils from 'lib/utils';
 
 import {
@@ -231,7 +231,7 @@ const sagas = {
   // Respond to timeline pan/zoom.
   timelineZoomed: function* (action: Action) {
     const newZoom = action.params as DomainPropType;
-    const x = (newZoom as any).x as [number, number]; // TODO TypeScript definitions not allowing newZoom.x directly
+    const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
     log.trace('saga timelineZoomed', refTime);
     yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));

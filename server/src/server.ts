@@ -61,32 +61,32 @@ function flushLogsAndExit(msecDelay: number = 1000) {
   }, msecDelay);
 }
 
-const startExpressServer = () => {
-  let server: any, port: number, via: string;
-  const secure = true; // TODO
-  log.info('startExpressServer');
+const startServer = () => {
+  const allowInsecure = true; // TODO
+  const port = constants.defaultPort;
+  let server: any;
+  let via: string;
 
-  if (secure) {
-    port = constants.defaultPort;
-    via = 'https';
-    const cert = utils.getSecret('pathify_app.ca-bundle');
-    const key = utils.getSecret('pathify.app.key');
+  const cert = utils.getSecret('pathify_app.ca-bundle');
+  const key = utils.getSecret('pathify.app.key');
+  if (cert && key) {
+    log.info('Launching secure server');
     server = https.createServer({ cert, key }, app);
-  } else {
-    log.warn('Server running over insecure http');
-    port = constants.defaultPort;
-    via = 'http';
+    via = 'https';
+  } else if (allowInsecure) {
+    log.warn('Launching insecure server via http');
     server = app;
+    via = 'http';
   }
-  server.listen(port, () => {
-    log.info(`server listening via ${via}, port ${port}`);
-  })
-}
-
-const startServer = async () => {
-  console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
-  log.info('--------------------------');
-  startExpressServer();
+  if (server) {
+    log.info('--------------------------');
+    console.log('Server launched at', new Date().toString());
+    server.listen(port, () => {
+      log.info(`server listening via ${via}, port ${port}`);
+    })
+  } else {
+    log.error('startServer failed');
+  }
 }
 
 // Equivalent of main() for the server

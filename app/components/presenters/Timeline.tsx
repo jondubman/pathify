@@ -50,22 +50,26 @@ class Timeline extends Component<TimelinePanelProps> {
     this.handleZoom = this.handleZoom.bind(this);
   }
 
-  public handleZoom(domain: DomainPropType, props: any) { // responds to user interaction
+  // This responds to user zoom interaction (which won't be happening if allowZoom is false)
+  // TODO review panning of the timeline
+  public handleZoom(domain: DomainPropType, props: any) {
     this.setState({ zoomDomain: domain }, () => {
       this.props.zoomDomainChanged(domain);
     })
   }
 
   public render() {
-    const { refTime, timespansData } = this.props;
-    // log.trace('timespansData', timespansData);
-    const { initialSpan, yDomain } = constants.timeline;
-    const initialDomain: DomainPropType = { // the entire navigable domain of the Timeline
-      x: [refTime - initialSpan * 100, refTime + initialSpan * 100],
+    const { refTime, timeRange, timespansData, zoomLevel } = this.props;
+    const { yDomain } = constants.timeline;
+    const visibleTime = constants.timeline.visibleTimeForZoomLevel[zoomLevel];
+
+    const dataDomain: DomainPropType = { // the entire navigable domain of the Timeline
+      x: [timeRange[0], Math.max(timeRange[1], refTime + visibleTime / 2)],
       y: yDomain,
     }
-    const initialZoomDomain: DomainPropType = { // the visible domain of the Timeline
-      x: [refTime - initialSpan / 2, refTime + initialSpan / 2],
+
+    const zoomDomain: DomainPropType = { // the visible domain of the Timeline
+      x: [refTime - visibleTime / 2, refTime + visibleTime / 2], // half the visible time goes on either side of refTime
       y: yDomain,
     }
     const axisStyle = {
@@ -86,6 +90,9 @@ class Timeline extends Component<TimelinePanelProps> {
       fill: constants.colors.timeline.axisLabels,
       style: { strokeWidth: 0 },
     }
+    // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
+    // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
+    // Zoom is still allowed, indirectly, via state.options.timelineZoom and constants.timeline.zoomLevels.
     return (
       <View style={TimelineStyles.timeline}>
         <VictoryChart
@@ -96,11 +103,11 @@ class Timeline extends Component<TimelinePanelProps> {
               minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"
-              zoomDomain={this.state.zoomDomain || initialZoomDomain}
+              zoomDomain={zoomDomain}
               onZoomDomainChange={this.handleZoom}
             /> as any
           }
-          domain={initialDomain}
+          domain={dataDomain}
           height={constants.timeline.default.height}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >

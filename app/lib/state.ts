@@ -19,16 +19,17 @@ const initialAppOptions = {
   timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
   serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
   serverSyncTime: 0, // time of last server sync (or 0 if never)
-  zoomLevelIndex: constants.timeline.default.zoomLevelIndex,
+  timelineZoomLevel: constants.timeline.default.zoomLevel,
 }
 export type AppOptions = typeof initialAppOptions;
+
 export interface AppOption {
   name: string;
   value: any; // could be an object
 }
 
 // Canonical interface for AppUIState included in AppState.
-// AppUIState is for transient, user-initiated state changes, e.g. for menus.
+// AppUIState is for transient, UI-related state changes, e.g. for menus.
 
 const initialAppUIState = {
   flags: {
@@ -39,6 +40,7 @@ const initialAppUIState = {
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
+  // panels are subviews that sit above the main (perhaps map) view, which don't have to be modal.
   panels: {
     geolocation: { open: false },
     settings: { open: false },
