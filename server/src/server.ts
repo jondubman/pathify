@@ -11,8 +11,6 @@ import * as helmet from 'helmet';
 import * as https from 'https';
 // import * as JSON5 from 'json5'; // extension of JSON with more permissive syntax
 
-const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues with import, but works fine with require.
-
 import { log } from 'lib/log-bunyan';
 import { constants } from 'lib/constants';
 import { utils } from 'lib/utils';
@@ -33,14 +31,15 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Log network activity at TRACE level
-app.use(bunyanMiddleware({
-  headerName: 'X-Request-Id',
-  propertyName: 'reqId',
-  logName: 'req_id',
-  logger: log.bunyanLogger,
-  level: 'trace',
-  }
-))
+// const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues with import, but works fine with require.
+// app.use(bunyanMiddleware({
+//   headerName: 'X-Request-Id',
+//   propertyName: 'reqId',
+//   logName: 'req_id',
+//   logger: log.bunyanLogger,
+//   level: 'trace',
+//   }
+// ))
 
 // TODO use /api/ping etc.
 import { ping } from 'routers/ping';
