@@ -8,7 +8,7 @@ import * as bodyParser from 'body-parser'; // Unbundled from Express as of Expre
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
-// import * as https from 'https';
+import * as https from 'https';
 // import * as JSON5 from 'json5'; // extension of JSON with more permissive syntax
 
 const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues with import, but works fine with require.
@@ -61,29 +61,33 @@ function flushLogsAndExit(msecDelay: number = 1000) {
   }, msecDelay);
 }
 
-// const startExpressServer = () => {
-//   let server, port, via;
-//   const secure = false;
-//   log.info('startExpressServer');
-//   if (secure) {
-//     // TODO
-//   } else {
-//     log.warn('Server running over insecure http');
-//     port = constants.defaultPort;
-//     via = 'http';
-//     server = app;
-//   }
-//   server.listen(port, () => {
-//     log.info(`server listening via ${via}, port ${port}`);
-//   })
-// }
+const startExpressServer = () => {
+  let server: any, port: number, via: string;
+  const secure = true; // TODO
+  log.info('startExpressServer');
 
-// // This is called synchronously below. It's only async so it can await. TODO
-// const startServer = async () => {
-//   console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
-//   log.info('--------------------------');
-//   startExpressServer();
-// }
+  if (secure) {
+    port = constants.defaultPort;
+    via = 'https';
+    const cert = utils.getSecret('pathify_app.ca-bundle');
+    const key = utils.getSecret('pathify_app.key');
+    server = https.createServer({ cert, key }, app);
+  } else {
+    log.warn('Server running over insecure http');
+    port = constants.defaultPort;
+    via = 'http';
+    server = app;
+  }
+  server.listen(port, () => {
+    log.info(`server listening via ${via}, port ${port}`);
+  })
+}
+
+const startServer = async () => {
+  console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
+  log.info('--------------------------');
+  startExpressServer();
+}
 
 // Equivalent of main() for the server
 
@@ -99,7 +103,7 @@ process
     flushLogsAndExit();
   })
 
-// startServer();
+startServer();
 
 // TODO - experimental timer-based failure injection
 //
