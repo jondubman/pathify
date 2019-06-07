@@ -5,14 +5,15 @@
   "scripts": {
     "clean": "rm -rf dist; mkdir dist 2>/dev/null",
     "clean-reset": " yarn prisma-force-reset; yarn clean",
-    "build": "yarn clean; cp -R prisma/generated/prisma-client src; pushd .; cd ../shared; yarn share; popd; tsc; cp -R src/config dist; echo 'built to /server/dist'; ls -l dist; yarn test",
+    "build": "yarn clean; cp -R prisma/generated/prisma-client src; pushd .; cd ../shared; yarn share; popd; tsc; cp -R src/config dist; cp -R src/secrets dist; echo 'built to /server/dist'; ls -l dist; yarn test",
     "build-reset": "yarn build; yarn prisma-force-reset",
     "launch": "NODE_ENV=development node dist/server.js",
     "test": "NODE_ENV=development mocha dist/test/*.js",
     "prisma-generate": "pushd .; cd prisma; prisma deploy; prisma generate; popd",
     "prisma-reset": "pushd .; cd prisma; prisma reset; prisma deploy; prisma generate; prisma seed; popd",
     "prisma-force-reset": "pushd .; cd prisma; prisma reset -f; prisma deploy; prisma generate; prisma seed; popd",
-    "start": "echo \"launching nodemon, watching src...\"; NODE_ENV=development nodemon --watch src -e ts,json5 --exec 'echo \"rebuilding server...\"; yarn build; echo \"running tests...\"; echo \"relaunching server...\"; yarn launch'"
+    "start-TODO": "echo \"launching nodemon, watching src...\"; NODE_ENV=development nodemon --watch src -e ts,json5 --exec 'echo \"rebuilding server...\"; yarn build; echo \"running tests...\"; echo \"relaunching server...\"; yarn launch'",
+    "start": "yarn build; yarn test; yarn launch"
   },
   "author": "Jonathan Dubman",
   "license": "ISC",

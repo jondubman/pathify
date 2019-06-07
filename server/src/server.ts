@@ -15,6 +15,7 @@ const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues wit
 
 import { log } from 'lib/log-bunyan';
 import { constants } from 'lib/constants';
+import { utils } from 'lib/utils';
 
 const app = express();
 
@@ -46,7 +47,7 @@ import { ping } from 'routers/ping';
 app.use('/ping', ping);
 
 // used for fatal error / server restart
-function flushLogsAndExit(msecDelay = 1000) {
+function flushLogsAndExit(msecDelay: number = 1000) {
   // Note this would exit immediately, omitting logs due to https://github.com/trentm/node-bunyan/issues/95
   // process.exit(1);
 
@@ -60,28 +61,31 @@ function flushLogsAndExit(msecDelay = 1000) {
   }, msecDelay);
 }
 
-const startExpressServer = () => {
-  let server, port, via;
-  const secure = false;
-  log.info('startExpressServer');
-  if (secure) {
-    // TODO
-  } else {
-    log.warn('Server running over insecure http');
-    port = constants.defaultPort;
-    via = 'http';
-    server = app;
-  }
-  server.listen(port, () => {
-    log.info(`server listening via ${via}, port ${port}`);
-  })
-}
+// const startExpressServer = () => {
+//   let server, port, via;
+//   const secure = false;
+//   log.info('startExpressServer');
+//   if (secure) {
+//     // TODO
+//   } else {
+//     log.warn('Server running over insecure http');
+//     port = constants.defaultPort;
+//     via = 'http';
+//     server = app;
+//   }
+//   server.listen(port, () => {
+//     log.info(`server listening via ${via}, port ${port}`);
+//   })
+// }
 
-// This is called synchronously below. It's only async so it can await. TODO
-const startServer = async () => {
-  log.info('--------------------------');
-  startExpressServer();
-}
+// // This is called synchronously below. It's only async so it can await. TODO
+// const startServer = async () => {
+//   console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
+//   log.info('--------------------------');
+//   startExpressServer();
+// }
+
+// Equivalent of main() for the server
 
 // https://stackoverflow.com/questions/40867345/catch-all-uncaughtexception-for-node-js-app
 process
@@ -95,10 +99,10 @@ process
     flushLogsAndExit();
   })
 
-// Important: Actually start the server!
-console.log('server launched. To view debug log, tail -f logs/server.log | bunyan -l debug');
+console.log(utils.getSecret('pathify_app.crt'));
+console.log(utils.getSecret('pathify_app.ca-bundle'));
 
-startServer();
+// startServer();
 
 // TODO - experimental timer-based failure injection
 //
