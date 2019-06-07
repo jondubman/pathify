@@ -4,6 +4,7 @@ import * as chai from 'chai';
 const expect = chai.expect;
 
 import { constants } from 'lib/constants';
+import { utils } from 'lib/utils';
 
 // ----------------------
 // Mocha tests begin here
@@ -45,3 +46,12 @@ describe('timeseries-continuousTracks', function () {
     expect(tracks).to.exist;
   })
 })
+
+describe('secrets', function() {
+  it(`should be able to read from a secret file`, async function() {
+    const secret = utils.getSecret('test-secret');
+    console.log('secret:', secret);
+    expect(secret).to.exist;
+  })
+})
+

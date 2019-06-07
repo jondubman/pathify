@@ -99,9 +99,6 @@ process
     flushLogsAndExit();
   })
 
-console.log(utils.getSecret('pathify_app.crt'));
-console.log(utils.getSecret('pathify_app.ca-bundle'));
-
 // startServer();
 
 // TODO - experimental timer-based failure injection
