@@ -70,7 +70,7 @@ const startExpressServer = () => {
     port = constants.defaultPort;
     via = 'https';
     const cert = utils.getSecret('pathify_app.ca-bundle');
-    const key = utils.getSecret('pathify_app.key');
+    const key = utils.getSecret('pathify.app.key');
     server = https.createServer({ cert, key }, app);
   } else {
     log.warn('Server running over insecure http');
