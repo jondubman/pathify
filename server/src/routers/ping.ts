@@ -16,7 +16,7 @@ router.get('/json', function (req, res) {
 })
 
 // api ping/post
-router.get('/post', function (req, res) {
+router.post('/post', function (req, res) {
   const obj = req.body;
   res.send(obj);
 })
