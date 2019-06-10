@@ -3,13 +3,21 @@ var router = express.Router()
 
 import { log } from 'lib/log-bunyan';
 
+// get ping
 router.get('/', function (req, res) {
   res.send('pong');
   log.debug('ping');
 })
 
+// api ping/json
 router.get('/json', function (req, res) {
   const obj = { ping: 'pong' };
+  res.send(obj);
+})
+
+// api ping/post
+router.get('/post', function (req, res) {
+  const obj = req.body;
   res.send(obj);
 })
 
