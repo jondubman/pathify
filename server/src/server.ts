@@ -66,10 +66,12 @@ const startServer = () => {
   let server: any;
   let via: string;
 
+  log.info('--------------------------');
+
   const cert = utils.getSecret('pathify-app.crt');
   const key = utils.getSecret('pathify.app.key');
   if (cert && key) {
-    log.info('Launching secure server');
+    log.info('Launching securely with https');
     server = https.createServer({ cert, key }, app);
     via = 'https';
   } else if (allowInsecure) {
@@ -78,10 +80,9 @@ const startServer = () => {
     via = 'http';
   }
   if (server) {
-    log.info('--------------------------');
     console.log('Server launched at', new Date().toString());
     server.listen(port, () => {
-      log.info(`server listening via ${via}, port ${port}`);
+      log.info(`Server listening via ${via}, port ${port}`);
     })
   } else {
     log.error('startServer failed');
