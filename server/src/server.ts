@@ -41,9 +41,11 @@ app.use(cookieParser());
 //   }
 // ))
 
-// TODO use /api/ping etc.
 import { ping } from 'routers/ping';
 app.use('/ping', ping);
+
+import { poll } from 'routers/poll';
+app.use('/poll', poll);
 
 // used for fatal error / server restart
 function flushLogsAndExit(msecDelay: number = 1000) {
