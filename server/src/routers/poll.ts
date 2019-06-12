@@ -16,7 +16,7 @@ router.get('/test', function (req, res) {
   const { clientId, message } = req.query;
   log.debug(`poll test for clientId ${clientId}, message ${message}`);
   push(message, clientId);
-  res.sendStatus(200);
+  res.send({ message: 'done' });
 })
 
 export { router as poll };
