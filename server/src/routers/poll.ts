@@ -6,9 +6,9 @@ import { log } from 'lib/log-bunyan';
 import { handlePollRequest, push } from 'lib/push';
 
 router.get('/', function (req, res) {
-  const { clientId } = req.query;
+  const { clientId, timeout } = req.query;
   log.debug(`poll from clientId ${clientId}`);
-  const timeoutMsec = constants.serverPollTimeout
+  const timeoutMsec = timeout || constants.serverPollTimeout;
   handlePollRequest(req, res, timeoutMsec);
 })
 
