@@ -1,14 +1,14 @@
 // import * as uuid from 'uuid/v4';
 
 import { log } from 'lib/log-bunyan';
+import { util } from 'prettier';
 
 // When client initiates polling, server should respond before timeout, either with placeholder timeout response,
-// or with an array of queued messages for the app.
+// or with an array of queued messages for the app. For now, server uses a simple in-memory queue that does not
+// persist across server invocations.
 
 // Use push to queue a message for the app (which will hopefully be delivered right away)
-
-// TODO what if server goes down with pending pushes? Need to determine whether they are still relevant
-// when server comes back up. Probably need to set something when pushing that will help determine that.
+// If messages are idempotent, server could attempt resending until a client handshake arrives.
 
 type Message = any; // TODO
 type ClientMessages = { [key: string]: Message[] }; // key is clientId
@@ -23,9 +23,6 @@ type ClientPollRequest = {
 }
 type ClientPollRequests = { [key: string]: ClientPollRequest[] }; // key is clientId
 let polls: ClientPollRequests = {};
-
-// TODO replaced by queue within pollRequests, by clientId
-// let pendingPushes = []; // TODO there needs to be more than one of these! One per connected app!
 
 // Start here: Polling request from client. Exported to be called from Express router.
 // This should happen regularly for each active/connected client.
@@ -61,10 +58,12 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
 
 // Server push is the purpose of this module. Enqueue a message to a client and attempt to send it.
 export const push = (message: any, clientId: string) => {
-  log.debug(`push to clientId ${clientId}`);
   if (!messages[clientId]) {
     messages[clientId] = [];
   }
+  const countPending = messages[clientId].length;
+  const messageText = (typeof message == 'string') ? message : JSON.stringify(message));
+  log.debug(`push ${messageText} to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`);
   messages[clientId].push(message);
   respond(clientId, 'server push');
 }

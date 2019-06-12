@@ -2,9 +2,9 @@
 
 // Pathify cli (admin)
 
-// chmod u+x pathify.ts
-// alias pathify=pathify.ts
+// chmod u+x pathify-cli.ts
+// alias pathify=pathify-cli.ts
 //
-// pathify ...
+// pathify-cli ...
 
 console.log('Hello ts-node');
