@@ -148,6 +148,7 @@ const constants = {
   appName: 'Pathify',
   buttonOffset,
   buttonSize,
+  clientId: 'app', // TODO uuid
   clock: {
     border: {
       width: 1,
@@ -238,6 +239,10 @@ const constants = {
     size: buttonSize,
     topOffset: safeAreaTop + buttonOffset,
   },
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
   map: {
     default: {
       lat: 47.6603810, // Wallingford
@@ -268,6 +273,7 @@ const constants = {
   },
   safeAreaBottom,
   safeAreaTop,
+  serverUrl: 'https://pathify.app:3000/', // TODO could also be localhost:3000/
   serverSyncIntervalDefault: 10000, // msec
   settingsButton: {
     leftOffset: buttonOffset,

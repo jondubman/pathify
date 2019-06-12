@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import { appAction, newAction, reducerAction } from 'lib/actions';
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
+import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
 
@@ -31,6 +32,8 @@ export default class App extends Component {
       store.dispatch(newAction(appAction.TIMER_TICK, Date.now()));
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(reducerAction.SET_TIMER_TICK_INTERVAL, interval));
+
+    pollServer(); // TODO
   }
 
   render() {

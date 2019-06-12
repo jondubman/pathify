@@ -12,12 +12,14 @@ router.get('/', function (req, res) {
 // get ping/json
 router.get('/json', function (req, res) {
   const obj = { ping: 'pong' };
+  log.debug('ping/json');
   res.send(obj);
 })
 
 // post ping/post
 router.post('/post', function (req, res) {
   const obj = req.body;
+  log.debug('ping/post');
   res.send(obj);
 })
 

@@ -7,8 +7,8 @@ import { handlePollRequest, push } from 'lib/push';
 
 router.get('/', function (req, res) {
   const { clientId, timeout } = req.query;
-  log.debug(`poll from clientId ${clientId}`);
   const timeoutMsec = timeout || constants.serverPollTimeout;
+  log.debug(`poll from clientId ${clientId} timeout ${timeoutMsec}`);
   handlePollRequest(req, res, timeoutMsec);
 })
 
