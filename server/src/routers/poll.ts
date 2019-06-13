@@ -1,5 +1,4 @@
 import * as express from 'express';
-import util from 'util';
 
 var router = express.Router()
 
@@ -24,7 +23,9 @@ router.get('/push', function (req, res) {
 router.post('/push', function (req, res) {
   const { clientId } = req.query;
   const message = req.body;
-  const inspect = util.inspect(message);
+  // TODO
+  // const inspect = util.inspect(message);
+  const inspect = JSON.stringify(message);
   log.debug(`push object to clientId ${clientId}, message ${inspect}`);
   push(message, clientId);
   res.send({ message: 'done' });
