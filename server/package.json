@@ -18,8 +18,8 @@
     "prisma-generate": "cd prisma; prisma deploy; prisma generate; cd ..",
     "prisma-reset": "cd prisma; prisma reset; prisma deploy; prisma generate; prisma seed; cd ..",
     "prisma-force-reset": "cd prisma; prisma reset -f; prisma deploy; prisma generate; prisma seed; cd ..",
-    "start-TODO": "echo \"launching nodemon, watching src...\"; NODE_ENV=development nodemon --watch src -e ts,json5 --exec 'echo \"rebuilding server...\"; yarn build; echo \"running tests...\"; echo \"relaunching server...\"; yarn launch'",
-    "start": "yarn build; yarn launch"
+    "restart": "yarn build; yarn launch",
+    "start": "yarn; yarn build-test; yarn launch"
   },
   "author": "Jonathan Dubman",
   "license": "ISC",
