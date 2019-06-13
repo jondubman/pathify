@@ -5,15 +5,19 @@ import store from 'lib/store';
 
 const { clientId, headers, serverUrl } = constants;
 
-export const handleServerPush = (message: any) => {
-  log.info('serverPush', message);
-  if (message === 'handshake') {
+export const handleServerPush = (data: any) => {
+  log.info('serverPush', data);
+  // Custom string messages are handled here
+  if (data === 'handshake') {
     getFromServer('ping/json');
   }
-  if (typeof message === 'object') {
-    const { action, params } = message;
-    if (action) {
-      store.dispatch(newAction(action, params || null));
+  // TODO for now, for convenience, assume that any JSON that comes in is an appAction and just dispatch it with params.
+  if (typeof data === 'object') {
+    for (let message of data) {
+      const { action, params } = message;
+      if (action) {
+        store.dispatch(newAction(action, params || null));
+      }
     }
   }
 }

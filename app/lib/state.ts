@@ -5,13 +5,9 @@ import { Polygon } from "@turf/helpers";
 import constants from 'lib/constants';
 import { GenericEvent, LocationEvent } from 'shared/timeseries';
 
-// Canonical interface for AppOptions included in AppState.
-// AppOptions are potentially modifiable via the API by name, so they need to be the sorts of things one can change
-// at any time. These include, but are not limited to, all the options that are modifiable via Settings in the UI.
-
+// Canonical interface for AppOptions included in AppState
 const initialAppOptions = {
   geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
-  keepMapCenteredWhenFollowing: true,
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
   refTime: Date.now(),
@@ -34,6 +30,7 @@ export interface AppOption {
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
+    keepMapCenteredWhenFollowing: true,
     helpEnabled: false,
     mapFullScreen: false, // is the map occupying the full screen? If true, timeline is hidden.
     mapMoving: false, // is the map currently moving?
