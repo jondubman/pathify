@@ -23,25 +23,25 @@ export enum reducerAction {
   'UI_FLAG_TOGGLE' = 'UI_FLAG_TOGGLE',
 }
 
-// These enum strings are preceded by async_ so as never to match any reducerActions (similar to namespacing).
-// async_ serves as a reminder that while reducers are synchronous, these are handled asynchronously (via sagas).
+// These enum strings are formatted in Pascal case so as never to match any reducerActions (similar to namespacing).
+// While reducers are synchronous, these are handled asynchronously (via sagas).
 export enum appAction {
-  'BACKGROUND_TAPPED' = 'async_BACKGROUND_TAPPED',
-  'GEOLOCATION' = 'async_GEOLOCATION',
-  'CENTER_MAP_ON_USER' = 'async_CENTER_MAP_ON_USER',
-  'USER_MOVED_MAP' = 'async_USER_MOVED_MAP',
-  'REORIENT_MAP' = 'async_REORIENT_MAP',
-  'MAP_REGION_CHANGED' = 'async_MAP_REGION_CHANGED',
-  'MAP_REGION_CHANGING' = 'async_MAP_REGION_CHANGING',
-  'MAP_TAPPED' = 'async_MAP_TAPPED',
-  'SERVER_SYNC' = 'async_SERVER_SYNC',
-  'SET_APP_OPTION' = 'async_SET_APP_OPTION', // Use appAction.SET_APP_OPTION to allow for side effects
-  'SET_GEOLOCATION_MODE' = 'async_SET_GEOLOCATION_MODE',
-  'START_FOLLOWING_USER' = 'async_START_FOLLOWING_USER',
-  'STOP_FOLLOWING_USER' = 'async_STOP_FOLLOWING_USER',
-  'TIMELINE_ZOOMED' = 'async_TIMELINE_ZOOMED',
-  'TIMER_TICK' = 'async_TIMER_TICK',
-  'TOGGLE_PANEL_VISIBILITY' = 'async_TOGGLE_PANEL_VISIBILITY',
+  'backgroundTapped' = 'backgroundTapped',
+  'geolocation' = 'geolocation',
+  'centerMapOnUser' = 'centerMapOnUser',
+  'userMovedMap' = 'userMovedMap',
+  'reorientMap' = 'reorientMap',
+  'mapRegionChanged' = 'mapRegionChanged',
+  'mapRegionChanging' = 'mapRegionChanging',
+  'mapTapped' = 'mapTapped',
+  'serverSync' = 'serverSync',
+  'setAppOption' = 'setAppOption', // allows for side effects
+  'setGeolocationMode' = 'setGeolocationMode',
+  'startFollowingUser' = 'startFollowingUser',
+  'stopFollowingUser' = 'stopFollowingUser',
+  'timelineZoomed' = 'timelineZoomed',
+  'timerTick' = 'timerTick',
+  'togglePanelVisibility' = 'togglePanelVisibility',
 }
 
 export type ActionType = reducerAction | appAction;

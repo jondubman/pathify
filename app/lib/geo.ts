@@ -224,7 +224,7 @@ export const Geo = {
       const onLocation = (location: Location) => {
         const locationEvent = locationEventFromLocation(location);
         // log.trace('location', locationEvent);
-        store.dispatch(newAction(appAction.GEOLOCATION, locationEvent));
+        store.dispatch(newAction(appAction.geolocation, locationEvent));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
       }

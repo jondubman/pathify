@@ -43,19 +43,19 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
 const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
   const dispatchers = {
     backgroundTapped: (args: any) => {
-      dispatch(newAction(appAction.BACKGROUND_TAPPED, args));
+      dispatch(newAction(appAction.backgroundTapped, args));
     },
     mapTapped: (args: any) => {
-      dispatch(newAction(appAction.MAP_TAPPED, args));
+      dispatch(newAction(appAction.mapTapped, args));
     },
     mapRegionChanged: (args: any) => {
-      dispatch(newAction(appAction.MAP_REGION_CHANGED, args));
+      dispatch(newAction(appAction.mapRegionChanged, args));
     },
     mapRegionChanging: (args: any) => {
-      dispatch(newAction(appAction.MAP_REGION_CHANGING, args));
+      dispatch(newAction(appAction.mapRegionChanging, args));
     },
     userMovedMap: (args: any) => {
-      dispatch(newAction(appAction.USER_MOVED_MAP, args));
+      dispatch(newAction(appAction.userMovedMap, args));
     },
   }
   return dispatchers;

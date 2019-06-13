@@ -46,24 +46,22 @@ import { Polygon } from '@turf/helpers';
 import constants from './constants';
 
 const sagas = {
-  // root is boilerplate
+  // Avoid boilerplate by automatically yielding takeEvery for each appAction
   root: function* () {
-    yield takeEvery(appAction.CENTER_MAP_ON_USER, sagas.centerMapOnUser);
-    yield takeEvery(appAction.GEOLOCATION, sagas.geolocation);
-    yield takeEvery(appAction.SET_GEOLOCATION_MODE, sagas.setGeolocationMode);
-    yield takeEvery(appAction.USER_MOVED_MAP, sagas.userMovedMap);
-    yield takeEvery(appAction.REORIENT_MAP, sagas.reorientMap);
-    yield takeEvery(appAction.MAP_REGION_CHANGED, sagas.mapRegionChanged);
-    yield takeEvery(appAction.MAP_REGION_CHANGING, sagas.mapRegionChanging);
-    yield takeEvery(appAction.MAP_TAPPED, sagas.mapTapped);
-    yield takeEvery(appAction.BACKGROUND_TAPPED, sagas.backgroundTapped);
-    yield takeEvery(appAction.TOGGLE_PANEL_VISIBILITY, sagas.togglePanelVisiblity);
-    yield takeEvery(appAction.SET_APP_OPTION, sagas.setAppOption);
-    yield takeEvery(appAction.START_FOLLOWING_USER, sagas.startFollowingUser);
-    yield takeEvery(appAction.STOP_FOLLOWING_USER, sagas.stopFollowingUser);
-    yield takeEvery(appAction.TIMELINE_ZOOMED, sagas.timelineZoomed);
-    yield takeEvery(appAction.TIMER_TICK, sagas.timerTick);
-    yield takeEvery(appAction.SERVER_SYNC, sagas.serverSync);
+    for (let action in appAction) {
+      // TODO why is action sometimes 0?
+      if (appAction[action]) {
+        log.debug('action', action, appAction[action]);
+        yield takeEvery(appAction[action], sagas[appAction[action]]);
+      } else {
+        log.warn('unknown action in appAction enum', action); // TODO why does this happen?
+      }
+    }
+    // equivalent to
+    // yield takeEvery(appAction.firstAction, sagas.firstAction);
+    // yield takeEvery(appAction.secondAction, sagas.secondAction);
+    // yield takeEvery(appAction.thirdAction, sagas.thirdAction);
+    // ...
   },
 
   // TODO for now these are more or less in order of when they were added. Maybe alphabetize.
@@ -91,7 +89,7 @@ const sagas = {
       yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'followingUser'));
       const map = MapUtils();
       if (map) {
-        yield put(newAction(appAction.CENTER_MAP_ON_USER)); // cascading app action
+        yield put(newAction(appAction.centerMapOnUser)); // cascading app action
       }
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
@@ -114,7 +112,7 @@ const sagas = {
       const locationEvent: LocationEvent = action.params as LocationEvent;
       yield put(newAction(reducerAction.GEOLOCATION, locationEvent));
 
-      // Potential cascading appAction.CENTER_MAP_ON_USER:
+      // Potential cascading appAction.centerMapOnUser:
       const map = MapUtils();
       if (map) {
         const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: any) => ({
@@ -124,7 +122,7 @@ const sagas = {
         }))
         const bounds = yield call(map.getVisibleBounds as any);
         if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
-          yield put(newAction(appAction.CENTER_MAP_ON_USER));
+          yield put(newAction(appAction.centerMapOnUser));
         }
       }
     } catch (err) {
@@ -150,7 +148,7 @@ const sagas = {
   userMovedMap: function* (action: Action) {
     try {
       log.debug('saga userMovedMap');
-      yield put(newAction(appAction.STOP_FOLLOWING_USER));
+      yield put(newAction(appAction.stopFollowingUser));
     } catch (err) {
       log.error('userMovedMap', err);
     }
@@ -200,8 +198,8 @@ const sagas = {
   // If named panel is open, it will be closed.
   // If named panel is closed, any opened panels will be closed, and the named panel will be opened.
   // If named panel is empty (or unknown), any open panels will be closed.
-  togglePanelVisiblity: function* (action: Action) {
-    log.trace('saga togglePanelVisiblity', action.params);
+  togglePanelVisibility: function* (action: Action) {
+    log.trace('saga togglePanelVisibility', action.params);
     const name = action.params as string;
     const panels = yield select((state: AppState) => state.ui.panels);
     const closeAll = !name || (name === '') || !panels[name];
@@ -253,7 +251,7 @@ const sagas = {
     const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
     const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
     if (now >= serverSyncTime + serverSyncInterval) {
-      yield put(newAction(appAction.SERVER_SYNC, now));
+      yield put(newAction(appAction.serverSync, now));
     }
   },
 

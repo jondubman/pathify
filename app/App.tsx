@@ -26,10 +26,10 @@ export default class App extends Component {
 
     Geo.initializeGeolocation(store);
     Geo.resetOdometer();
-    store.dispatch(newAction(appAction.START_FOLLOWING_USER));
+    store.dispatch(newAction(appAction.startFollowingUser));
 
     const interval = setInterval(() => {
-      store.dispatch(newAction(appAction.TIMER_TICK, Date.now()));
+      store.dispatch(newAction(appAction.timerTick, Date.now()));
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(reducerAction.SET_TIMER_TICK_INTERVAL, interval));
 

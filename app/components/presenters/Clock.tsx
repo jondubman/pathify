@@ -142,7 +142,7 @@ const ClockTicks = () => {
         ]
       }
     ]
-    clockTicks.push(<View style={styles} />);
+    clockTicks.push(<View key={i} style={styles} />);
   }
   return (
     <View>

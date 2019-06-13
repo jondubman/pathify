@@ -1,7 +1,7 @@
 // import * as uuid from 'uuid/v4';
 
 import { log } from 'lib/log-bunyan';
-import { util } from 'prettier';
+// import { util } from 'prettier';
 
 // When client initiates polling, server should respond before timeout, either with placeholder timeout response,
 // or with an array of queued messages for the app. For now, server uses a simple in-memory queue that does not

@@ -26,8 +26,8 @@ const mapStateToProps = (state: AppState): GeolocationPanelStateProps => {
 const mapDispatchToProps = (dispatch: Function): GeolocationPanelDispatchProps => {
   const dispatchers = {
     setGeolocationMode: (id: number) => {
-      dispatch(newAction(appAction.SET_GEOLOCATION_MODE, id));
-      dispatch(newAction(appAction.TOGGLE_PANEL_VISIBILITY));
+      dispatch(newAction(appAction.setGeolocationMode, id));
+      dispatch(newAction(appAction.togglePanelVisibility));
     },
   }
   return dispatchers;

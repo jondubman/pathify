@@ -27,7 +27,7 @@ const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): SettingsButtonDispatchProps => {
   const onPress = () => {
     log.debug('SettingsButton press');
-    dispatch(newAction(appAction.TOGGLE_PANEL_VISIBILITY, 'settings'));
+    dispatch(newAction(appAction.togglePanelVisibility, 'settings'));
   }
   const dispatchers = {
     onPress,

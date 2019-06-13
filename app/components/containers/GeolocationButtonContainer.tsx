@@ -34,7 +34,7 @@ const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(appAction.TOGGLE_PANEL_VISIBILITY, 'geolocation'));
+    dispatch(newAction(appAction.togglePanelVisibility, 'geolocation'));
   }
   const dispatchers = {
     onPress,

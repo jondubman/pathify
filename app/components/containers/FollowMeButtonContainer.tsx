@@ -34,9 +34,9 @@ const mapDispatchToProps = (dispatch: Function): FollowMeButtonDispatchProps => 
   const onPress = () => {
     const { followingUser } = store.uiState().flags;
     if (followingUser) { // toggle the state
-      dispatch(newAction(appAction.STOP_FOLLOWING_USER));
+      dispatch(newAction(appAction.stopFollowingUser));
     } else {
-      dispatch(newAction(appAction.START_FOLLOWING_USER));
+      dispatch(newAction(appAction.startFollowingUser));
     }
   }
   const dispatchers = {
