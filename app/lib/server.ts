@@ -5,7 +5,7 @@ const { clientId, headers, serverUrl } = constants;
 
 export const handleServerPush = (message: any) => {
   log.info('serverPush', message);
-  if (message == 'handshake') {
+  if (message === 'handshake') {
     getFromServer('ping/json');
   }
 }

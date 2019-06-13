@@ -12,9 +12,17 @@ router.get('/', function (req, res) {
   handlePollRequest(req, res, timeoutMsec);
 })
 
-router.get('/test', function (req, res) {
+router.get('/push', function (req, res) {
   const { clientId, message } = req.query;
-  log.debug(`poll test for clientId ${clientId}, message ${message}`);
+  log.debug(`push text clientId ${clientId}, message ${message}`);
+  push(message, clientId);
+  res.send({ message: 'done' });
+})
+
+router.post('/push', function (req, res) {
+  const { clientId } = req.query;
+  const message = req.body;
+  log.debug(`push object to clientId ${clientId}, message ${message}`);
   push(message, clientId);
   res.send({ message: 'done' });
 })
