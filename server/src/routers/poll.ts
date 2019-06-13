@@ -1,4 +1,6 @@
 import * as express from 'express';
+import util from 'util';
+
 var router = express.Router()
 
 import { constants } from 'lib/constants';
@@ -22,7 +24,8 @@ router.get('/push', function (req, res) {
 router.post('/push', function (req, res) {
   const { clientId } = req.query;
   const message = req.body;
-  log.debug(`push object to clientId ${clientId}, message ${message}`);
+  const inspect = util.inspect(message);
+  log.debug(`push object to clientId ${clientId}, message ${inspect}`);
   push(message, clientId);
   res.send({ message: 'done' });
 })

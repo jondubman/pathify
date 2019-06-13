@@ -43,7 +43,7 @@ import {
 
 import { MapUtils } from 'components/MapArea';
 import { Polygon } from '@turf/helpers';
-import constants from './constants';
+import constants from 'lib/constants';
 
 const sagas = {
   // Avoid boilerplate by automatically yielding takeEvery for each appAction

@@ -1,7 +1,7 @@
 //  Selector functions for Redux reducer
 
 import { AppState } from 'lib/state';
-import constants, { MapStyle } from './constants';
+import constants, { MapStyle } from 'lib/constants';
 import utils from 'lib/utils';
 
 import timeseries, { TimeRange, Tracks } from 'shared/timeseries';

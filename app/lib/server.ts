@@ -1,5 +1,7 @@
+import { newAction } from 'lib/actions';
 import log from 'lib/log';
-import constants from './constants';
+import constants from 'lib/constants';
+import store from 'lib/store';
 
 const { clientId, headers, serverUrl } = constants;
 
@@ -7,6 +9,12 @@ export const handleServerPush = (message: any) => {
   log.info('serverPush', message);
   if (message === 'handshake') {
     getFromServer('ping/json');
+  }
+  if (typeof message === 'object') {
+    const { action, params } = message;
+    if (action) {
+      store.dispatch(newAction(action, params || null));
+    }
   }
 }
 
