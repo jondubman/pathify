@@ -252,7 +252,7 @@ const constants = {
       zoom: 14,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
-    reorientationTime: 500, // msec
+    reorientationTime: timeInterval.seconds(1) / 2,
   },
   mapStyles: [
     { name: 'None', opacity: 1, url: '' },
@@ -263,7 +263,7 @@ const constants = {
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
-  maxTimeGapForContinuousTrack: 5000, // msec,
+  maxTimeGapForContinuousTrack: timeInterval.seconds(5),
   panelWidth,
   refTime: {
     bottomMargin: 5,
@@ -273,8 +273,9 @@ const constants = {
   },
   safeAreaBottom,
   safeAreaTop,
+  serverDelayAfterFailedRequest: timeInterval.seconds(5),
   serverUrl: 'https://pathify.app:3000/', // TODO could also be localhost:3000/
-  serverSyncIntervalDefault: 10000, // msec
+  serverSyncIntervalDefault: timeInterval.seconds(10),
   settingsButton: {
     leftOffset: buttonOffset,
     opacityWhenClosed: defaultOpacity,

@@ -2,6 +2,7 @@ import { newAction } from 'lib/actions';
 import log from 'lib/log';
 import constants from 'lib/constants';
 import store from 'lib/store';
+import { delay } from 'redux-saga/effects';
 
 const { clientId, headers, serverUrl } = constants;
 
@@ -32,13 +33,15 @@ const pollServerOnce = async () => {
     handleServerPush(message);
   } catch(err) {
     log.warn('pollServerOnce', err);
+
+    await new Promise(resolve => setTimeout(resolve, 5000)); // take a brief nap and then try again
+    log.info('...continuing...');
   }
 }
 
 export const pollServer = async () => {
   try {
     while (true) { // TODO use caution with this construct
-      // TODO back off if the server is not responding or throwing errors
       await pollServerOnce();
     }
   } catch (err) {

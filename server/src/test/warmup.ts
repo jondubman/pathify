@@ -50,8 +50,6 @@ describe('timeseries-continuousTracks', function () {
 describe('secrets', function() {
   it(`should be able to read from a secret file`, async function() {
     const secret = utils.getSecret('test-secret');
-    console.log('secret:', secret);
     expect(secret).to.exist;
   })
 })
-
