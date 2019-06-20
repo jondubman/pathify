@@ -159,7 +159,7 @@ const sagas = {
   // This doesn't neecssarily sync everything that is pending at once, particularly with a big backlog.
   serverSync: function* (action: Action) {
     const now = action.params as number;
-    yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'serverSyncTime', value: now }));
+    yield put(newAction(reducerAction.SET_APP_OPTION, { serverSyncTime: now }));
 
     const events: GenericEvent[] = yield select((state: AppState) => state.events);
     const changedEvents: GenericEvent[] = [];
@@ -192,7 +192,7 @@ const sagas = {
   setGeolocationMode: function* (action: Action) {
     try {
       const id = action.params as number;
-      yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'geolocationModeId', value: id }));
+      yield put(newAction(reducerAction.SET_APP_OPTION, { geolocationModeId: id }));
 
       // This is the side-effect that belongs outside the reducer:
       Geo.setGeolocationMode(id);
@@ -232,7 +232,7 @@ const sagas = {
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
     log.trace('saga timelineZoomed', refTime);
-    yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: refTime }));
+    yield put(newAction(reducerAction.SET_APP_OPTION, { refTime }));
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -243,7 +243,7 @@ const sagas = {
     // log.trace('timerTick', now);
     const timelineNow = yield select((state: AppState) => state.ui.flags.timelineNow);
     if (timelineNow) {
-      yield put(newAction(reducerAction.SET_APP_OPTION, { name: 'refTime', value: now }));
+      yield put(newAction(reducerAction.SET_APP_OPTION, { refTime: now }));
     }
     // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
     // rather than depend on a separate long-running timer. That could also work, but this is sufficient

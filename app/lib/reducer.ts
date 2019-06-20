@@ -13,7 +13,6 @@ import log from 'lib/log';
 
 import {
   initialAppState,
-  AppOption,
   AppState,
 } from 'lib/state';
 
@@ -66,13 +65,12 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
 
     case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
-        const { name, value } = params as AppOption;
-        if (name !== 'refTime') { // this happens like every second, so logging it is noise
-          log.debug('reducerAction.SET_APP_OPTION', name, value);
+        if (!params.refTime) { // this happens like every second, so logging it is noise
+          log.debug('reducerAction.SET_APP_OPTION', params);
         }
         newState.options = {
           ...state.options,
-          [name]: value,
+          ...params, // TODO watch out; zero validation of incoming params!
         }
       }
       break;

@@ -31,12 +31,12 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
-  const onSelectMapStyle = (mapStyleName: string) => {
-    log.debug('SettingsPanel onSelectMapStyle', mapStyleName);
-    dispatch(newAction(appAction.setAppOption, { name: 'mapStyle', value: mapStyleName }));
+  const onSelectMapStyle = (mapStyle: string) => {
+    log.debug('SettingsPanel onSelectMapStyle', mapStyle);
+    dispatch(newAction(appAction.setAppOption, { mapStyle }));
   }
-  const onSetMapOpacity = (opacity: number) => {
-    dispatch(newAction(appAction.setAppOption, { name: 'mapOpacity', value: opacity }));
+  const onSetMapOpacity = (mapOpacity: number) => {
+    dispatch(newAction(appAction.setAppOption, { mapOpacity }));
   }
   const dispatchers = {
     onSelectMapStyle,

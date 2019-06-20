@@ -19,11 +19,6 @@ const initialAppOptions = {
 }
 export type AppOptions = typeof initialAppOptions;
 
-export interface AppOption {
-  name: string;
-  value: any; // could be an object
-}
-
 // Canonical interface for AppUIState included in AppState.
 // AppUIState is for transient, UI-related state changes, e.g. for menus.
 
