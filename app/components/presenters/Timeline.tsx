@@ -19,7 +19,7 @@ import {
 
 import constants from 'lib/constants';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
-import Timespans from 'presenters/Timespans';
+import TimelineSpans from 'presenters/TimelineSpans';
 
 const initialState = {
   zoomDomain: null as any,
@@ -59,7 +59,7 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { refTime, timeRange, timespansData, zoomLevel } = this.props;
+    const { refTime, timeRange, timespans, zoomLevel } = this.props;
     const { yDomain } = constants.timeline;
     const visibleTime = constants.timeline.visibleTimeForZoomLevel[zoomLevel];
 
@@ -117,8 +117,8 @@ class Timeline extends Component<TimelinePanelProps> {
             tickLabelComponent={<VictoryLabel style={axisLabelStyle}/> as any}
             tickFormat={tickFormat}
           />
-          <Timespans
-            data={timespansData}
+          <TimelineSpans
+            data={timespans}
             ref={(timespans: any) => (this as any)._timespans = timespans}
           />
         </VictoryChart>

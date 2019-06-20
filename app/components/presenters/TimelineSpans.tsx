@@ -3,21 +3,21 @@ import * as React from 'react';
 import * as Victory from 'victory-native';
 const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
-import constants from 'lib/constants';
-import log from 'lib/log';
-import { TimeRange } from 'shared/timeseries';
+import constants, { TimespanKind } from 'lib/constants';
+import { Timespan, Timespans } from 'containers/TimelineContainer';
 
-interface TimespansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
+interface TimelineSpansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
+  data: Timespans;
 }
 
-class Timespans extends React.Component<TimespansProps> {
+class TimelineSpans extends React.Component<TimelineSpansProps> {
 
   constructor(props: any) {
     super(props);
   }
 
   public render() {
-    const data = this.props.data as TimeRange[];
+    const data = this.props.data;
     const {
       scale,
     } = this.props as any;
@@ -28,13 +28,13 @@ class Timespans extends React.Component<TimespansProps> {
     const y = (timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars)
             - timeline.barHeight;
 
-    return data.map((tr: TimeRange, index: number) => (
+    return data.map((ts: Timespan, index: number) => (
       <Rect
         key={`Rect${index}`}
-        style={{ fill: constants.colors.timeline.bars[0] }}
-        x={scale.x(tr[0])}
-        y={y}
-        width={scale.x(tr[1]) - scale.x(tr[0])}
+        style={{ fill: constants.colors.timeline.timespans[ts.kind] }}
+        x={scale.x(ts.tr[0])}
+        y={y - timeline.barHeight * (ts.kind == TimespanKind.locations ? 0 : 1)}
+        width={scale.x(ts.tr[1]) - scale.x(ts.tr[0])}
         height={constants.timeline.barHeight}
       />
     ))
@@ -48,4 +48,4 @@ class Timespans extends React.Component<TimespansProps> {
         }
 */
 
-export default Timespans;
+export default TimelineSpans;

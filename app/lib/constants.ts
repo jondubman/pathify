@@ -8,6 +8,11 @@ const safeAreaTop =  getInset('top');
 const safeAreaBottom = getInset('bottom');
 const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized for displays with/without home button
 
+export enum TimespanKind {
+  'locations' = 'locations',
+  'other' = 'other',
+}
+
 export interface GeolocationModeChoice {
   id: number;
   name: string;
@@ -132,10 +137,10 @@ const colors = {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
     background: colorThemes.background,
-    bars: [
-      withOpacity(namedColors.green, 0.35),
-      withOpacity(namedColors.green, 0.55),
-    ],
+    timespans: {
+      [TimespanKind.locations]: withOpacity(namedColors.green, 0.35),
+      [TimespanKind.other]: withOpacity(namedColors.azure, 0.35),
+    },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),
   },
