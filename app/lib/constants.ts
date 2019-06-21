@@ -306,22 +306,11 @@ const constants = {
       height: initialTimelineHeight,
       zoomLevel: 1,
     },
-    tickCount: 5, // target number of ticks on the axis (approximate)
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
-    visibleTimeForZoomLevel: [ // TODO remove
-      timeInterval.minutes(1), // default, 4x previous interval
-      timeInterval.minutes(5), // 5x previous interval
-      timeInterval.minutes(30), // 6x (half hour)
-      timeInterval.hours(2), // 4x
-      timeInterval.hours(12), // 6x (half a day)
-      timeInterval.days(2), // 4x (two days)
-      timeInterval.days(7), // 3.5x (one week)
-      timeInterval.days(30), // 4.3x (one month, largest supported zoom in the app)
-    ],
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.
     zoomLevels: [
-      // visibleTimeInterval is #milliseconds visible at a given time (which has no relation to refTime.)
+      // visibleTime is #milliseconds visible at a given time (which has no relation to refTime.)
       //
       // Note the ratios of successive pairs of intervals aims to be somewhat consistently close to 5,
       // (ranging from 3.5 to 6), rounded so they are easy to understand, like a half hour, half day, etc.
@@ -330,54 +319,63 @@ const constants = {
       {
         // level 0: zoomed in all the way
         name: '10 seconds',
+        tickInterval: timeInterval.seconds(2), // 1/5 of visibleTime
         tickFormat: '%-I:%M:%S',
         visibleTime: timeInterval.seconds(10), // 1/6 of default
       },
       {
         // level 1: default
         name: '1 minute',
+        tickInterval: timeInterval.seconds(10), // 1/6 of visibleTime
         tickFormat: '%-I:%M:%S',
         visibleTime: timeInterval.minutes(1), // 4x previous interval
       },
       {
         // level 2: one level zoomed out
         name: '5 minutes',
+        tickInterval: timeInterval.minutes(1), // 1/5 of visibleTime
         tickFormat: '%-I:%M:%S',
         visibleTime: timeInterval.minutes(5), // 5x
       },
       {
         // level 3
         name: '30 minutes', // half hour
+        tickInterval: timeInterval.minutes(5), // 1/6 of visibleTime
         tickFormat: '%-I:%M %p',
         visibleTime: timeInterval.minutes(30), // 6x
       },
       {
         // level 4
         name: '2 hours',
+        tickInterval: timeInterval.minutes(30), // 1/4 of visibleTime
         tickFormat: '%-I:%M %p',
         visibleTime: timeInterval.hours(2), // 4x
       },
       {
         // level 5
         name: '12 hours',
+        tickInterval: timeInterval.hours(2), // 1/6 of visibleTime
         tickFormat: '%-I:%M %p',
         visibleTime: timeInterval.hours(12), // 6x
       },
       {
         // level 6
         name: '2 days',
+        tickInterval: timeInterval.hours(12), // 1/4 of visibleTime
         tickFormat: '%a %-I:%M %p',
         visibleTime: timeInterval.days(2), // 4x
       },
       {
         // level 7
         name: '1 week',
+        tickInterval: timeInterval.days(1), // 1/7 of visibleTime
         tickFormat: '%a %p',
-        visibleTime: timeInterval.weeks(1), // 6x
+        visibleTime: timeInterval.days(7), // 6x
       },
       {
         // level 8
         name: '4 weeks',
+        tickInterval: timeInterval.weeks(1), // 1/4 of visibleTime
         tickFormat: '%a %b %d',
         visibleTime: timeInterval.weeks(4), // 4x
       },

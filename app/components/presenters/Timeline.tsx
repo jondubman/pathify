@@ -20,6 +20,7 @@ import {
 import constants from 'lib/constants';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import TimelineSpans from 'presenters/TimelineSpans';
+import timeseries from 'shared/timeseries';
 
 const initialState = {
   zoomDomain: null as any,
@@ -56,7 +57,7 @@ class Timeline extends Component<TimelinePanelProps> {
     const { refTime, timeRange, timespans, zoomLevel } = this.props;
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
-    const { tickFormat, visibleTime } = zoomInfo;
+    const { tickInterval, tickFormat, visibleTime } = zoomInfo;
 
     const tickFormatFn = (t: Date) => {
       return d3.timeFormat(tickFormat)(t);
@@ -69,6 +70,20 @@ class Timeline extends Component<TimelinePanelProps> {
       x: [refTime - visibleTime / 2, refTime + visibleTime / 2], // half the visible time goes on either side of refTime
       y: yDomain,
     }
+    const timeRoundDown = timeseries.timeRoundDown(refTime, tickInterval);
+    const timeRoundUp = timeseries.timeRoundUp(refTime, tickInterval);
+    const tickValues = [ // those outside the visible range will not be displayed
+      timeRoundDown - tickInterval * 4,
+      timeRoundDown - tickInterval * 3,
+      timeRoundDown - tickInterval * 2,
+      timeRoundDown - tickInterval,
+      timeRoundDown,
+      timeRoundUp,
+      timeRoundUp + tickInterval,
+      timeRoundUp + tickInterval * 2,
+      timeRoundUp + tickInterval * 3,
+      timeRoundUp + tickInterval * 4,
+    ]
     const axisStyle = {
       axis: { stroke: constants.colors.timeline.axis },
       grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
@@ -89,7 +104,7 @@ class Timeline extends Component<TimelinePanelProps> {
     }
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
-    // Zoom is still allowed, indirectly, via state.options.timelineZoom and constants.timeline.zoomLevels.
+    // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
     return (
       <View style={TimelineStyles.timeline}>
         <VictoryChart
@@ -110,9 +125,9 @@ class Timeline extends Component<TimelinePanelProps> {
         >
           <VictoryAxis
             style={axisStyle}
-            tickCount={constants.timeline.tickCount}
             tickLabelComponent={<VictoryLabel style={axisLabelStyle}/> as any}
             tickFormat={tickFormatFn}
+            tickValues={tickValues}
           />
           <TimelineSpans
             data={timespans}

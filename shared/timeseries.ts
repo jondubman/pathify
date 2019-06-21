@@ -177,6 +177,16 @@ const timeseries = {
     return true;
   },
 
+  // helper function to round time t down to the nearest minute, hour, etc. (determined by second parameter)
+  timeRoundDown: (t: number, toNearest: number): number => {
+    return t - (t % toNearest);
+  },
+
+  // helper function to round time t up to the nearest minute, hour, etc. (determined by second parameter)
+  timeRoundUp: (t: number, toNearest: number): number => {
+    return t - (t % toNearest) + toNearest;
+  },
+
   // simple helper function to improve readability
   timeInRange: (t: number, tr: TimeRange): boolean => {
     return (tr[0] <= t && t <= tr[1]);
