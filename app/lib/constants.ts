@@ -2,11 +2,12 @@
 
 import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 import { DomainTuple } from 'victory-native';
-
 const getInset = (SafeAreaView as any).getInset;
 const safeAreaTop =  getInset('top');
 const safeAreaBottom = getInset('bottom');
 const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized for displays with/without home button
+
+import { interval } from 'shared/timeseries';
 
 export enum TimespanKind {
   'locations' = 'locations',
@@ -67,20 +68,6 @@ const zeroPrefix = (s: string) => (s.length ? (s.length == 1 ? '0' + s : s) : '0
 const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(16));
 
 const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
-
-const timeInterval = { // in msec
-  oneSecond: 1000,
-  oneMinute: 1000 * 60,
-  oneHour:   1000 * 60 * 60,
-  oneDay:    1000 * 60 * 60 * 24,
-  oneWeek:   1000 * 60 * 60 * 24 * 7,
-
-  seconds: (n: number) => timeInterval.oneSecond * n,
-  minutes: (n: number) => timeInterval.oneMinute * n,
-  hours: (n: number) => timeInterval.oneHour * n,
-  days: (n: number) => timeInterval.oneDay * n,
-  weeks: (n: number) => timeInterval.oneWeek * n,
-}
 
 const colors = {
   appBackground: colorThemes.background,
@@ -259,7 +246,7 @@ const constants = {
       zoom: 14,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
-    reorientationTime: timeInterval.seconds(1) / 2,
+    reorientationTime: interval.seconds(1) / 2,
   },
   mapStyles: [
     { name: 'None', opacity: 1, url: '' },
@@ -270,7 +257,7 @@ const constants = {
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
-  maxTimeGapForContinuousTrack: timeInterval.seconds(5),
+  maxTimeGapForContinuousTrack: interval.seconds(5),
   panelWidth,
   refTime: {
     bottomMargin: 5,
@@ -280,9 +267,9 @@ const constants = {
   },
   safeAreaBottom,
   safeAreaTop,
-  serverDelayAfterFailedRequest: timeInterval.seconds(5),
+  serverDelayAfterFailedRequest: interval.seconds(5),
   serverUrl: 'https://pathify.app:3000/', // TODO could also be localhost:3000/
-  serverSyncIntervalDefault: timeInterval.seconds(10),
+  serverSyncIntervalDefault: interval.seconds(10),
   settingsButton: {
     leftOffset: buttonOffset,
     opacityWhenClosed: defaultOpacity,
@@ -297,6 +284,7 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop + buttonOffset,
   },
+  startupTime: Date.now(),
   timeline: {
     barHeight: 35,
     bottomPaddingForAxis,
@@ -319,65 +307,65 @@ const constants = {
       {
         // level 0: zoomed in all the way
         name: '10 seconds',
-        tickInterval: timeInterval.seconds(2), // 1/5 of visibleTime
+        tickInterval: interval.seconds(2), // 1/5 of visibleTime
         tickFormat: '%-I:%M:%S',
-        visibleTime: timeInterval.seconds(10), // 1/6 of default
+        visibleTime: interval.seconds(10), // 1/6 of default
       },
       {
         // level 1: default
         name: '1 minute',
-        tickInterval: timeInterval.seconds(10), // 1/6 of visibleTime
+        tickInterval: interval.seconds(10), // 1/6 of visibleTime
         tickFormat: '%-I:%M:%S',
-        visibleTime: timeInterval.minutes(1), // 4x previous interval
+        visibleTime: interval.minutes(1), // 4x previous visibleTime
       },
       {
         // level 2: one level zoomed out
         name: '5 minutes',
-        tickInterval: timeInterval.minutes(1), // 1/5 of visibleTime
-        tickFormat: '%-I:%M:%S',
-        visibleTime: timeInterval.minutes(5), // 5x
+        tickInterval: interval.minutes(1), // 1/5 of visibleTime
+        tickFormat: '%-I:%M %p',
+        visibleTime: interval.minutes(5), // 5x previous visibleTime
       },
       {
         // level 3
         name: '30 minutes', // half hour
-        tickInterval: timeInterval.minutes(5), // 1/6 of visibleTime
+        tickInterval: interval.minutes(5), // 1/6 of visibleTime
         tickFormat: '%-I:%M %p',
-        visibleTime: timeInterval.minutes(30), // 6x
+        visibleTime: interval.minutes(30), // 6x previous visibleTime
       },
       {
         // level 4
         name: '2 hours',
-        tickInterval: timeInterval.minutes(30), // 1/4 of visibleTime
+        tickInterval: interval.minutes(30), // 1/4 of visibleTime
         tickFormat: '%-I:%M %p',
-        visibleTime: timeInterval.hours(2), // 4x
+        visibleTime: interval.hours(2), // 4x previous visibleTime
       },
       {
         // level 5
         name: '12 hours',
-        tickInterval: timeInterval.hours(2), // 1/6 of visibleTime
+        tickInterval: interval.hours(2), // 1/6 of visibleTime
         tickFormat: '%-I:%M %p',
-        visibleTime: timeInterval.hours(12), // 6x
+        visibleTime: interval.hours(12), // 6x previous visibleTime
       },
       {
         // level 6
         name: '2 days',
-        tickInterval: timeInterval.hours(12), // 1/4 of visibleTime
-        tickFormat: '%a %-I:%M %p',
-        visibleTime: timeInterval.days(2), // 4x
+        tickInterval: interval.hours(12), // 1/4 of visibleTime
+        tickFormat: '%a %-I %p',
+        visibleTime: interval.days(2), // 4x previous visibleTime
       },
       {
         // level 7
         name: '1 week',
-        tickInterval: timeInterval.days(1), // 1/7 of visibleTime
-        tickFormat: '%a %p',
-        visibleTime: timeInterval.days(7), // 6x
+        tickInterval: interval.days(1), // 1/7 of visibleTime
+        tickFormat: '%a %d',
+        visibleTime: interval.days(7), // 6x previous visibleTime
       },
       {
         // level 8
         name: '4 weeks',
-        tickInterval: timeInterval.weeks(1), // 1/4 of visibleTime
+        tickInterval: interval.weeks(1), // 1/4 of visibleTime
         tickFormat: '%a %b %d',
-        visibleTime: timeInterval.weeks(4), // 4x
+        visibleTime: interval.weeks(4), // 4x previous visibleTime
       },
     ],
   },

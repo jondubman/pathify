@@ -232,6 +232,7 @@ const sagas = {
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
     log.trace('saga timelineZoomed', refTime);
+    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'timelineNow'));
     yield put(newAction(reducerAction.SET_APP_OPTION, { refTime }));
   },
 

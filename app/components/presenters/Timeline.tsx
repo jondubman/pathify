@@ -18,9 +18,10 @@ import {
 } from 'victory-native';
 
 import constants from 'lib/constants';
+import log from 'lib/log';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import TimelineSpans from 'presenters/TimelineSpans';
-import timeseries from 'shared/timeseries';
+import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
   zoomDomain: null as any,
@@ -54,35 +55,50 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { refTime, timeRange, timespans, zoomLevel } = this.props;
+    const { nowTime, refTime, timeRange, timespans, zoomLevel } = this.props;
+    const { startupTime } = constants;
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat, visibleTime } = zoomInfo;
 
+    const someTimeAgo = timeseries.timeRoundDown(startupTime - interval.days(60), interval.days(1));
     const tickFormatFn = (t: Date) => {
       return d3.timeFormat(tickFormat)(t);
     }
     const dataDomain: DomainPropType = { // the entire navigable domain of the Timeline
-      x: [timeRange[0], Math.max(timeRange[1], refTime + visibleTime / 2)],
+      x: [Math.min(timeRange[0], someTimeAgo), Math.max(timeRange[1], nowTime + visibleTime / 2)],
       y: yDomain,
     }
     const zoomDomain: DomainPropType = { // the visible domain of the Timeline
       x: [refTime - visibleTime / 2, refTime + visibleTime / 2], // half the visible time goes on either side of refTime
       y: yDomain,
     }
-    const timeRoundDown = timeseries.timeRoundDown(refTime, tickInterval);
-    const timeRoundUp = timeseries.timeRoundUp(refTime, tickInterval);
-    const tickValues = [ // those outside the visible range will not be displayed
+
+    // const timeRoundDown = (tickInterval >= interval.hours(12)) ?
+    //   timeseries.timeRoundDown(timeseries.timeRoundDownHours(refTime), interval.hours(1))
+    //   :
+    //   timeseries.timeRoundDown(refTime, tickInterval);
+
+    let timeRoundDown: number;
+    if (tickInterval >= interval.day) {
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(refTime), interval.hours(1))
+    } else if (tickInterval >= interval.hours(12)) {
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(refTime), interval.hours(1))
+    } else {
+      timeRoundDown = timeseries.timeRoundDown(refTime, tickInterval);
+    }
+
+    const tickValues = [ // Any outside the visible range will be clipped. count is 10.
       timeRoundDown - tickInterval * 4,
       timeRoundDown - tickInterval * 3,
       timeRoundDown - tickInterval * 2,
       timeRoundDown - tickInterval,
       timeRoundDown,
-      timeRoundUp,
-      timeRoundUp + tickInterval,
-      timeRoundUp + tickInterval * 2,
-      timeRoundUp + tickInterval * 3,
-      timeRoundUp + tickInterval * 4,
+      timeRoundDown + tickInterval,
+      timeRoundDown + tickInterval * 2,
+      timeRoundDown + tickInterval * 3,
+      timeRoundDown + tickInterval * 4,
+      timeRoundDown + tickInterval * 5,
     ]
     const axisStyle = {
       axis: { stroke: constants.colors.timeline.axis },

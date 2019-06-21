@@ -17,6 +17,7 @@ export interface Timespan {
 export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
+  nowTime: number;
   refTime: number;
   timelineNow: boolean;
   timeRange: TimeRange;
@@ -31,6 +32,7 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
+  const nowTime = Date.now();
   const refTime = state.options.refTime;
   let timespans: Timespans = [];
   trackList(state).map(track => {
@@ -44,6 +46,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   //   tr: [refTime - 5000, refTime],
   // })
   return {
+    nowTime,
     refTime,
     timelineNow: state.ui.flags.timelineNow,
     timeRange: timeseries.timeRangeOfEvents(state.events),

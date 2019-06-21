@@ -46,6 +46,20 @@ export interface LocationEvent extends GenericEvent {
   }
 }
 
+export const interval = {
+  second: 1000,
+  minute: 1000 * 60,
+  hour: 1000 * 60 * 60,
+  day: 1000 * 60 * 60 * 24,
+  week: 1000 * 60 * 60 * 24 * 7,
+
+  seconds: (n: number) => interval.second * n,
+  minutes: (n: number) => interval.minute * n,
+  hours: (n: number) => interval.hour * n,
+  days: (n: number) => interval.day * n,
+  weeks: (n: number) => interval.week * n,
+}
+
 const timeseries = {
 
   // Continuous tracks are series of TimeRanges such that there is no time gap > maxTimeGap between LOC updates.
@@ -64,13 +78,14 @@ const timeseries = {
     let t_trackStart = 0; // timestamp of the start of the current track. 0 means no current track.
     let t_prevLocUpdate = 0; // timestamp of previous LOC update in a track that has been started. 0 means none yet.
 
+    // Loop through all events, once
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       if (event.t < tr[0]) {
-        continue; // have yet to reach the TimeRange of interest
+        continue; // have yet to reach the TimeRange of interest. We'll get there fast.
       }
-      if (event.t > tr[1]) {
-         // passed the end of the TimeRange
+      if (event.t >= tr[1]) {
+         // reached the end of the TimeRange
          if (t_trackStart) { // if there is a current track, complete it
           const t_trackEnd = t_prevLocUpdate; // t_prevLocUpdate will be nonzero if t_trackStart is nonzero.
           tracks.push({ tr: [t_trackStart, t_trackEnd], count });
@@ -177,14 +192,24 @@ const timeseries = {
     return true;
   },
 
-  // helper function to round time t down to the nearest minute, hour, etc. (determined by second parameter)
-  timeRoundDown: (t: number, toNearest: number): number => {
-    return t - (t % toNearest);
+  // helper function to round time t down to the previous minute, hour, etc. (determined by second parameter)
+  // Example: timeRoundDown(t, 1000) would round down to the previous second boundary
+  timeRoundDown: (t: number, toPrevious: number): number => {
+    return t - (t % toPrevious);
   },
 
-  // helper function to round time t up to the nearest minute, hour, etc. (determined by second parameter)
-  timeRoundUp: (t: number, toNearest: number): number => {
-    return t - (t % toNearest) + toNearest;
+  timeRoundDownHours: (t: number): number => {
+    return timeseries.timeRoundDown(t - (new Date(t).getHours() % 12) * interval.hour, interval.hour);
+  },
+
+  timeRoundDownToMidnight: (t: number): number => {
+    return timeseries.timeRoundDown(t - (new Date(t).getHours()) * interval.hour, interval.hour);
+  },
+
+  // helper function to round time t up to the next minute, hour, etc. (determined by second parameter)
+  // Example: timeRoundUp(t, 60000) would round up to the next minute boundary
+  timeRoundUp: (t: number, toNext: number): number => {
+    return t - (t % toNext) + toNext;
   },
 
   // simple helper function to improve readability
@@ -204,6 +229,7 @@ const timeseries = {
   // 'uniqified' timepoints make it easier to precisely filter discrete events from the global event list.
   // (Otherwise there might be multiple matches for a given timepoint.)
   // This approach is used to facilitate syncing of changed events, without messing with the canonical timepoint t.
+  // TODO Think through implications in the unlikely event two random numbers ever match.
   uniqify: (t: number) => {
     return t + Math.random();
   },
