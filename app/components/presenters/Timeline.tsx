@@ -26,12 +26,6 @@ const initialState = {
 }
 type State = Readonly<typeof initialState>
 
-const tickFormat = (t: Date) => {
-  // TODO improve, and use multi-format
-  // https://github.com/d3/d3-time-format/blob/master/README.md#timeFormat
-  return d3.timeFormat('%-I:%M:%S')(t);
-}
-
 const TimelineStyles = StyleSheet.create({
   timeline: {
     backgroundColor: constants.colors.timeline.background,
@@ -61,13 +55,16 @@ class Timeline extends Component<TimelinePanelProps> {
   public render() {
     const { refTime, timeRange, timespans, zoomLevel } = this.props;
     const { yDomain } = constants.timeline;
-    const visibleTime = constants.timeline.visibleTimeForZoomLevel[zoomLevel];
+    const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
+    const { tickFormat, visibleTime } = zoomInfo;
 
+    const tickFormatFn = (t: Date) => {
+      return d3.timeFormat(tickFormat)(t);
+    }
     const dataDomain: DomainPropType = { // the entire navigable domain of the Timeline
       x: [timeRange[0], Math.max(timeRange[1], refTime + visibleTime / 2)],
       y: yDomain,
     }
-
     const zoomDomain: DomainPropType = { // the visible domain of the Timeline
       x: [refTime - visibleTime / 2, refTime + visibleTime / 2], // half the visible time goes on either side of refTime
       y: yDomain,
@@ -115,7 +112,7 @@ class Timeline extends Component<TimelinePanelProps> {
             style={axisStyle}
             tickCount={constants.timeline.tickCount}
             tickLabelComponent={<VictoryLabel style={axisLabelStyle}/> as any}
-            tickFormat={tickFormat}
+            tickFormat={tickFormatFn}
           />
           <TimelineSpans
             data={timespans}
