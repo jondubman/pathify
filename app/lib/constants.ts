@@ -1,5 +1,8 @@
 // constants module
 
+import * as uuid from 'uuid/v4';
+const clientId = uuid.default(); // TODO perist
+
 import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 import { DomainTuple } from 'victory-native';
 const getInset = (SafeAreaView as any).getInset;
@@ -142,7 +145,7 @@ const constants = {
   appName: 'Pathify',
   buttonOffset,
   buttonSize,
-  clientId: 'app', // TODO uuid
+  clientId,
   clock: {
     border: {
       width: 1,

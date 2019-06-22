@@ -6,13 +6,15 @@ import { delay } from 'redux-saga/effects';
 
 const { clientId, headers, serverUrl } = constants;
 
+// This handles the server response to /poll, which is a server push.
 export const handleServerPush = (data: any) => {
   log.info('serverPush', data);
   // Custom string messages are handled here
   if (data === 'handshake') {
     getFromServer('ping/json');
   }
-  // TODO for now, for convenience, assume that any JSON that comes in is an appAction and just dispatch it with params.
+  // TODO For now, for convenience, assume that any JSON that comes in is an appAction and just dispatch it with params.
+  // TODO Handle other kinds of incoming JSON
   if (typeof data === 'object') {
     for (let message of data) {
       const { action, params } = message;

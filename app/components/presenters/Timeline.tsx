@@ -63,6 +63,7 @@ class Timeline extends Component<TimelinePanelProps> {
 
     const someTimeAgo = timeseries.timeRoundDown(startupTime - interval.days(60), interval.days(1));
     const tickFormatFn = (t: Date) => {
+      // TODO could customize string here to highlight special times/dates, e.g. 'noon'
       return d3.timeFormat(tickFormat)(t);
     }
     const dataDomain: DomainPropType = { // the entire navigable domain of the Timeline

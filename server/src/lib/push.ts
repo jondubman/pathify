@@ -1,5 +1,3 @@
-// import * as uuid from 'uuid/v4';
-
 import { log } from 'lib/log-bunyan';
 // import { util } from 'prettier';
 
@@ -44,7 +42,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
   const clientPollRequest: ClientPollRequest = {
     clientId,
     index: req.query.index || 0, // TODO
-    res: res, // so server can respond
+    res, // so server can respond
     timer, // so it can be cleared if server responds
     timeout, // fyi
   }
@@ -57,6 +55,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
 }
 
 // Server push is the purpose of this module. Enqueue a message to a client and attempt to send it.
+// See handleServerPush in the app for where this comes in.
 export const push = (message: any, clientId: string) => {
   if (!messages[clientId]) {
     messages[clientId] = [];
