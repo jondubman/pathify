@@ -12,22 +12,6 @@ const initialAppOptions = {
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
   pulsars: {
-    // TODO this is test data
-    orange: {
-      lon: -122.321811,
-      lat: 47.652209,
-      color: constants.colors.byName.orange,
-    },
-    green: {
-      lon: -122.327165,
-      lat: 47.654999,
-      color: constants.colors.byName.green,
-    },
-    purple: {
-      lon: -122.3319497,
-      lat: 47.6559636,
-      color: constants.colors.byName.purple,
-    },
   } as OptionalPulsars,
   refTime: constants.startupTime,
   startupTime: constants.startupTime,

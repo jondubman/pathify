@@ -3,7 +3,7 @@ import { DomainPropType } from 'victory-native';
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
-import { trackList } from 'lib/selectors';
+import { continuousTrackList, customTimespans } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
 import timeseries, { TimeRange } from 'shared/timeseries';
@@ -34,17 +34,14 @@ export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   const nowTime = Date.now();
   const refTime = state.options.refTime;
-  let timespans: Timespans = [];
-  trackList(state).map(track => {
-    timespans.push({
+  let timespans = continuousTrackList(state).map(track => {
+    return {
       kind: TimespanKind.locations,
       tr: track.tr,
-    })
+    }
   })
-  // timespans.push({ // TODO experiment
-  //   kind: TimespanKind.other,
-  //   tr: [refTime - 5000, refTime],
-  // })
+  timespans = timespans.concat(customTimespans(state));
+  log.debug('timespans', timespans);
   return {
     nowTime,
     refTime,

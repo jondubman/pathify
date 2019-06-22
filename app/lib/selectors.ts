@@ -1,10 +1,26 @@
 //  Selector functions for Redux reducer
 
 import { AppState } from 'lib/state';
-import constants, { MapStyle } from 'lib/constants';
+import constants, { MapStyle, TimespanKind } from 'lib/constants';
 import utils from 'lib/utils';
+import { Timespan, Timespans } from 'containers/TimelineContainer';
 
-import timeseries, { TimeRange, Tracks } from 'shared/timeseries';
+import timeseries, { interval, TimeRange, Tracks } from 'shared/timeseries';
+
+export const continuousTrackList = (state: AppState): Tracks => {
+  const tr: TimeRange = [0, Date.now()];
+  return timeseries.continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
+}
+
+export const customTimespans = (state: AppState): Timespans => {
+  // return []; // TODO
+  const { refTime, startupTime } = state.options;
+  const timespan: Timespan = {
+    kind: TimespanKind.other,
+    tr: [startupTime, refTime ], // for now just show timespan since the app started up
+  }
+  return [ timespan ];
+}
 
 export const dynamicMapHeight = (state: AppState): number => {
   return utils.windowSize().height - dynamicTimelineHeight(state);
@@ -24,8 +40,3 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
 export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '')
 )
-
-export const trackList = (state: AppState): Tracks => {
-  const tr: TimeRange = [0, Date.now()];
-  return timeseries.continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
-}
