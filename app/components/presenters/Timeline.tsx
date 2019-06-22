@@ -18,7 +18,6 @@ import {
 } from 'victory-native';
 
 import constants from 'lib/constants';
-import log from 'lib/log';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import TimelineSpans from 'presenters/TimelineSpans';
 import timeseries, { interval } from 'shared/timeseries';
@@ -75,11 +74,6 @@ class Timeline extends Component<TimelinePanelProps> {
       y: yDomain,
     }
 
-    // const timeRoundDown = (tickInterval >= interval.hours(12)) ?
-    //   timeseries.timeRoundDown(timeseries.timeRoundDownHours(refTime), interval.hours(1))
-    //   :
-    //   timeseries.timeRoundDown(refTime, tickInterval);
-
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
       timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(refTime), interval.hours(1))
@@ -88,7 +82,6 @@ class Timeline extends Component<TimelinePanelProps> {
     } else {
       timeRoundDown = timeseries.timeRoundDown(refTime, tickInterval);
     }
-
     const tickValues = [ // Any outside the visible range will be clipped. count is 10.
       timeRoundDown - tickInterval * 4,
       timeRoundDown - tickInterval * 3,

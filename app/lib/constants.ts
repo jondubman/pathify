@@ -60,7 +60,7 @@ const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
 const mapLogoHeight = 34; // mapbox logo
-const initialTimelineHeight = 100; // thinking 150 max
+const initialTimelineHeight = 120; // thinking 150 max
 const panelWidth = 252; // fits on iPhone SE
 const clockHeight = 70;
 const clockMargin = 4;
@@ -289,7 +289,7 @@ const constants = {
   },
   startupTime: Date.now(),
   timeline: {
-    barHeight: 35,
+    barHeight: 40,
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
