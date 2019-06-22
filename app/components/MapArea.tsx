@@ -19,6 +19,7 @@ import CompassButtonContainer from 'containers/CompassButtonContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import GeolocationPanelContainer from 'containers/GeolocationPanelContainer';
 import { MapAreaProps } from 'containers/MapContainer';
+import PulsarsContainer from 'containers/PulsarsContainer';
 import Pulsar from 'presenters/Pulsar';
 
 // Public interface to singleton underlying Mapbox component
@@ -148,6 +149,7 @@ class MapArea extends Component<MapAreaProps> {
               :
               null
             }
+            <PulsarsContainer />
           </Mapbox.MapView>
         </View>
         <FollowMeButtonContainer />

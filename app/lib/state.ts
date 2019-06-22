@@ -4,12 +4,31 @@ import { Polygon } from "@turf/helpers";
 
 import constants from 'lib/constants';
 import { GenericEvent, LocationEvent } from 'shared/timeseries';
+import { OptionalPulsars } from 'containers/PulsarsContainer';
 
 // Canonical interface for AppOptions included in AppState
 const initialAppOptions = {
   geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
+  pulsars: {
+    // TODO this is test data
+    orange: {
+      lon: -122.321811,
+      lat: 47.652209,
+      color: constants.colors.byName.orange,
+    },
+    green: {
+      lon: -122.327165,
+      lat: 47.654999,
+      color: constants.colors.byName.green,
+    },
+    purple: {
+      lon: -122.3319497,
+      lat: 47.6559636,
+      color: constants.colors.byName.purple,
+    },
+  } as OptionalPulsars,
   refTime: constants.startupTime,
   startupTime: constants.startupTime,
   timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.

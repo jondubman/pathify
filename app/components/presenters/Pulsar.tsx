@@ -1,6 +1,5 @@
 // Pulsar component - a pulsing dot to show dynamic locations on the map (chiefly, user location)
 // Intended to be contained within a MapArea.
-// TODO should this have a corresponding container?
 
 import React, {
   Component,
@@ -20,21 +19,22 @@ const pulseMsec = 1000;
 const desiredRadius = 8;
 const defaultCircleColor = constants.colors.user;
 
-interface Props {
+interface PulsarProps {
   id: string;
   lon: number;
   lat: number;
   color: string;
 }
 
-const initialState = {
-  pulse: new Animated.Value(pulseMin),
+interface PulsarState {
+  pulse: Animated.Value;
 }
-type State = Readonly<typeof initialState>
 
-class Pulsar extends Component<Props, State> {
+class Pulsar extends Component<PulsarProps, PulsarState> {
 
-  public readonly state: State = initialState;
+  public readonly state: PulsarState = {
+    pulse: new Animated.Value(pulseMin),
+  }
   _pulseAnimation: any = null;
 
   constructor(props) {
