@@ -41,7 +41,6 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     }
   })
   timespans = timespans.concat(customTimespans(state));
-  log.debug('timespans', timespans);
   return {
     nowTime,
     refTime,

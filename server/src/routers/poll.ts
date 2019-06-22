@@ -9,7 +9,7 @@ import { clientIdForAlias, handlePollRequest, push } from 'lib/push';
 router.get('/', function (req, res) {
   const { clientId, timeout } = req.query;
   const timeoutMsec = timeout || constants.serverPollTimeout;
-  log.debug(`poll from clientId ${clientId} timeout ${timeoutMsec}`);
+  log.debug(`poll from clientId ${clientId} (${clientAlias}) timeout=${timeoutMsec}`);
   handlePollRequest(req, res, timeoutMsec);
 })
 
