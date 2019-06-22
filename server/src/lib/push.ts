@@ -70,6 +70,10 @@ export const push = (message: any, clientId: string) => {
 // Attempt to send pending messages by responding to any open poll request.
 // If client is not connected, message sits in a queue.
 const respond = (clientId: string, reason: string = 'unspecified reason') => {
+  if (!clientId || !clientId.length) {
+    log.warn('push respond: missing clientId');
+    return;
+  }
   log.debug(`attempting response to clientId ${clientId}, due to ${reason}`);
   const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO best practice?)
   if (pollRequest) {
