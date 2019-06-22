@@ -26,7 +26,8 @@ export const handleServerPush = (data: any) => {
 
 const pollServerOnce = async () => {
   const route = 'poll';
-  const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=app&timeout=90000`;
+  const clientAlias = store.options().clientAlias;
+  const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=90000`;
   const method = 'GET';
   try {
     const response = await fetch(url, { method, headers });

@@ -8,6 +8,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 
 // Canonical interface for AppOptions included in AppState
 const initialAppOptions = {
+  clientAlias: 'app', // TODO should be unique in production, if specified
   geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
