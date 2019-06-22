@@ -2,7 +2,6 @@ import { newAction } from 'lib/actions';
 import log from 'lib/log';
 import constants from 'lib/constants';
 import store from 'lib/store';
-import { delay } from 'redux-saga/effects';
 
 const { clientId, headers, serverUrl } = constants;
 
@@ -27,7 +26,7 @@ export const handleServerPush = (data: any) => {
 
 const pollServerOnce = async () => {
   const route = 'poll';
-  const url = serverUrl + route + '?clientId=' + clientId + '&timeout=90000';
+  const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=app&timeout=90000`;
   const method = 'GET';
   try {
     const response = await fetch(url, { method, headers });

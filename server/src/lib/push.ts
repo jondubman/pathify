@@ -13,6 +13,7 @@ type ClientMessages = { [key: string]: Message[] }; // key is clientId
 let messages: ClientMessages = {};
 
 type ClientPollRequest = {
+  clientAlias: string;
   clientId: string;
   index?: number;
   res: any,
@@ -22,10 +23,13 @@ type ClientPollRequest = {
 type ClientPollRequests = { [key: string]: ClientPollRequest[] }; // key is clientId
 let polls: ClientPollRequests = {};
 
+type ClientAliases = { [key: string]: string }; // key is clientAlias, value is clientId
+let aliases: ClientAliases = {};
+
 // Start here: Polling request from client. Exported to be called from Express router.
 // This should happen regularly for each active/connected client.
 export const handlePollRequest = (req: any, res: any, timeout: number) => {
-  const { clientId } = req.query;
+  const { clientAlias, clientId } = req.query;
   if (!clientId) {
     log.warn('handlePollRequest: clientId not provided');
     res.sendStatus(500);
@@ -40,6 +44,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
     polls[clientId] = [];
   }
   const clientPollRequest: ClientPollRequest = {
+    clientAlias,
     clientId,
     index: req.query.index || 0, // TODO
     res, // so server can respond
@@ -48,6 +53,10 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
   }
   polls[clientId].push(clientPollRequest);
 
+  if (clientAlias && clientAlias.length) {
+    // This is where a clientAlias gets associated with a clientId.
+    aliases[clientAlias] = clientId; // TODO do we ever need to clean up this array?
+  }
   // Respond right away if pushes are pending, else, no immediate response.
   if (messages[clientId] && messages[clientId].length) {
     respond(clientId, 'client poll');
@@ -56,7 +65,8 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
 
 // Server push is the purpose of this module. Enqueue a message to a client and attempt to send it.
 // See handleServerPush in the app for where this comes in.
-export const push = (message: any, clientId: string) => {
+export const push = (message: any, clientId: string, clientAlias: string = '') => {
+  // If clientId is
   if (!messages[clientId]) {
     messages[clientId] = [];
   }
@@ -65,6 +75,10 @@ export const push = (message: any, clientId: string) => {
   log.debug(`push ${messageText} to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`);
   messages[clientId].push(message);
   respond(clientId, 'server push');
+}
+
+export const clientIdForAlias = (clientAlias: string): string => {
+  return aliases[clientAlias];
 }
 
 // Attempt to send pending messages by responding to any open poll request.

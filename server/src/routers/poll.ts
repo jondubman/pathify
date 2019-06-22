@@ -4,7 +4,7 @@ var router = express.Router()
 
 import { constants } from 'lib/constants';
 import { log } from 'lib/log-bunyan';
-import { handlePollRequest, push } from 'lib/push';
+import { clientIdForAlias, handlePollRequest, push } from 'lib/push';
 
 router.get('/', function (req, res) {
   const { clientId, timeout } = req.query;
@@ -14,20 +14,27 @@ router.get('/', function (req, res) {
 })
 
 router.get('/push', function (req, res) {
-  const { clientId, message } = req.query;
-  log.debug(`push text clientId ${clientId}, message ${message}`);
-  push(message, clientId);
+  const { clientAlias, clientId, message } = req.query;
+  log.debug(`push text clientAlias ${clientAlias}, clientId ${clientId}, message ${message}`);
+  push(message, clientId, clientAlias);
   res.send({ message: 'done' });
 })
 
 router.post('/push', function (req, res) {
-  const { clientId } = req.query;
+  const { clientAlias } = req.query;
+  let { clientId } = req.query;
+
+  // OK for clientId to be missing if we have clientAlias
+  // If both are provided by mistake, clientAlias overrides.
+  if (clientAlias) {
+    clientId = clientIdForAlias(clientAlias);
+  }
   const message = req.body;
   // TODO
   // const inspect = util.inspect(message);
   const inspect = JSON.stringify(message);
-  log.debug(`push object to clientId ${clientId}, message ${inspect}`);
-  push(message, clientId);
+  log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message ${inspect}`);
+  push(message, clientId, clientAlias);
   res.send({ message: 'done' });
 })
 
