@@ -5,7 +5,6 @@ import React, {
 import {
   TouchableWithoutFeedback,
   View,
-  ViewPagerAndroid,
 } from 'react-native';
 
 import Mapbox from '@mapbox/react-native-mapbox-gl';
@@ -35,6 +34,7 @@ class MapArea extends Component<MapAreaProps> {
   constructor(props: MapAreaProps) {
     super(props);
 
+    this.getCenter = this.getCenter.bind(this);
     this.getPointInView = this.getPointInView.bind(this);
     this.getVisibleBounds = this.getVisibleBounds.bind(this);
     this.flyTo = this.flyTo.bind(this);
@@ -52,6 +52,7 @@ class MapArea extends Component<MapAreaProps> {
     return {
       flyTo: this.flyTo,
       moveTo: this.moveTo,
+      getCenter: this.getCenter,
       getMap: this.getMap,
       getVisibleBounds: this.getVisibleBounds,
       setCamera: this.setCamera,
@@ -151,6 +152,15 @@ class MapArea extends Component<MapAreaProps> {
 
   // https://github.com/mapbox/react-native-mapbox-gl/blob/master/docs/MapView.md
 
+  async getCenter(): Promise<LonLat> {
+    if (this._map) {
+      const mapView = this._map as any;
+      const center = await mapView.getCenter();
+      return center;
+    }
+    return [0, 0]; // TODO should never happen
+  }
+
   // coordinates is [ lon, lat ]
   async getPointInView(coordinates) {
     if (this._map) {
@@ -247,9 +257,21 @@ class MapArea extends Component<MapAreaProps> {
 export interface IMapUtils {
   flyTo: (coordinates: LonLat, duration: number) => void;
   moveTo: (coordinates: LonLat, duration: number) => void;
+  getCenter: () => Promise<LonLat>
   getMap: () => IMapUtils;
   getVisibleBounds: () => Promise<Bounds>;
   setCamera: (config: object) => void;
+}
+
+export enum CenterMapOption {
+  'absolute' = 'absolute',
+  'relative' = 'relative',
+}
+
+export interface CenterMapParams {
+  center: LonLat;
+  option: CenterMapOption;
+  // zoom?: any; // TODO
 }
 
 // ref to singleton MapArea component that is created

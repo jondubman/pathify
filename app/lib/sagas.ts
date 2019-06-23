@@ -35,7 +35,7 @@ import log from 'lib/log';
 import { AppState } from 'lib/state';
 import { GenericEvent, LocationEvent, TimeRange } from 'shared/timeseries';
 import utils from 'lib/utils';
-
+import { CenterMapOption, CenterMapParams } from 'presenters/MapArea'
 import {
   Action,
   appAction,
@@ -72,6 +72,28 @@ const sagas = {
     log.trace('saga backgroundTapped');
     yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
     yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
+  },
+
+  // Center map on absolute position or relative to current position (see CenterMapParams)
+  centerMap: function* (action: Action) {
+    try {
+      const map = MapUtils();
+      if (map && map.flyTo) {
+        const params = action.params as CenterMapParams;
+        const { center, option } = params;
+        if (center) {
+          let newCenter = center;
+          if (option == CenterMapOption.relative) {
+            const currentCenter = yield call(map.getCenter as any);
+            newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
+          }
+          yield put(newAction(appAction.stopFollowingUser));
+          yield call(map.moveTo as any, newCenter);
+        }
+      }
+    } catch (err) {
+      log.error('saga centerMap', err);
+    }
   },
 
   // This has the side effect of panning the map component imperatively.

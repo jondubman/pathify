@@ -31,6 +31,7 @@ export enum reducerAction {
 export enum appAction {
   'backgroundTapped' = 'backgroundTapped',
   'geolocation' = 'geolocation',
+  'centerMap' = 'centerMap',
   'centerMapOnUser' = 'centerMapOnUser',
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
