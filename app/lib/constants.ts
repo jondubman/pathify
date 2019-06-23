@@ -15,6 +15,7 @@ import { interval } from 'shared/timeseries';
 export enum TimespanKind {
   'locations' = 'locations',
   'other' = 'other',
+  'selection' = 'selection'
 }
 
 export interface GeolocationModeChoice {
@@ -132,6 +133,8 @@ const colors = {
     timespans: {
       [TimespanKind.locations]: withOpacity(namedColors.green, 0.35),
       [TimespanKind.other]: withOpacity(namedColors.azure, 0.35),
+      [TimespanKind.selection]: withOpacity(namedColors.white, 0.25),
+
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),

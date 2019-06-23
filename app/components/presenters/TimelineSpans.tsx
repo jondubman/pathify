@@ -24,18 +24,33 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
 
     const { timeline } = constants;
 
-    // TODO for now, all Timespans appear at the same height
-    const y = (timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars)
-            - timeline.barHeight;
+    const yBase = timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars;
+
+    const y = (kind: TimespanKind): number => {
+      if (kind == TimespanKind.locations) {
+        return yBase - timeline.barHeight;
+      }
+      if (kind == TimespanKind.other) {
+        return yBase - timeline.barHeight * 2;
+      }
+      return 0;
+    }
+
+    const height = (kind: TimespanKind): number => {
+      if (kind == TimespanKind.selection) {
+        return timeline.default.height;
+      }
+      return constants.timeline.barHeight;
+    }
 
     return data.map((ts: Timespan, index: number) => (
       <Rect
         key={`Rect${index}`}
         style={{ fill: constants.colors.timeline.timespans[ts.kind] }}
         x={scale.x(ts.tr[0])}
-        y={y - timeline.barHeight * (ts.kind == TimespanKind.locations ? 0 : 1)}
+        y={y(ts.kind)}
         width={scale.x(ts.tr[1]) - scale.x(ts.tr[0])}
-        height={constants.timeline.barHeight}
+        height={height(ts.kind)}
       />
     ))
   }

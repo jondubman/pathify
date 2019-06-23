@@ -3,7 +3,7 @@ import { DomainPropType } from 'victory-native';
 
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
-import { continuousTrackList, customTimespans } from 'lib/selectors';
+import { continuousTrackList, customTimespans, selectedTimespans } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
 import timeseries, { TimeRange } from 'shared/timeseries';
@@ -40,7 +40,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
       tr: track.tr,
     }
   })
-  timespans = timespans.concat(customTimespans(state));
+  timespans = timespans.concat(customTimespans(state)).concat(selectedTimespans(state));
   return {
     nowTime,
     refTime,

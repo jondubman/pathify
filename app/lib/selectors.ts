@@ -13,13 +13,31 @@ export const continuousTrackList = (state: AppState): Tracks => {
 }
 
 export const customTimespans = (state: AppState): Timespans => {
-  // return []; // TODO
-  const { refTime, startupTime } = state.options;
-  const timespan: Timespan = {
-    kind: TimespanKind.other,
-    tr: [startupTime, refTime ], // for now just show timespan since the app started up
+  const experiment = true; // TODO
+  if (experiment) {
+    const { refTime, startupTime } = state.options;
+    const timespan: Timespan = {
+      kind: TimespanKind.other,
+      tr: [startupTime, refTime ], // for now just show timespan since the app started up
+    }
+    return [ timespan ];
+  } else {
+    return [];
   }
-  return [ timespan ];
+}
+
+export const selectedTimespans = (state: AppState): Timespans => {
+  const experiment = true; // TODO
+  if (experiment) {
+    const { startupTime } = state.options;
+    const timespan: Timespan = {
+      kind: TimespanKind.selection,
+      tr: [startupTime - interval.seconds(10), startupTime + interval.seconds(10)],
+    }
+    return [timespan];
+  } else {
+    return [];
+  }
 }
 
 export const dynamicMapHeight = (state: AppState): number => {
