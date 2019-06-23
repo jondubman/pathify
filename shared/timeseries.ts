@@ -34,6 +34,10 @@ export interface GenericEvent {
   changed?: number; // timestamp if/when last changed. Used to identify events to sync with server.
 }
 
+export type Lon = number;
+export type Lat = number;
+export type LonLat = [Lon, Lat];
+
 export interface LocationEvent extends GenericEvent {
   data: {
     ele?: number;

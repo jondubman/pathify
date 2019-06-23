@@ -30,20 +30,24 @@ import {
 
 import { DomainPropType } from 'victory-native';
 
-import { Geo } from 'lib/geo';
-import log from 'lib/log';
-import { AppState } from 'lib/state';
-import { GenericEvent, LocationEvent, TimeRange } from 'shared/timeseries';
-import utils from 'lib/utils';
-import { CenterMapOption, CenterMapParams } from 'presenters/MapArea'
 import {
   Action,
   appAction,
   newAction,
   reducerAction,
-} from 'lib/actions';
+
+  AbsoluteRelativeOption,
+  CenterMapParams,
+  PanTimelineParams,
+  ZoomMapParams
+} from 'lib/actions'
 
 import constants from 'lib/constants';
+import { Geo } from 'lib/geo';
+import log from 'lib/log';
+import { AppState } from 'lib/state';
+import utils from 'lib/utils';
+import { GenericEvent, LocationEvent, TimeRange } from 'shared/timeseries';
 import { MapUtils } from 'presenters/MapArea';
 
 const sagas = {
@@ -80,15 +84,26 @@ const sagas = {
       const map = MapUtils();
       if (map && map.flyTo) {
         const params = action.params as CenterMapParams;
-        const { center, option } = params;
+        const { center, option, zoom } = params;
         if (center) {
           let newCenter = center;
-          if (option == CenterMapOption.relative) {
+          if (option == AbsoluteRelativeOption.relative) {
             const currentCenter = yield call(map.getCenter as any);
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
-          yield put(newAction(appAction.stopFollowingUser));
-          yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
+
+          yield put(newAction(appAction.stopFollowingUser)); // otherwise map may hop right back
+
+          if (zoom) { // optional in CenterMapParams; applies for both absolute and relative
+            const config = {
+              centerCoordinate: center,
+              zoom,
+              duration: 2000, // TODO
+            }
+            yield call(map.setCamera as any, config);
+          } else {
+            yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
+          }
         }
       }
     } catch (err) {
@@ -162,6 +177,18 @@ const sagas = {
     } else {
       yield put(newAction(reducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
     }
+  },
+
+  panTimeline: function* (action: Action) {
+    const params = action.params as PanTimelineParams;
+    const { t, option } = params;
+    let newRefTime = t;
+    if (option == AbsoluteRelativeOption.relative) {
+      const refTime = yield select(state => state.options.refTime);
+      newRefTime = refTime + t;
+    }
+    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(reducerAction.SET_APP_OPTION, { refTime: newRefTime }));
   },
 
   // Set map bearing to 0 (true north) typically in response to user action (button).
@@ -324,6 +351,30 @@ const sagas = {
       yield put(newAction(appAction.stopFollowingUser));
     } catch (err) {
       log.error('userMovedMap', err);
+    }
+  },
+
+  zoomMap: function* (action: Action) {
+    try {
+      const map = MapUtils();
+      if (map && map.flyTo) {
+        const params = action.params as ZoomMapParams;
+        const { option, zoom } = params;
+        let newZoom = zoom;
+        const currentCenter = yield call(map.getCenter as any); // will not change
+        if (option == AbsoluteRelativeOption.relative) {
+          const currentZoom = yield call(map.getZoom as any);
+          newZoom = currentZoom + zoom;
+        }
+        const config = {
+          centerCoordinate: currentCenter,
+          zoom: newZoom,
+          duration: 1000, // TODO
+        }
+        yield call(map.setCamera as any, config);
+      }
+    } catch (err) {
+      log.error('saga centerMap', err);
     }
   },
 }

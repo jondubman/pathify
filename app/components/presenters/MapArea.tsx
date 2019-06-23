@@ -22,9 +22,7 @@ import PulsarsContainer from 'containers/PulsarsContainer';
 import Pulsar from 'presenters/Pulsar';
 
 // Public interface to singleton underlying Mapbox component
-export type Lon = number;
-export type Lat = number;
-export type LonLat = [Lon, Lat];
+import { LonLat } from 'shared/timeseries';
 export type Bounds = [LonLat, LonLat] | null;
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.
@@ -276,17 +274,6 @@ export interface IMapUtils {
   getVisibleBounds: () => Promise<Bounds>;
   getZoom: () => Promise<number>;
   setCamera: (config: object) => void;
-}
-
-export enum CenterMapOption {
-  'absolute' = 'absolute',
-  'relative' = 'relative',
-}
-
-export interface CenterMapParams {
-  center: LonLat;
-  option: CenterMapOption;
-  // zoom?: any; // TODO
 }
 
 // ref to singleton MapArea component that is created

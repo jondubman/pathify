@@ -36,6 +36,7 @@ export enum appAction {
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
+  'panTimeline' = 'panTimeline',
   'reorientMap' = 'reorientMap',
   'serverSync' = 'serverSync',
   'setAppOption' = 'setAppOption',
@@ -50,6 +51,7 @@ export enum appAction {
   'uiFlagEnable' = 'uiFlagEnable',
   'uiFlagToggle' = 'uiFlagToggle',
   'userMovedMap' = 'userMovedMap',
+  'zoomMap' = 'zoomMap',
 }
 
 export type ActionType = reducerAction | appAction;
@@ -80,3 +82,28 @@ export const newAction = (type: ActionType, params: any = null) => ({
   type,
   params,
 })
+
+// From here on: types related to params for actions
+
+import { LonLat } from 'shared/timeseries';
+
+export enum AbsoluteRelativeOption {
+  'absolute' = 'absolute',
+  'relative' = 'relative',
+}
+
+export interface CenterMapParams {
+  center: LonLat;
+  option: AbsoluteRelativeOption;
+  zoom?: number;
+}
+
+export interface PanTimelineParams {
+  option: AbsoluteRelativeOption;
+  t: number; // actually delta t, if option is relative
+}
+
+export interface ZoomMapParams {
+  option: AbsoluteRelativeOption;
+  zoom: number;
+}

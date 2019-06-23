@@ -13,6 +13,7 @@ router.get('/', function (req, res) {
   handlePollRequest(req, res, timeoutMsec);
 })
 
+// GET can be used to push simple string messages to the app
 router.get('/push', function (req, res) {
   const { clientAlias, clientId, message } = req.query;
   log.debug(`push text clientAlias ${clientAlias}, clientId ${clientId}, message ${message}`);
@@ -20,6 +21,7 @@ router.get('/push', function (req, res) {
   res.send({ message: 'done' });
 })
 
+// Push JSON to the app.
 router.post('/push', function (req, res) {
   const { clientAlias } = req.query;
   let { clientId } = req.query;
