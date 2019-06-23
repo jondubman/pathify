@@ -22,7 +22,9 @@ import PulsarsContainer from 'containers/PulsarsContainer';
 import Pulsar from 'presenters/Pulsar';
 
 // Public interface to singleton underlying Mapbox component
-export type LonLat = [number, number];
+export type Lon = number;
+export type Lat = number;
+export type LonLat = [Lon, Lat];
 export type Bounds = [LonLat, LonLat] | null;
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.

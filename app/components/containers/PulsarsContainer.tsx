@@ -8,12 +8,12 @@
 
 import { connect } from 'react-redux';
 
+import { LonLat } from 'presenters/MapArea';
 import Pulsars from 'presenters/Pulsars';
 import { AppState } from 'lib/state';
 
 export interface OptionalPulsar {
-  lon: number;
-  lat: number;
+  loc: LonLat;
   color: string;
   visible: boolean;
 }
