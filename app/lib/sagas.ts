@@ -88,7 +88,7 @@ const sagas = {
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
           yield put(newAction(appAction.stopFollowingUser));
-          yield call(map.moveTo as any, newCenter);
+          yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
         }
       }
     } catch (err) {
@@ -96,7 +96,7 @@ const sagas = {
     }
   },
 
-  // This has the side effect of panning the map component imperatively.
+  // This has the side effect of panning the map component imperatively. Note use of flyTo which makes it more fluid.
   centerMapOnUser: function* () {
     try {
       const map = MapUtils();

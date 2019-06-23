@@ -40,6 +40,7 @@ class MapArea extends Component<MapAreaProps> {
     this.getPointInView = this.getPointInView.bind(this);
     this.getVisibleBounds = this.getVisibleBounds.bind(this);
     this.flyTo = this.flyTo.bind(this);
+    this.getZoom = this.getZoom.bind(this);
     this.moveTo = this.moveTo.bind(this);
     this.fitBounds = this.fitBounds.bind(this);
     this.onRegionWillChange = this.onRegionWillChange.bind(this);
@@ -57,6 +58,7 @@ class MapArea extends Component<MapAreaProps> {
       getCenter: this.getCenter,
       getMap: this.getMap,
       getVisibleBounds: this.getVisibleBounds,
+      getZoom: this.getZoom,
       setCamera: this.setCamera,
     }
   }
@@ -154,6 +156,26 @@ class MapArea extends Component<MapAreaProps> {
 
   // https://github.com/mapbox/react-native-mapbox-gl/blob/master/docs/MapView.md
 
+  // padding is [ verticalPadding, horizontalPadding ]
+  //   (TODO What are the units exactly? Pixels?)
+  // all coords: [lon, lat]
+  // duration is msec.
+  fitBounds(neCoords: LonLat, swCoords: LonLat, padding: number, duration: number) {
+    if (this._map) {
+      const mapView = this._map as any;
+      mapView.fitBounds(neCoords, swCoords, padding, duration);
+    }
+  }
+
+  // duration is optional
+  // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
+  flyTo(coordinates: LonLat, duration: number) {
+    if (this._map) {
+      const mapView = this._map as any;
+      mapView.flyTo(coordinates, duration);
+    }
+  }
+
   async getCenter(): Promise<LonLat> {
     if (this._map) {
       const mapView = this._map as any;
@@ -181,31 +203,21 @@ class MapArea extends Component<MapAreaProps> {
     return null;
   }
 
-  // duration is optional
-  // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
-  flyTo(coordinates: LonLat, duration: number) {
+  async getZoom(): Promise<number> {
     if (this._map) {
       const mapView = this._map as any;
-      mapView.flyTo(coordinates, duration);
+      const zoom = await mapView.getZoom();
+      return zoom;
     }
+    return 0; // TODO should never happen
   }
+
 
   // duration is optional
   moveTo(coordinates: LonLat, duration: number) {
     if (this._map) {
       const mapView = this._map as any;
       mapView.moveTo(coordinates, duration);
-    }
-  }
-
-  // padding is [ verticalPadding, horizontalPadding ]
-  //   (TODO What are the units exactly? Pixels?)
-  // all coords: [lon, lat]
-  // duration is msec.
-  fitBounds(neCoords: LonLat, swCoords: LonLat, padding: number, duration: number) {
-    if (this._map) {
-      const mapView = this._map as any;
-      mapView.fitBounds(neCoords, swCoords, padding, duration);
     }
   }
 
@@ -262,6 +274,7 @@ export interface IMapUtils {
   getCenter: () => Promise<LonLat>
   getMap: () => IMapUtils;
   getVisibleBounds: () => Promise<Bounds>;
+  getZoom: () => Promise<number>;
   setCamera: (config: object) => void;
 }
 
