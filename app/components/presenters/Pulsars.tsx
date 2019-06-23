@@ -15,8 +15,11 @@ class Pulsars extends Component<PulsarsProps> {
       <Fragment>
         {Object.keys(pulsars).map((key => {
           const pulsar = pulsars[key];
-          const { lon, lat, color } = pulsar;
-          return <Pulsar key={key} id={key} lon={lon} lat={lat} color={color} />
+          const { lon, lat, color, visible } = pulsar;
+          return visible ?
+            <Pulsar key={key} id={key} lon={lon} lat={lat} color={color} />
+            :
+            null
         }))}
       </Fragment>
     )

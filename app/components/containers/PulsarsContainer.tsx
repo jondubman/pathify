@@ -15,7 +15,10 @@ export interface OptionalPulsar {
   lon: number;
   lat: number;
   color: string;
+  visible: boolean;
 }
+
+// The key here is any unique string, whih could indicate a kind of pulsar (like 'origin'), or an id
 export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
 interface PulsarsStateProps {
