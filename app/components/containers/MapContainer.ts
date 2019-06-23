@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
 import { LocationEvent } from 'shared/timeseries';
-import MapArea from 'components/MapArea';
 import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
+import MapArea from 'presenters/MapArea';
 
 interface MapAreaStateProps {
   height: number;

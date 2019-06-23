@@ -19,6 +19,8 @@
 //
 // Note you must use yield select instead of accessing the store directly (yield the select effect)
 
+import { Polygon } from '@turf/helpers';
+
 import {
   call,
   put,
@@ -41,13 +43,13 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import { MapUtils } from 'components/MapArea';
-import { Polygon } from '@turf/helpers';
 import constants from 'lib/constants';
+import { MapUtils } from 'presenters/MapArea';
 
 const sagas = {
-  // Avoid boilerplate by automatically yielding takeEvery for each appAction
+
   root: function* () {
+  // Avoid boilerplate by automatically yielding takeEvery for each appAction
     for (let action in appAction) {
       // TODO why is action sometimes 0?
       if (appAction[action]) {
