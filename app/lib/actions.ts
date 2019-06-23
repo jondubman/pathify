@@ -37,6 +37,7 @@ export enum appAction {
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
   'panTimeline' = 'panTimeline',
+  // 'remoteAppAction' = 'remoteAppAction', // TODO
   'reorientMap' = 'reorientMap',
   'serverSync' = 'serverSync',
   'setAppOption' = 'setAppOption',

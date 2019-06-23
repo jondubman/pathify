@@ -47,6 +47,9 @@ app.use('/ping', ping);
 import { poll } from 'routers/poll';
 app.use('/poll', poll);
 
+import { push } from 'routers/push';
+app.use('/push', push);
+
 // used for fatal error / server restart
 function flushLogsAndExit(msecDelay: number = 1000) {
   // Note this would exit immediately, omitting logs due to https://github.com/trentm/node-bunyan/issues/95

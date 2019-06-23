@@ -5,7 +5,7 @@ import { log } from 'lib/log-bunyan';
 // or with an array of queued messages for the app. For now, server uses a simple in-memory queue that does not
 // persist across server invocations.
 
-// Use push to queue a message for the app (which will hopefully be delivered right away)
+// Use pushToClient to queue a message for the app (which will hopefully be delivered right away)
 // If messages are idempotent, server could attempt resending until a client handshake arrives.
 
 type Message = any; // TODO
@@ -65,7 +65,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
 
 // Server push is the purpose of this module. Enqueue a message to a client and attempt to send it.
 // See handleServerPush in the app for where this comes in.
-export const push = (message: any, clientId: string, clientAlias: string = '') => {
+export const pushToClient = (message: any, clientId: string, clientAlias: string = '') => {
   // If clientId is
   if (!messages[clientId]) {
     messages[clientId] = [];
