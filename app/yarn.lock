@@ -2381,10 +2381,10 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/mapbox-gl@^0.51.6":
-  version "0.51.6"
-  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-0.51.6.tgz#c9163f6010c49d66c348d41f403ddf349242bbc6"
-  integrity sha512-CvOYB4MfqDQm3YH6Xr7odn8qK3zvOPAySXi2/lNmZDc1CdofIa6NdVOwKP2+WP8XD4hEiFr91PBuuNstsfTm0A==
+"@types/mapbox-gl@^0.51.7":
+  version "0.51.7"
+  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-0.51.7.tgz#01249e155523c1c047b82012e42e343095f89e2f"
+  integrity sha512-HtyBAaq/bXvy42SizlXLifHZJIscLW4hapYcreUpXDvvce1JzWsA78BOx4BSchClLONhNBq1oe+01YjKpNXtDg==
   dependencies:
     "@types/geojson" "*"
 

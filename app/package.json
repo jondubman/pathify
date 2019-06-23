@@ -15,7 +15,7 @@
     "@turf/turf": "^5.1.6",
     "@types/d3": "^5.7.2",
     "@types/mapbox": "^1.6.39",
-    "@types/mapbox-gl": "^0.51.6",
+    "@types/mapbox-gl": "^0.51.7",
     "@types/radium": "^0.24.2",
     "@types/react-native-vector-icons": "^6.4.0",
     "@types/react-redux": "^7.0.9",

@@ -5,6 +5,7 @@ import React, {
 import {
   TouchableWithoutFeedback,
   View,
+  ViewPagerAndroid,
 } from 'react-native';
 
 import Mapbox from '@mapbox/react-native-mapbox-gl';
@@ -22,20 +23,8 @@ import PulsarsContainer from 'containers/PulsarsContainer';
 import Pulsar from 'presenters/Pulsar';
 
 // Public interface to singleton underlying Mapbox component
-export interface IMapUtils {
-  flyTo: Function;
-  getVisibleBounds: Function;
-  setCamera: Function,
-}
-
-let singletonMap: (Component<MapAreaProps> & IMapUtils | null) = null; // ref to singleton MapArea component that is created
-
-export function MapUtils(): IMapUtils | null {
-  if (!singletonMap) {
-    return null; // TODO
-  }
-  return (singletonMap as any).getMap();
-}
+export type LonLat = [number, number];
+export type Bounds = [LonLat, LonLat] | null;
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.
 
@@ -60,8 +49,10 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   getMap(): IMapUtils {
-    return { // methods exposed for imperative use as needed
+    return {
       flyTo: this.flyTo,
+      moveTo: this.moveTo,
+      getMap: this.getMap,
       getVisibleBounds: this.getVisibleBounds,
       setCamera: this.setCamera,
     }
@@ -169,17 +160,18 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   // return the coordinate bounds [NE [lon, lat], SW [lon, lat]] visible in the users’s viewport.
-  async getVisibleBounds() {
+  async getVisibleBounds(): Promise<Bounds> {
     if (this._map) {
       const mapView = this._map as any;
       const bounds = await mapView.getVisibleBounds();
       return bounds;
     }
+    return null;
   }
 
   // duration is optional
   // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
-  flyTo(coordinates, duration) {
+  flyTo(coordinates: LonLat, duration: number) {
     if (this._map) {
       const mapView = this._map as any;
       mapView.flyTo(coordinates, duration);
@@ -187,7 +179,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   // duration is optional
-  moveTo(coordinates, duration) {
+  moveTo(coordinates: LonLat, duration: number) {
     if (this._map) {
       const mapView = this._map as any;
       mapView.moveTo(coordinates, duration);
@@ -198,7 +190,7 @@ class MapArea extends Component<MapAreaProps> {
   //   (TODO What are the units exactly? Pixels?)
   // all coords: [lon, lat]
   // duration is msec.
-  fitBounds(neCoords, swCoords, padding, duration) {
+  fitBounds(neCoords: LonLat, swCoords: LonLat, padding: number, duration: number) {
     if (this._map) {
       const mapView = this._map as any;
       mapView.fitBounds(neCoords, swCoords, padding, duration);
@@ -249,6 +241,25 @@ class MapArea extends Component<MapAreaProps> {
       // this._map.zoomTo(zoomLevel);
     }
   }
+}
+
+// methods exposed for imperative use as needed
+export interface IMapUtils {
+  flyTo: (coordinates: LonLat, duration: number) => void;
+  moveTo: (coordinates: LonLat, duration: number) => void;
+  getMap: () => IMapUtils;
+  getVisibleBounds: () => Promise<Bounds>;
+  setCamera: (config: object) => void;
+}
+
+// ref to singleton MapArea component that is created
+let singletonMap: (Component<MapAreaProps> & IMapUtils) | null = null;
+
+export function MapUtils(): IMapUtils | null {
+  if (!singletonMap) {
+    return null; // TODO
+  }
+  return singletonMap.getMap();
 }
 
 export default MapArea;
