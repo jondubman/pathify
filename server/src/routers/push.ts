@@ -61,15 +61,23 @@ router.post('/', function (req, res) {
         setTimeout(() => {
           reject('timeout');
         }, timeout);
-      }).then(appQueryResponse => {
+      }).then(appQueryResponse => { // the POST to /appQueryResponse gets us here
         const { response } = appQueryResponse;
         const responseReadable = util.inspect(response, { depth: 4 });
         log.info(`response from clientId ${clientId}: ${responseReadable}`);
         // forward response to whoever requested that we post this JSON to the app
-        res.send(JSON.stringify(response));
+        if (typeof response === 'string') {
+          res.send(response);
+        } else {
+          res.send(JSON.stringify(response));
+        }
       }).catch(error => {
-        log.info(`appQuery timeout, clentId ${clientId}`);
-        res.send({ error });
+        try {
+          log.info(`appQuery timeout, clientId ${clientId}`);
+          res.send({ error });
+        } catch(err) {
+          log.error('subsequent error, probably: Cannot set headers after they are sent to the client');
+        }
       })
     }
   }
