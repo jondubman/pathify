@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as util from 'util'
 import * as uuid from 'uuid/v4';
 
 var router = express.Router()
@@ -45,16 +46,18 @@ router.post('/', function (req, res) {
     if (!message.params) { // TODO message.params is type AppQueryParams
       message.params = {};
     }
-    message.params.uuid = uuid();
+    const appQueryUuid = uuid();
+    message.params.uuid = appQueryUuid;
     log.debug('message at this point', message);
-    if (appQueryPromises[uuid]) {
+    if (appQueryPromises[appQueryUuid]) {
       log.warn('call to appQuery with existing uuid'); // not likely!
     } else {
       new Promise<AppQueryResponse>((resolve, reject) => {
-        appQueryPromises[uuid] = { resolve, reject };
+        appQueryPromises[appQueryUuid] = { resolve, reject };
         // hopefully app will respond by posting to /appQueryResponse
       }).then(response => {
-        log.info(`response from clientId ${clientId}: ${response}`);
+        const responseReadable = util.inspect(response, { depth: 4 });
+        log.info(`response from clientId ${clientId}: ${responseReadable}`);
         res.send(response); // forward response to whoever requested that we post this JSON to the app
         return response;
       })
