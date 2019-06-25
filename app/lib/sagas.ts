@@ -89,8 +89,17 @@ const sagas = {
     try {
       const params = action.params as AppQueryParams;
       log.debug('appQuery', params);
-      const { uuid } = params;
-      const response = `response to uuid ${uuid}`;
+      const { query, uuid } = params;
+      let response;
+      switch (query) {
+        case 'ping': {
+          response = 'pong';
+          break;
+        }
+        default: {
+          response = `response to uuid ${uuid}`; // default
+        }
+      }
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: { response, uuid }});
     } catch(err) {
       log.error('appQuery', err);

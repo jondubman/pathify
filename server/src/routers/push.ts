@@ -67,9 +67,9 @@ router.post('/', function (req, res) {
         log.info(`response from clientId ${clientId}: ${responseReadable}`);
         // forward response to whoever requested that we post this JSON to the app
         res.send(JSON.stringify(response));
-      }).catch(err => {
-        log.info(`appQuery timeout clentId ${clientId}`);
-        res.send({ error: 'timeout' });
+      }).catch(error => {
+        log.info(`appQuery timeout, clentId ${clientId}`);
+        res.send({ error });
       })
     }
   }
@@ -89,7 +89,7 @@ router.post('/appQueryResponse', function (req, res) {
   log.debug('/appQueryResponse', appQueryResponse);
   const { resolve } = appQueryPromises[appQueryResponse.uuid];
   resolve(appQueryResponse); // this should forward the response to the original requester
-  res.sendStatus(200);
+  res.sendStatus(200); // OK
 })
 
 export { router as push };
