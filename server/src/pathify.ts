@@ -1,5 +1,4 @@
 // Pathify server main
-
 // This creates an Express server, installs middleware, configures all the routes, and launches it.
 
 require('module-alias/register'); // for module import alias resolution. See tsconfig.json and package.json
