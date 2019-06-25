@@ -43,7 +43,7 @@ router.post('/', function (req, res) {
   if (clientAlias) {
     clientId = clientIdForAlias(clientAlias);
   }
-  if (!clientAlias && !clientId) {
+  if (!clientId) {
     res.send({ message: 'No client specified; set environment variable CA for client alias or CID for client ID' });
     return;
   }

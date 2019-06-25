@@ -32,7 +32,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
   const { clientAlias, clientId } = req.query;
   if (!clientId) {
     log.warn('handlePollRequest: clientId not provided');
-    res.sendStatus(500);
+    res.sendStatus(500); // TODO
     return;
   }
   const timer = setTimeout(() => {
