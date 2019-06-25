@@ -6,12 +6,14 @@ var router = express.Router()
 
 import { log } from 'lib/log-bunyan';
 import { clientIdForAlias, pushToClient } from 'lib/client';
+import { setTimeout } from 'timers';
+import { constants } from 'lib/constants';
 
-interface AppQueryParams { // TODO this also appears in actions module on client; interface definition should be shared
-  timeout?: number;
-  query?: string; // empty query is just a ping
-  uuid: string;
-}
+// interface AppQueryParams {
+//   timeout?: number;
+//   query?: string; // empty query is just a ping
+//   uuid: string;
+// }
 interface AppQueryResponse {
   uuid: string;
   response: any;
@@ -44,7 +46,7 @@ router.post('/', function (req, res) {
   const message = { ...req.body };
   if (message.type === 'appQuery') { // TODO appAction.appQuery
     if (!message.params) { // TODO message.params is type AppQueryParams
-      message.params = {};
+      message.params = {}; // this allows us to send an empty query, which is essentially a ping
     }
     const appQueryUuid = uuid();
     message.params.uuid = appQueryUuid;
@@ -54,13 +56,20 @@ router.post('/', function (req, res) {
     } else {
       new Promise<AppQueryResponse>((resolve, reject) => {
         appQueryPromises[appQueryUuid] = { resolve, reject };
-        // hopefully app will respond by posting to /appQueryResponse
+        const timeout = message.params.timeout || constants.appQueryDefaultTimeout;
+        // hopefully app will respond by posting to /appQueryResponse, but if not:
+        setTimeout(() => {
+          reject('timeout');
+        }, timeout);
       }).then(appQueryResponse => {
         const responseReadable = util.inspect(appQueryResponse.response, { depth: 4 });
         log.info(`response from clientId ${clientId}: ${responseReadable}`);
         // forward response to whoever requested that we post this JSON to the app
         res.send(JSON.stringify(appQueryResponse.response));
         return appQueryResponse.response; // TODO do we need to return anything?
+      }).catch(err => {
+        log.info(`appQuery timeout clentId ${clientId}`);
+        res.send('timeout');
       })
     }
   }
@@ -79,7 +88,7 @@ router.post('/appQueryResponse', function (req, res) {
   log.debug('/appQueryResponse', appQueryResponse);
   const { resolve } = appQueryPromises[appQueryResponse.uuid];
   resolve(appQueryResponse); // this should forward the response to the original requester
-  // res.sendStatus(200);
+  // res.sendStatus(200)
   res.send(JSON.stringify(appQueryResponse.response));
 })
 
