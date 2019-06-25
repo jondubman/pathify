@@ -40,11 +40,12 @@ router.post('/', function (req, res) {
   if (clientAlias) {
     clientId = clientIdForAlias(clientAlias);
   }
-  const message = req.body;
+  const message = { ...req.body };
   if (message.type === 'appQuery') { // TODO appAction.appQuery
-    const appQuery = (message.params || {}) as AppQueryParams;
-    appQuery.uuid = uuid();
-    log.debug('appQuery with uuid', appQuery);
+    if (!message.params) { // TODO message.params is type AppQueryParams
+      message.params = {};
+    }
+    message.params.uuid = uuid();
     log.debug('message at this point', message);
     if (appQueryPromises[uuid]) {
       log.warn('call to appQuery with existing uuid'); // not likely!
