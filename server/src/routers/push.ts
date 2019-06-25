@@ -76,7 +76,7 @@ router.post('/', function (req, res) {
 router.post('/appQueryResponse', function (req, res) {
   const appQueryResponse = req.body as AppQueryResponse;
   log.debug('/appQueryResponse', appQueryResponse);
-  const { resolve } = appQueryPromises[uuid];
+  const { resolve } = appQueryPromises[appQueryResponse.uuid];
   resolve(appQueryResponse); // this should forward the response to the original requester
   res.sendStatus(200);
 })
