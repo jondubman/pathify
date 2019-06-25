@@ -90,9 +90,18 @@ const sagas = {
       const params = action.params as AppQueryParams;
       log.debug('appQuery', params);
       const { query, uuid } = params;
-      let response = `response to uuid ${uuid}`; // default;
       const queryType = query ? query.type : null;
+      const state = store.getState();
+      let response: any = `response to uuid ${uuid}`; // default;
       switch (queryType) {
+        case 'eventCount': {
+          response = state.events.length;
+          break;
+        }
+        case 'options': {
+          response = state.options;
+          break;
+        }
         case 'ping': {
           response = 'pong';
           break;
