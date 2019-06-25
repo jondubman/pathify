@@ -55,11 +55,11 @@ router.post('/', function (req, res) {
       new Promise<AppQueryResponse>((resolve, reject) => {
         appQueryPromises[appQueryUuid] = { resolve, reject };
         // hopefully app will respond by posting to /appQueryResponse
-      }).then(response => {
-        const responseReadable = util.inspect(response, { depth: 4 });
+      }).then(appQueryResponse => {
+        const responseReadable = util.inspect(appQueryResponse.response, { depth: 4 });
         log.info(`response from clientId ${clientId}: ${responseReadable}`);
-        res.send(response); // forward response to whoever requested that we post this JSON to the app
-        return response;
+        res.send(appQueryResponse.response); // forward response to whoever requested that we post this JSON to the app
+        return appQueryResponse.response; // TODO do we need to return anything?
       })
     }
   }
@@ -78,7 +78,8 @@ router.post('/appQueryResponse', function (req, res) {
   log.debug('/appQueryResponse', appQueryResponse);
   const { resolve } = appQueryPromises[appQueryResponse.uuid];
   resolve(appQueryResponse); // this should forward the response to the original requester
-  res.sendStatus(200);
+  // res.sendStatus(200);
+  res.send(appQueryResponse.response);
 })
 
 export { router as push };
