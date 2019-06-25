@@ -244,6 +244,8 @@ const constants = {
     'Content-Type': 'application/json',
   },
   map: {
+    centerMapDuration: 500, // TODO not honored on iOS https://github.com/nitaliano/react-native-mapbox-gl/issues/1411
+    // TODO fitBounds can be used instead
     default: {
       lat: 47.6603810, // Wallingford
       lon: -122.3336650,

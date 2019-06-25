@@ -6,7 +6,7 @@ import store from 'lib/store';
 const { clientId, headers, serverUrl } = constants;
 
 // This handles the server response to /poll, which is a server push.
-export const handleServerPush = (data: any) => {
+export const handleServerPush = async (data: any) => {
   log.info('serverPush', data);
   // Custom string messages are handled here
   if (data === 'handshake') {
@@ -16,7 +16,8 @@ export const handleServerPush = (data: any) => {
   // TODO Handle other kinds of incoming JSON
   if (typeof data === 'object') {
     for (let message of data) {
-      const { action, params } = message;
+      const action = message.type;
+      const params = message.params;
       if (action) {
         store.dispatch(newAction(action, params || null));
       }
@@ -35,8 +36,8 @@ const pollServerOnce = async () => {
     handleServerPush(message);
   } catch(err) {
     log.warn('pollServerOnce', err);
-
-    await new Promise(resolve => setTimeout(resolve, 5000)); // take a brief nap and then try again
+    // take a brief nap and then try again
+    await new Promise(resolve => setTimeout(resolve, constants.serverDelayAfterFailedRequest));
     log.info('...continuing...');
   }
 }

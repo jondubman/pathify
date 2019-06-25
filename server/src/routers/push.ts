@@ -1,9 +1,22 @@
 import * as express from 'express';
+import * as uuid from 'uuid/v4';
 
 var router = express.Router()
 
 import { log } from 'lib/log-bunyan';
-import { clientIdForAlias, handlePollRequest, pushToClient } from 'lib/client';
+import { clientIdForAlias, pushToClient } from 'lib/client';
+
+interface AppQueryParams { // TODO this also appears in actions module on client; interface definition should be shared
+  timeout?: number;
+  query: string;
+  uuid: string;
+}
+interface AppQueryResponse {
+  uuid: string;
+  response: any;
+}
+type AppQueryPromises = { [key: string]: Promise<AppQueryResponse> }; // key is uuid
+let appQueryPromises: AppQueryPromises = {};
 
 // GET can be used to push simple string messages to the app
 router.get('/', function (req, res) {
@@ -24,12 +37,32 @@ router.post('/', function (req, res) {
     clientId = clientIdForAlias(clientAlias);
   }
   const message = req.body;
-  // TODO
-  // const inspect = util.inspect(message);
+  if (message.type === 'appQuery') { // TODO appAction.appQuery
+    const appQuery = message.params as AppQueryParams;
+    appQuery.uuid = uuid();
+    if (appQueryPromises[uuid]) {
+      log.warn('call to appQuery with existing uuid'); // not likely!
+    } else {
+      appQueryPromises[uuid] = new Promise<AppQueryResponse>((resolve, reject) => {}).then(response => {
+        log.info(`response from clientId ${clientId}: ${response}`);
+        res.send(response); // forward response to whoever requested that we post this JSON to the app
+        return response;
+      })
+    }
+  }
   const inspect = JSON.stringify(message);
   log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message ${inspect}`);
   pushToClient(message, clientId, clientAlias);
-  res.send({ message: 'done' });
+
+  if (message.type !== 'appQuery') {
+    res.send({ message: 'done' });
+  }
+})
+
+router.post('/appQueryResponse', function (req, res) {
+  const appQueryResponse = req.body as AppQueryResponse;
+  const promise = appQueryPromises[uuid];
+  promise.resolve(req.query);
 })
 
 export { router as push };

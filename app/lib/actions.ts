@@ -29,20 +29,25 @@ export enum reducerAction {
 // Some appActions and reducerActions have similar names (e.g. geolocation, GEOLOCATION).
 // In these cases the appAction is a wrapper that triggers the corresponding reducerAction while handling side effects.
 export enum appAction {
+  'appQuery' = 'appQuery', // see AppQueryParams
   'backgroundTapped' = 'backgroundTapped',
-  'geolocation' = 'geolocation',
-  'centerMap' = 'centerMap',
+  'centerMap' = 'centerMap', // see CenterMapParams
   'centerMapOnUser' = 'centerMapOnUser',
+  'delayedAction' = 'delayedAction', // see DelayedActionParams
+  'geolocation' = 'geolocation',
+  'log' = 'log', // see LogActionParams
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
-  'panTimeline' = 'panTimeline',
-  // 'remoteAppAction' = 'remoteAppAction', // TODO
+  'panTimeline' = 'panTimeline', // see PanTimelineParams
   'reorientMap' = 'reorientMap',
+  'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'serverSync' = 'serverSync',
+  'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
   'setGeolocationMode' = 'setGeolocationMode',
   'setPanelVisibility' = 'setPanelVisibility',
+  'sleep' = 'sleep', // see SleepParams
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',
   'timelineZoomed' = 'timelineZoomed',
@@ -52,7 +57,7 @@ export enum appAction {
   'uiFlagEnable' = 'uiFlagEnable',
   'uiFlagToggle' = 'uiFlagToggle',
   'userMovedMap' = 'userMovedMap',
-  'zoomMap' = 'zoomMap',
+  'zoomMap' = 'zoomMap', // see ZoomMapParams
 }
 
 export type ActionType = reducerAction | appAction;
@@ -88,9 +93,17 @@ export const newAction = (type: ActionType, params: any = null) => ({
 
 import { LonLat } from 'shared/timeseries';
 
+// TODO complete this list
+
 export enum AbsoluteRelativeOption {
   'absolute' = 'absolute',
   'relative' = 'relative',
+}
+
+export interface AppQueryParams {
+  timeout?: number;
+  query: string;
+  uuid: string;
 }
 
 export interface CenterMapParams {
@@ -99,9 +112,30 @@ export interface CenterMapParams {
   zoom?: number;
 }
 
+export interface DelayedActionParams {
+  run: Action,
+  after: number,
+}
+
+export interface LogActionParams {
+  level?: string; // TODO validate?
+  message: string;
+}
+
 export interface PanTimelineParams {
   option: AbsoluteRelativeOption;
   t: number; // actually delta t, if option is relative
+}
+
+export interface RepeatedActionParams {
+  repeat: Action,
+  times: number,
+}
+
+export type SequenceParams = Action[];
+
+export interface SleepParams {
+  for: number,
 }
 
 export interface ZoomMapParams {

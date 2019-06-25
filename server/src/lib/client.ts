@@ -88,7 +88,7 @@ const respond = (clientId: string, reason: string = 'unspecified reason') => {
     log.warn('push respond: missing clientId');
     return;
   }
-  log.debug(`attempting response to clientId ${clientId}, due to ${reason}`);
+  log.debug(`responding to clientId ${clientId} poll due to ${reason}`);
   const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO best practice?)
   if (pollRequest) {
     if (pollRequest.timer) {

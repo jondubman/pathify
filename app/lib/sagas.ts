@@ -23,8 +23,11 @@ import { Polygon } from '@turf/helpers';
 
 import {
   call,
+  delay,
   put,
+  // putResolve,
   select,
+  // spawn,
   takeEvery,
 } from 'redux-saga/effects';
 
@@ -36,16 +39,25 @@ import {
   newAction,
   reducerAction,
 
-  AbsoluteRelativeOption,
+  AppQueryParams,
   CenterMapParams,
+  DelayedActionParams,
+  LogActionParams,
   PanTimelineParams,
-  ZoomMapParams
+  RepeatedActionParams,
+  SequenceParams,
+  SleepParams,
+  ZoomMapParams,
+
+  AbsoluteRelativeOption,
 } from 'lib/actions'
 
 import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
+import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
+import store from 'lib/store';
 import utils from 'lib/utils';
 import { GenericEvent, LocationEvent, TimeRange } from 'shared/timeseries';
 import { MapUtils } from 'presenters/MapArea';
@@ -71,6 +83,15 @@ const sagas = {
   },
 
   // From here on, functions are alphabetized:
+
+  appQuery: function* (action: Action) {
+    log.debug('appQuery - got here');
+    // const params = action.params as AppQueryParams;
+    // const { uuid } = params;
+    // const response = `response to uuid ${uuid}`;
+    // yield call(postToServer as any, 'push/appQueryResponse', { response, uuid });
+  },
+
 
   backgroundTapped: function* (action: Action) {
     log.trace('saga backgroundTapped');
@@ -98,7 +119,7 @@ const sagas = {
             const config = {
               centerCoordinate: center,
               zoom,
-              duration: 2000, // TODO
+              duration: constants.map.centerMapDuration,
             }
             yield call(map.setCamera as any, config);
           } else {
@@ -127,6 +148,16 @@ const sagas = {
     }
   },
 
+  delayedAction: function* (action: Action) {
+    try {
+      const params = action.params as DelayedActionParams;
+      yield delay(params.after);
+      yield put(params.run);
+    } catch (err) {
+      log.error('saga delayedAction', err);
+    }
+  },
+
   geolocation: function* (action: Action) {
     try {
       const locationEvent: LocationEvent = action.params as LocationEvent;
@@ -148,6 +179,13 @@ const sagas = {
     } catch (err) {
       log.error('geolocation', err);
     }
+  },
+
+  // Generate a client-side log with an Action
+  log: function* (action: Action) {
+    const params = action.params as LogActionParams;
+    const { level, message } = params;
+    log[level || 'debug'](message);
   },
 
   // Triggered by Mapbox
@@ -201,6 +239,53 @@ const sagas = {
       yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapReorienting'));
       map.setCamera(obj);
     }
+  },
+
+  // See sequence saga.
+  repeatedAction: function* () {
+  },
+
+  // The sequence action is an array of actions to be executed in sequence, such that
+  //    -- the sleep action can be interspersed, and works as expected, delaying subsequent actions in the sequence;
+  //    -- repeatedAction behaves as expected when containing a sub-sequence of
+  sequence: function* (action: Action) {
+    try {
+      const runSequenceActions = async (sequenceActions: Action[]) => {
+        for (let sequenceAction of sequenceActions) {
+          log.debug('sequenceAction', sequenceAction);
+          if (sequenceAction.type === appAction.sleep) { // TODO sleep gets special treatment to ensure blocking execution
+            const sleepTime = (sequenceAction.params as SleepParams).for;
+            await new Promise(resolve => setTimeout(resolve, sleepTime));
+          }
+          if (sequenceAction.type == appAction.repeatedAction) {
+            const times = (sequenceAction.params as RepeatedActionParams).times;
+            for (let i = 0; i < times; i++) {
+              await runSequenceActions([sequenceAction.params.repeat]);
+            }
+          } else if (sequenceAction.type == appAction.sequence) {
+            await runSequenceActions(sequenceAction.params); // using recursion to support nested sequences
+          } else {
+            store.dispatch(sequenceAction); // note use of store.dispatch rather than yield put
+          }
+        }
+      }
+      const innerActions = action.params as SequenceParams;
+      setTimeout(async () => { // using setTimeout so we can trigger an async function
+        await runSequenceActions(innerActions);
+      }, 0)
+      // for (let innerAction of innerActions) {
+      //   yield put(innerAction);
+      // }
+    } catch (err) {
+      log.error('saga sequence', err);
+    }
+  },
+
+  // Note sleep only works as expected if enclosed in a sequence action; sequence is where sleep is really implemented.
+  // Behavior is odd when nesting sequences involving sleep and repeated actions if not enclosed in a sequence.
+  // Mostly, more things will happen in parallel than you might anticipate, due to the somewhat subtle semantics of
+  // these redux-saga generators, which cannot use async/await.
+  sleep: function* () {
   },
 
   setPanelVisibility: function* () {
