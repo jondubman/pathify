@@ -84,6 +84,7 @@ const sagas = {
 
   // From here on, functions are alphabetized:
 
+  // TODO now that this scaffolding is working, add actual app queries
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
