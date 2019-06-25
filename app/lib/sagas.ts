@@ -85,11 +85,11 @@ const sagas = {
   // From here on, functions are alphabetized:
 
   appQuery: function* (action: Action) {
-    log.debug('appQuery - got here');
-    // const params = action.params as AppQueryParams;
-    // const { uuid } = params;
-    // const response = `response to uuid ${uuid}`;
-    // yield call(postToServer as any, 'push/appQueryResponse', { response, uuid });
+    const params = action.params as AppQueryParams;
+    log.debug('appQuery', params);
+    const { uuid } = params;
+    const response = `response to uuid ${uuid}`;
+    yield call(postToServer as any, 'push/appQueryResponse', { response, uuid });
   },
 
 

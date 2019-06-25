@@ -8,7 +8,7 @@ import { clientIdForAlias, pushToClient } from 'lib/client';
 
 interface AppQueryParams { // TODO this also appears in actions module on client; interface definition should be shared
   timeout?: number;
-  query: string;
+  query?: string; // empty query is just a ping
   uuid: string;
 }
 interface AppQueryResponse {
@@ -38,7 +38,7 @@ router.post('/', function (req, res) {
   }
   const message = req.body;
   if (message.type === 'appQuery') { // TODO appAction.appQuery
-    const appQuery = message.params as AppQueryParams;
+    const appQuery = (message.params || {}) as AppQueryParams;
     appQuery.uuid = uuid();
     // if (appQueryPromises[uuid]) {
     //   log.warn('call to appQuery with existing uuid'); // not likely!
