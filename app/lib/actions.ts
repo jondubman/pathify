@@ -100,9 +100,13 @@ export enum AbsoluteRelativeOption {
   'relative' = 'relative',
 }
 
+export interface AppQueryDesciptor {
+  type: string;
+}
+
 export interface AppQueryParams {
   timeout?: number;
-  query: string;
+  query: AppQueryDesciptor;
   uuid: string;
 }
 
