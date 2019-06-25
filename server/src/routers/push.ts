@@ -15,7 +15,11 @@ interface AppQueryResponse {
   uuid: string;
   response: any;
 }
-type AppQueryPromises = { [key: string]: Promise<AppQueryResponse> }; // key is uuid
+interface AppQueryPromise {
+  resolve: Function;
+  reject: Function;
+}
+type AppQueryPromises = { [key: string]: AppQueryPromise }; // key is uuid
 let appQueryPromises: AppQueryPromises = {};
 
 // GET can be used to push simple string messages to the app
@@ -40,15 +44,18 @@ router.post('/', function (req, res) {
   if (message.type === 'appQuery') { // TODO appAction.appQuery
     const appQuery = (message.params || {}) as AppQueryParams;
     appQuery.uuid = uuid();
-    // if (appQueryPromises[uuid]) {
-    //   log.warn('call to appQuery with existing uuid'); // not likely!
-    // } else {
-    //   appQueryPromises[uuid] = new Promise<AppQueryResponse>((resolve, reject) => {}).then(response => {
-    //     log.info(`response from clientId ${clientId}: ${response}`);
-    //     res.send(response); // forward response to whoever requested that we post this JSON to the app
-    //     return response;
-    //   })
-    // }
+    if (appQueryPromises[uuid]) {
+      log.warn('call to appQuery with existing uuid'); // not likely!
+    } else {
+      new Promise<AppQueryResponse>((resolve, reject) => {
+        appQueryPromises[uuid] = { resolve, reject };
+        // hopefully app will respond by posting to /appQueryResponse
+      }).then(response => {
+        log.info(`response from clientId ${clientId}: ${response}`);
+        res.send(response); // forward response to whoever requested that we post this JSON to the app
+        return response;
+      })
+    }
   }
   const inspect = JSON.stringify(message);
   log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message ${inspect}`);
@@ -63,8 +70,8 @@ router.post('/', function (req, res) {
 
 router.post('/appQueryResponse', function (req, res) {
   const appQueryResponse = req.body as AppQueryResponse;
-  const promise = appQueryPromises[uuid];
-  promise.resolve(req.query);
+  const { resolve } = appQueryPromises[uuid];
+  resolve(req.query); // this should forward the response to the original requester
 })
 
 export { router as push };
