@@ -90,7 +90,7 @@ const sagas = {
       log.debug('appQuery', params);
       const { uuid } = params;
       const response = `response to uuid ${uuid}`;
-      yield call(postToServer as any, 'push/appQueryResponse', { response, uuid });
+      yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: { response, uuid }});
     } catch(err) {
       log.error('appQuery', err);
     }
