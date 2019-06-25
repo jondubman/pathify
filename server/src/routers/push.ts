@@ -80,7 +80,7 @@ router.post('/', function (req, res) {
 
   if (message.type !== 'appQuery') { // The handler for appQueryResponse should respond for an appQuery.
     // typical scenario
-    res.sendStatus(200); // OK
+    res.send({ message: 'OK' });
   }
 })
 
@@ -89,7 +89,7 @@ router.post('/appQueryResponse', function (req, res) {
   log.debug('/appQueryResponse', appQueryResponse);
   const { resolve } = appQueryPromises[appQueryResponse.uuid];
   resolve(appQueryResponse); // this should forward the response to the original requester
-  res.sendStatus(200); // OK
+  res.send({ message: 'OK' });
 })
 
 export { router as push };
