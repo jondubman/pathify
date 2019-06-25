@@ -65,7 +65,7 @@ import { MapUtils } from 'presenters/MapArea';
 const sagas = {
 
   root: function* () {
-  // Avoid boilerplate by automatically yielding takeEvery for each appAction
+    // Avoid boilerplate by automatically yielding takeEvery for each appAction
     for (let action in appAction) {
       // TODO why is action sometimes 0?
       if (appAction[action]) {
@@ -85,11 +85,15 @@ const sagas = {
   // From here on, functions are alphabetized:
 
   appQuery: function* (action: Action) {
-    const params = action.params as AppQueryParams;
-    log.debug('appQuery', params);
-    const { uuid } = params;
-    const response = `response to uuid ${uuid}`;
-    yield call(postToServer as any, 'push/appQueryResponse', { response, uuid });
+    try {
+      const params = action.params as AppQueryParams;
+      log.debug('appQuery', params);
+      const { uuid } = params;
+      const response = `response to uuid ${uuid}`;
+      yield call(postToServer as any, 'push/appQueryResponse', { response, uuid });
+    } catch(err) {
+      log.error('appQuery', err);
+    }
   },
 
 

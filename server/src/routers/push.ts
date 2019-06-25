@@ -63,10 +63,9 @@ router.post('/', function (req, res) {
   log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message ${inspect}`);
   pushToClient(message, clientId, clientAlias);
 
-  if (message.type !== 'appQuery') {
-    res.send({ message: 'done' });
-  } else {
-    res.send({ message: 'appQuery done' }); // TODO
+  if (message.type !== 'appQuery') { // The handler for appQueryResponse should respond for an appQuery.
+    // typical scenario
+    res.sendStatus(200); // OK
   }
 })
 
