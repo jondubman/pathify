@@ -66,15 +66,10 @@ router.post('/', function (req, res) {
         const responseReadable = util.inspect(response, { depth: 4 });
         log.info(`response from clientId ${clientId}: ${responseReadable}`);
         // forward response to whoever requested that we post this JSON to the app
-        if (typeof response === 'string') {
-          res.send(response);
-        } else {
-          res.send(JSON.stringify(response));
-        }
-        // return response; // TODO do we need to return anything?
+        res.send(JSON.stringify(response));
       }).catch(err => {
         log.info(`appQuery timeout clentId ${clientId}`);
-        res.send('timeout');
+        res.send({ error: 'timeout' });
       })
     }
   }
