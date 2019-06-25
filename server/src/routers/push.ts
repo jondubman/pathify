@@ -43,6 +43,11 @@ router.post('/', function (req, res) {
   if (clientAlias) {
     clientId = clientIdForAlias(clientAlias);
   }
+  if (!clientAlias && !clientId) {
+    res.send({ message: 'No client specified; set environment variable CA for client alias or CID for client ID' });
+    return;
+  }
+  // Push message to client (whether appQuery, or any other)
   const message = { ...req.body };
   if (message.type === 'appQuery') { // TODO appAction.appQuery
     if (!message.params) { // TODO message.params is type AppQueryParams
@@ -76,11 +81,6 @@ router.post('/', function (req, res) {
         }
       })
     }
-  }
-  // Push message to client (whether appQuery, or any other)
-  if (!clientAlias && !clientId) {
-    res.send({ message: 'No client specified; set environment variable CA for client alias or CID for client ID' });
-    return;
   }
   const inspect = JSON.stringify(message);
   log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message ${inspect}`);
