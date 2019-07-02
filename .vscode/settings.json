@@ -1,8 +1,14 @@
 {
   "files.exclude": {
+    "**/.flowconfig": true,
+    "**/app/android/**": true,
+    "**/app/ios/Pathify.xcodeproj": true,
+    "**/app/shared/**": true,
+    "**/package-lock.json": true,
+    "**/server/src/shared/**": true,
+    "**/web/**": true,
     "**/web/build": true,
-    "app/shared/**": true,
-    "server/src/shared/**": true
+    "**/yarn.lock": true
   },
   "workbench.colorTheme": "Tomorrow Night Blue"
 }

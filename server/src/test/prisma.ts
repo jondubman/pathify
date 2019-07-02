@@ -4,7 +4,8 @@ import * as chai from 'chai';
 const expect = chai.expect;
 
 import { prisma } from 'prisma-client/index';
-import timeseries, { GenericEvent } from 'shared/timeseries';
+import timeseries, { GenericEvents } from 'shared/timeseries';
+import { continuousTracks } from 'shared/tracks';
 
 // ----------------------
 // Mocha tests begin here
@@ -20,17 +21,15 @@ describe.skip('prisma', function () {
   })
 
   it('should count events', async function () {
-    const events: GenericEvent[] = await prisma.events() as GenericEvent[];
+    const events: GenericEvents = await prisma.events() as GenericEvents;
     const count = timeseries.countEvents(events);
     // console.log('count', count);
     expect(count).to.exist;
   })
 
   it('should calculate continuousTracks', async function () {
-    const events: GenericEvent[] = await prisma.events() as GenericEvent[];
-    // console.log(events);
-    const tracks = timeseries.continuousTracks(events, 1);
-    // console.log('tracks', tracks);
+    const events: GenericEvents = await prisma.events() as GenericEvents;
+    const tracks = continuousTracks(events, 1);
     expect(tracks).to.exist;
   })
 })

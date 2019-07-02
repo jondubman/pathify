@@ -5,11 +5,12 @@ import constants, { MapStyle, TimespanKind } from 'lib/constants';
 import utils from 'lib/utils';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 
-import timeseries, { interval, TimeRange, Tracks } from 'shared/timeseries';
+import { interval, TimeRange } from 'shared/timeseries';
+import { continuousTracks, Tracks } from 'shared/tracks';
 
 export const continuousTrackList = (state: AppState): Tracks => {
   const tr: TimeRange = [0, Date.now()];
-  return timeseries.continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
+  return continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
 }
 
 export const customTimespans = (state: AppState): Timespans => {
