@@ -1,10 +1,8 @@
 {
   "files.exclude": {
-    "**/app/shared": true,
-    "**/server/src/shared": true,
     "**/web/build": true,
-    "**/web/src/shared": true,
-    "test.ts": true
+    "app/shared/**": true,
+    "server/src/shared/**": true
   },
   "workbench.colorTheme": "Tomorrow Night Blue"
 }

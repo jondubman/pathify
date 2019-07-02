@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 
 import { appAction, newAction } from 'lib/actions';
-import { LocationEvent } from 'shared/timeseries';
+import { LocationEvent } from 'shared/locations';
 import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';

@@ -91,7 +91,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 
 // From here on: types related to params for actions
 
-import { LonLat } from 'shared/timeseries';
+import { LonLat } from 'shared/locations';
 
 // TODO complete this list
 

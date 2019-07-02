@@ -3,7 +3,8 @@
 import { Polygon } from "@turf/helpers";
 
 import constants from 'lib/constants';
-import { GenericEvent, LocationEvent } from 'shared/timeseries';
+import { LocationEvent } from 'shared/locations';
+import { GenericEvent } from 'shared/timeseries';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 
 // Canonical interface for AppOptions included in AppState

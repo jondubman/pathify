@@ -8,7 +8,7 @@ import {
   reducerAction,
 } from 'lib/actions';
 
-import { LocationEvent } from 'shared/timeseries';
+import { LocationEvent } from 'shared/locations';
 import log from 'lib/log';
 
 import {

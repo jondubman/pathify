@@ -59,7 +59,8 @@ import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
-import { GenericEvent, LocationEvent, TimeRange } from 'shared/timeseries';
+import { LocationEvent } from 'shared/locations';
+import { GenericEvent, TimeRange } from 'shared/timeseries';
 import { MapUtils } from 'presenters/MapArea';
 
 const sagas = {

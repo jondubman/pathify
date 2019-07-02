@@ -20,7 +20,8 @@ import BackgroundGeolocation, {
 import { appAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { Store } from 'lib/store';
-import timeseries, { LocationEvent } from 'shared/timeseries';
+import { LocationEvent } from 'shared/locations';
+import timeseries, { EventType } from 'shared/timeseries';
 import utils from 'lib/utils';
 
 const geolocationOptions: Config = {
