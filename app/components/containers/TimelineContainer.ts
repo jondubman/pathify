@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { DomainPropType } from 'victory-native';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { continuousTrackList, customTimespans, selectedTimespans } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -55,7 +55,7 @@ const mapDispatchToProps = (dispatch: Function): TimelineDispatchProps => {
   const zoomDomainChanged = (domain: DomainPropType) => {
     // This responds to user interaction, adjusting the refTime. Not needed to programmatically zoom Timeline.
     log.trace('zoomDomainChanged', domain);
-    dispatch(newAction(appAction.timelineZoomed, domain));
+    dispatch(newAction(AppAction.timelineZoomed, domain));
   }
   const dispatchers = {
     zoomDomainChanged,

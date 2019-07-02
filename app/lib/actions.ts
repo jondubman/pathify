@@ -6,12 +6,12 @@
 //   -- app actions
 //      - should be handled by sagas (using redux-saga), which may trigger asynchronous activity,
 //        and may dispatch reducer actions (via 'put' in redux-saga), indirectly impacting the Redux store.
-//      - should not be handled by the reducer; let the saga dispatch any corresponding required reducerAction.
+//      - should not be handled by the reducer; let the saga dispatch any corresponding required ReducerAction.
 
 // The actions are strings in order to work smoothly with redux-saga. This also makes action objects self-explanatory.
 // There seems to be no way to avoid the repetition on each line given the syntax for TypeScript string enums.
 
-export enum reducerAction {
+export enum ReducerAction {
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'SET_APP_OPTION' = 'SET_APP_OPTION',
@@ -27,8 +27,8 @@ export enum reducerAction {
 // While reducers are synchronous, these are handled asynchronously, via sagas.
 // Each of these should correspond to a generator function in the sagas module with the same name.
 // Some appActions and reducerActions have similar names (e.g. geolocation, GEOLOCATION).
-// In these cases the appAction is a wrapper that triggers the corresponding reducerAction while handling side effects.
-export enum appAction {
+// In these cases the AppAction is a wrapper that triggers the corresponding ReducerAction while handling side effects.
+export enum AppAction {
   'appQuery' = 'appQuery', // see AppQueryParams
   'backgroundTapped' = 'backgroundTapped',
   'centerMap' = 'centerMap', // see CenterMapParams
@@ -60,7 +60,7 @@ export enum appAction {
   'zoomMap' = 'zoomMap', // see ZoomMapParams
 }
 
-export type ActionType = reducerAction | appAction;
+export type ActionType = ReducerAction | AppAction;
 export interface Action {
   type: ActionType;
   params: any;
@@ -76,14 +76,14 @@ export interface Action {
 //    This might be a location update from background geolocation, a user-initiated UI action, etc.
 // -- Call an action creator, e.g. newAction
 // -- Dispatch that action (store.dispatch) to Redux
-// -- If it's a reducerAction, it should be handled by one of the cases in the reducer.
+// -- If it's a ReducerAction, it should be handled by one of the cases in the reducer.
 //    reducerActions should act synchronously using pure functions without side effects.
-// -- If it's an appAction, it should be handled by one of the sagas, after the action passes through the reducer.
+// -- If it's an AppAction, it should be handled by one of the sagas, after the action passes through the reducer.
 //    (which may well take no action with it)
 //    appActions may yield other appActions and/or reducerActions.
 
 // This simple helper just forms an action with type and params properties.
-// Note type could be an appAction or reducerAction.
+// Note type could be an AppAction or ReducerAction.
 export const newAction = (type: ActionType, params: any = null) => ({
   type,
   params,

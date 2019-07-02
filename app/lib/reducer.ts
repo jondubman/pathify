@@ -5,7 +5,7 @@ import { Polygon } from "@turf/helpers";
 
 import {
   Action,
-  reducerAction,
+  ReducerAction,
 } from 'lib/actions';
 
 import { LocationEvent } from 'shared/locations';
@@ -24,7 +24,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
   const { params } = action;
   switch (action.type) {
 
-    case reducerAction.GEOLOCATION:
+    case ReducerAction.GEOLOCATION:
       {
         const locationEvent = params as LocationEvent;
         if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t && locationEvent.type === 'LOC') {
@@ -35,14 +35,14 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.MAP_REGION:
+    case ReducerAction.MAP_REGION:
       {
         const mapRegion = params as Polygon;
         newState.mapRegion = mapRegion;
       }
       break;
 
-    case reducerAction.SERVER_SYNC_COMPLETED:
+    case ReducerAction.SERVER_SYNC_COMPLETED:
       {
         const timestamps = params as number[];
         const events = [ ...newState.events ];
@@ -63,10 +63,10 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
+    case ReducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
         if (!params.refTime) { // this happens like every second, so logging it is noise
-          log.debug('reducerAction.SET_APP_OPTION', params);
+          log.debug('ReducerAction.SET_APP_OPTION', params);
         }
         newState.options = {
           ...state.options,
@@ -75,7 +75,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.SET_PANEL_VISIBILITY:
+    case ReducerAction.SET_PANEL_VISIBILITY:
       {
         const panelName = params.name as string;
         const open = params.open as boolean;
@@ -85,14 +85,14 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.SET_TIMER_TICK_INTERVAL:
+    case ReducerAction.SET_TIMER_TICK_INTERVAL:
       {
         const interval = params as number;
         newState.timerTickInterval = interval;
       }
       break;
 
-    case reducerAction.UI_FLAG_DISABLE:
+    case ReducerAction.UI_FLAG_DISABLE:
       {
         const flagName = params as string;
         newState.ui = { ...state.ui };
@@ -101,7 +101,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.UI_FLAG_ENABLE:
+    case ReducerAction.UI_FLAG_ENABLE:
       {
         const flagName = params as string;
         newState.ui = { ...state.ui };
@@ -110,7 +110,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case reducerAction.UI_FLAG_TOGGLE:
+    case ReducerAction.UI_FLAG_TOGGLE:
       {
         const flagName = params as string;
         newState.ui = { ...state.ui };

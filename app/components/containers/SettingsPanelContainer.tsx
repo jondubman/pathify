@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import { MapStyle } from 'lib/constants';
 import log from 'lib/log';
 import {
@@ -33,10 +33,10 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
 const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   const onSelectMapStyle = (mapStyle: string) => {
     log.debug('SettingsPanel onSelectMapStyle', mapStyle);
-    dispatch(newAction(appAction.setAppOption, { mapStyle }));
+    dispatch(newAction(AppAction.setAppOption, { mapStyle }));
   }
   const onSetMapOpacity = (mapOpacity: number) => {
-    dispatch(newAction(appAction.setAppOption, { mapOpacity }));
+    dispatch(newAction(AppAction.setAppOption, { mapOpacity }));
   }
   const dispatchers = {
     onSelectMapStyle,

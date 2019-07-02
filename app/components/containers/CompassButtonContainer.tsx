@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import {
   mapHidden,
@@ -27,7 +27,7 @@ export type CompassButtonProps = CompassButtonStateProps & CompassButtonDispatch
 const mapStateToProps = (state: AppState): CompassButtonStateProps => {
   let heading = null;
   if (state.mapRegion) {
-    const r = state.mapRegion;
+    const r = state.mapRegion as any;
     heading = r.properties!.heading;
   }
   const reorienting = state.ui.flags.mapMoving && state.ui.flags.mapReorienting;
@@ -41,7 +41,7 @@ const mapStateToProps = (state: AppState): CompassButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): CompassButtonDispatchProps => {
   const onPress = () => {
     log.debug('compass press');
-    dispatch(newAction(appAction.reorientMap));
+    dispatch(newAction(AppAction.reorientMap));
   }
   const dispatchers = {
     onPress,

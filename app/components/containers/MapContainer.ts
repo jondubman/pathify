@@ -1,7 +1,7 @@
 // Note this is the container for MapArea but for brevity, it's called MapContainer instead of MapAreaContainer.
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import { LocationEvent } from 'shared/locations';
 import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -43,19 +43,19 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
 const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
   const dispatchers = {
     backgroundTapped: (args: any) => {
-      dispatch(newAction(appAction.backgroundTapped, args));
+      dispatch(newAction(AppAction.backgroundTapped, args));
     },
     mapTapped: (args: any) => {
-      dispatch(newAction(appAction.mapTapped, args));
+      dispatch(newAction(AppAction.mapTapped, args));
     },
     mapRegionChanged: (args: any) => {
-      dispatch(newAction(appAction.mapRegionChanged, args));
+      dispatch(newAction(AppAction.mapRegionChanged, args));
     },
     mapRegionChanging: (args: any) => {
-      dispatch(newAction(appAction.mapRegionChanging, args));
+      dispatch(newAction(AppAction.mapRegionChanging, args));
     },
     userMovedMap: (args: any) => {
-      dispatch(newAction(appAction.userMovedMap, args));
+      dispatch(newAction(AppAction.userMovedMap, args));
     },
   }
   return dispatchers;

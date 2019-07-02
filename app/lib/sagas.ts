@@ -13,7 +13,7 @@
 //   yield join
 //
 // Non-blocking:
-//   Use yield put instead of dispatch to issue a Redux action (be it an appAction or reducerAction.)
+//   Use yield put instead of dispatch to issue a Redux action (be it an AppAction or ReducerAction.)
 //   yield fork
 //   yield cancel
 //
@@ -35,9 +35,9 @@ import { DomainPropType } from 'victory-native';
 
 import {
   Action,
-  appAction,
+  AppAction,
   newAction,
-  reducerAction,
+  ReducerAction,
 
   AppQueryParams,
   CenterMapParams,
@@ -60,26 +60,26 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { LocationEvent } from 'shared/locations';
-import { GenericEvent, TimeRange } from 'shared/timeseries';
+import { GenericEvents, TimeRange } from 'shared/timeseries';
 import { MapUtils } from 'presenters/MapArea';
 
 const sagas = {
 
   root: function* () {
-    // Avoid boilerplate by automatically yielding takeEvery for each appAction
-    for (let action in appAction) {
+    // Avoid boilerplate by automatically yielding takeEvery for each AppAction
+    for (let action in AppAction) {
       // TODO why is action sometimes 0?
-      if (appAction[action]) {
-        log.debug('action', action, appAction[action]);
-        yield takeEvery(appAction[action], sagas[appAction[action]]);
+      if (AppAction[action]) {
+        log.debug('action', action, AppAction[action]);
+        yield takeEvery(AppAction[action], sagas[AppAction[action]]);
       } else {
-        log.warn('unknown action in appAction enum', action); // TODO why does this happen?
+        log.warn('unknown action in AppAction enum', action); // TODO why does this happen?
       }
     }
     // equivalent to
-    // yield takeEvery(appAction.firstAction, sagas.firstAction);
-    // yield takeEvery(appAction.secondAction, sagas.secondAction);
-    // yield takeEvery(appAction.thirdAction, sagas.thirdAction);
+    // yield takeEvery(AppAction.firstAction, sagas.firstAction);
+    // yield takeEvery(AppAction.secondAction, sagas.secondAction);
+    // yield takeEvery(AppAction.thirdAction, sagas.thirdAction);
     // ...
   },
 
@@ -117,8 +117,8 @@ const sagas = {
 
   backgroundTapped: function* (action: Action) {
     log.trace('saga backgroundTapped');
-    yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
-    yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
+    yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
+    yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
   },
 
   // Center map on absolute position or relative to current position (see CenterMapParams)
@@ -135,7 +135,7 @@ const sagas = {
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
 
-          yield put(newAction(appAction.stopFollowingUser)); // otherwise map may hop right back
+          yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
 
           if (zoom) { // optional in CenterMapParams; applies for both absolute and relative
             const config = {
@@ -183,9 +183,9 @@ const sagas = {
   geolocation: function* (action: Action) {
     try {
       const locationEvent: LocationEvent = action.params as LocationEvent;
-      yield put(newAction(reducerAction.GEOLOCATION, locationEvent));
+      yield put(newAction(ReducerAction.GEOLOCATION, locationEvent));
 
-      // Potential cascading appAction.centerMapOnUser:
+      // Potential cascading AppAction.centerMapOnUser:
       const map = MapUtils();
       if (map) {
         const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: any) => ({
@@ -195,7 +195,7 @@ const sagas = {
         }))
         const bounds = yield call(map.getVisibleBounds as any);
         if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
-          yield put(newAction(appAction.centerMapOnUser));
+          yield put(newAction(AppAction.centerMapOnUser));
         }
       }
     } catch (err) {
@@ -213,15 +213,15 @@ const sagas = {
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     // log.trace('saga mapRegionChanged', action.params);
-    yield put(newAction(reducerAction.MAP_REGION, action.params as Polygon));
-    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapMoving'));
-    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
+    yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
+    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'mapMoving'));
+    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
   },
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
     // log.trace('saga mapRegionChanging', action.params);
-    yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
+    yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapMoving'));
   },
 
   mapTapped: function* (action: Action) {
@@ -231,11 +231,11 @@ const sagas = {
     const settingsOpen = yield select((state: AppState) => state.ui.panels.settings.open);
 
     if (geolocationPanelOpen) {
-      yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
+      yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
     } else if (settingsOpen) {
-      yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
+      yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
     } else {
-      yield put(newAction(reducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
+      yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
     }
   },
 
@@ -247,8 +247,8 @@ const sagas = {
       const refTime = yield select(state => state.options.refTime);
       newRefTime = refTime + t;
     }
-    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'timelineNow'));
-    yield put(newAction(reducerAction.SET_APP_OPTION, { refTime: newRefTime }));
+    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: newRefTime }));
   },
 
   // Set map bearing to 0 (true north) typically in response to user action (button).
@@ -257,8 +257,8 @@ const sagas = {
     if (map) {
       log.debug('saga reorientMap');
       const obj = { heading: 0, duration: constants.map.reorientationTime };
-      yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapMoving'));
-      yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'mapReorienting'));
+      yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapMoving'));
+      yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapReorienting'));
       map.setCamera(obj);
     }
   },
@@ -275,16 +275,16 @@ const sagas = {
       const runSequenceActions = async (sequenceActions: Action[]) => {
         for (let sequenceAction of sequenceActions) {
           log.debug('sequenceAction', sequenceAction);
-          if (sequenceAction.type === appAction.sleep) { // TODO sleep gets special treatment to ensure blocking execution
+          if (sequenceAction.type === AppAction.sleep) { // TODO sleep gets special treatment to ensure blocking execution
             const sleepTime = (sequenceAction.params as SleepParams).for;
             await new Promise(resolve => setTimeout(resolve, sleepTime));
           }
-          if (sequenceAction.type == appAction.repeatedAction) {
+          if (sequenceAction.type == AppAction.repeatedAction) {
             const times = (sequenceAction.params as RepeatedActionParams).times;
             for (let i = 0; i < times; i++) {
               await runSequenceActions([sequenceAction.params.repeat]);
             }
-          } else if (sequenceAction.type == appAction.sequence) {
+          } else if (sequenceAction.type == AppAction.sequence) {
             await runSequenceActions(sequenceAction.params); // using recursion to support nested sequences
           } else {
             store.dispatch(sequenceAction); // note use of store.dispatch rather than yield put
@@ -317,10 +317,10 @@ const sagas = {
   // This doesn't neecssarily sync everything that is pending at once, particularly with a big backlog.
   serverSync: function* (action: Action) {
     const now = action.params as number;
-    yield put(newAction(reducerAction.SET_APP_OPTION, { serverSyncTime: now }));
+    yield put(newAction(ReducerAction.SET_APP_OPTION, { serverSyncTime: now }));
 
-    const events: GenericEvent[] = yield select((state: AppState) => state.events);
-    const changedEvents: GenericEvent[] = [];
+    const events: GenericEvents = yield select((state: AppState) => state.events);
+    const changedEvents: GenericEvents = [];
     const timestamps: number[] = [];
 
     // For now, just loop through the whole array and accumulate the changed ones.
@@ -335,14 +335,14 @@ const sagas = {
     if (changedEvents.length) {
       // TODO Actually send these changed events to the server!
       log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
-      yield put(newAction(reducerAction.SERVER_SYNC_COMPLETED, timestamps));
+      yield put(newAction(ReducerAction.SERVER_SYNC_COMPLETED, timestamps));
     }
   },
 
   setAppOption: function* (action: Action) {
     // for now, this is just a pass through to the reducer.
     log.debug('saga setAppOption', action);
-    yield put(newAction(reducerAction.SET_APP_OPTION, action.params));
+    yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
   },
 
   // This determines whether geolocation should be active when running the app in the background,
@@ -350,7 +350,7 @@ const sagas = {
   setGeolocationMode: function* (action: Action) {
     try {
       const id = action.params as number;
-      yield put(newAction(reducerAction.SET_APP_OPTION, { geolocationModeId: id }));
+      yield put(newAction(ReducerAction.SET_APP_OPTION, { geolocationModeId: id }));
 
       // This is the side-effect that belongs outside the reducer:
       Geo.setGeolocationMode(id);
@@ -363,10 +363,10 @@ const sagas = {
   startFollowingUser: function* () {
     try {
       log.debug('saga startFollowingUser');
-      yield put(newAction(reducerAction.UI_FLAG_ENABLE, 'followingUser'));
+      yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'followingUser'));
       const map = MapUtils();
       if (map) {
-        yield put(newAction(appAction.centerMapOnUser)); // cascading app action
+        yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
       }
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
@@ -377,7 +377,7 @@ const sagas = {
   stopFollowingUser: function* () {
     try {
       log.debug('saga stopFollowingUser');
-      yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'followingUser'));
+      yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'followingUser'));
       // yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
       log.error('saga stopFollowingUser', err);
@@ -390,8 +390,8 @@ const sagas = {
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
     log.trace('saga timelineZoomed', refTime);
-    yield put(newAction(reducerAction.UI_FLAG_DISABLE, 'timelineNow'));
-    yield put(newAction(reducerAction.SET_APP_OPTION, { refTime }));
+    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime }));
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -402,7 +402,7 @@ const sagas = {
     // log.trace('timerTick', now);
     const timelineNow = yield select((state: AppState) => state.ui.flags.timelineNow);
     if (timelineNow) {
-      yield put(newAction(reducerAction.SET_APP_OPTION, { refTime: now }));
+      yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: now }));
     }
     // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
     // rather than depend on a separate long-running timer. That could also work, but this is sufficient
@@ -410,7 +410,7 @@ const sagas = {
     const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
     const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
     if (now >= serverSyncTime + serverSyncInterval) {
-      yield put(newAction(appAction.serverSync, now));
+      yield put(newAction(AppAction.serverSync, now));
     }
   },
 
@@ -424,38 +424,38 @@ const sagas = {
     const closeAll = !name || (name === '') || !panels[name];
 
     if (!closeAll && panels[name].open) {
-      yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name, open: false }));
+      yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: false }));
     } else {
       if (closeAll || name === 'geolocation') {
-        yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
+        yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
       }
       if (closeAll || name === 'settings') {
-        yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
+        yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
       }
       // open the new panel
       if (name) {
-        yield put(newAction(reducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
+        yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
       }
     }
   },
 
   uiFlagDisable: function* (action: Action) {
-    yield put(newAction(reducerAction.UI_FLAG_DISABLE, action.params));
+    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, action.params));
   },
 
   uiFlagEnable: function* (action: Action) {
-    yield put(newAction(reducerAction.UI_FLAG_ENABLE, action.params));
+    yield put(newAction(ReducerAction.UI_FLAG_ENABLE, action.params));
   },
 
   uiFlagToggle: function* (action: Action) {
-    yield put(newAction(reducerAction.UI_FLAG_TOGGLE, action.params));
+    yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, action.params));
   },
 
   // Stop following user after panning the map.
   userMovedMap: function* (action: Action) {
     try {
       log.debug('saga userMovedMap');
-      yield put(newAction(appAction.stopFollowingUser));
+      yield put(newAction(AppAction.stopFollowingUser));
     } catch (err) {
       log.error('userMovedMap', err);
     }

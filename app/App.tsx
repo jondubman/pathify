@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 // https: //www.npmjs.com/package/react-native-typescript-transformer
 // This is referenced in getTransformModulePath in rn-cli.config.js.
 
-import { appAction, newAction, reducerAction } from 'lib/actions';
+import { AppAction, newAction, ReducerAction } from 'lib/actions';
 import { Geo } from 'lib/geo';
 import log from 'lib/log';
 import { pollServer } from 'lib/server';
@@ -26,12 +26,12 @@ export default class App extends Component {
 
     Geo.initializeGeolocation(store);
     Geo.resetOdometer();
-    store.dispatch(newAction(appAction.startFollowingUser));
+    store.dispatch(newAction(AppAction.startFollowingUser));
 
     const interval = setInterval(() => {
-      store.dispatch(newAction(appAction.timerTick, Date.now()));
+      store.dispatch(newAction(AppAction.timerTick, Date.now()));
     }, store.getState().options.timerTickIntervalMsec);
-    store.dispatch(newAction(reducerAction.SET_TIMER_TICK_INTERVAL, interval));
+    store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
     pollServer(); // TODO
   }

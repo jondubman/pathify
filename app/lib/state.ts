@@ -4,7 +4,7 @@ import { Polygon } from "@turf/helpers";
 
 import constants from 'lib/constants';
 import { LocationEvent } from 'shared/locations';
-import { GenericEvent } from 'shared/timeseries';
+import { GenericEvents } from 'shared/timeseries';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 
 // Canonical interface for AppOptions included in AppState
@@ -48,7 +48,7 @@ export type AppUIState = typeof initialAppUIState;
 // Canonical interface for AppState, the contents of the Redux store
 
 export interface AppState {
-  events: GenericEvent[];
+  events: GenericEvents;
   loc?: LocationEvent;
   mapRegion: Polygon | null;
   options: AppOptions;

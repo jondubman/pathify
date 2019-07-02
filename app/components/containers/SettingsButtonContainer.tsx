@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { newAction, appAction } from 'lib/actions';
+import { newAction, AppAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
 import SettingsButton from 'presenters/SettingsButton';
@@ -27,7 +27,7 @@ const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): SettingsButtonDispatchProps => {
   const onPress = () => {
     log.debug('SettingsButton press');
-    dispatch(newAction(appAction.togglePanelVisibility, 'settings'));
+    dispatch(newAction(AppAction.togglePanelVisibility, 'settings'));
   }
   const dispatchers = {
     onPress,

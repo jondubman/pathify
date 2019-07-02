@@ -17,7 +17,7 @@ import BackgroundGeolocation, {
   // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { Store } from 'lib/store';
 import { LocationEvent } from 'shared/locations';
@@ -225,7 +225,7 @@ export const Geo = {
       const onLocation = (location: Location) => {
         const locationEvent = locationEventFromLocation(location);
         // log.trace('location', locationEvent);
-        store.dispatch(newAction(appAction.geolocation, locationEvent));
+        store.dispatch(newAction(AppAction.geolocation, locationEvent));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
       }

@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
@@ -34,7 +34,7 @@ const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(appAction.togglePanelVisibility, 'geolocation'));
+    dispatch(newAction(AppAction.togglePanelVisibility, 'geolocation'));
   }
   const dispatchers = {
     onPress,

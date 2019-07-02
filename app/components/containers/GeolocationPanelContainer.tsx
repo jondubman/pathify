@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import { AppState } from 'lib/state';
 
 import GeolocationPanel from 'presenters/GeolocationPanel';
@@ -26,8 +26,8 @@ const mapStateToProps = (state: AppState): GeolocationPanelStateProps => {
 const mapDispatchToProps = (dispatch: Function): GeolocationPanelDispatchProps => {
   const dispatchers = {
     setGeolocationMode: (id: number) => {
-      dispatch(newAction(appAction.setGeolocationMode, id));
-      dispatch(newAction(appAction.togglePanelVisibility));
+      dispatch(newAction(AppAction.setGeolocationMode, id));
+      dispatch(newAction(AppAction.togglePanelVisibility));
     },
   }
   return dispatchers;

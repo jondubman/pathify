@@ -12,7 +12,7 @@ export const handleServerPush = async (data: any) => {
   if (data === 'handshake') {
     getFromServer('ping/json');
   }
-  // TODO For now, for convenience, assume that any JSON that comes in is an appAction and just dispatch it with params.
+  // TODO For now, for convenience, assume that any JSON that comes in is an AppAction and just dispatch it with params.
   // TODO Handle other kinds of incoming JSON
   if (typeof data === 'object') {
     for (let message of data) {

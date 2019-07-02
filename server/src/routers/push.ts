@@ -49,7 +49,7 @@ router.post('/', function (req, res) {
   }
   // Push message to client (whether appQuery, or any other)
   const message = { ...req.body };
-  if (message.type === 'appQuery') { // TODO appAction.appQuery
+  if (message.type === 'appQuery') { // TODO AppAction.appQuery
     if (!message.params) { // TODO message.params is type AppQueryParams
       message.params = {}; // this allows us to send an empty query, which is essentially a ping
     }

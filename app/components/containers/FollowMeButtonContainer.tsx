@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import {
   mapHidden,
 } from 'lib/selectors';
@@ -34,9 +34,9 @@ const mapDispatchToProps = (dispatch: Function): FollowMeButtonDispatchProps => 
   const onPress = () => {
     const { followingUser } = store.uiState().flags;
     if (followingUser) { // toggle the state
-      dispatch(newAction(appAction.stopFollowingUser));
+      dispatch(newAction(AppAction.stopFollowingUser));
     } else {
-      dispatch(newAction(appAction.startFollowingUser));
+      dispatch(newAction(AppAction.startFollowingUser));
     }
   }
   const dispatchers = {

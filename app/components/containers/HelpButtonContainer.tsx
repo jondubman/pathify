@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { appAction, newAction } from 'lib/actions';
+import { AppAction, newAction } from 'lib/actions';
 import log from 'lib/log';
 import { AppState } from 'lib/state';
 import HelpButton from 'presenters/HelpButton';
@@ -27,7 +27,7 @@ const mapStateToProps = (state: AppState): HelpButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): HelpButtonDispatchProps => {
   const onPress = () => {
     log.debug('HelpButton press');
-    dispatch(newAction(appAction.uiFlagToggle, 'helpEnabled'));
+    dispatch(newAction(AppAction.uiFlagToggle, 'helpEnabled'));
   }
   const dispatchers = {
     onPress,

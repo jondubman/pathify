@@ -42,14 +42,15 @@ export interface GenericEvent {
   changed?: Timepoint; // timestamp if/when last changed. Used to identify events to sync with server.
 }
 
-// Functions of GenericEvent[] that return a single event can return an EventResult that contains both the index into
-// GenericEvent[] as well as the actual event, for convenience.
+// Functions of GenericEvents that return a single event can return an EventResult that contains both the index into
+// GenericEvents as well as the actual event, for convenience.
 // export interface EventResult {
 //   event: GenericEvent;
 //   index: number;
 // }
 export type EventFilter = (event: GenericEvent) => Boolean;
 export type EventsFilter = (events: GenericEvent[], filter: EventFilter) => GenericEvent[];
+export type GenericEvents = GenericEvent[];
 
 export const interval = {
   second: 1000,
