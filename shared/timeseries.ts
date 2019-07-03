@@ -106,6 +106,7 @@ const timeseries = {
           results = [event]; // reset results
           gap = t - event.t; // reset gap
         }
+        continue;
       }
       if (after && (t < event.t) && (event.t - t <= near) && (event.t - t <= gap)) {
         if (event.t - t === gap) {

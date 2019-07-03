@@ -68,9 +68,8 @@ const sagas = {
   root: function* () {
     // Avoid boilerplate by automatically yielding takeEvery for each AppAction
     for (let action in AppAction) {
-      // TODO why is action sometimes 0?
       if (AppAction[action]) {
-        log.debug('action', action, AppAction[action]);
+        log.debug('configuring saga for AppAction', action);
         yield takeEvery(AppAction[action], sagas[AppAction[action]]);
       } else {
         log.warn('unknown action in AppAction enum', action); // TODO why does this happen?

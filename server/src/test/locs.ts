@@ -5,7 +5,7 @@ const expect = chai.expect;
 import * as turf from '@turf/helpers';
 import * as util from 'util';
 
-import { LocationEvents } from 'shared/locations';
+import locations, { LocationEvents } from 'shared/locations';
 import log from 'shared/log';
 import { EventType, interval, Timepoint } from 'shared/timeseries';
 
@@ -38,6 +38,29 @@ const locEvents: LocationEvents = function() {
 describe('LocationEvents tests', function() {
   it('should generate locEvents', function() {
     expect(locEvents).to.exist;
+    log.debug(util.inspect(locEvents, { depth: 3 }));
   })
-  log.debug(util.inspect(locEvents, { depth: 3 }));
+  it('should find locEventNearestTimepoint', function() {
+    const t = tBase + tIncrement * locEventCount / 2; // TODO loop
+
+    const t1 = t + tIncrement / 3;
+    const near1 = tIncrement / 2;
+    const e1 = locations.locEventNearestTimepoint(locEvents, t1, near1);
+    log.debug(util.inspect(e1, { depth: 3 }));
+    expect(e1).to.exist;
+    expect(e1.t).to.equal(t);
+
+    const t2 = t + (2 * tIncrement) / 3;
+    const near2 = tIncrement / 2;
+    const e2 = locations.locEventNearestTimepoint(locEvents, t2, near2);
+    log.debug(util.inspect(e2, { depth: 3 }));
+    expect(e2).to.exist;
+    expect(e2.t).to.equal(t + tIncrement);
+
+    const t3 = t + (2 * tIncrement) / 3;
+    const near3 = tIncrement / 4;
+    const e3 = locations.locEventNearestTimepoint(locEvents, t3, near3);
+    log.debug(util.inspect(e3, { depth: 3 }));
+    expect(e3).to.not.exist;
+  })
 })
