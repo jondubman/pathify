@@ -1,7 +1,5 @@
 // Shared code (client + server) having to do with time series of events.
 
-// TODO may want to use turf.js
-
 // Note classical for loops are used over a forEach / functional approach when iterating through a potentially large
 // array of events, as this incurs less overhead for function closures and support break / continue.
 
@@ -21,7 +19,7 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
 
 export interface GenericEvent {
   t: Timepoint;
-  type: string;
+  type: EventType;
   // subtype?: string;
   data?: object;
   source?: string; // generally either our own client ID, or something else if from server (like 'server')
@@ -38,7 +36,7 @@ export interface GenericEvent {
 //   index: number;
 // }
 export type EventFilter = (event: GenericEvent) => Boolean;
-export type EventsFilter = (events: GenericEvent[], filter: EventFilter) => GenericEvent[];
+export type EventsFilter = (events: GenericEvents, filter: EventFilter) => GenericEvents;
 export type GenericEvents = GenericEvent[];
 
 export const interval = {
@@ -58,7 +56,7 @@ export const interval = {
 const timeseries = {
 
   // Determine the number of events whose t is within the given TimeRange, with optional type filter
-  countEvents: (events: GenericEvent[], tr: TimeRange = [0, Infinity], type: string = ''): number => {
+  countEvents: (events: GenericEvents, tr: TimeRange = [0, Infinity], type: string = ''): number => {
     let count = 0;
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
@@ -72,26 +70,11 @@ const timeseries = {
   },
 
   // filterEvents ia an EventsFilter
-  filterEvents: (events: GenericEvent[], filter: EventFilter): GenericEvent[] => {
+  filterEvents: (events: GenericEvents, filter: EventFilter): GenericEvents => {
     return events.filter(filter);
   },
 
-  // Return events whose t is within the given TimeRange, with optional type filter
-  // TODO refactor to use filterEvents?
-  // findEvents: (events: GenericEvent[], tr: TimeRange = [0, Infinity], type: string = ''): GenericEvent[] => {
-  //   const results: GenericEvent[] = [];
-  //   for (let i = 0; i < events.length; i++) {
-  //     const event = events[i];
-  //     if (!type.length || type === event.type) {
-  //       if (timeseries.timeInRange(event.t, tr)) {
-  //         results.push(event);
-  //       }
-  //     }
-  //   }
-  //   return results;
-  // },
-
-  findEventsAtTimepoint: (events: GenericEvent[], t: Timepoint): GenericEvent[] => {
+  findEventsAtTimepoint: (events: GenericEvents, t: Timepoint): GenericEvents => {
     return timeseries.filterEvents(events, (event: GenericEvent) => {
       return event.t === t;
     })
@@ -101,11 +84,11 @@ const timeseries = {
   // after: whether to consider events after Timepoint t (default true)
   // near: maximum time gap to consider "near" (default unrestricted)
   // eventFilter is optional.
-  findEventsNearestTimepoint: (events: GenericEvent[], t: Timepoint,
+  findEventsNearestTimepoint: (events: GenericEvents, t: Timepoint,
                                before: Boolean = true, after: Boolean = true,
-                               near: number = Infinity, eventFilter: EventFilter | null = null): GenericEvent[] => {
+                               near: number = Infinity, eventFilter: EventFilter | null = null): GenericEvents => {
     let gap = Infinity;
-    let results: GenericEvent[] = [];
+    let results: GenericEvents = [];
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       if (eventFilter && !eventFilter(event)) {
@@ -143,7 +126,7 @@ const timeseries = {
     return {
       t: timestamp,
       // these are placeholders to be overridden
-      type: 'NONE',
+      type: EventType.NONE,
       data: {},
     }
   },
@@ -163,7 +146,7 @@ const timeseries = {
   // TODO obtain performance benefit of sorted events by migrating to boolean search for timepoints where possible.
   // In practice this should not actually make a huge difference until there are a large number of events which should
   // take a long time when the event log basically consists of LOC updates (order of once per second) and user actions.
-  sortedByTime: (events: GenericEvent[]): boolean => {
+  sortedByTime: (events: GenericEvents): boolean => {
     let t = 0;
     for (let i = 0; i < events.length; i++) {
       const eventTime = events[i].t;
@@ -201,7 +184,7 @@ const timeseries = {
   },
 
   // When events are sorted by time, finding the total time range is easy.
-  timeRangeOfEvents: (events: GenericEvent[]): TimeRange => {
+  timeRangeOfEvents: (events: GenericEvents): TimeRange => {
     if (events.length < 1) {
       return [0, 0]; // no events passed in
     }

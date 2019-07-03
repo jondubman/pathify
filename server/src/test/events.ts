@@ -1,10 +1,9 @@
-require('module-alias/register');
-
 import * as chai from 'chai';
 const expect = chai.expect;
+require('module-alias/register');
 
 import locations, { LocationEvent } from 'shared/locations';
-import timeseries, { EventType, GenericEvent } from 'shared/timeseries';
+import timeseries, { EventType, GenericEvents } from 'shared/timeseries';
 
 // ----------------------
 // Mocha tests begin here
@@ -13,7 +12,7 @@ import timeseries, { EventType, GenericEvent } from 'shared/timeseries';
 const tBase = 1000;
 const tIncrement = 10;
 
-const eventList: GenericEvent[] = [
+const eventList: GenericEvents = [
   { t: tBase, type: EventType.OTHER },
   { t: tBase + tIncrement * 1, type: EventType.OTHER },
   { t: tBase + tIncrement * 2, type: EventType.OTHER },
@@ -21,7 +20,7 @@ const eventList: GenericEvent[] = [
   { t: tBase + tIncrement * 4, type: EventType.OTHER },
 ]
 
-describe('shared modules', function () {
+describe('GenericEvents tests', function () {
   it('should load locations module', function () {
     expect(locations).to.exist;
   })
@@ -57,7 +56,6 @@ describe('shared modules', function () {
   })
   it('should find two events equally near a timepoint', function () {
     for (let i = 1; i < eventList.length - 1; i++) {
-
       const matchTwo =
         timeseries.findEventsNearestTimepoint(eventList, eventList[i].t - tIncrement / 2, true, true, tIncrement / 2);
       expect(matchTwo.length).to.equal(2);

@@ -191,7 +191,7 @@ const locationEventFromLocation = (info: Location): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
   const loc: LocationEvent = {
     ...timeseries.newSyncedEvent(t),
-    type: 'LOC',
+    type: EventType.LOC,
     data: {
       ele: info.coords.altitude,
       heading: info.coords.heading,

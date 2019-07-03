@@ -238,14 +238,6 @@ class MapArea extends Component<MapAreaProps> {
     // log.trace('onDidFinishRenderingMapFully', args);
   }
 
-  // [{ geometry:
-  //     { type: 'Point',
-  //       coordinates: [ -122.33381520370017, 47.66132942045516 ]
-  //     },
-  //     properties: { screenPointY: 120.5, screenPointX: 347 },
-  //     type: 'Feature'
-  // }]
-
   async onPress(...args) {
     log.trace('onPress', args);
     this.props.mapTapped(args);

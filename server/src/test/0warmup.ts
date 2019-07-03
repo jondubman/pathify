@@ -14,9 +14,6 @@ describe('warmup', function() {
   it(`should confirm server config port number ${constants.defaultPort}`, async function() {
     expect(constants.defaultPort).to.exist;
   })
-})
-
-describe('secrets', function() {
   it(`should be able to read from a secret file`, async function() {
     const secret = utils.getSecret('test-secret');
     expect(secret).to.exist;

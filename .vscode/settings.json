@@ -3,12 +3,16 @@
     "**/.flowconfig": true,
     "**/app/android/**": true,
     "**/app/ios/Pathify.xcodeproj": true,
+    "**/app/shared": true,
     "**/app/shared/**": true,
     "**/package-lock.json": true,
+    "**/server/src/shared": true,
     "**/server/src/shared/**": true,
     "**/web/**": true,
     "**/web/build": true,
-    "**/yarn.lock": true
+    "**/yarn.lock": true,
+    "app/shared/**": true,
+    "server/src/shared/**": true
   },
   "workbench.colorTheme": "Tomorrow Night Blue"
 }

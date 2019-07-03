@@ -1,6 +1,8 @@
 // Pulsar component - a pulsing dot to show dynamic locations on the map (chiefly, user location)
 // Intended to be contained within a MapArea.
 
+import * as turf from '@turf/helpers';
+
 import React, {
   Component,
 } from 'react';
@@ -59,7 +61,7 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
 
   render() {
     const { id, lon, lat } = this.props;
-    const circleShape = { // GeoJSON geometry object
+    const circleShape: turf.Point = { // Point is a type of GeoJSON geometry object having only coordinates.
       type: 'Point',
       coordinates: [lon, lat],
     }

@@ -4,7 +4,7 @@ export type Lon = number;
 export type Lat = number;
 export type LonLat = [Lon, Lat];
 
-import timeseries, { EventFilter, EventType, GenericEvent, Timepoint } from './timeseries';
+import timeseries, { EventFilter, EventType, GenericEvent, GenericEvents, Timepoint } from './timeseries';
 
 export interface LocationEvent extends GenericEvent {
   data: {
@@ -18,15 +18,17 @@ export interface LocationEvent extends GenericEvent {
   }
 }
 
+export type LocationEvents = LocationEvent[];
+
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type == EventType.LOC);
 
 const locations = {
 
   // Return a single LOC event (or null if none found within the "near" threshold) nearest in time to given Timepoint t.
-  locEventNearestTimepoint: (events: GenericEvent[], t: Timepoint, near: number): LocationEvent | null  => {
+  locEventNearestTimepoint: (events: GenericEvents, t: Timepoint, near: number): LocationEvent | null  => {
 
-    const nearestMatches: LocationEvent[] =
-      timeseries.findEventsNearestTimepoint(events, t, true, true, near, locEventFilter) as LocationEvent[];
+    const nearestMatches: LocationEvents =
+      timeseries.findEventsNearestTimepoint(events, t, true, true, near, locEventFilter) as LocationEvents;
 
     if (!nearestMatches.length) {
       return null;
