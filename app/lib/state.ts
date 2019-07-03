@@ -30,7 +30,7 @@ export type AppOptions = typeof initialAppOptions;
 const initialAppUIState = {
   flags: {
     followingUser: true, // should map follow user?
-    keepMapCenteredWhenFollowing: true, // true means continuous. false means map recentered only when you near the edge
+    keepMapCenteredWhenFollowing: false, // true means continuous. false means map recentered only when you near the edge
     helpEnabled: false,
     mapFullScreen: false, // false means timeline is visible. true means map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)

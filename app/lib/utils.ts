@@ -2,11 +2,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-// TODO this needs to go - replace with LonLat
-interface LatLon {
-  lat: number;
-  lon: number;
-}
+import { LonLat } from 'shared/locations';
 
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
 
@@ -16,8 +12,9 @@ const utils = {
   // lonInset and latInset of 0 is the simple test.
   // lonInset or latInset > 0 shrinks the range that is considered inside the bounds.
   // lonInset or latInset < 0 expands that range.
-  locInsideBounds: (loc: LatLon, bounds: Bounds, lonInset = 0, latInset = 0) => {
-    const { lon, lat } = loc;
+  locInsideBounds: (loc: LonLat, bounds: Bounds, lonInset = 0, latInset = 0) => {
+    const lon = loc[0];
+    const lat = loc[1];
     const NE = bounds[0];
     const SW = bounds[1];
     return (lon > SW[0] + lonInset && lon < NE[0] - lonInset) &&
@@ -29,7 +26,7 @@ const utils = {
   // bounds is like what we get from mapArea.getVisibleBounds: [NE [lon, lat], SW [lon, lat]]
   // Note: NE and SW must be in that order, [ NE, SW ]
   // Hint: read [0] as 'lon' and [1] as 'lat'
-  locWellBounded: (loc: LatLon, bounds: Bounds) => {
+  locWellBounded: (loc: LonLat, bounds: Bounds) => {
     const NE = bounds[0]; // NE is [ lon, lat ] of NE corner of bounds
     const SW = bounds[1]; // SW is [ lon, lat ] of SW corner of bounds
     const lonRange = NE[0] - SW[0]; // longitude range of bounds

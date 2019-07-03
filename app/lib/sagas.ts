@@ -187,10 +187,10 @@ const sagas = {
       // Potential cascading AppAction.centerMapOnUser:
       const map = MapUtils();
       if (map) {
-        const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: any) => ({
+        const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
           followingUser: state.ui.flags.followingUser,
           keepMapCenteredWhenFollowing: state.ui.flags.keepMapCenteredWhenFollowing,
-          loc: state.userLocation,
+          loc: state.userLocation!.data.loc,
         }))
         const bounds = yield call(map.getVisibleBounds as any);
         if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
