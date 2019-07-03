@@ -2,6 +2,7 @@ import {
   Dimensions,
 } from 'react-native';
 
+// TODO this needs to go - replace with LonLat
 interface LatLon {
   lat: number;
   lon: number;

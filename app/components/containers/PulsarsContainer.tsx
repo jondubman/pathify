@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 
 import { AppState } from 'lib/state';
 import Pulsars from 'presenters/Pulsars';
-import { LonLat } from 'shared/timeseries';
+import { LonLat } from 'shared/locations';
 
 export interface OptionalPulsar {
   loc: LonLat;

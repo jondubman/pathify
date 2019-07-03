@@ -22,7 +22,7 @@ import PulsarsContainer from 'containers/PulsarsContainer';
 import Pulsar from 'presenters/Pulsar';
 
 // Public interface to singleton underlying Mapbox component
-import { LonLat } from 'shared/timeseries';
+import { LonLat } from 'shared/locations';
 export type Bounds = [LonLat, LonLat] | null;
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.
@@ -69,7 +69,7 @@ class MapArea extends Component<MapAreaProps> {
       mapStyleURL,
       opacity,
       width,
-      userLoc,
+      userLocation,
     } = this.props;
 
     const hiddenStyle = {
@@ -88,7 +88,7 @@ class MapArea extends Component<MapAreaProps> {
     }
     const mapCenterLon = constants.map.default.lon;
     const mapCenterLat = constants.map.default.lat;
-    const showUserMarker = !!userLoc; // boolean (related to use of userLoc! postfix bang for non-null assertion below)
+    const showUserMarker = !!userLocation; // boolean (related to non-null assertion below, userLocation!.data.loc)
 
     if (mapHidden) {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
@@ -135,8 +135,7 @@ class MapArea extends Component<MapAreaProps> {
             {showUserMarker ?
               <Pulsar
                 id="userLocationMarker"
-                lon={userLoc!.data.lon}
-                lat={userLoc!.data.lat}
+                loc={userLocation!.data.loc}
                 color={constants.colors.user}
               />
               :

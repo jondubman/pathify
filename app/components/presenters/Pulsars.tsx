@@ -17,7 +17,7 @@ class Pulsars extends Component<PulsarsProps> {
           const pulsar = pulsars[key];
           const { loc, color, visible } = pulsar;
           return visible ?
-            <Pulsar key={key} id={key} lon={loc[0]} lat={loc[1]} color={color} />
+            <Pulsar key={key} id={key} loc={loc} color={color} />
             :
             null
         }))}

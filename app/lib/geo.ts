@@ -189,19 +189,18 @@ const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutK
 
 const locationEventFromLocation = (info: Location): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
-  const loc: LocationEvent = {
+  const locationEvent: LocationEvent = {
     ...timeseries.newSyncedEvent(t),
     type: EventType.LOC,
     data: {
       ele: info.coords.altitude,
       heading: info.coords.heading,
-      lat: info.coords.latitude,
-      lon: info.coords.longitude,
+      loc: [info.coords.longitude, info.coords.latitude],
       odo: info.odometer,
       speed: info.coords.speed,
     },
   }
-  return loc;
+  return locationEvent;
 }
 
 export const Geo = {

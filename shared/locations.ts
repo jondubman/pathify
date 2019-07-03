@@ -10,8 +10,7 @@ export interface LocationEvent extends GenericEvent {
   data: {
     ele?: number;
     heading?: number;
-    lat: Lat;
-    lon: Lon;
+    loc: LonLat;
     odo?: number;
     speed?: number;
     // TODO battery level?

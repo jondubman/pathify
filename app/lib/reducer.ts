@@ -8,13 +8,13 @@ import {
   ReducerAction,
 } from 'lib/actions';
 
-import { LocationEvent } from 'shared/locations';
 import log from 'lib/log';
-
 import {
   initialAppState,
   AppState,
 } from 'lib/state';
+import { LocationEvent } from 'shared/locations';
+import { EventType } from "shared/timeseries";
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.
 // Expressions like { ...state, modifiedProp: newValue } help to form newState, which is returned at the end..
@@ -27,8 +27,8 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case ReducerAction.GEOLOCATION:
       {
         const locationEvent = params as LocationEvent;
-        if (locationEvent.data.lon && locationEvent.data.lat && locationEvent.t && locationEvent.type === 'LOC') {
-          newState.loc = locationEvent;
+        if (locationEvent.data.loc && locationEvent.t && locationEvent.type === EventType.LOC) {
+          newState.userLocation = locationEvent;
           newState.events = [...newState.events, locationEvent];
           log.trace(`${newState.events.length} total events`);
         }

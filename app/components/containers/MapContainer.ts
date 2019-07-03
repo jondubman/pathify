@@ -14,7 +14,7 @@ interface MapAreaStateProps {
   mapStyleURL: string;
   opacity: number;
   width: number;
-  userLoc?: LocationEvent;
+  userLocation?: LocationEvent;
 }
 
 interface MapAreaDispatchProps {
@@ -36,7 +36,7 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
     mapStyleURL: mapStyle.url,
     opacity: state.options.mapOpacity,
     width,
-    userLoc: state.loc,
+    userLocation: state.userLocation,
   }
 }
 

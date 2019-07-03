@@ -14,6 +14,7 @@ import {
 import Mapbox from '@mapbox/react-native-mapbox-gl';
 
 import constants from 'lib/constants';
+import { LonLat } from 'shared/locations';
 
 const pulseMin = 1;
 const pulseMax = 3;
@@ -23,8 +24,7 @@ const defaultCircleColor = constants.colors.user;
 
 interface PulsarProps {
   id: string;
-  lon: number;
-  lat: number;
+  loc: LonLat;
   color: string;
 }
 
@@ -60,10 +60,10 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
   }
 
   render() {
-    const { id, lon, lat } = this.props;
+    const { id, loc } = this.props;
     const circleShape: turf.Point = { // Point is a type of GeoJSON geometry object having only coordinates.
       type: 'Point',
-      coordinates: [lon, lat],
+      coordinates: loc,
     }
     const { pulse } = this.state;
     // pulse directly affects the circleStrokeWidth, which gets drawn outside the circle's canonical radius.

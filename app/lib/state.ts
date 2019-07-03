@@ -49,7 +49,7 @@ export type AppUIState = typeof initialAppUIState;
 
 export interface AppState {
   events: GenericEvents;
-  loc?: LocationEvent;
+  userLocation?: LocationEvent;
   mapRegion: Polygon | null;
   options: AppOptions;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec

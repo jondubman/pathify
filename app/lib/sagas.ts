@@ -159,10 +159,9 @@ const sagas = {
     try {
       const map = MapUtils();
       if (map && map.flyTo) {
-        const loc = yield select((state: AppState) => state.loc);
-        if (loc && loc.data && loc.data.lon && loc.data.lat) {
-          const coordinates = [loc.data.lon, loc.data.lat];
-          yield call(map.flyTo as any, coordinates);
+        const loc = yield select((state: AppState) => state.userLocation);
+        if (loc && loc.data && loc.data.loc) {
+          yield call(map.flyTo as any, loc.data.loc);
         }
       }
     } catch (err) {
@@ -191,7 +190,7 @@ const sagas = {
         const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: any) => ({
           followingUser: state.ui.flags.followingUser,
           keepMapCenteredWhenFollowing: state.ui.flags.keepMapCenteredWhenFollowing,
-          loc: state.loc,
+          loc: state.userLocation,
         }))
         const bounds = yield call(map.getVisibleBounds as any);
         if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
