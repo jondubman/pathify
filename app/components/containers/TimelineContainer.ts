@@ -5,6 +5,7 @@ import { AppAction, newAction } from 'lib/actions';
 import { TimespanKind } from 'lib/constants';
 import { continuousTrackList, customTimespans, selectedTimespans } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
 import log from 'shared/log';
 import timeseries, { TimeRange } from 'shared/timeseries';
@@ -19,6 +20,7 @@ export type Timespans = Timespan[];
 export interface TimelineStateProps {
   nowTime: number;
   refTime: number;
+  startupTime: number;
   timelineNow: boolean;
   timeRange: TimeRange;
   timespans: Timespans;
@@ -32,7 +34,7 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const nowTime = Date.now();
+  const nowTime = utils.now();
   const refTime = state.options.refTime;
   let timespans = continuousTrackList(state).map(track => {
     return {
@@ -44,6 +46,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   return {
     nowTime,
     refTime,
+    startupTime: state.options.startupTime,
     timelineNow: state.ui.flags.timelineNow,
     timeRange: timeseries.timeRangeOfEvents(state.events),
     timespans,

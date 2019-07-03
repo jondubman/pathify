@@ -29,7 +29,7 @@ export default class App extends Component {
     store.dispatch(newAction(AppAction.startFollowingUser));
 
     const interval = setInterval(() => {
-      store.dispatch(newAction(AppAction.timerTick, Date.now()));
+      store.dispatch(newAction(AppAction.timerTick, utils.now()));
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 

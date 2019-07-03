@@ -292,7 +292,6 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop + buttonOffset,
   },
-  startupTime: Date.now(),
   timeline: {
     barHeight: 40,
     bottomPaddingForAxis,

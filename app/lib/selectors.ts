@@ -9,7 +9,7 @@ import { interval, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 
 export const continuousTrackList = (state: AppState): Tracks => {
-  const tr: TimeRange = [0, Date.now()];
+  const tr: TimeRange = [0, utils.now()];
   return continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
 }
 

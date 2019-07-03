@@ -123,7 +123,7 @@ const timeseries = {
   // local/private by default (i.e. not synced with the server)
   // timestamped now unless a timestamp is provided.
   newEvent: (t: Timepoint): GenericEvent => {
-    const timestamp = t || Date.now();
+    const timestamp = t || Date.now(); // TODO maybe require t
     return {
       t: timestamp,
       // these are placeholders to be overridden
@@ -135,7 +135,7 @@ const timeseries = {
   // A synced event will be synchronized with the server (i.e. not private)
   // timestamped now unless a timestamp is provided.
   newSyncedEvent: (t: Timepoint): GenericEvent => {
-    const timestamp = t || Date.now();
+    const timestamp = t || Date.now(); // TODO maybe require t
     return {
       ...timeseries.newEvent(timestamp),
       changed: timeseries.uniqify(timestamp), // uniqifying it will facilitate filtering the event list by this value

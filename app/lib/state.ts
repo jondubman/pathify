@@ -3,6 +3,7 @@
 import { Polygon } from "@turf/helpers";
 
 import constants from 'lib/constants';
+import utils from "lib/utils";
 import { LocationEvent } from 'shared/locations';
 import { GenericEvents } from 'shared/timeseries';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
@@ -15,8 +16,8 @@ const initialAppOptions = {
   mapStyle: constants.map.default.style,
   pulsars: {
   } as OptionalPulsars,
-  refTime: constants.startupTime,
-  startupTime: constants.startupTime,
+  refTime: utils.now(),
+  startupTime: utils.now(),
   timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
   serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
   serverSyncTime: 0, // time of last server sync (or 0 if never)
