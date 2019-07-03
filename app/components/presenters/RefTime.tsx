@@ -11,7 +11,7 @@ import {
 
 import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
-import log from 'lib/log';
+import log from 'shared/log';
 
 const colors = constants.colors.refTime;
 const { height, leftContentsWidth, width } = constants.refTime;

@@ -2,12 +2,12 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import { MapStyle } from 'lib/constants';
-import log from 'lib/log';
 import {
   dynamicMapStyle,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import SettingsPanel from 'presenters/SettingsPanel';
+import log from 'shared/log';
 
 interface SettingsPanelStateProps {
   open: boolean;

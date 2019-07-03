@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
-import log from 'lib/log';
 import { AppState } from 'lib/state';
 import GeolocationButton from 'presenters/GeolocationButton';
+import log from 'shared/log';
 
 interface GeolocationButtonStateProps {
   bottomOffset: number,

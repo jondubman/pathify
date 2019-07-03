@@ -4,11 +4,11 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import log from 'lib/log';
 import {
   mapHidden,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import log from 'shared/log';
 
 import CompassButton from 'presenters/CompassButton';
 

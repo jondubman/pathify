@@ -4,9 +4,9 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import log from 'lib/log';
 import { AppState } from 'lib/state';
 import HelpButton from 'presenters/HelpButton';
+import log from 'shared/log';
 
 interface HelpButtonStateProps {
   enabled: boolean;

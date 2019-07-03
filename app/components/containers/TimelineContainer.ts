@@ -2,12 +2,12 @@ import { connect } from 'react-redux';
 import { DomainPropType } from 'victory-native';
 
 import { AppAction, newAction } from 'lib/actions';
-import log from 'lib/log';
+import { TimespanKind } from 'lib/constants';
 import { continuousTrackList, customTimespans, selectedTimespans } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
+import log from 'shared/log';
 import timeseries, { TimeRange } from 'shared/timeseries';
-import { TimespanKind } from 'lib/constants';
 
 export interface Timespan {
   kind: TimespanKind;

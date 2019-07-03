@@ -1,7 +1,7 @@
 import { newAction } from 'lib/actions';
-import log from 'lib/log';
 import constants from 'lib/constants';
 import store from 'lib/store';
+import log from 'shared/log';
 
 const { clientId, headers, serverUrl } = constants;
 

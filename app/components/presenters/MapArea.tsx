@@ -11,15 +11,14 @@ import Mapbox from '@mapbox/react-native-mapbox-gl';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-import constants from 'lib/constants';
-import log from 'lib/log';
-
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import GeolocationPanelContainer from 'containers/GeolocationPanelContainer';
 import { MapAreaProps } from 'containers/MapContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
+import constants from 'lib/constants';
 import Pulsar from 'presenters/Pulsar';
+import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
 import { LonLat } from 'shared/locations';

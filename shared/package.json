@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "util": "^0.12.0"
   },
   "scripts": {
     "share": "ls *.ts*; rm -rf ../web/src/shared; mkdir ../web/src/shared; cp -R *.ts* ../web/src/shared; rm -rf ../server/src/shared; mkdir ../server/src/shared; cp -R *.ts* ../server/src/shared; rm -rf ../app/shared; mkdir ../app/shared; cp -R *.ts* ../app/shared; cp package.json ../app/shared"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

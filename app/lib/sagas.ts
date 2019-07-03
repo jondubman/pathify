@@ -54,14 +54,14 @@ import {
 
 import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
-import log from 'lib/log';
 import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
-import { LocationEvent } from 'shared/locations';
-import { GenericEvents, TimeRange } from 'shared/timeseries';
 import { MapUtils } from 'presenters/MapArea';
+import { LocationEvent } from 'shared/locations';
+import log from 'shared/log';
+import { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const sagas = {
 

@@ -8,12 +8,12 @@ import {
   ReducerAction,
 } from 'lib/actions';
 
-import log from 'lib/log';
 import {
   initialAppState,
   AppState,
 } from 'lib/state';
 import { LocationEvent } from 'shared/locations';
+import log from 'shared/log';
 import { EventType } from "shared/timeseries";
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.

@@ -10,10 +10,10 @@ import { Provider } from 'react-redux';
 
 import { AppAction, newAction, ReducerAction } from 'lib/actions';
 import { Geo } from 'lib/geo';
-import log from 'lib/log';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
+import log from 'shared/log';
 
 import AppUIContainer from 'containers/AppUIContainer';
 

@@ -3,8 +3,8 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import log from 'lib/log';
 import { AppState } from 'lib/state';
+import log from 'shared/log';
 
 import Clock from 'presenters/Clock';
 

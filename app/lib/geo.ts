@@ -18,11 +18,11 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 
 import { AppAction, newAction } from 'lib/actions';
-import log from 'lib/log';
 import { Store } from 'lib/store';
 import { LocationEvent } from 'shared/locations';
 import timeseries, { EventType } from 'shared/timeseries';
 import utils from 'lib/utils';
+import log from 'shared/log';
 
 const geolocationOptions: Config = {
   // --------------
