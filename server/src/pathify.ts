@@ -26,7 +26,8 @@ app.use(function(req, res, next) {
 })
 
 // NOTE: This must be done BEFORE wiring app.post handler in order to receive anything in req.body!
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }))
 
 app.use(cookieParser());
 
