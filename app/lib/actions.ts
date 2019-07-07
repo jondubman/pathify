@@ -35,6 +35,8 @@ export enum AppAction {
   'centerMapOnUser' = 'centerMapOnUser',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
   'geolocation' = 'geolocation',
+  'importEvents' = 'importEvents',
+  'importGPX' = 'importGPX',
   'log' = 'log', // see LogActionParams
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
@@ -119,6 +121,14 @@ export interface CenterMapParams {
 export interface DelayedActionParams {
   run: Action,
   after: number,
+}
+
+export interface ImportEventsParams {
+  include: object; // TODO
+}
+
+export interface ImportGPXParams {
+  include: object;
 }
 
 export interface LogActionParams {

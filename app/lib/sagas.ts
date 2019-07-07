@@ -42,6 +42,8 @@ import {
   AppQueryParams,
   CenterMapParams,
   DelayedActionParams,
+  ImportEventsParams,
+  ImportGPXParams,
   LogActionParams,
   PanTimelineParams,
   RepeatedActionParams,
@@ -60,7 +62,7 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import { LocationEvent } from 'shared/locations';
-import log from 'shared/log';
+import log, { messageToLog } from 'shared/log';
 import { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const sagas = {
@@ -112,7 +114,6 @@ const sagas = {
       log.error('appQuery', err);
     }
   },
-
 
   backgroundTapped: function* (action: Action) {
     log.trace('saga backgroundTapped');
@@ -198,6 +199,48 @@ const sagas = {
       }
     } catch (err) {
       log.error('geolocation', err);
+    }
+  },
+
+  // TODO
+  importEvents: function* (action: Action) {
+    try {
+      const params = action.params as ImportEventsParams;
+      log.info('importEvents', params.include);
+    } catch (err) {
+      log.error('importEvents', err);
+    }
+  },
+
+  // TODO process this GPX on the server and turn it into events there
+  importGPX: function* (action: Action) {
+    try {
+      const params = action.params as ImportGPXParams;
+      log.info('importGPX', messageToLog(action));
+      const gpx = (params.include as any).gpx;
+      gpx.trk.map(trk => {
+        // const name = trk.name;
+        trk.trkseg.map(trkseg => {
+          const maxIndex = trkseg.trkpt.length - 1;
+          log.debug(`importing ${maxIndex + 1} locations`);
+
+          trkseg.trkpt.map((trkpt, index) => {
+            const pt = trkpt.$;
+            const lat = pt.lat && parseFloat(pt.lat); // required
+            const lon = pt.lon && parseFloat(pt.lon); // required
+            const ele = (pt.ele && parseFloat(pt.ele)) || null;
+            const time = (pt.time && pt.time) || null; // UTC using ISO 8601
+            const epoch = (new Date(time)).getTime(); // msec (epoch)
+
+            // only log a sample of the locations to show progress
+            if (!(index % 100) || index == maxIndex) {
+              log.trace(`${index}/${maxIndex}: lat ${lat}, lon ${lon}, ele ${ele}, time ${time}, epoch ${epoch}`);
+            }
+          }) // trkpt map
+        }) // trkseg map
+      }) // trk map
+    } catch (err) {
+      log.error('importGPX', err);
     }
   },
 

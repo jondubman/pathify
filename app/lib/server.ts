@@ -1,13 +1,15 @@
 import { newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import store from 'lib/store';
-import log from 'shared/log';
+import log, { messageToLog } from 'shared/log';
 
 const { clientId, headers, serverUrl } = constants;
 
 // This handles the server response to /poll, which is a server push.
 export const handleServerPush = async (data: any) => {
-  log.info('serverPush', data);
+
+  log.info(`serverPush: message count ${data.length}`);
+
   // Custom string messages are handled here
   if (data === 'handshake') {
     getFromServer('ping/json');
@@ -16,6 +18,7 @@ export const handleServerPush = async (data: any) => {
   // TODO Handle other kinds of incoming JSON
   if (typeof data === 'object') {
     for (let message of data) {
+      log.debug('serverPush message', messageToLog(message));
       const action = message.type;
       const params = message.params;
       if (action) {

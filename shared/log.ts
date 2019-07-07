@@ -7,7 +7,7 @@ const log = {
   levels: [ 'trace', 'debug', 'info', 'warn', 'error' ], // from low to high
 
   // Note this is the only place in the app where console.log is used directly.
-  // This is the lower-level function. Normally, use log.info, log.warn or log.error.
+  // This is the lower-level function. Normally, use one of log.trace, log.debug, log.info, log.warn, log.error.
   inner: (level = 'info', ...args) => {
 
     if (!log.levels.includes(level)) {
@@ -63,4 +63,13 @@ const log = {
   },
 }
 
+// Handle debug output: Omit logging the include property, which may contain a large volume of data.
+export const messageToLog = (message: any) => {
+  const messageCopy = { ...message };
+  if (messageCopy.params && messageCopy.params.include) {
+    messageCopy.params = { ...messageCopy.params };
+    messageCopy.params.include = '...';
+  }
+  return messageCopy;
+}
 export default log;
