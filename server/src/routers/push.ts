@@ -8,6 +8,7 @@ import { log } from 'lib/log-bunyan';
 import { clientIdForAlias, pushToClient } from 'lib/client';
 import { setTimeout } from 'timers';
 import { constants } from 'lib/constants';
+import { messageToLog } from 'shared/log';
 
 // interface AppQueryParams {
 //   timeout?: number;
@@ -82,8 +83,7 @@ router.post('/', function (req, res) {
       })
     }
   }
-  const inspect = JSON.stringify(message);
-  log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message ${inspect}`);
+  log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message`, messageToLog(message));
   pushToClient(message, clientId, clientAlias);
 
   if (message.type !== 'appQuery') { // The handler for appQueryResponse should respond for an appQuery.

@@ -1,4 +1,6 @@
 import { log } from 'lib/log-bunyan';
+import { messageToLog } from 'shared/log';
+
 // import { util } from 'prettier';
 
 // When client initiates polling, server should respond before timeout, either with placeholder timeout response,
@@ -71,8 +73,10 @@ export const pushToClient = (message: any, clientId: string, clientAlias: string
     messages[clientId] = [];
   }
   const countPending = messages[clientId].length;
-  const messageText = (typeof message == 'string') ? message : JSON.stringify(message);
-  log.debug(`push ${messageText} to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`);
+  // const messageText = (typeof message == 'string') ? message : JSON.stringify(message);
+  // log.debug(`push ${messageText} to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`);
+  log.debug(`push to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`,
+    messageToLog(message)));
   messages[clientId].push(message);
   respond(clientId, 'server push');
 }
