@@ -25,7 +25,8 @@ const locEventFilter: EventFilter = (event: GenericEvent) => (event.type == Even
 const locations = {
 
   // Convert GPX POJO (previously converted from XML) to a set of events that can be imported into the app.
-  eventsFromGPX: (gpx: any): GenericEvents => {
+  eventsFromGPX: (gpx: any): LocationEvents => {
+    const events: LocationEvents = [];
     gpx.trk.map(trk => {
       // const name = trk.name;
       trk.trkseg.map(trkseg => {
@@ -44,14 +45,24 @@ const locations = {
           if (!(index % 100) || index == maxIndex) { // TODO move this number to constants
             log.trace(`${index}/${maxIndex}: lat ${lat}, lon ${lon}, ele ${ele}, time ${time}, epoch ${epoch}`);
           }
+          const event: LocationEvent = {
+            ...timeseries.newEvent(epoch),
+            data: {
+              ele,
+              loc: [ lon, lat ],
+            },
+            source: 'import', // TODO placeholder
+          }
+          events.push(event);
         }) // trkpt map
       }) // trkseg map
     }) // trk map
-    return []; // TODO
+
+  return events;
   },
 
   // Return a single LOC event (or null if none found within the "near" threshold) nearest in time to given Timepoint t.
-  locEventNearestTimepoint: (events: GenericEvents, t: Timepoint, near: number): LocationEvent | null  => {
+  locEventNearestTimepoint: (events: GenericEvents, t: Timepoint, near: number): (LocationEvent | null)  => {
 
     const nearestMatches: LocationEvents =
       timeseries.findEventsNearestTimepoint(events, t, true, true, near, locEventFilter) as LocationEvents;

@@ -126,7 +126,7 @@ const timeseries = {
     const timestamp = t || Date.now(); // TODO maybe require t
     return {
       t: timestamp,
-      // these are placeholders to be overridden
+      // these are placeholders, to be overridden
       type: EventType.NONE,
       data: {},
     }

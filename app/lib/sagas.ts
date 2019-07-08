@@ -61,8 +61,8 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
-import { LocationEvent } from 'shared/locations';
-import log from 'shared/log';
+import locations, { LocationEvent } from 'shared/locations';
+import log, { messageToLog } from 'shared/log';
 import { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const sagas = {
@@ -219,27 +219,8 @@ const sagas = {
       const params = action.params as ImportGPXParams;
       log.info('importGPX', messageToLog(action));
       const gpx = (params.include as any).gpx;
-      gpx.trk.map(trk => {
-        // const name = trk.name;
-        trk.trkseg.map(trkseg => {
-          const maxIndex = trkseg.trkpt.length - 1;
-          log.debug(`importing ${maxIndex + 1} locations`);
-
-          trkseg.trkpt.map((trkpt, index) => {
-            const pt = trkpt.$;
-            const lat = pt.lat && parseFloat(pt.lat); // required
-            const lon = pt.lon && parseFloat(pt.lon); // required
-            const ele = (trkpt.ele && parseFloat(trkpt.ele[0])) || null;
-            const time = (trkpt.time && trkpt.time[0]) || null; // UTC using ISO 8601
-            const epoch = (new Date(time)).getTime(); // msec (epoch)
-
-            // only log a sample of the locations to show progress
-            if (!(index % 100) || index == maxIndex) { // TODO move this number to constants
-              log.trace(`${index}/${maxIndex}: lat ${lat}, lon ${lon}, ele ${ele}, time ${time}, epoch ${epoch}`);
-            }
-          }) // trkpt map
-        }) // trkseg map
-      }) // trk map
+      const events = locations.eventsFromGPX(gpx);
+      log.debug(events);
     } catch (err) {
       log.error('importGPX', err);
     }
