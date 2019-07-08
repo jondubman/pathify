@@ -95,6 +95,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 // From here on: types related to params for actions
 
 import { LonLat } from 'shared/locations';
+import { TimeReference } from 'shared/timeseries';
 
 // TODO complete this list
 
@@ -130,6 +131,8 @@ export interface ImportEventsParams {
 
 export interface ImportGPXParams {
   include: object;
+  adjustStartTime?: TimeReference;
+  adjustEndTime?: TimeReference;
 }
 
 export interface LogActionParams {

@@ -3,11 +3,18 @@
 // Note classical for loops are used over a forEach / functional approach when iterating through a potentially large
 // array of events, as this incurs less overhead for function closures and support break / continue.
 
-// Define TimeRange tuple, which is always inclusive of its endpoints.
+import log from './log';
+
+// TimeRange tuple is always inclusive of its endpoints.
 // Use 0 as the first number to indicate a range with no start (-Infinity is not needed as time is always positive.)
 // Use Infinity as the second number to indicate a range with no end (open-ended time range).
 export type Timepoint = number;
 export type TimeRange = [Timepoint, Timepoint];
+
+export interface TimeReference { // relative or absolute
+  t: Timepoint;
+  relative: boolean;
+}
 
 export enum EventType { // TODO keep in sync with datamodel.prisma
   'APP' = 'APP',
@@ -54,6 +61,46 @@ export const interval = {
 }
 
 const timeseries = {
+
+  // Adjust the Timepoints in a time series of events.
+  // relativeTo is only needed if at least one of the TimeReferences is relative.
+  adjustTime: (events: GenericEvents,
+               startAt: TimeReference | null = null,
+               endAt: TimeReference | null = null,
+               relativeTo: Timepoint = 0): GenericEvents => {
+
+    if (!events.length) {
+      return [];
+    }
+    if (!startAt && !endAt) {
+      return events; // no adjustments to make
+    }
+    const newEvents = [];
+    const existingStart = events[0].t;
+    const existingEnd = events[events.length - 1].t;
+    const existingDuration = existingEnd - existingStart;
+
+    // relativeTo is typically set at runtime, whereas startAt / endAt are likely to be specified, e.g. in test samples.
+    // relativeTo might be the current time, or perhaps the refTime of the timeline.
+
+    let newStart = startAt ? (startAt.relative ? relativeTo + startAt.t : startAt.t) : existingStart;
+    let newEnd =   endAt   ? (endAt.relative   ? relativeTo + endAt.t   : endAt.t)   : existingEnd;
+
+    // timeScaleFactor is only needed if both startAt and endAt are specified; otherwise assumed to be 1 (no scaling)
+    const timeScaleFactor = (startAt && endAt) ? (newEnd - newStart) / existingDuration : 1;
+
+    // Now make the time adjustments
+    for (let i = 0; i < events.length; i++) {
+      const newEvent = { ...events[i] };
+      if (startAt) {
+        newEvent.t = newStart + (newEvent.t - existingStart) * timeScaleFactor;
+      } else { // endAt
+        newEvent.t = newEnd - (existingEnd - newEvent.t) * timeScaleFactor;
+      }
+      newEvents.push(newEvent);
+    }
+    return newEvents;
+  },
 
   // Determine the number of events whose t is within the given TimeRange, with optional type filter
   countEvents: (events: GenericEvents, tr: TimeRange = [0, Infinity], type: string = ''): number => {

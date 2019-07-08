@@ -63,7 +63,7 @@ import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import locations, { LocationEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
-import { GenericEvents, TimeRange } from 'shared/timeseries';
+import timeseries, { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const sagas = {
 
@@ -217,10 +217,13 @@ const sagas = {
   importGPX: function* (action: Action) {
     try {
       const params = action.params as ImportGPXParams;
-      log.info('importGPX', messageToLog(action));
+      log.info('importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
       const gpx = (params.include as any).gpx;
       const events = locations.eventsFromGPX(gpx);
-      yield put(newAction(ReducerAction.ADD_EVENTS, events));
+      const relativeTo = utils.now(); // TODO may want more flexibility later
+      const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
+      log.debug('adjustedEvents', relativeTo, adjustedEvents[0].t - relativeTo, adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
+      yield put(newAction(ReducerAction.ADD_EVENTS, adjustedEvents));
     } catch (err) {
       log.error('importGPX', err);
     }

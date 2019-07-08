@@ -1,5 +1,6 @@
 // Shared code (client + server)
 
+import log from './log';
 import { EventType, GenericEvents, TimeRange } from './timeseries';
 
 // Define "Track", a type of derived metadata about events.
@@ -45,6 +46,7 @@ export const continuousTracks = (events: GenericEvents, maxTimeGap: number, tr: 
       }
       break;
     }
+
     // Event is in the proper TimeRange. Is it close enough in time to the previous event to be included in the track?
     if (event.t - t_prevLocUpdate > maxTimeGap) {
       // Gap exceeds maxTimeGap

@@ -29,20 +29,23 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         const newEvents = params as GenericEvents;
         if (!newEvents.length) {
-          break;
+          break; // nothing to add
         }
         const mergedEvents: GenericEvents = [];
 
-        log.debug('ADD_EVENTS: current events count', state.events.length);
+        log.debug('ADD_EVENTS: existing events count', state.events.length);
 
         // Merge incoming and existing events (TODO both assumed to be sorted!)
+        // TODO: Factor this out into shared timeseries code.
         let eventsIndex = 0, newEventsIndex = 0;
 
-        if (!state.events.length) {
+        if (!state.events.length) {  // special case: no existing events
           newState.events = newEvents;
           log.debug('ADD_EVENTS: newState.events count', newState.events.length);
           break;
         }
+
+        // Merge sort two non-empty sorted event lists into mergedEvents.
         while (eventsIndex < state.events.length || newEventsIndex < newEvents.length) {
 
           if (eventsIndex < state.events.length &&

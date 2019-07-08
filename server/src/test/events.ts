@@ -3,7 +3,8 @@ const expect = chai.expect;
 require('module-alias/register');
 
 import locations, { LocationEvent } from 'shared/locations';
-import timeseries, { EventType, GenericEvents } from 'shared/timeseries';
+import log from 'shared/log';
+import timeseries, { EventType, GenericEvents, TimeReference } from 'shared/timeseries';
 
 // ----------------------
 // Mocha tests begin here
@@ -64,5 +65,88 @@ describe('GenericEvents tests', function () {
   it('should not find any locEventNearestTimepoint in a list with no LOC events', function() {
     const locEvent: LocationEvent = locations.locEventNearestTimepoint(eventList, tBase, tIncrement);
     expect(locEvent).to.be.null;
+  })
+  it('should adjustTime with fixed start time only', function () {
+    const startAtTime = 5000;
+    const startAt: TimeReference = {
+      t: startAtTime,
+      relative: false,
+    }
+    const adjustedEventList = timeseries.adjustTime(eventList, startAt);
+
+    log.info(eventList);
+    log.debug(adjustedEventList);
+  })
+  it('should adjustTime with fixed end time only', function () {
+    const endAtTime = 5000;
+    const endAt: TimeReference = {
+      t: endAtTime,
+      relative: false,
+    }
+    const adjustedEventList = timeseries.adjustTime(eventList, null, endAt);
+
+    log.info(eventList);
+    log.debug(adjustedEventList);
+  })
+  it('should adjustTime with fixed start and end time', function() {
+    const startAtTime = 5000;
+    const endAtTime = 8000;
+    const startAt: TimeReference = {
+      t: startAtTime,
+      relative: false,
+    }
+    const endAt: TimeReference = {
+      t: endAtTime,
+      relative: false,
+    }
+    const adjustedEventList = timeseries.adjustTime(eventList, startAt, endAt);
+
+    log.info(eventList);
+    log.debug(adjustedEventList);
+
+    expect(adjustedEventList[0].t).to.equal(startAtTime);
+    expect(adjustedEventList[adjustedEventList.length - 1].t).to.equal(endAtTime);
+  })
+  it('should adjustTime with relative start and end time', function () {
+    const startAtTime = 0;
+    const endAtTime = 9;
+    const relativeTo = 10000;
+    const startAt: TimeReference = {
+      t: startAtTime,
+      relative: true,
+    }
+    const endAt: TimeReference = {
+      t: endAtTime,
+      relative: true,
+    }
+    const adjustedEventList = timeseries.adjustTime(eventList, startAt, endAt, relativeTo);
+
+    log.info(eventList);
+    log.debug(adjustedEventList);
+
+  })
+  it('should adjustTime with relative start time and no end time', function () {
+    const startAtTime = 0;
+    const relativeTo = 10000;
+    const startAt: TimeReference = {
+      t: startAtTime,
+      relative: true,
+    }
+    const adjustedEventList = timeseries.adjustTime(eventList, startAt, null, relativeTo);
+
+    log.info(eventList);
+    log.debug(adjustedEventList);
+  })
+  it('should adjustTime with relative end time and no start time', function () {
+    const endAtTime = 0;
+    const relativeTo = 10000;
+    const endAt: TimeReference = {
+      t: endAtTime,
+      relative: true,
+    }
+    const adjustedEventList = timeseries.adjustTime(eventList, null, endAt, relativeTo);
+
+    log.info(eventList);
+    log.debug(adjustedEventList);
   })
 })

@@ -47,6 +47,7 @@ const locations = {
           }
           const event: LocationEvent = {
             ...timeseries.newEvent(epoch),
+            type: EventType.LOC,
             data: {
               ele,
               loc: [ lon, lat ],
