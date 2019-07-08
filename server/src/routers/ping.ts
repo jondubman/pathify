@@ -1,7 +1,7 @@
 import * as express from 'express';
 var router = express.Router()
 
-import { log } from 'lib/log-bunyan';
+import log from 'shared/log';
 
 // get-text ping
 router.get('/', function (req, res) {

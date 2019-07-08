@@ -1,5 +1,4 @@
-import { log } from 'lib/log-bunyan';
-import { messageToLog } from 'shared/log';
+import log, { messageToLog } from 'shared/log';
 
 // import { util } from 'prettier';
 

@@ -4,7 +4,7 @@ const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
 const log = {
-  levels: [ 'trace', 'debug', 'info', 'warn', 'error' ], // from low to high
+  levels: ['trace', 'debug', 'info', 'warn', 'error', 'fatalError' ], // from low to high
 
   // Note this is the only place in the app where console.log is used directly.
   // This is the lower-level function. Normally, use one of log.trace, log.debug, log.info, log.warn, log.error.
@@ -43,6 +43,10 @@ const log = {
     log.inner('error', ...args);
   },
 
+  fatalError: (...args) => {
+    log.inner('error', ...args);
+  },
+
   // only to mimic console API
   log: (...args) => {
     log.inner('trace', 'other', ...args);
@@ -61,6 +65,15 @@ const log = {
       return dots;
     }
   },
+
+  useLogger: (logger: any) => {
+    log.trace = logger.trace;
+    log.debug = logger.debug;
+    log.info = logger.info;
+    log.warn = logger.warn;
+    log.error = logger.error;
+    log.fatalError = logger.fatalError;
+  },
 }
 
 // Handle debug output: Omit logging the include property, which may contain a large volume of data.
@@ -72,4 +85,5 @@ export const messageToLog = (message: any) => {
   }
   return messageCopy;
 }
+
 export default log;

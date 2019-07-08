@@ -11,7 +11,11 @@ import * as helmet from 'helmet';
 import * as https from 'https';
 // import * as JSON5 from 'json5'; // extension of JSON with more permissive syntax
 
-import { log } from 'lib/log-bunyan';
+import log from 'shared/log';
+// Ensure this applies to all modules (TODO)
+import { logBunyan } from 'lib/log-bunyan';
+log.useLogger(logBunyan);
+
 import { constants } from 'lib/constants';
 import { utils } from 'lib/utils';
 

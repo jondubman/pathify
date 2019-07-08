@@ -62,7 +62,7 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import { LocationEvent } from 'shared/locations';
-import log, { messageToLog } from 'shared/log';
+import log from 'shared/log';
 import { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const sagas = {
@@ -212,7 +212,8 @@ const sagas = {
     }
   },
 
-  // TODO process this GPX on the server and turn it into events there
+  // GPX: geolocation data that may have been eported from other apps, already converted from XML to JSON to POJO.
+  // TODO process this GPX on the server and turn it into events there.
   importGPX: function* (action: Action) {
     try {
       const params = action.params as ImportGPXParams;
@@ -228,12 +229,12 @@ const sagas = {
             const pt = trkpt.$;
             const lat = pt.lat && parseFloat(pt.lat); // required
             const lon = pt.lon && parseFloat(pt.lon); // required
-            const ele = (pt.ele && parseFloat(pt.ele)) || null;
-            const time = (pt.time && pt.time) || null; // UTC using ISO 8601
+            const ele = (trkpt.ele && parseFloat(trkpt.ele[0])) || null;
+            const time = (trkpt.time && trkpt.time[0]) || null; // UTC using ISO 8601
             const epoch = (new Date(time)).getTime(); // msec (epoch)
 
             // only log a sample of the locations to show progress
-            if (!(index % 100) || index == maxIndex) {
+            if (!(index % 100) || index == maxIndex) { // TODO move this number to constants
               log.trace(`${index}/${maxIndex}: lat ${lat}, lon ${lon}, ele ${ele}, time ${time}, epoch ${epoch}`);
             }
           }) // trkpt map

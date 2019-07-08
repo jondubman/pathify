@@ -3,7 +3,7 @@ import * as express from 'express';
 var router = express.Router()
 
 import { constants } from 'lib/constants';
-import { log } from 'lib/log-bunyan';
+import log from 'shared/log';
 import { handlePollRequest } from 'lib/client';
 
 router.get('/', function (req, res) {

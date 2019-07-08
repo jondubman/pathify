@@ -24,7 +24,7 @@ const bunyanLogger = bunyan.createLogger({
 // map null to 'null' else Bunyan will not show anything at all for null
 const nullToString = e => (e === null ? 'null' : e);
 
-const log = {
+const logBunyan = {
   bunyanLogger,
   latestLogFile,
   serverLogfile,
@@ -53,8 +53,7 @@ const log = {
     const fixedArgs = args.map(nullToString);
     bunyanLogger.fatal(...fixedArgs);
   },
-  // TODO implement in log-winston as well
-  exception: (e, message) => log.error({ err: e, message: 'exception: ' + message }),
+  exception: (e, message) => logBunyan.error({ err: e, message: 'exception: ' + message }),
 }
 
 // function testLogging() {
@@ -77,4 +76,4 @@ const log = {
 
 // testLogging();
 
-export { log };
+export { logBunyan };

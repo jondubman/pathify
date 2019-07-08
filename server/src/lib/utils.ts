@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import { log } from 'lib/log-bunyan';
+import log from 'shared/log';
 
 const utils = {
   // secrets folder is excluded from Git repo.

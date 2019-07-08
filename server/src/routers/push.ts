@@ -4,7 +4,7 @@ import * as uuid from 'uuid/v4';
 
 var router = express.Router()
 
-import { log } from 'lib/log-bunyan';
+import log from 'shared/log';
 import { clientIdForAlias, pushToClient } from 'lib/client';
 import { setTimeout } from 'timers';
 import { constants } from 'lib/constants';
