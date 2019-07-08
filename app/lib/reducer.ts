@@ -12,6 +12,7 @@ import {
   initialAppState,
   AppState,
 } from 'lib/state';
+import { GenericEvents } from 'shared/timeseries';
 import { LocationEvent } from 'shared/locations';
 import log from 'shared/log';
 import { EventType } from "shared/timeseries";
@@ -23,6 +24,45 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
   const newState = { ...state }; // shallow copy for now
   const { params } = action;
   switch (action.type) {
+
+    case ReducerAction.ADD_EVENTS:
+      {
+        const newEvents = params as GenericEvents;
+        if (!newEvents.length) {
+          break;
+        }
+        const mergedEvents: GenericEvents = [];
+
+        log.debug('ADD_EVENTS: current events count', state.events.length);
+
+        // Merge incoming and existing events (TODO both assumed to be sorted!)
+        let eventsIndex = 0, newEventsIndex = 0;
+
+        if (!state.events.length) {
+          newState.events = newEvents;
+          log.debug('ADD_EVENTS: newState.events count', newState.events.length);
+          break;
+        }
+        while (eventsIndex < state.events.length || newEventsIndex < newEvents.length) {
+
+          if (eventsIndex < state.events.length &&
+             (newEventsIndex >= newEvents.length || state.events[eventsIndex].t <= newEvents[newEventsIndex].t)) {
+
+              mergedEvents.push(state.events[eventsIndex]);
+              eventsIndex++;
+            }
+          else if (newEventsIndex < newEvents.length &&
+              (eventsIndex >= state.events.length || newEvents[newEventsIndex].t <= state.events[eventsIndex].t)) {
+
+              mergedEvents.push(newEvents[newEventsIndex]);
+              newEventsIndex++;
+            }
+          // TODO consider eliminating duplicates, which would make ADD_EVENTS idempotent
+        }
+        log.debug('ADD_EVENTS: merged events count', mergedEvents.length);
+        newState.events = mergedEvents;
+      }
+      break;
 
     case ReducerAction.GEOLOCATION:
       {

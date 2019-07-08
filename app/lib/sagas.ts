@@ -220,7 +220,7 @@ const sagas = {
       log.info('importGPX', messageToLog(action));
       const gpx = (params.include as any).gpx;
       const events = locations.eventsFromGPX(gpx);
-      log.debug(events);
+      yield put(newAction(ReducerAction.ADD_EVENTS, events));
     } catch (err) {
       log.error('importGPX', err);
     }

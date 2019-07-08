@@ -12,6 +12,7 @@
 // There seems to be no way to avoid the repetition on each line given the syntax for TypeScript string enums.
 
 export enum ReducerAction {
+  'ADD_EVENTS' = 'ADD_EVENTS',
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'SET_APP_OPTION' = 'SET_APP_OPTION',
