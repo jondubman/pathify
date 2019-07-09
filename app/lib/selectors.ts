@@ -5,6 +5,7 @@ import constants, { MapStyle, TimespanKind } from 'lib/constants';
 import utils from 'lib/utils';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 
+import locations, { LocationEvent } from 'shared/locations';
 import { interval, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 
@@ -67,6 +68,18 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       loc: state.userLocation.data.loc,
       color: constants.colors.user,
       visible: true,
+    }
+  }
+  if (!state.ui.flags.timelineNow) {
+    const loc = locations.locEventNearestTimepoint(state.events,
+                                                   state.options.refTime,
+                                                   constants.timeline.nearTimeThreshold);
+    if (loc) {
+      pulsars.priorLocation = {
+        loc: loc.data.loc,
+        color: constants.colors.byName.red,
+        visible: true,
+      }
     }
   }
   return pulsars;

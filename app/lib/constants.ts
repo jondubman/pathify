@@ -301,6 +301,7 @@ const constants = {
       height: initialTimelineHeight,
       zoomLevel: 1,
     },
+    nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.

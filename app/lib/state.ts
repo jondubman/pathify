@@ -37,6 +37,7 @@ export type AppOptions = typeof initialAppOptions;
 
 const initialAppUIState = {
   flags: {
+    allowContinuousTimelineZoom: false, // false means discrete only
     followingUser: true, // should map follow user?
     keepMapCenteredWhenFollowing: false, // true means continuous. false means map recentered only when you near the edge
     helpEnabled: false,

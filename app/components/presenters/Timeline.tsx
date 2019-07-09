@@ -54,7 +54,7 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { nowTime, refTime, startupTime, timeRange, timespans, zoomLevel } = this.props;
+    const { allowZoom, nowTime, refTime, startupTime, timeRange, timespans, zoomLevel } = this.props;
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat, visibleTime } = zoomInfo;
@@ -120,7 +120,7 @@ class Timeline extends Component<TimelinePanelProps> {
           containerComponent={
             <VictoryZoomContainer
               allowPan={true}
-              allowZoom={false}
+              allowZoom={allowZoom}
               minimumZoom={{ x: 1000, y: 1 }}
               responsive={true}
               zoomDimension="x"
