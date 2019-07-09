@@ -1,0 +1,11 @@
+[
+  "trigger",
+  "./",
+  {
+    "name": "share",
+    "command": [
+      "yarn",
+      "share"
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "name": "pathify",
+  "version": "1.0.0",
+  "scripts": {
+    "dev-app": "develop-app.sh"
+  },
+  "main": "index.js",
+  "repository": "git@github.com:jondubman/pathify.git",
+  "author": "jondubman <jon@dubman.com>",
+  "license": "MIT"
+}
