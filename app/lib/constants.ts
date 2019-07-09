@@ -265,7 +265,7 @@ const constants = {
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
-  maxTimeGapForContinuousTrack: interval.seconds(5),
+  maxTimeGapForContinuousTrack: interval.seconds(2),
   panelWidth,
   refTime: {
     bottomMargin: 5,

@@ -1,6 +1,6 @@
 //  Selector functions for Redux reducer
 
-import { AppState } from 'lib/state';
+import { AppState, OptionalPulsars } from 'lib/state';
 import constants, { MapStyle, TimespanKind } from 'lib/constants';
 import utils from 'lib/utils';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
@@ -59,3 +59,15 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
 export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '')
 )
+
+export const pulsars = (state: AppState): OptionalPulsars => {
+  const pulsars = { ...state.options.pulsars };
+  if (state.userLocation) {
+    pulsars.userLocation = {
+      loc: state.userLocation.data.loc,
+      color: constants.colors.user,
+      visible: true,
+    }
+  }
+  return pulsars;
+}

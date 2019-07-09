@@ -8,18 +8,9 @@
 
 import { connect } from 'react-redux';
 
-import { AppState } from 'lib/state';
+import { pulsars } from 'lib/selectors';
+import { AppState, OptionalPulsars } from 'lib/state';
 import Pulsars from 'presenters/Pulsars';
-import { LonLat } from 'shared/locations';
-
-export interface OptionalPulsar {
-  loc: LonLat;
-  color: string;
-  visible: boolean;
-}
-
-// The key here is any unique string, whih could indicate a kind of pulsar (like 'origin'), or an id
-export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
 interface PulsarsStateProps {
   pulsars: OptionalPulsars;
@@ -31,9 +22,8 @@ interface PulsarsDispatchProps {
 export type PulsarsProps = PulsarsStateProps & PulsarsDispatchProps;
 
 const mapStateToProps = (state: AppState): PulsarsStateProps => {
-  // TODO should probably roll user location pulsar into this one. See showUserMarker in MapArea.
   return {
-    pulsars: state.options.pulsars,
+    pulsars: pulsars(state),
   }
 }
 

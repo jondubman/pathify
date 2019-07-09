@@ -3,8 +3,6 @@
 // Note classical for loops are used over a forEach / functional approach when iterating through a potentially large
 // array of events, as this incurs less overhead for function closures and support break / continue.
 
-import log from './log';
-
 // TimeRange tuple is always inclusive of its endpoints.
 // Use 0 as the first number to indicate a range with no start (-Infinity is not needed as time is always positive.)
 // Use Infinity as the second number to indicate a range with no end (open-ended time range).

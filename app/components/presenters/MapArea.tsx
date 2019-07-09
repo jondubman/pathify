@@ -87,8 +87,6 @@ class MapArea extends Component<MapAreaProps> {
     }
     const mapCenterLon = constants.map.default.lon;
     const mapCenterLat = constants.map.default.lat;
-    const showUserMarker = !!userLocation; // boolean (related to non-null assertion below, userLocation!.data.loc)
-
     if (mapHidden) {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
       // onPressIn is instantaneous, unlike onPress which waits for the tap to end.
@@ -103,7 +101,6 @@ class MapArea extends Component<MapAreaProps> {
         </View>
       )
     }
-
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>
@@ -131,15 +128,6 @@ class MapArea extends Component<MapAreaProps> {
             zoomEnabled={true}
             zoomLevel={constants.map.default.zoom}
           >
-            {showUserMarker ?
-              <Pulsar
-                id="userLocationMarker"
-                loc={userLocation!.data.loc}
-                color={constants.colors.user}
-              />
-              :
-              null
-            }
             <PulsarsContainer />
           </Mapbox.MapView>
         </View>
