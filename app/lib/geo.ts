@@ -237,7 +237,7 @@ export const Geo = {
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       if (pluginState.enabled) {
-        log.debug('BackgroundGeolocation configured and ready', pluginState);
+        log.trace('BackgroundGeolocation configured and ready', pluginState);
 
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         // Geo.changePace(true, () => {

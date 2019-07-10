@@ -20,7 +20,7 @@
 // Note you must use yield select instead of accessing the store directly (yield the select effect)
 
 import { Polygon } from '@turf/helpers';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   call,
   delay,
@@ -39,6 +39,7 @@ import {
   newAction,
   ReducerAction,
 
+  AddEventsParams,
   AppQueryParams,
   CenterMapParams,
   DelayedActionParams,
@@ -47,6 +48,7 @@ import {
   LogActionParams,
   PanTimelineParams,
   RepeatedActionParams,
+  SaveEventsToStorageParams,
   SequenceParams,
   SleepParams,
   ZoomMapParams,
@@ -63,7 +65,7 @@ import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import locations, { LocationEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
-import timeseries, { GenericEvents, TimeRange } from 'shared/timeseries';
+import timeseries, { GenericEvent, GenericEvents, TimeRange } from 'shared/timeseries';
 
 const sagas = {
 
@@ -86,6 +88,13 @@ const sagas = {
 
   // From here on, functions are alphabetized:
 
+  addEvents: function* (action: Action) {
+    const params = action.params as AddEventsParams;
+    const { events } = params;
+    yield put(newAction(ReducerAction.ADD_EVENTS, events));
+    yield put(newAction(AppAction.saveEventsToStorage, { events }));
+  },
+
   // TODO now that this scaffolding is working, add actual app queries
   appQuery: function* (action: Action) {
     try {
@@ -106,6 +115,11 @@ const sagas = {
         }
         case 'ping': {
           response = 'pong';
+          break;
+        }
+        case 'storage': {
+          const keys = yield call(AsyncStorage.getAllKeys);
+          response = keys.length;
           break;
         }
       }
@@ -169,6 +183,17 @@ const sagas = {
     }
   },
 
+
+  clearStorage: function* () {
+    try {
+      const keys = yield call(AsyncStorage.getAllKeys);
+      log.warn(`clearStorage: clearing ${keys.length} keys from AsyncStorage`);
+      AsyncStorage.clear();
+    } catch (err) {
+      log.error('saga clearStorage', err);
+    }
+  },
+
   delayedAction: function* (action: Action) {
     try {
       const params = action.params as DelayedActionParams;
@@ -183,6 +208,7 @@ const sagas = {
     try {
       const locationEvent: LocationEvent = action.params as LocationEvent;
       yield put(newAction(ReducerAction.GEOLOCATION, locationEvent));
+      yield put(newAction(AppAction.saveEventsToStorage, { events: [ locationEvent ] }));
 
       // Potential cascading AppAction.centerMapOnUser:
       const map = MapUtils();
@@ -223,9 +249,26 @@ const sagas = {
       const relativeTo = utils.now(); // TODO may want more flexibility later
       const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
       log.debug('adjustedEvents', relativeTo, adjustedEvents[0].t - relativeTo, adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
-      yield put(newAction(ReducerAction.ADD_EVENTS, adjustedEvents));
+      yield put(newAction(AppAction.addEvents, adjustedEvents));
     } catch (err) {
       log.error('importGPX', err);
+    }
+  },
+
+  loadEventsFromStorage: function* (action: Action) {
+    try {
+      const keys = yield call(AsyncStorage.getAllKeys);
+      log.debug('loadEventsFromStorage: key count:', keys.length);
+      for (let i = 0; i < keys.length; i++) {
+        log.debug(keys[i]);
+      }
+      if (keys.length) {
+        log.debug(keys);
+        // const keyValuePairs = yield call(AsyncStorage.multiGet, [keys[0]]);
+        // log.debug('it worked', typeof keyValuePairs);
+      }
+    } catch (err) {
+      log.error('loadEventsFromStorage', err);
     }
   },
 
@@ -293,6 +336,14 @@ const sagas = {
   repeatedAction: function* () {
   },
 
+  saveEventsToStorage: function* (action: Action) {
+    const params = action.params as SaveEventsToStorageParams;
+    const { events } = params;
+    const keyValuePairs = events.map((event: GenericEvent) => ([ event.t.toString(), JSON.stringify(event) ]));
+    log.debug(`saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
+    yield call(AsyncStorage.multiSet, keyValuePairs); // TODO handle errors
+  },
+
   // The sequence action is an array of actions to be executed in sequence, such that
   //    -- the sleep action can be interspersed, and works as expected, delaying subsequent actions in the sequence;
   //    -- repeatedAction behaves as expected when containing a sub-sequence of
@@ -341,6 +392,7 @@ const sagas = {
 
   // Initiate or continue syncing data with the server.
   // This doesn't neecssarily sync everything that is pending at once, particularly with a big backlog.
+  // Note: see timerTick which is what typically triggers this saga.
   serverSync: function* (action: Action) {
     const now = action.params as number;
     yield put(newAction(ReducerAction.SET_APP_OPTION, { serverSyncTime: now }));
@@ -414,6 +466,7 @@ const sagas = {
   timelineZoomed: function* (action: Action) {
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
+
     const refTime = (x[0] + x[1]) / 2;
     log.trace('saga timelineZoomed', refTime);
     yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
@@ -428,6 +481,7 @@ const sagas = {
     // log.trace('timerTick', now);
     const timelineNow = yield select((state: AppState) => state.ui.flags.timelineNow);
     if (timelineNow) {
+      // This is where the mode for the Timeline really takes effect.
       yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: now }));
     }
     // The approach for occasional scheduled actions such as server sync is to leverage this tick timer

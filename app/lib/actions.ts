@@ -30,14 +30,17 @@ export enum ReducerAction {
 // Some appActions and reducerActions have similar names (e.g. geolocation, GEOLOCATION).
 // In these cases the AppAction is a wrapper that triggers the corresponding ReducerAction while handling side effects.
 export enum AppAction {
+  'addEvents' = 'addEvents',
   'appQuery' = 'appQuery', // see AppQueryParams
   'backgroundTapped' = 'backgroundTapped',
   'centerMap' = 'centerMap', // see CenterMapParams
   'centerMapOnUser' = 'centerMapOnUser',
+  'clearStorage' = 'clearStorage',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
   'importGPX' = 'importGPX',
+  'loadEventsFromStorage' = 'loadEventsFromStorage',
   'log' = 'log', // see LogActionParams
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
@@ -45,6 +48,7 @@ export enum AppAction {
   'panTimeline' = 'panTimeline', // see PanTimelineParams
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
+  'saveEventsToStorage' = 'saveEventsToStorage',
   'serverSync' = 'serverSync',
   'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
@@ -95,13 +99,17 @@ export const newAction = (type: ActionType, params: any = null) => ({
 // From here on: types related to params for actions
 
 import { LonLat } from 'shared/locations';
-import { TimeReference } from 'shared/timeseries';
+import { GenericEvents, TimeReference } from 'shared/timeseries';
 
 // TODO complete this list
 
 export enum AbsoluteRelativeOption {
   'absolute' = 'absolute',
   'relative' = 'relative',
+}
+
+export interface AddEventsParams {
+  events: GenericEvents;
 }
 
 export interface AppQueryDesciptor {
@@ -148,6 +156,10 @@ export interface PanTimelineParams {
 export interface RepeatedActionParams {
   repeat: Action,
   times: number,
+}
+
+export interface SaveEventsToStorageParams {
+  events: GenericEvents,
 }
 
 export type SequenceParams = Action[];
