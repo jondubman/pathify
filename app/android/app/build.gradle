@@ -94,7 +94,8 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+	purgeBackgroundGeolocationDebugResources(applicationVariants)
+	compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
@@ -137,13 +138,12 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-community_async-storage')
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-svg')
     implementation project(':react-native-background-geolocation')
     implementation project(':react-native-background-fetch')
     implementation project(':@react-native-community_slider')
-    implementation project(':@mapbox_react-native-mapbox-gl')
-    implementation project(':@react-native-community_async-storage')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-svg')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
@@ -154,4 +154,17 @@ dependencies {
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
+}
+
+// [Added by react-native-background-geolocation] Purge debug sounds from release build.
+def purgeBackgroundGeolocationDebugResources(applicationVariants) {
+    if ((rootProject.ext.has("removeBackgroundGeolocationDebugSoundsInRelease")) && (rootProject.ext.removeBackgroundGeolocationDebugSoundsInRelease == false)) return
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            println("[react-native-background-geolocation] Purging debug resources in release build")
+            variant.mergeResources.doLast {
+                delete(fileTree(dir: variant.mergeResources.outputDir, includes: ["raw_tslocationmanager*"]))
+            }
+        }
+    }
 }

@@ -2,6 +2,7 @@
 
 buildscript {
     ext {
+		googlePlayServicesLocationVersion = "17.0.0"
         buildToolsVersion = "27.0.3"
         minSdkVersion = 16
         compileSdkVersion = 27
@@ -22,6 +23,12 @@ buildscript {
 
 allprojects {
     repositories {
+		maven {
+			url "$rootDir/../node_modules/react-native-background-geolocation/android/libs"
+		}
+		maven {
+			url "$rootDir/../node_modules/react-native-background-fetch/android/libs"
+		}
         mavenLocal()
         google()
         jcenter()
