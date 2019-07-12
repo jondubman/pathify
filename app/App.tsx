@@ -24,11 +24,11 @@ export default class App extends Component {
     log.debug('windowSize', utils.windowSize());
     store.create(); // proactively create Redux store instance
 
-    store.dispatch(newAction(AppAction.loadEventsFromStorage));
-
     Geo.initializeGeolocation(store);
     Geo.resetOdometer();
     store.dispatch(newAction(AppAction.startFollowingUser));
+
+    store.dispatch(newAction(AppAction.loadEventsFromStorage));
 
     const interval = setInterval(() => {
       store.dispatch(newAction(AppAction.timerTick, utils.now()));

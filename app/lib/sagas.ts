@@ -188,7 +188,7 @@ const sagas = {
     try {
       const keys = yield call(AsyncStorage.getAllKeys);
       log.warn(`clearStorage: clearing ${keys.length} keys from AsyncStorage`);
-      AsyncStorage.clear();
+      yield call(AsyncStorage.clear);
     } catch (err) {
       log.error('saga clearStorage', err);
     }
@@ -249,7 +249,7 @@ const sagas = {
       const relativeTo = utils.now(); // TODO may want more flexibility later
       const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
       log.debug('adjustedEvents', relativeTo, adjustedEvents[0].t - relativeTo, adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
-      yield put(newAction(AppAction.addEvents, adjustedEvents));
+      yield put(newAction(AppAction.addEvents, { events: adjustedEvents }));
     } catch (err) {
       log.error('importGPX', err);
     }
@@ -259,13 +259,15 @@ const sagas = {
     try {
       const keys = yield call(AsyncStorage.getAllKeys);
       log.debug('loadEventsFromStorage: key count:', keys.length);
-      for (let i = 0; i < keys.length; i++) {
-        log.debug(keys[i]);
-      }
       if (keys.length) {
-        log.debug(keys);
-        // const keyValuePairs = yield call(AsyncStorage.multiGet, [keys[0]]);
-        // log.debug('it worked', typeof keyValuePairs);
+        // Note the context (AsyncStorage) needs to be passed in so 'this' is correct inside AsyncStorage's multiGet.
+        const keyValuePairs = yield call([AsyncStorage, AsyncStorage.multiGet], keys);
+        const events: GenericEvents = [];
+        for (const keyValue of keyValuePairs) {
+          const event = JSON.parse(keyValue[1]);
+          events.push(event);
+        }
+        yield put(newAction(AppAction.addEvents, { events }));
       }
     } catch (err) {
       log.error('loadEventsFromStorage', err);

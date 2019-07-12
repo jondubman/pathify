@@ -12,7 +12,11 @@
     "**/web/build": true,
     "**/yarn.lock": true,
     "app/shared/**": true,
-    "server/src/shared/**": true
+    "server/src/shared/**": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
   },
   "workbench.colorTheme": "Tomorrow Night Blue"
 }
