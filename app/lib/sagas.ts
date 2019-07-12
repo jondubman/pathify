@@ -66,6 +66,7 @@ import { MapUtils } from 'presenters/MapArea';
 import locations, { LocationEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
 import timeseries, { GenericEvent, GenericEvents, TimeRange } from 'shared/timeseries';
+import { continuousTracks } from 'shared/tracks';
 
 const sagas = {
 
@@ -90,12 +91,14 @@ const sagas = {
 
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
-    const { events } = params;
-    yield put(newAction(ReducerAction.ADD_EVENTS, events));
-    yield put(newAction(AppAction.saveEventsToStorage, { events }));
+    const { events, saveEventsToStorage } = params;
+    const sortedEvents = timeseries.sortEvents(events);
+    yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
+    if (saveEventsToStorage) {
+      yield put(newAction(AppAction.saveEventsToStorage, { events: sortedEvents }));
+    }
   },
 
-  // TODO now that this scaffolding is working, add actual app queries
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
@@ -120,6 +123,14 @@ const sagas = {
         case 'storage': {
           const keys = yield call(AsyncStorage.getAllKeys);
           response = keys.length;
+          break;
+        }
+        case 'ui': {
+          response = state.ui;
+          break;
+        }
+        case 'userLocation': {
+          response = state.userLocation;
           break;
         }
       }
@@ -267,7 +278,12 @@ const sagas = {
           const event = JSON.parse(keyValue[1]);
           events.push(event);
         }
-        yield put(newAction(AppAction.addEvents, { events }));
+        yield put(newAction(AppAction.addEvents, { events, saveEventsToStorage: false }));
+
+        // TODO debug
+        const sortedEvents = timeseries.sortEvents(events);
+        const tracks = yield call(continuousTracks, sortedEvents, constants.maxTimeGapForContinuousTrack);
+        yield call(log.debug, 'load event count', sortedEvents.length, 'loaded tracks', tracks.length, tracks);
       }
     } catch (err) {
       log.error('loadEventsFromStorage', err);

@@ -1,5 +1,7 @@
 // Shared code (client + server) having to do with time series of events.
 
+import log from './log';
+
 // Note classical for loops are used over a forEach / functional approach when iterating through a potentially large
 // array of events, as this incurs less overhead for function closures and support break / continue.
 
@@ -186,6 +188,19 @@ const timeseries = {
       changed: timeseries.uniqify(timestamp), // uniqifying it will facilitate filtering the event list by this value
       source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
     }
+  },
+
+  // return a sorted copy of events, or the original events if they were already sorted.
+  sortEvents: (events: GenericEvents): GenericEvents => {
+    if (timeseries.sortedByTime(events)) {
+      return events;
+    }
+    log.warn('sortEvents: sort required');
+    const sortedEvents = [ ...events ].sort((a: GenericEvent, b: GenericEvent) => (a.t - b.t));
+    if (!timeseries.sortedByTime(sortedEvents)) {
+      log.warn('sortEvents: sort failed');
+    }
+    return sortedEvents;
   },
 
   // Confirm that the given events are sorted by t, where t is non-negative.

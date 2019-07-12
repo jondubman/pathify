@@ -5,7 +5,7 @@ import constants, { MapStyle, TimespanKind } from 'lib/constants';
 import utils from 'lib/utils';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 
-import locations, { LocationEvent } from 'shared/locations';
+import locations from 'shared/locations';
 import { interval, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 

@@ -110,6 +110,7 @@ export enum AbsoluteRelativeOption {
 
 export interface AddEventsParams {
   events: GenericEvents;
+  saveEventsToStorage?: boolean; // if explicitly set to false, client-side storage will not be affected
 }
 
 export interface AppQueryDesciptor {

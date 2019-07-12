@@ -1,7 +1,7 @@
 // Shared code (client + server)
 
 import log from './log';
-import { EventType, GenericEvents, TimeRange } from './timeseries';
+import timeseries, { EventType, GenericEvents, TimeRange } from './timeseries';
 
 // Define "Track", a type of derived metadata about events.
 // A Track does not include or contain any of the events themselves. It specifies a TimeRange for LOC updates,
@@ -26,6 +26,9 @@ export type Tracks = Track[]; // plural
 // TODO *Contiguous* tracks, which add the requirement that consecutive LOC updates be in close proximity.
 //
 export const continuousTracks = (events: GenericEvents, maxTimeGap: number, tr: TimeRange = [0, Infinity]): Tracks => {
+  if (!timeseries.sortedByTime(events)) {
+    log.warn('continuousTracks: events out of order');
+  }
   let tracks: Tracks = []; // to return
   let count = 0; // count of LOC updates per track
   let t_trackStart = 0; // timestamp of the start of the current track. 0 means no current track.
