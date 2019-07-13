@@ -19,7 +19,7 @@ import BackgroundGeolocation, {
 
 import { AppAction, newAction } from 'lib/actions';
 import { Store } from 'lib/store';
-import { LocationEvent } from 'shared/locations';
+import { LocationEvent, ModeChangeEvent, ModeType, MotionEvent } from 'shared/locations';
 import timeseries, { EventType } from 'shared/timeseries';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -187,9 +187,9 @@ const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolo
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
 const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
-const locationEventFromLocation = (info: Location): LocationEvent => {
+const newLocationEvent = (info: Location): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
-  const locationEvent: LocationEvent = {
+  return {
     ...timeseries.newSyncedEvent(t),
     type: EventType.LOC,
     data: {
@@ -200,7 +200,35 @@ const locationEventFromLocation = (info: Location): LocationEvent => {
       speed: info.coords.speed,
     },
   }
-  return locationEvent;
+}
+
+const newMotionEvent = (info: Location, isMoving: boolean): MotionEvent => {
+  const t = new Date(info.timestamp).getTime();
+  return {
+    ...timeseries.newSyncedEvent(t),
+    type: EventType.MOTION,
+    data: { isMoving },
+  }
+}
+
+const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEvent => {
+  const t = utils.now(); // TODO
+  const mapActivityToMode =
+    { in_vehicle: ModeType.VEHICLE,
+      on_bicycle: ModeType.BICYCLE,
+      on_foot: ModeType.ON_FOOT,
+      running: ModeType.RUNNING,
+      walking: ModeType.WALKING }
+  const mode = mapActivityToMode[activity];
+  log.trace('newModeChangeEvent', activity, mode);
+  return {
+    ...timeseries.newSyncedEvent(t),
+    type: EventType.MODE,
+    data: {
+      mode,
+      confidence,
+    },
+  }
 }
 
 export const Geo = {
@@ -212,6 +240,7 @@ export const Geo = {
     BackgroundGeolocation.ready(geolocationOptions_default, pluginState => {
 
       const onActivityChange = (event: MotionActivityEvent) => {
+        store.dispatch(newAction(AppAction.modeChange, newModeChangeEvent(event.activity, event.confidence)));
       }
       const onEnabledChange = (isEnabled: boolean) => {
       }
@@ -222,11 +251,10 @@ export const Geo = {
       const onHeartbeat = (event: HeartbeatEvent) => {
       }
       const onLocation = (location: Location) => {
-        const locationEvent = locationEventFromLocation(location);
-        // log.trace('location', locationEvent);
-        store.dispatch(newAction(AppAction.geolocation, locationEvent));
+        store.dispatch(newAction(AppAction.geolocation, newLocationEvent(location)));
       }
       const onMotionChange = (event: MotionChangeEvent) => {
+        store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving)));
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);

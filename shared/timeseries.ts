@@ -17,11 +17,15 @@ export interface TimeReference { // relative or absolute
 }
 
 export enum EventType { // TODO keep in sync with datamodel.prisma
-  'APP' = 'APP',
-  'LOC' = 'LOC',
+  'APP' = 'APP', // startup, pause, resume
+  'LOC' = 'LOC', // geolocation
+  'MODE' = 'MODE', // see ModeType
+  'MOTION' = 'MOTION', // isMoving: true or false
   'NONE' = 'NONE',
   'OTHER' = 'OTHER',
-  'SYSTEM' = 'SYSTEM',
+  'SYSTEM' = 'SYSTEM', // reserved
+  'TEST' = 'TEST',
+  'UI' = 'UI', // user action
 }
 
 export interface GenericEvent {
@@ -34,6 +38,7 @@ export interface GenericEvent {
 
   // used locally only (not committed to server):
   changed?: Timepoint; // timestamp if/when last changed. Used to identify events to sync with server.
+  temp?: boolean; // true means do not persist anywhere
 }
 
 // Functions of GenericEvents that return a single event can return an EventResult that contains both the index into

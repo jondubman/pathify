@@ -64,9 +64,9 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
-import locations, { LocationEvent } from 'shared/locations';
+import locations, { LocationEvent, ModeChangeEvent, MotionEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
-import timeseries, { GenericEvent, GenericEvents, TimeRange } from 'shared/timeseries';
+import timeseries, { GenericEvent, GenericEvents, TimeRange, EventType } from 'shared/timeseries';
 import { continuousTracks } from 'shared/tracks';
 
 const sagas = {
@@ -95,7 +95,7 @@ const sagas = {
     const { events, saveEventsToStorage } = params;
     const sortedEvents = timeseries.sortEvents(events);
     yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
-    if (saveEventsToStorage) {
+    if (saveEventsToStorage !== false) { // note undefined defaults to true
       const eventsToStore = timeseries.filterEvents(sortedEvents, (event: GenericEvent) => (!event.temp))
       yield put(newAction(AppAction.saveEventsToStorage, { events: eventsToStore }));
     }
@@ -112,6 +112,18 @@ const sagas = {
       switch (queryType) {
         case 'eventCount': {
           response = state.events.length;
+          break;
+        }
+        case 'modeCount': {
+          response = timeseries
+            .filterEvents(state.events, (event: GenericEvent) => (event.type === EventType.MODE))
+            .length;
+          break;
+        }
+        case 'motionCount': {
+          response = timeseries
+            .filterEvents(state.events,(event: GenericEvent) => (event.type === EventType.MOTION))
+            .length;
           break;
         }
         case 'options': {
@@ -219,7 +231,7 @@ const sagas = {
 
   geolocation: function* (action: Action) {
     try {
-      const locationEvent: LocationEvent = action.params as LocationEvent;
+      const locationEvent = action.params as LocationEvent;
       yield put(newAction(ReducerAction.GEOLOCATION, locationEvent));
       yield put(newAction(AppAction.saveEventsToStorage, { events: [ locationEvent ] }));
 
@@ -302,7 +314,6 @@ const sagas = {
 
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
-    // log.trace('saga mapRegionChanged', action.params);
     yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
     yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'mapMoving'));
     yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
@@ -310,12 +321,11 @@ const sagas = {
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
-    // log.trace('saga mapRegionChanging', action.params);
     yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapMoving'));
   },
 
   mapTapped: function* (action: Action) {
-    log.trace('saga mapTapped', action.params);
+    yield call(log.debug, 'saga mapTapped', action.params);
 
     const geolocationPanelOpen = yield select((state: AppState) => state.ui.panels.geolocation.open);
     const settingsOpen = yield select((state: AppState) => state.ui.panels.settings.open);
@@ -327,6 +337,18 @@ const sagas = {
     } else {
       yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
     }
+  },
+
+  modeChange: function* (action: Action) {
+    const modeChangeEvent = action.params as ModeChangeEvent;
+    yield call(log.debug, 'saga modeChange', modeChangeEvent);
+    yield put(newAction(AppAction.addEvents, { events: [ modeChangeEvent ]}));
+  },
+
+  motionChange: function* (action: Action) {
+    const motionEvent = action.params as MotionEvent;
+    yield call(log.debug, 'saga motionChange', motionEvent);
+    yield put(newAction(AppAction.addEvents, { events: [ motionEvent ] }));
   },
 
   panTimeline: function* (action: Action) {

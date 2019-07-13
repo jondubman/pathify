@@ -20,6 +20,27 @@ export interface LocationEvent extends GenericEvent {
 
 export type LocationEvents = LocationEvent[];
 
+export interface MotionEvent extends GenericEvent {
+  data: {
+    isMoving: boolean;
+  }
+}
+
+export enum ModeType {
+  'VEHICLE' = 'VEHICLE',
+  'BICYCLE' = 'BICYCLE',
+  'ON_FOOT' = 'ON_FOOT',
+  'RUNNING' = 'RUNNING',
+  'WALKING' = 'WALKING',
+}
+
+export interface ModeChangeEvent extends GenericEvent {
+  data: {
+    mode: ModeType;
+    confidence: number;
+  }
+}
+
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type == EventType.LOC);
 
 const locations = {

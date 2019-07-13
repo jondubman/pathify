@@ -45,6 +45,8 @@ export enum AppAction {
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
+  'modeChange' = 'modeChange',
+  'motionChange' = 'motionChange',
   'panTimeline' = 'panTimeline', // see PanTimelineParams
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams

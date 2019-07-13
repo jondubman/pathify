@@ -14,11 +14,11 @@ const tBase = 1000;
 const tIncrement = 10;
 
 const eventList: GenericEvents = [
-  { t: tBase, type: EventType.OTHER },
-  { t: tBase + tIncrement * 1, type: EventType.OTHER },
-  { t: tBase + tIncrement * 2, type: EventType.OTHER },
-  { t: tBase + tIncrement * 3, type: EventType.OTHER },
-  { t: tBase + tIncrement * 4, type: EventType.OTHER },
+  { t: tBase, type: EventType.TEST },
+  { t: tBase + tIncrement * 1, type: EventType.TEST },
+  { t: tBase + tIncrement * 2, type: EventType.TEST },
+  { t: tBase + tIncrement * 3, type: EventType.TEST },
+  { t: tBase + tIncrement * 4, type: EventType.TEST },
 ]
 
 describe('GenericEvents tests', function () {
