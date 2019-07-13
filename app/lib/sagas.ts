@@ -18,6 +18,7 @@
 //   yield cancel
 //
 // Note you must use yield select instead of accessing the store directly (yield the select effect)
+// Note also you should use yield call(log...) instead of log directly (yield call effect) so log happens at right time.
 
 import { Polygon } from '@turf/helpers';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -74,10 +75,10 @@ const sagas = {
     // Avoid boilerplate by automatically yielding takeEvery for each AppAction
     for (let action in AppAction) {
       if (AppAction[action]) {
-        log.debug('configuring saga for AppAction', action);
+        yield call(log.debug, 'configuring saga for AppAction', action);
         yield takeEvery(AppAction[action], sagas[AppAction[action]]);
       } else {
-        log.warn('unknown action in AppAction enum', action); // TODO why does this happen?
+        yield call(log.warn, 'unknown action in AppAction enum', action); // TODO why does this happen?
       }
     }
     // equivalent to
@@ -95,14 +96,15 @@ const sagas = {
     const sortedEvents = timeseries.sortEvents(events);
     yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
     if (saveEventsToStorage) {
-      yield put(newAction(AppAction.saveEventsToStorage, { events: sortedEvents }));
+      const eventsToStore = timeseries.filterEvents(sortedEvents, (event: GenericEvent) => (!event.temp))
+      yield put(newAction(AppAction.saveEventsToStorage, { events: eventsToStore }));
     }
   },
 
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
-      log.debug('appQuery', params);
+      yield call(log.debug, 'appQuery', params);
       const { query, uuid } = params;
       const queryType = query ? query.type : null;
       const state = store.getState();
@@ -136,7 +138,7 @@ const sagas = {
       }
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: { response, uuid }});
     } catch(err) {
-      log.error('appQuery', err);
+      yield call(log.error, 'appQuery', err);
     }
   },
 
@@ -175,7 +177,7 @@ const sagas = {
         }
       }
     } catch (err) {
-      log.error('saga centerMap', err);
+      yield call(log.error, 'saga centerMap', err);
     }
   },
 
@@ -190,7 +192,7 @@ const sagas = {
         }
       }
     } catch (err) {
-      log.error('saga centerMapOnUser', err);
+      yield call(log.error, 'saga centerMapOnUser', err);
     }
   },
 
@@ -198,10 +200,10 @@ const sagas = {
   clearStorage: function* () {
     try {
       const keys = yield call(AsyncStorage.getAllKeys);
-      log.warn(`clearStorage: clearing ${keys.length} keys from AsyncStorage`);
+      yield call(log.info, `clearStorage: clearing ${keys.length} keys from AsyncStorage`);
       yield call(AsyncStorage.clear);
     } catch (err) {
-      log.error('saga clearStorage', err);
+      yield call(log.error, 'saga clearStorage', err);
     }
   },
 
@@ -211,7 +213,7 @@ const sagas = {
       yield delay(params.after);
       yield put(params.run);
     } catch (err) {
-      log.error('saga delayedAction', err);
+      yield call(log.error, 'saga delayedAction', err);
     }
   },
 
@@ -235,7 +237,7 @@ const sagas = {
         }
       }
     } catch (err) {
-      log.error('geolocation', err);
+      yield call(log.error, 'geolocation', err);
     }
   },
 
@@ -243,9 +245,9 @@ const sagas = {
   importEvents: function* (action: Action) {
     try {
       const params = action.params as ImportEventsParams;
-      log.info('importEvents', params.include);
+      yield call(log.info, 'importEvents', params.include);
     } catch (err) {
-      log.error('importEvents', err);
+      yield call(log.error, 'importEvents', err);
     }
   },
 
@@ -254,22 +256,23 @@ const sagas = {
   importGPX: function* (action: Action) {
     try {
       const params = action.params as ImportGPXParams;
-      log.info('importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
+      yield call(log.info, 'importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
       const gpx = (params.include as any).gpx;
       const events = locations.eventsFromGPX(gpx);
       const relativeTo = utils.now(); // TODO may want more flexibility later
       const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
-      log.debug('adjustedEvents', relativeTo, adjustedEvents[0].t - relativeTo, adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
+      yield call(log.debug, 'adjustedEvents',
+        relativeTo, adjustedEvents[0].t - relativeTo, adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
       yield put(newAction(AppAction.addEvents, { events: adjustedEvents }));
     } catch (err) {
-      log.error('importGPX', err);
+      yield call(log.error, 'importGPX', err);
     }
   },
 
   loadEventsFromStorage: function* (action: Action) {
     try {
       const keys = yield call(AsyncStorage.getAllKeys);
-      log.debug('loadEventsFromStorage: key count:', keys.length);
+      yield call(log.debug, 'loadEventsFromStorage: key count:', keys.length);
       if (keys.length) {
         // Note the context (AsyncStorage) needs to be passed in so 'this' is correct inside AsyncStorage's multiGet.
         const keyValuePairs = yield call([AsyncStorage, AsyncStorage.multiGet], keys);
@@ -286,7 +289,7 @@ const sagas = {
         yield call(log.debug, 'load event count', sortedEvents.length, 'loaded tracks', tracks.length, tracks);
       }
     } catch (err) {
-      log.error('loadEventsFromStorage', err);
+      yield call(log.error, 'loadEventsFromStorage', err);
     }
   },
 
@@ -294,7 +297,7 @@ const sagas = {
   log: function* (action: Action) {
     const params = action.params as LogActionParams;
     const { level, message } = params;
-    log[level || 'debug'](message);
+    yield call(log[level || 'debug'], message);
   },
 
   // Triggered by Mapbox
@@ -342,7 +345,7 @@ const sagas = {
   reorientMap: function* () {
     const map = MapUtils();
     if (map) {
-      log.debug('saga reorientMap');
+      yield call(log.debug, 'saga reorientMap');
       const obj = { heading: 0, duration: constants.map.reorientationTime };
       yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapMoving'));
       yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapReorienting'));
@@ -358,7 +361,7 @@ const sagas = {
     const params = action.params as SaveEventsToStorageParams;
     const { events } = params;
     const keyValuePairs = events.map((event: GenericEvent) => ([ event.t.toString(), JSON.stringify(event) ]));
-    log.debug(`saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
+    yield call(log.debug, `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
     yield call(AsyncStorage.multiSet, keyValuePairs); // TODO handle errors
   },
 
@@ -394,7 +397,7 @@ const sagas = {
       //   yield put(innerAction);
       // }
     } catch (err) {
-      log.error('saga sequence', err);
+      yield call(log.error, 'saga sequence', err);
     }
   },
 
@@ -451,14 +454,14 @@ const sagas = {
       // This is the side-effect that belongs outside the reducer:
       Geo.setGeolocationMode(id);
     } catch (err) {
-      log.error('setGeolocationMode', err);
+      yield call(log.error, 'setGeolocationMode', err);
     }
   },
 
   // follow the user, recentering map right away, kicking off background geolocation if needed
   startFollowingUser: function* () {
     try {
-      log.debug('saga startFollowingUser');
+      yield call(log.debug, 'saga startFollowingUser');
       yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'followingUser'));
       const map = MapUtils();
       if (map) {
@@ -466,17 +469,17 @@ const sagas = {
       }
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
-      log.error('saga startFollowingUser', err);
+      yield call(log.error, 'saga startFollowingUser', err);
     }
   },
 
   stopFollowingUser: function* () {
     try {
-      log.debug('saga stopFollowingUser');
+      yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'followingUser'));
       // yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
-      log.error('saga stopFollowingUser', err);
+      yield call(log.error, 'saga stopFollowingUser', err);
     }
   },
 
@@ -552,10 +555,10 @@ const sagas = {
   // Stop following user after panning the map.
   userMovedMap: function* (action: Action) {
     try {
-      log.debug('saga userMovedMap');
+      yield call(log.debug, 'saga userMovedMap');
       yield put(newAction(AppAction.stopFollowingUser));
     } catch (err) {
-      log.error('userMovedMap', err);
+      yield call(log.error, 'userMovedMap', err);
     }
   },
 
@@ -579,7 +582,7 @@ const sagas = {
         yield call(map.setCamera as any, config);
       }
     } catch (err) {
-      log.error('saga centerMap', err);
+      yield call(log.error, 'saga centerMap', err);
     }
   },
 }
