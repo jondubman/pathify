@@ -8,17 +8,9 @@ import log from 'shared/log';
 import { clientIdForAlias, pushToClient } from 'lib/client';
 import { setTimeout } from 'timers';
 import { constants } from 'lib/constants';
+import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
 import { messageToLog } from 'shared/log';
 
-// interface AppQueryParams {
-//   timeout?: number;
-//   query?: string; // empty query is just a ping
-//   uuid: string;
-// }
-interface AppQueryResponse {
-  uuid: string;
-  response: any;
-}
 interface AppQueryPromise {
   resolve: Function;
   reject: Function;
@@ -48,15 +40,18 @@ router.post('/', function (req, res) {
     res.send({ message: 'No client specified; set environment variable CA for client alias or CID for client ID' });
     return;
   }
-  // Push message to client (whether appQuery, or any other)
+  // Push message to client
   const message = { ...req.body };
-  if (message.type === 'appQuery') { // TODO AppAction.appQuery
-    if (!message.params) { // TODO message.params is type AppQueryParams
-      message.params = {}; // this allows us to send an empty query, which is essentially a ping
-    }
+
+  // Special case to support round trip server-initiated queries into a running app:
+  //   When server receives appQuery request,
+  //   server pushes this 'query' to the app;
+  //   app responds with POST to /appQueryResponse (or timeout);
+  //   then server forwards the app's response to the original requester by responding to this request
+
+  if (message.type === 'appQuery') {
     const appQueryUuid = uuid();
-    message.params.uuid = appQueryUuid;
-    log.debug('message at this point', message);
+    message.params = { ...message.params, uuid: appQueryUuid } as AppQueryParams;
     if (appQueryPromises[appQueryUuid]) {
       log.warn('call to appQuery with existing uuid'); // not likely!
     } else {
@@ -67,7 +62,7 @@ router.post('/', function (req, res) {
         setTimeout(() => {
           reject('timeout');
         }, timeout);
-      }).then(appQueryResponse => { // the POST to /appQueryResponse gets us here
+      }).then(appQueryResponse => { // a POST to /appQueryResponse gets us here
         const { response } = appQueryResponse;
         const responseReadable = util.inspect(response, { depth: 4 });
         log.info(`response from clientId ${clientId}: ${responseReadable}`);
@@ -86,9 +81,8 @@ router.post('/', function (req, res) {
   log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message`, messageToLog(message));
   pushToClient(message, clientId, clientAlias);
 
-  if (message.type !== 'appQuery') { // The handler for appQueryResponse should respond for an appQuery.
-    // typical scenario
-    res.send({ message: 'OK' });
+  if (message.type !== 'appQuery') { // The handler for POST to /appQueryResponse above should respond to an appQuery.
+    res.send({ message: 'OK' }); // typical
   }
 })
 

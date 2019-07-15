@@ -5,7 +5,7 @@ import BackgroundGeolocation, {
   // State,
   Config,
   Location,
-  // LocationError,
+  LocationError,
   // Geofence,
   GeofenceEvent,
   GeofencesChangeEvent,
@@ -252,6 +252,9 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         store.dispatch(newAction(AppAction.geolocation, newLocationEvent(location)));
+      }
+      const onLocationError = (error: LocationError) => {
+        log.warn('LocationError', error);
       }
       const onMotionChange = (event: MotionChangeEvent) => {
         store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving)));

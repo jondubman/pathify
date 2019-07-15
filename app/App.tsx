@@ -20,6 +20,9 @@ import AppUIContainer from 'containers/AppUIContainer';
 export default class App extends Component {
   constructor(props: any) {
     super(props);
+  }
+
+  componentDidMount() {
     log.info('----- App starting up! (device log)');
     log.debug('windowSize', utils.windowSize());
     store.create(); // proactively create Redux store instance
@@ -35,7 +38,7 @@ export default class App extends Component {
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
-    pollServer(); // TODO
+    pollServer();
   }
 
   render() {

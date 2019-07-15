@@ -41,7 +41,6 @@ import {
   ReducerAction,
 
   AddEventsParams,
-  AppQueryParams,
   CenterMapParams,
   DelayedActionParams,
   ImportEventsParams,
@@ -64,6 +63,7 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
+import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
 import locations, { LocationEvent, ModeChangeEvent, MotionEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
 import timeseries, { GenericEvent, GenericEvents, TimeRange, EventType } from 'shared/timeseries';
@@ -110,6 +110,21 @@ const sagas = {
       const state = store.getState();
       let response: any = `response to uuid ${uuid}`; // default;
       switch (queryType) {
+        case 'events': {
+          let events = [ ...state.events ];
+          if (query.filterTypes) {
+            if (query.exclude) {
+              events = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
+            } else {
+              events = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
+            }
+          }
+          if (query.limit) {
+            events = events.slice(0, query.limit)
+          }
+          response = query.count ? events.length : events;
+          break;
+        }
         case 'eventCount': {
           response = state.events.length;
           break;
@@ -148,7 +163,8 @@ const sagas = {
           break;
         }
       }
-      yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: { response, uuid }});
+      const appQueryResponse: AppQueryResponse = { response, uuid };
+      yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
     } catch(err) {
       yield call(log.error, 'appQuery', err);
     }

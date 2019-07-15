@@ -18,5 +18,6 @@
     "**/.settings": true,
     "**/.factorypath": true
   },
-  "workbench.colorTheme": "Tomorrow Night Blue"
+  "workbench.colorTheme": "Tomorrow Night Blue",
+  "search.quickOpen.includeHistory": false
 }

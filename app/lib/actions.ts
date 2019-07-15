@@ -115,16 +115,6 @@ export interface AddEventsParams {
   saveEventsToStorage?: boolean; // if explicitly set to false, client-side storage will not be affected
 }
 
-export interface AppQueryDesciptor {
-  type: string;
-}
-
-export interface AppQueryParams {
-  timeout?: number;
-  query: AppQueryDesciptor;
-  uuid: string;
-}
-
 export interface CenterMapParams {
   center: LonLat;
   option: AbsoluteRelativeOption;
