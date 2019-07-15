@@ -1,17 +1,22 @@
 // server can query a running app by pushing an appQuery message to the app
 
+import { TimeRange } from './timeseries';
+
 export interface AppQueryDescriptor {
   type: string;
+
+  count?: boolean;
+  exclude?: boolean;
+  filterTypes?: string[];
+  group?: boolean;
+  limit?: number;
+  timeRange?: TimeRange;
 }
 
 export interface AppQueryParams {
   query: AppQueryDescriptor;
   timeout?: number;
   uuid: string;
-
-  count?: boolean;
-  limit?: number;
-  filterTypes?: string[];
 }
 
 export interface AppQueryResponse {

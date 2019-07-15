@@ -121,6 +121,11 @@ const timeseries = {
     return count;
   },
 
+  // TODO since events are sorted by time should just be done with a slice?
+  filterByTime: (events: GenericEvents, tr: TimeRange = [0, Infinity]): GenericEvents => {
+    return events.filter((e: GenericEvent) => (timeseries.timeInRange(e.t, tr)));
+  },
+
   // filterEvents ia an EventsFilter
   filterEvents: (events: GenericEvents, filter: EventFilter): GenericEvents => {
     return events.filter(filter);

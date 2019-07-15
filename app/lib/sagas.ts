@@ -108,10 +108,10 @@ const sagas = {
       const { query, uuid } = params;
       const queryType = query ? query.type : null;
       const state = store.getState();
-      let response: any = `response to uuid ${uuid}`; // default;
+      let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
         case 'events': {
-          let events = [ ...state.events ];
+          let events = query.timeRange ? timeseries.filterByTime(state.events, query.timeRange) : [ ...state.events ];
           if (query.filterTypes) {
             if (query.exclude) {
               events = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
@@ -125,17 +125,17 @@ const sagas = {
           response = query.count ? events.length : events;
           break;
         }
-        case 'eventCount': {
+        case 'eventCount': { // quick count of the total, no overhead
           response = state.events.length;
           break;
         }
-        case 'modeCount': {
+        case 'modeCount': { // TODO remove; this is obviated by new features of events query
           response = timeseries
             .filterEvents(state.events, (event: GenericEvent) => (event.type === EventType.MODE))
             .length;
           break;
         }
-        case 'motionCount': {
+        case 'motionCount': { // TODO remove; this is obviated by new features of events query
           response = timeseries
             .filterEvents(state.events,(event: GenericEvent) => (event.type === EventType.MOTION))
             .length;
@@ -149,7 +149,7 @@ const sagas = {
           response = 'pong';
           break;
         }
-        case 'storage': {
+        case 'storage': { // TODO development-only
           const keys = yield call(AsyncStorage.getAllKeys);
           response = keys.length;
           break;
