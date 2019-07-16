@@ -112,7 +112,11 @@ const sagas = {
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
         case 'events': {
-          let events = query.timeRange ? timeseries.filterByTime(state.events, query.timeRange) : [ ...state.events ];
+          let timeRange = query.timeRange || [ 0, Infinity ];
+          if (query.sinceLastStartup) {
+            timeRange = [ lastStartupTime(state.events) || timeRange[0], Math.min(timeRange[1], Infinity) ];
+          }
+          let events = timeRange ? timeseries.filterByTime(state.events, timeRange) : [ ...state.events ];
           if (query.filterTypes) {
             if (query.exclude) {
               events = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
