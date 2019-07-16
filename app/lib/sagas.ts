@@ -63,6 +63,7 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
+import { lastStartupTime } from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
 import locations, { LocationEvent, ModeChangeEvent, MotionEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
@@ -129,16 +130,8 @@ const sagas = {
           response = state.events.length;
           break;
         }
-        case 'modeCount': { // TODO remove; this is obviated by new features of events query
-          response = timeseries
-            .filterEvents(state.events, (event: GenericEvent) => (event.type === EventType.MODE))
-            .length;
-          break;
-        }
-        case 'motionCount': { // TODO remove; this is obviated by new features of events query
-          response = timeseries
-            .filterEvents(state.events,(event: GenericEvent) => (event.type === EventType.MOTION))
-            .length;
+        case 'lastStartupTime': {
+          response = lastStartupTime(state.events);
           break;
         }
         case 'options': {

@@ -176,6 +176,23 @@ const timeseries = {
     return results;
   },
 
+  // Return the smallest index into events such that events[index].t > t.
+  // Return events.length if the given timepoint is beyond all given events.
+  // So given time series like [ 1, 2, 3, 4, 5 ], events.length is 5.
+  //     If t is 0.5, index is 0
+  //     If t is 1, index is 0
+  //     If t is 1.5, index is 1
+  //     If t is 5, index is 4
+  //     If t is 6, index is 5
+  indexForTimepoint: (events: GenericEvents, t: Timepoint): (Timepoint | null) => {
+    for (let index = 0; index < events.length; index++) {
+      if (events[index].t > t) {
+        return index;
+      }
+    }
+    return events.length;
+  },
+
   // local/private by default (i.e. not synced with the server)
   // timestamped now unless a timestamp is provided.
   newEvent: (t: Timepoint): GenericEvent => {
