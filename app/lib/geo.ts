@@ -286,27 +286,13 @@ export const Geo = {
     BackgroundGeolocation.changePace(isMoving, done);
   },
 
-  setGeolocationMode: (id: number): void => {
-    log.debug('setGeolocationMode', id);
-    switch (id) {
-      case 0:
-        Geo.stopBackgroundGeolocation('following');
-        break;
-      case 1:
-        Geo.startBackgroundGeolocation('following');
-        BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
-        break;
-      case 2:
-        Geo.startBackgroundGeolocation('following');
-        BackgroundGeolocation.setConfig(geolocationOptions_highPower);
-        break;
-      case 3:
-        Geo.startBackgroundGeolocation('following');
-        BackgroundGeolocation.setConfig(geolocationOptions_highPower);
-        break;
-      default:
-        log.error('unknown id in Geo.setGeolocationMode');
-        break;
+  setGeolocationMode: (enabled: boolean): void => {
+    log.debug('setGeolocationMode', enabled);
+    if (enabled) {
+      Geo.startBackgroundGeolocation('following');
+      BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
+    } else {
+      Geo.stopBackgroundGeolocation('following');
     }
   },
 

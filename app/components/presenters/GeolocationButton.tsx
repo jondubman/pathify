@@ -30,22 +30,21 @@ const Styles = StyleSheet.create({
 
 import { GeolocationButtonProps } from 'containers/GeolocationButtonContainer';
 
-const modeIcons = [ 'ghost', 'bullseye', 'running', 'bolt' ];
-const modeIconColors = [ colors.icon, colors.icon, colors.icon, colors.icon ]; // TODO
+// const modeIcons = [ 'ghost', 'bullseye', 'running', 'bolt' ];
 
 const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
-      backgroundColor: props.open ? colors.underlay : colors.background,
+      backgroundColor: props.enabled ? colors.enabledBackground : colors.disabledBackground,
       bottom: props.bottomOffset,
       left: props.leftOffset,
     }]}
     onPress={props.onPress}
-    underlayColor={props.open ? colors.background : colors.underlay}
+    underlayColor={props.enabled ? colors.enabledUnderlay : colors.disabledUnderlay}
   >
     <FontAwesome5
-      color={modeIconColors[props.mode]}
-      name={modeIcons[props.mode]}
+      color={constants.colors.byName.black}
+      name={props.enabled ? 'stop' : 'running'}
       size={constants.geolocationButton.size / 2}
     />
   </TouchableHighlight>

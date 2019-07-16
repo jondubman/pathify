@@ -12,8 +12,7 @@ import log from 'shared/log';
 interface GeolocationButtonStateProps {
   bottomOffset: number,
   leftOffset: number,
-  mode: number,
-  open: boolean,
+  enabled: boolean,
 }
 
 interface GeolocationButtonDispatchProps {
@@ -26,15 +25,14 @@ const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     bottomOffset: constants.geolocationButton.bottomOffset,
     leftOffset: constants.geolocationButton.leftOffset,
-    mode: state.options.geolocationModeId,
-    open: state.ui.panels.geolocation.open,
+    enabled: state.ui.flags.backgroundGeolocation,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(AppAction.togglePanelVisibility, 'geolocation'));
+    dispatch(newAction(AppAction.uiFlagToggle, 'backgroundGeolocation'));
   }
   const dispatchers = {
     onPress,

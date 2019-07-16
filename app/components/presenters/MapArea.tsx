@@ -13,11 +13,10 @@ Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
-import GeolocationPanelContainer from 'containers/GeolocationPanelContainer';
+import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import { MapAreaProps } from 'containers/MapContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
-import Pulsar from 'presenters/Pulsar';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
@@ -97,7 +96,7 @@ class MapArea extends Component<MapAreaProps> {
           >
             <View style={hiddenStyle} />
           </TouchableWithoutFeedback>
-          <GeolocationPanelContainer />
+          <GeolocationButtonContainer />
         </View>
       )
     }
@@ -133,7 +132,7 @@ class MapArea extends Component<MapAreaProps> {
         </View>
         <FollowMeButtonContainer />
         <CompassButtonContainer />
-        <GeolocationPanelContainer />
+        <GeolocationButtonContainer />
       </View>
     )
   }

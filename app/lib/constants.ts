@@ -18,11 +18,6 @@ export enum TimespanKind {
   'selection' = 'selection'
 }
 
-export interface GeolocationModeChoice {
-  id: number;
-  name: string;
-}
-
 export interface MapStyle {
   name: string;
   opacity: number;
@@ -54,7 +49,6 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 const colorThemes = {
   background: namedColors.navy,
   settings: namedColors.red,
-  geolocation: namedColors.azure,
 }
 
 const buttonOffset = 6;
@@ -95,12 +89,10 @@ const colors = {
   geolocationButton: {
     background: 'white',
     icon: 'black',
-    underlay: colorThemes.geolocation,
-  },
-  geolocationPanel: {
-    background: withOpacity(colorThemes.background, defaultOpacity),
-    border: colorThemes.geolocation,
-    choiceUnderlay: withOpacity(colorThemes.geolocation, 0.5),
+    disabledBackground: namedColors.green,
+    disabledUnderlay: namedColors.yellow,
+    enabledBackground: namedColors.yellow,
+    enabledUnderlay: namedColors.blue,
   },
   helpButton: {
     background: 'white',
@@ -221,17 +213,6 @@ const constants = {
     leftOffset: buttonOffset,
     opacity: defaultOpacity,
     size: buttonSize,
-  },
-  geolocationModeChoices: [
-    { id: 0, name: '0' },
-    { id: 1, name: '1' },
-    { id: 2, name: '2' },
-    { id: 3, name: '3' },
-  ] as GeolocationModeChoice[],
-  geolocationPanel: {
-    height: 300,
-    leftOffset: buttonOffset,
-    bottomOffset: safeAreaBottom + mapLogoHeight,
   },
   helpButton: {
     opacity: defaultOpacity,

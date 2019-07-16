@@ -340,12 +340,9 @@ const sagas = {
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
 
-    const geolocationPanelOpen = yield select((state: AppState) => state.ui.panels.geolocation.open);
     const settingsOpen = yield select((state: AppState) => state.ui.panels.settings.open);
 
-    if (geolocationPanelOpen) {
-      yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
-    } else if (settingsOpen) {
+    if (settingsOpen) {
       yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
     } else {
       yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
@@ -479,20 +476,6 @@ const sagas = {
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
   },
 
-  // This determines whether geolocation should be active when running the app in the background,
-  // just in the foreground, or not at all (ghost mode)
-  setGeolocationMode: function* (action: Action) {
-    try {
-      const id = action.params as number;
-      yield put(newAction(ReducerAction.SET_APP_OPTION, { geolocationModeId: id }));
-
-      // This is the side-effect that belongs outside the reducer:
-      Geo.setGeolocationMode(id);
-    } catch (err) {
-      yield call(log.error, 'setGeolocationMode', err);
-    }
-  },
-
   // follow the user, recentering map right away, kicking off background geolocation if needed
   startFollowingUser: function* () {
     try {
@@ -558,17 +541,9 @@ const sagas = {
     const name = action.params as string;
     const panels = yield select((state: AppState) => state.ui.panels);
     const closeAll = !name || (name === '') || !panels[name];
-
     if (!closeAll && panels[name].open) {
       yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: false }));
     } else {
-      if (closeAll || name === 'geolocation') {
-        yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
-      }
-      if (closeAll || name === 'settings') {
-        yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
-      }
-      // open the new panel
       if (name) {
         yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
       }
@@ -584,7 +559,14 @@ const sagas = {
   },
 
   uiFlagToggle: function* (action: Action) {
+    const flagName: string = action.params;
     yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, action.params));
+
+    // side effects
+    if (flagName === 'backgroundGeolocation') {
+      const enabledNow = yield select(state => state.ui.flags[flagName]);
+      yield call(Geo.setGeolocationMode, !enabledNow);
+    }
   },
 
   // Stop following user after panning the map.

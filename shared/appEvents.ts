@@ -8,6 +8,7 @@ export enum AppStateChange {
 }
 
 export interface AppStateChangeEvent extends GenericEvent {
+  // type: EventType.APP;
   data: {
     newState: AppStateChange;
   }
@@ -23,4 +24,16 @@ export const lastStartupTime = (events: GenericEvents): (Timepoint | null) => {
     }
   }
   return null;
+}
+
+export enum AppUserAction {
+  'START' = 'START',
+  'STOP' = 'STOP',
+}
+
+export interface AppUserActionEvent extends GenericEvent {
+  // type: EventType.UI;
+  data: {
+    userAction: AppUserAction,
+  }
 }

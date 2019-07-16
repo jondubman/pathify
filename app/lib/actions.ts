@@ -54,7 +54,6 @@ export enum AppAction {
   'serverSync' = 'serverSync',
   'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
-  'setGeolocationMode' = 'setGeolocationMode',
   'setPanelVisibility' = 'setPanelVisibility',
   'sleep' = 'sleep', // see SleepParams
   'startFollowingUser' = 'startFollowingUser',

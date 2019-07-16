@@ -19,7 +19,6 @@ export type OptionalPulsars = { [key: string]: OptionalPulsar }
 // Canonical interface for AppOptions included in AppState
 const initialAppOptions = {
   clientAlias: 'app', // TODO should be unique in production, if specified
-  geolocationModeId: 1, // TODO if 0, app should open in ghost mode, but geolocation module is still initialized
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
   pulsars: {} as OptionalPulsars,
@@ -38,6 +37,7 @@ export type AppOptions = typeof initialAppOptions;
 const initialAppUIState = {
   flags: {
     allowContinuousTimelineZoom: false, // false means discrete only
+    backgroundGeolocation: false,
     followingUser: true, // should map follow user?
     keepMapCenteredWhenFollowing: false, // true means continuous. false means map recentered only when you near the edge
     helpEnabled: false,
