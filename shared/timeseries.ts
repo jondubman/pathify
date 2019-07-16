@@ -17,14 +17,14 @@ export interface TimeReference { // relative or absolute
 }
 
 export enum EventType { // TODO keep in sync with datamodel.prisma
-  'APP' = 'APP', // startup, pause, resume
-  'LOC' = 'LOC', // geolocation
+  'APP' = 'APP', // see AppStateChangeType
+  'LOC' = 'LOC', // geolocation result
   'MODE' = 'MODE', // see ModeType
   'MOTION' = 'MOTION', // isMoving: true or false
-  'NONE' = 'NONE',
-  'OTHER' = 'OTHER',
-  'SYSTEM' = 'SYSTEM', // reserved
-  'TEST' = 'TEST',
+  'NONE' = 'NONE', // placeholder when creating events
+  'OTHER' = 'OTHER', // reserved for experimentation
+  'SYSTEM' = 'SYSTEM', // reserved for future use
+  'TEST' = 'TEST', // reserved for testing
   'UI' = 'UI', // user action
 }
 
@@ -80,7 +80,7 @@ const timeseries = {
     if (!startAt && !endAt) {
       return events; // no adjustments to make
     }
-    const newEvents = [];
+    const newEvents: GenericEvents = [];
     const existingStart = events[0].t;
     const existingEnd = events[events.length - 1].t;
     const existingDuration = existingEnd - existingStart;
@@ -96,7 +96,7 @@ const timeseries = {
 
     // Now make the time adjustments
     for (let i = 0; i < events.length; i++) {
-      const newEvent = { ...events[i] };
+      const newEvent: GenericEvent = { ...events[i] };
       if (startAt) {
         newEvent.t = newStart + (newEvent.t - existingStart) * timeScaleFactor;
       } else { // endAt
@@ -126,9 +126,8 @@ const timeseries = {
     return events.filter((e: GenericEvent) => (timeseries.timeInRange(e.t, tr)));
   },
 
-  // filterEvents ia an EventsFilter
-  filterEvents: (events: GenericEvents, filter: EventFilter): GenericEvents => {
-    return events.filter(filter);
+  filterEvents: (events: GenericEvents, eventFilter: EventFilter): GenericEvents => {
+    return events.filter(eventFilter);
   },
 
   findEventsAtTimepoint: (events: GenericEvents, t: Timepoint): GenericEvents => {

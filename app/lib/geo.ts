@@ -213,13 +213,15 @@ const newMotionEvent = (info: Location, isMoving: boolean): MotionEvent => {
 
 const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEvent => {
   const t = utils.now(); // TODO
-  const mapActivityToMode =
-    { in_vehicle: ModeType.VEHICLE,
+  const mapActivityToMode = {
+      in_vehicle: ModeType.VEHICLE,
       on_bicycle: ModeType.BICYCLE,
       on_foot: ModeType.ON_FOOT,
       running: ModeType.RUNNING,
-      walking: ModeType.WALKING }
-  const mode = mapActivityToMode[activity];
+      still: ModeType.STILL,
+      walking: ModeType.WALKING,
+    }
+  const mode = mapActivityToMode[activity] || `unknown activity: ${activity}`;
   log.trace('newModeChangeEvent', activity, mode);
   return {
     ...timeseries.newSyncedEvent(t),

@@ -31,6 +31,7 @@ export enum ModeType {
   'BICYCLE' = 'BICYCLE',
   'ON_FOOT' = 'ON_FOOT',
   'RUNNING' = 'RUNNING',
+  'STILL'   = 'STILL',
   'WALKING' = 'WALKING',
 }
 
