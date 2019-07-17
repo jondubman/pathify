@@ -73,8 +73,8 @@ const colors = {
   byName: namedColors, // all of them
   clock: {
     background: withOpacity(namedColors.black, 0.5),
-    border: withOpacity(namedColors.azure, 0.5),
-    underlay: withOpacity(namedColors.purple, 0.5),
+    border: withOpacity(namedColors.azure, 0.7),
+    underlay: withOpacity(namedColors.blue, 0.5),
   },
   compassButton: {
     background: 'white',
@@ -88,11 +88,12 @@ const colors = {
   },
   geolocationButton: {
     background: 'white',
-    icon: 'black',
+    // icon: 'black',
+    opacity: 0.75,
     disabledBackground: namedColors.green,
-    disabledUnderlay: namedColors.yellow,
-    enabledBackground: namedColors.yellow,
-    enabledUnderlay: namedColors.blue,
+    disabledUnderlay: namedColors.yellow, // in transition
+    enabledBackground: namedColors.red,
+    enabledUnderlay: namedColors.orange, // in transition
   },
   helpButton: {
     background: 'white',

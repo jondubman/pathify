@@ -42,6 +42,10 @@ export interface ModeChangeEvent extends GenericEvent {
   }
 }
 
+export interface TickEvent extends GenericEvent {
+  // nothing added for now
+}
+
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type == EventType.LOC);
 
 const locations = {

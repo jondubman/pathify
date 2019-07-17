@@ -44,6 +44,7 @@ const initialAppUIState = {
     mapFullScreen: false, // false means timeline is visible. true means map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
+    tickEvents: true, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
   // panels are subviews that sit above the main (perhaps map) view, which don't have to be modal.

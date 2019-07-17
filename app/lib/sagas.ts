@@ -65,9 +65,9 @@ import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import { lastStartupTime } from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
-import locations, { LocationEvent, ModeChangeEvent, MotionEvent } from 'shared/locations';
+import locations, { LocationEvent, ModeChangeEvent, MotionEvent, TickEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
-import timeseries, { GenericEvent, GenericEvents, TimeRange, EventType } from 'shared/timeseries';
+import timeseries, { EventType, GenericEvent, GenericEvents, TimeRange } from 'shared/timeseries';
 import { continuousTracks } from 'shared/tracks';
 
 const sagas = {
@@ -93,7 +93,7 @@ const sagas = {
 
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
-    const { events, saveEventsToStorage } = params;
+    const { events, saveToStorage: saveEventsToStorage } = params;
     const sortedEvents = timeseries.sortEvents(events);
     yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
     if (saveEventsToStorage !== false) { // note undefined defaults to true
@@ -306,12 +306,15 @@ const sagas = {
           const event = JSON.parse(keyValue[1]);
           events.push(event);
         }
-        yield put(newAction(AppAction.addEvents, { events, saveEventsToStorage: false }));
+        // This is why we have the special-case saveToStorage option. Avoid saving data that was just loaded.
+        yield put(newAction(AppAction.addEvents, { events, saveToStorage: false }));
 
-        // TODO debug
         const sortedEvents = timeseries.sortEvents(events);
-        const tracks = yield call(continuousTracks, sortedEvents, constants.maxTimeGapForContinuousTrack);
-        yield call(log.debug, 'load event count', sortedEvents.length, 'loaded tracks', tracks.length, tracks);
+
+        if (__DEV__) { // log the following only in development
+          const tracks = yield call(continuousTracks, sortedEvents, constants.maxTimeGapForContinuousTrack);
+          yield call(log.debug, 'load event count', sortedEvents.length, 'loaded tracks', tracks.length, tracks);
+        }
       }
     } catch (err) {
       yield call(log.error, 'loadEventsFromStorage', err);
@@ -371,6 +374,17 @@ const sagas = {
     }
     yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
     yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: newRefTime }));
+  },
+
+  tickEvent: function* (action: Action) {
+    try {
+      const tickEvent = action.params as TickEvent;
+      yield call(log.trace, 'saga tickEvent', tickEvent);
+      yield put(newAction(ReducerAction.TICK_EVENT, tickEvent));
+      // yield put(newAction(AppAction.saveEventsToStorage, { events: [ tickEvent ] }));
+    } catch (err) {
+      yield call(log.error, 'tickEvent', err);
+    }
   },
 
   // Set map bearing to 0 (true north) typically in response to user action (button).
@@ -495,7 +509,7 @@ const sagas = {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'followingUser'));
-      // yield call(Geo.stopBackgroundGeolocation, 'following');
+      yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
     }
@@ -522,6 +536,11 @@ const sagas = {
     if (timelineNow) {
       // This is where the mode for the Timeline really takes effect.
       yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: now }));
+    }
+    const tickEvents = yield select((state: AppState) => state.ui.flags.tickEvents);
+    if (tickEvents) {
+      const tickEvent = { ...timeseries.newEvent(now), type: EventType.TICK };
+      yield put(newAction(AppAction.tickEvent, tickEvent));
     }
     // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
     // rather than depend on a separate long-running timer. That could also work, but this is sufficient
@@ -565,7 +584,7 @@ const sagas = {
     // side effects
     if (flagName === 'backgroundGeolocation') {
       const enabledNow = yield select(state => state.ui.flags[flagName]);
-      yield call(Geo.setGeolocationMode, !enabledNow);
+      yield call(Geo.enableBackgroundGeolocation, enabledNow);
     }
   },
 

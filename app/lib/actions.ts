@@ -15,6 +15,7 @@ export enum ReducerAction {
   'ADD_EVENTS' = 'ADD_EVENTS',
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
+  'TICK_EVENT' = 'TICK_EVENT', // corresponds to AppAction.tickEvent
   'SET_APP_OPTION' = 'SET_APP_OPTION',
   'SET_PANEL_VISIBILITY' = 'SET_PANEL_VISIBILITY',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
@@ -48,6 +49,7 @@ export enum AppAction {
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'panTimeline' = 'panTimeline', // see PanTimelineParams
+  'tickEvent' = 'tickEvent',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'saveEventsToStorage' = 'saveEventsToStorage',
@@ -111,7 +113,7 @@ export enum AbsoluteRelativeOption {
 
 export interface AddEventsParams {
   events: GenericEvents;
-  saveEventsToStorage?: boolean; // if explicitly set to false, client-side storage will not be affected
+  saveToStorage?: boolean; // if explicitly set to false, client-side storage will not be affected
 }
 
 export interface CenterMapParams {

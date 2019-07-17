@@ -25,6 +25,7 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
   'OTHER' = 'OTHER', // reserved for experimentation
   'SYSTEM' = 'SYSTEM', // reserved for future use
   'TEST' = 'TEST', // reserved for testing
+  'TICK' = 'TICK', // heartbeat-type event mainly for debugging
   'UI' = 'UI', // user action
 }
 

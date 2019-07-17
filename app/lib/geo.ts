@@ -19,7 +19,7 @@ import BackgroundGeolocation, {
 
 import { AppAction, newAction } from 'lib/actions';
 import { Store } from 'lib/store';
-import { LocationEvent, ModeChangeEvent, ModeType, MotionEvent } from 'shared/locations';
+import { LocationEvent, ModeChangeEvent, ModeType, MotionEvent, TickEvent } from 'shared/locations';
 import timeseries, { EventType } from 'shared/timeseries';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -141,7 +141,7 @@ const geolocationOptions_lowPower: Config = {
   desiredOdometerAccuracy: 10, // Location accuracy threshold in meters for odometer calculations.
 
   distanceFilter: 10, // meters device must move to generate update event, default 10
-  heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
+  heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
   preventSuspend: false, // default false
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
@@ -271,7 +271,6 @@ export const Geo = {
 
       if (pluginState.enabled) {
         log.trace('BackgroundGeolocation configured and ready', pluginState);
-
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         // Geo.changePace(true, () => {
         //   log.info('BackgroundGeolocation pace manually set to moving');
@@ -286,13 +285,16 @@ export const Geo = {
     BackgroundGeolocation.changePace(isMoving, done);
   },
 
-  setGeolocationMode: (enabled: boolean): void => {
-    log.debug('setGeolocationMode', enabled);
-    if (enabled) {
-      Geo.startBackgroundGeolocation('following');
-      BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
+  enableBackgroundGeolocation: (enable: boolean): void => {
+    log.debug('enableBackgroundGeolocation', enable);
+    if (enable) {
+      Geo.startBackgroundGeolocation('tracking');
+      BackgroundGeolocation.setConfig(geolocationOptions_highPower);
+      log.debug('using geolocationOptions_highPower');
     } else {
-      Geo.stopBackgroundGeolocation('following');
+      Geo.stopBackgroundGeolocation('tracking');
+      BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
+      log.debug('using geolocationOptions_lowPower');
     }
   },
 
@@ -344,7 +346,7 @@ export const Geo = {
     }
     reasons[reason] = true;
     if (haveReasonBesides(reason)) {
-      log.debug(`BackgroundGeolocation requested for ${reason}, but already running`);
+      log.debug(`BackgroundGeolocation requested for ${reason}, already running`);
       log.trace('BackgroundGeolocation reasons', reasons);
       return false;
     }
