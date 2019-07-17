@@ -25,7 +25,7 @@ const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     bottomOffset: constants.geolocationButton.bottomOffset,
     leftOffset: constants.geolocationButton.leftOffset,
-    enabled: state.ui.flags.backgroundGeolocation,
+    enabled: state.flags.backgroundGeolocation,
   }
 }
 

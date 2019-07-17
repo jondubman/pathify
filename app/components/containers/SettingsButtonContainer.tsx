@@ -20,7 +20,7 @@ export type SettingsButtonProps = SettingsButtonStateProps & SettingsButtonDispa
 
 const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
   return {
-    open: state.ui.panels.settings.open,
+    open: state.panels.settings.open,
   }
 }
 

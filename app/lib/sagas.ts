@@ -97,7 +97,7 @@ const sagas = {
 
     const sortedEvents = timeseries.sortEvents(events);
 
-  yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
+    yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
     if (saveEventsToStorage !== false) { // note undefined defaults to true
       const eventsToStore = timeseries.filterEvents(sortedEvents, (event: GenericEvent) => (!event.temp))
       yield put(newAction(AppAction.saveEventsToStorage, { events: eventsToStore }));
@@ -141,7 +141,11 @@ const sagas = {
           break;
         }
         case 'options': {
-          response = state.options;
+          response = {
+            flags: state.flags,
+            options: state.options,
+            panels: state.panels,
+          }
           break;
         }
         case 'ping': {
@@ -151,10 +155,6 @@ const sagas = {
         case 'storage': { // TODO development-only
           const keys = yield call(AsyncStorage.getAllKeys);
           response = keys.length;
-          break;
-        }
-        case 'ui': {
-          response = state.ui;
           break;
         }
         case 'userLocation': {
@@ -254,8 +254,8 @@ const sagas = {
       const map = MapUtils();
       if (map) {
         const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
-          followingUser: state.ui.flags.followingUser,
-          keepMapCenteredWhenFollowing: state.ui.flags.keepMapCenteredWhenFollowing,
+          followingUser: state.flags.followingUser,
+          keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
           loc: state.userLocation!.data.loc,
         }))
         const bounds = yield call(map.getVisibleBounds as any);
@@ -343,7 +343,7 @@ const sagas = {
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
 
-    const settingsOpen = yield select((state: AppState) => state.ui.panels.settings.open);
+    const settingsOpen = yield select((state: AppState) => state.panels.settings.open);
 
     if (settingsOpen) {
       yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
@@ -381,6 +381,7 @@ const sagas = {
       const tickEvent = action.params as TickEvent;
       yield call(log.trace, 'saga tickEvent', tickEvent);
       yield put(newAction(ReducerAction.TICK_EVENT, tickEvent));
+      // TODO make this opt-in for debugging
       // yield put(newAction(AppAction.saveEventsToStorage, { events: [ tickEvent ] }));
     } catch (err) {
       yield call(log.error, 'tickEvent', err);
@@ -533,12 +534,12 @@ const sagas = {
   timerTick: function* (action: Action) {
     const now = action.params as number;
     // log.trace('timerTick', now);
-    const timelineNow = yield select((state: AppState) => state.ui.flags.timelineNow);
+    const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
     if (timelineNow) {
       // This is where the mode for the Timeline really takes effect.
       yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: now }));
     }
-    const tickEvents = yield select((state: AppState) => state.ui.flags.tickEvents);
+    const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
     if (tickEvents) {
       const tickEvent = { ...timeseries.newEvent(now), type: EventType.TICK };
       yield put(newAction(AppAction.tickEvent, tickEvent));
@@ -559,7 +560,7 @@ const sagas = {
   togglePanelVisibility: function* (action: Action) {
     log.trace('saga togglePanelVisibility', action.params);
     const name = action.params as string;
-    const panels = yield select((state: AppState) => state.ui.panels);
+    const panels = yield select((state: AppState) => state.panels);
     const closeAll = !name || (name === '') || !panels[name];
     if (!closeAll && panels[name].open) {
       yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: false }));
@@ -584,8 +585,15 @@ const sagas = {
 
     // side effects
     if (flagName === 'backgroundGeolocation') {
-      const enabledNow = yield select(state => state.ui.flags[flagName]);
+      const flags = yield select((state: AppState) => state.flags);
+      const enabledNow = flags[flagName];
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
+      if (flags.setPaceAfterStart && enabledNow) {
+        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
+        yield call(Geo.changePace, true, () => {
+          log.debug('BackgroundGeolocation pace manually set to moving');
+        })
+      }
     }
   },
 

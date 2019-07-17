@@ -14,9 +14,7 @@ import {
 import reducer from 'lib/reducer';
 import sagas from 'lib/sagas';
 import {
-  AppOptions,
   AppState,
-  AppUIState
 } from 'lib/state';
 
 let reduxStore: Store<AppState, Action>; // global singleton Redux store
@@ -27,6 +25,7 @@ const store = {
     // create once; create() is idempotent.
     if (!reduxStore) {
       const sagaMiddleware = createSagaMiddleware();
+      // Note use of template here.
       reduxStore = createStore<AppState, Action, {}, {}>(reducer, applyMiddleware(sagaMiddleware));
       sagaMiddleware.run(sagas.root);
     }
@@ -44,18 +43,6 @@ const store = {
     store.create(); // guard
     return reduxStore.getState();
   },
-
-  // for convenience
-  options: (): AppOptions => {
-    store.create(); // guard
-    return reduxStore.getState().options;
-  },
-
-  // for convenience
-  uiState: (): AppUIState => {
-    store.create(); // guard
-    return reduxStore.getState().ui;
-  }
 }
 
 export type Store = typeof store;

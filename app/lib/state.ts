@@ -16,59 +16,48 @@ export interface OptionalPulsar {
 // The key here is any unique string, whih could indicate a kind of pulsar (like 'origin'), or an id
 export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
-// Canonical interface for AppOptions included in AppState
-const initialAppOptions = {
-  clientAlias: 'app', // TODO should be unique in production, if specified
-  mapOpacity: constants.map.default.opacity,
-  mapStyle: constants.map.default.style,
-  pulsars: {} as OptionalPulsars,
-  refTime: utils.now(),
-  startupTime: utils.now(),
-  timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
-  serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
-  serverSyncTime: 0, // time of last server sync (or 0 if never)
-  timelineZoomLevel: constants.timeline.default.zoomLevel,
-}
-export type AppOptions = typeof initialAppOptions;
-
 // Canonical interface for AppUIState included in AppState.
 // AppUIState is for transient, UI-related state changes, e.g. for menus.
 
-const initialAppUIState = {
-  flags: {
+export const initialAppState = {
+  events: [] as GenericEvents,
+  flags: { // specifically boolean
     allowContinuousTimelineZoom: false, // false means discrete only
     backgroundGeolocation: false,
     followingUser: true, // should map follow user?
     keepMapCenteredWhenFollowing: false, // true means continuous. false means map recentered only when you near the edge
     helpEnabled: false,
+    setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
+    startupAction_clearStorage: true, // TODO
+    startupAction_loadStorage: false, // TODO
     mapFullScreen: false, // false means timeline is visible. true means map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     tickEvents: true, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
-  // panels are subviews that sit above the main (perhaps map) view, which don't have to be modal.
-  panels: {
+  options: {
+    clientAlias: 'app', // TODO should be unique in production, if specified
+    mapOpacity: constants.map.default.opacity,
+    mapStyle: constants.map.default.style,
+    pulsars: {} as OptionalPulsars,
+    refTime: utils.now(),
+    startupTime: utils.now(),
+    timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
+    serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
+    serverSyncTime: 0, // time of last server sync (or 0 if never)
+    timelineZoomLevel: constants.timeline.default.zoomLevel,
+  },
+  panels: { // panels are subviews that sit above the main (perhaps map) view, which don't have to be modal.
     geolocation: { open: false },
     settings: { open: false },
   },
 }
-export type AppUIState = typeof initialAppUIState;
 
 // Canonical interface for AppState, the contents of the Redux store
-
-export interface AppState {
-  events: GenericEvents;
+type InitialAppState = typeof initialAppState;
+export interface AppState extends InitialAppState {
   userLocation?: LocationEvent;
-  mapRegion: Polygon | null;
-  options: AppOptions;
+  mapRegion?: Polygon | undefined;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
-  ui: AppUIState;
-}
-
-export const initialAppState: AppState = {
-  events: [],
-  mapRegion: null,
-  options: initialAppOptions,
-  ui: initialAppUIState,
 }

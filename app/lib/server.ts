@@ -32,7 +32,7 @@ export const handleServerPush = async (data: any) => {
 
 const pollServerOnce = async () => {
   const route = 'poll';
-  const clientAlias = store.options().clientAlias;
+  const clientAlias = store.getState().options.clientAlias;
   const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=90000`;
   const method = 'GET';
   try {

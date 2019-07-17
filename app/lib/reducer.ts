@@ -67,7 +67,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         const locationEvent = params as LocationEvent;
         if (locationEvent.data.loc && locationEvent.t && locationEvent.type === EventType.LOC) {
           newState.userLocation = locationEvent;
-          newState.events = [ ...newState.events, locationEvent ];
+          newState.events = timeseries.sortEvents([...newState.events, locationEvent]);
           log.trace(`${newState.events.length} total events`);
         }
       }
@@ -84,7 +84,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         const tickEvent = params as TickEvent;
         if (tickEvent.t && tickEvent.type === EventType.TICK) {
-          newState.events = [...newState.events, tickEvent];
+          newState.events = timeseries.sortEvents([ ...newState.events, tickEvent ]);
           log.trace(`${newState.events.length} total events`);
         }
       }
@@ -127,9 +127,8 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         const panelName = params.name as string;
         const open = params.open as boolean;
-        newState.ui = { ...state.ui };
-        newState.ui.panels = { ...state.ui.panels };
-        newState.ui.panels[panelName].open = open;
+        newState.panels = { ...state.panels };
+        newState.panels[panelName].open = open;
       }
       break;
 
@@ -143,27 +142,24 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case ReducerAction.UI_FLAG_DISABLE:
       {
         const flagName = params as string;
-        newState.ui = { ...state.ui };
-        newState.ui.flags = { ...state.ui.flags };
-        newState.ui.flags[flagName] = false;
+        newState.flags = { ...state.flags };
+        newState.flags[flagName] = false;
       }
       break;
 
     case ReducerAction.UI_FLAG_ENABLE:
       {
         const flagName = params as string;
-        newState.ui = { ...state.ui };
-        newState.ui.flags = { ...state.ui.flags };
-        newState.ui.flags[flagName] = true;
+        newState.flags = { ...state.flags };
+        newState.flags[flagName] = true;
       }
       break;
 
     case ReducerAction.UI_FLAG_TOGGLE:
       {
         const flagName = params as string;
-        newState.ui = { ...state.ui };
-        newState.ui.flags = { ...state.ui.flags };
-        newState.ui.flags[flagName] = !state.ui.flags[flagName];
+        newState.flags = { ...state.flags };
+        newState.flags[flagName] = !state.flags[flagName];
       }
       break;
 

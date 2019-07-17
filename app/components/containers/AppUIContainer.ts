@@ -14,7 +14,7 @@ export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
   return {
-    showTimeline: !state.ui.flags.mapFullScreen,
+    showTimeline: !state.flags.mapFullScreen,
   }
 }
 

@@ -266,15 +266,11 @@ export const Geo = {
       BackgroundGeolocation.onGeofence(onGeofence);
       BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
       BackgroundGeolocation.onHeartbeat(onHeartbeat);
-      BackgroundGeolocation.onLocation(onLocation);
+      BackgroundGeolocation.onLocation(onLocation, onLocationError);
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       if (pluginState.enabled) {
         log.trace('BackgroundGeolocation configured and ready', pluginState);
-        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
-        // Geo.changePace(true, () => {
-        //   log.info('BackgroundGeolocation pace manually set to moving');
-        // })
       }
     }, err => {
       log.error('BackgroundGeolocation failed to configure', err);

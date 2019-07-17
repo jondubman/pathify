@@ -222,7 +222,8 @@ const timeseries = {
     }
   },
 
-  // return a sorted copy of events, or the original events if they were already sorted.
+  // Return sorted events, or the original events if they were already sorted.
+  // Sorting is an expensive operation but in practice the events will be close to sorted already.
   sortEvents: (events: GenericEvents): GenericEvents => {
     if (timeseries.sortedByTime(events)) {
       return events;
@@ -249,6 +250,20 @@ const timeseries = {
       t = eventTime;
     }
     return true;
+  },
+
+  // TODO
+  countUnsorted: (events: GenericEvents): number => {
+    let count = 0, t = 0;
+    for (let i = 0; i < events.length; i++) {
+      const eventTime = events[i].t;
+      if (eventTime < t) {
+        log.trace('countUnsorted', t, eventTime);
+        count++;
+      }
+      t = eventTime;
+    }
+    return count;
   },
 
   // helper function to round time t down to the previous minute, hour, etc. (determined by second parameter)

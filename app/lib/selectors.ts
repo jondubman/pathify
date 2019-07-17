@@ -47,7 +47,7 @@ export const dynamicMapHeight = (state: AppState): number => {
 }
 
 export const dynamicTimelineHeight = (state: AppState): number => {
-  return state.ui.flags.mapFullScreen ?
+  return state.flags.mapFullScreen ?
     0
     :
     constants.timeline.default.height
@@ -70,7 +70,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       visible: true,
     }
   }
-  if (!state.ui.flags.timelineNow) {
+  if (!state.flags.timelineNow) {
     const loc = locations.locEventNearestTimepoint(state.events,
                                                    state.options.refTime,
                                                    constants.timeline.nearTimeThreshold);

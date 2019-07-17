@@ -51,9 +51,14 @@ export default class App extends Component {
     Geo.resetOdometer();
     store.dispatch(newAction(AppAction.startFollowingUser));
 
-    store.dispatch(newAction(AppAction.loadEventsFromStorage));
-
-    this.handleAppStateChange('startup'); // insert this manually
+    const { startupAction_clearStorage, startupAction_loadStorage } = store.getState().flags;
+    if (startupAction_clearStorage) {
+      store.dispatch(newAction(AppAction.clearStorage));
+    }
+    if (startupAction_loadStorage) {
+      store.dispatch(newAction(AppAction.loadEventsFromStorage));
+    }
+    this.handleAppStateChange('startup'); // initialize
 
     const interval = setInterval(() => {
       store.dispatch(newAction(AppAction.timerTick, utils.now()));

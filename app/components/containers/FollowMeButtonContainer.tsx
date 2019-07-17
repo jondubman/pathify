@@ -25,14 +25,14 @@ export type FollowMeButtonProps = FollowMeButtonStateProps & FollowMeButtonDispa
 
 const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): FollowMeButtonStateProps => {
   return {
-    active: state.ui.flags.followingUser,
+    active: state.flags.followingUser,
     hidden: mapHidden(state),
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): FollowMeButtonDispatchProps => {
   const onPress = () => {
-    const { followingUser } = store.uiState().flags;
+    const { followingUser } = store.getState().flags;
     if (followingUser) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingUser));
     } else {

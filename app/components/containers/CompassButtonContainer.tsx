@@ -30,7 +30,7 @@ const mapStateToProps = (state: AppState): CompassButtonStateProps => {
     const r = state.mapRegion as any;
     heading = r.properties!.heading;
   }
-  const reorienting = state.ui.flags.mapMoving && state.ui.flags.mapReorienting;
+  const reorienting = state.flags.mapMoving && state.flags.mapReorienting;
   return {
     heading,
     hidden: mapHidden(state),

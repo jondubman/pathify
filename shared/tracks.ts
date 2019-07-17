@@ -27,7 +27,7 @@ export type Tracks = Track[]; // plural
 //
 export const continuousTracks = (events: GenericEvents, maxTimeGap: number, tr: TimeRange = [0, Infinity]): Tracks => {
   if (!timeseries.sortedByTime(events)) {
-    log.warn('continuousTracks: events out of order');
+    log.warn(`continuousTracks: ${timeseries.countUnsorted(events)} out of order`);
   }
   let tracks: Tracks = []; // to return
   let count = 0; // count of LOC updates per track
@@ -44,7 +44,7 @@ export const continuousTracks = (events: GenericEvents, maxTimeGap: number, tr: 
       // reached the end of the TimeRange
       if (t_trackStart) { // if there is a current track, complete it
         const t_trackEnd = t_prevLocUpdate; // t_prevLocUpdate will be nonzero if t_trackStart is nonzero.
-        tracks.push({ tr: [t_trackStart, t_trackEnd], count });
+        tracks.push({ tr: [ t_trackStart, t_trackEnd ], count });
         return tracks; // Done
       }
       break;
@@ -55,7 +55,7 @@ export const continuousTracks = (events: GenericEvents, maxTimeGap: number, tr: 
       // Gap exceeds maxTimeGap
       const t_trackEnd = t_prevLocUpdate;
       if (count) {
-        tracks.push({ tr: [t_trackStart, t_trackEnd], count });
+        tracks.push({ tr: [ t_trackStart, t_trackEnd ], count });
         count = 0; // reset
       }
       t_trackStart = 0; // reset
@@ -77,7 +77,7 @@ export const continuousTracks = (events: GenericEvents, maxTimeGap: number, tr: 
   if (t_trackStart && t_prevLocUpdate) {
     // complete the current track
     // TODO could note which tracks are open-ended... does it matter?
-    tracks.push({ tr: [t_trackStart, t_prevLocUpdate], count });
+    tracks.push({ tr: [ t_trackStart, t_prevLocUpdate ], count });
   }
   return tracks;
 }

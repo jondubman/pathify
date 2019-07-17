@@ -20,7 +20,7 @@ export type HelpButtonProps = HelpButtonStateProps & HelpButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpButtonStateProps => {
   return {
-    enabled: state.ui.flags.helpEnabled,
+    enabled: state.flags.helpEnabled,
   }
 }
 
