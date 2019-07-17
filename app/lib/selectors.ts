@@ -20,7 +20,7 @@ export const customTimespans = (state: AppState): Timespans => {
     const { refTime, startupTime } = state.options;
     const timespan: Timespan = {
       kind: TimespanKind.other,
-      tr: [startupTime, refTime ], // for now just show timespan since the app started up
+      tr: [ startupTime, refTime ], // for now just show timespan since the app started up
     }
     return [ timespan ];
   } else {
@@ -34,7 +34,7 @@ export const selectedTimespans = (state: AppState): Timespans => {
     const { startupTime } = state.options;
     const timespan: Timespan = {
       kind: TimespanKind.selection,
-      tr: [startupTime - interval.seconds(10), startupTime + interval.seconds(10)],
+      tr: [ startupTime - interval.seconds(10), startupTime + interval.seconds(10) ],
     }
     return [timespan];
   } else {

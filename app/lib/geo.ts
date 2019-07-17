@@ -19,7 +19,7 @@ import BackgroundGeolocation, {
 
 import { AppAction, newAction } from 'lib/actions';
 import { Store } from 'lib/store';
-import { LocationEvent, ModeChangeEvent, ModeType, MotionEvent, TickEvent } from 'shared/locations';
+import { LocationEvent, ModeChangeEvent, ModeType, MotionEvent } from 'shared/locations';
 import timeseries, { EventType } from 'shared/timeseries';
 import utils from 'lib/utils';
 import log from 'shared/log';

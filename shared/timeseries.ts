@@ -194,6 +194,11 @@ const timeseries = {
     return events.length;
   },
 
+  mergeEvents: (listOne: GenericEvents, listTwo: GenericEvents): GenericEvents => {
+    const mergedEvents = [ ...listOne, ...listTwo ].sort((a: GenericEvent, b: GenericEvent) => (a.t - b.t));
+    return mergedEvents;
+  },
+
   // local/private by default (i.e. not synced with the server)
   // timestamped now unless a timestamp is provided.
   newEvent: (t: Timepoint): GenericEvent => {

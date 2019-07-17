@@ -42,6 +42,8 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   yellow: '#ffdc00',
 
   darkerGray: '#888888',
+  darkGreen: '#239c31',
+  darkRed: '#bf0a00',
   black: '#000000',
   white: '#ffffff',
 }
@@ -91,9 +93,9 @@ const colors = {
     // icon: 'black',
     opacity: 0.75,
     disabledBackground: namedColors.green,
-    disabledUnderlay: namedColors.yellow, // in transition
+    disabledUnderlay: namedColors.darkGreen, // in transition
     enabledBackground: namedColors.red,
-    enabledUnderlay: namedColors.orange, // in transition
+    enabledUnderlay: namedColors.darkRed, // in transition
   },
   helpButton: {
     background: 'white',

@@ -9,6 +9,7 @@ import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
 import log from 'shared/log';
 import timeseries, { TimeRange } from 'shared/timeseries';
+import { Track } from 'shared/tracks';
 
 export interface Timespan {
   kind: TimespanKind;
@@ -38,12 +39,11 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const nowTime = utils.now();
   const refTime = state.options.refTime;
   const allowZoom = state.ui.flags.allowContinuousTimelineZoom;
-  let timespans = continuousTrackList(state).map(track => {
-    return {
-      kind: TimespanKind.locations,
-      tr: track.tr,
-    }
-  })
+  const tracks = continuousTrackList(state);
+  let timespans: Timespans = tracks.map((track: Track): Timespan => ({
+    kind: TimespanKind.locations,
+    tr: track.tr,
+  }))
   timespans = timespans.concat(customTimespans(state)).concat(selectedTimespans(state));
   return {
     allowZoom,

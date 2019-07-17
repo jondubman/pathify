@@ -94,8 +94,10 @@ const sagas = {
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
     const { events, saveToStorage: saveEventsToStorage } = params;
+
     const sortedEvents = timeseries.sortEvents(events);
-    yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
+
+  yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
     if (saveEventsToStorage !== false) { // note undefined defaults to true
       const eventsToStore = timeseries.filterEvents(sortedEvents, (event: GenericEvent) => (!event.temp))
       yield put(newAction(AppAction.saveEventsToStorage, { events: eventsToStore }));
@@ -307,10 +309,8 @@ const sagas = {
           events.push(event);
         }
         // This is why we have the special-case saveToStorage option. Avoid saving data that was just loaded.
-        yield put(newAction(AppAction.addEvents, { events, saveToStorage: false }));
-
         const sortedEvents = timeseries.sortEvents(events);
-
+        yield put(newAction(AppAction.addEvents, { events: sortedEvents, saveToStorage: false }));
         if (__DEV__) { // log the following only in development
           const tracks = yield call(continuousTracks, sortedEvents, constants.maxTimeGapForContinuousTrack);
           yield call(log.debug, 'load event count', sortedEvents.length, 'loaded tracks', tracks.length, tracks);
@@ -407,8 +407,9 @@ const sagas = {
     const params = action.params as SaveEventsToStorageParams;
     const { events } = params;
     const keyValuePairs = events.map((event: GenericEvent) => ([ event.t.toString(), JSON.stringify(event) ]));
-    yield call(log.debug, `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
-    yield call(AsyncStorage.multiSet, keyValuePairs); // TODO handle errors
+    yield call(log.debug,
+      `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
+    yield call(AsyncStorage.multiSet, keyValuePairs);
   },
 
   // The sequence action is an array of actions to be executed in sequence, such that
