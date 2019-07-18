@@ -22,22 +22,22 @@ export type OptionalPulsars = { [key: string]: OptionalPulsar }
 export const initialAppState = {
   events: [] as GenericEvents,
   flags: { // specifically boolean
-    allowContinuousTimelineZoom: false, // false means discrete only
-    backgroundGeolocation: false,
+    allowContinuousTimelineZoom: false, // false: discrete zoom only
+    backgroundGeolocation: false, // until enabled
     followingUser: true, // should map follow user?
-    keepMapCenteredWhenFollowing: false, // true means continuous. false means map recentered only when you near the edge
+    keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false,
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
-    startupAction_clearStorage: true, // TODO
-    startupAction_loadStorage: false, // TODO
-    mapFullScreen: false, // false means timeline is visible. true means map occupies full screen and timeline is hidden
+    startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
+    startupAction_loadStorage: true, // whether to load from storage when starting up the app
+    mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     tickEvents: true, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
   options: {
-    clientAlias: 'app', // TODO should be unique in production, if specified
+    clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     mapOpacity: constants.map.default.opacity,
     mapStyle: constants.map.default.style,
     pulsars: {} as OptionalPulsars,
