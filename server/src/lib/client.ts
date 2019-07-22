@@ -72,8 +72,6 @@ export const pushToClient = (message: any, clientId: string, clientAlias: string
     messages[clientId] = [];
   }
   const countPending = messages[clientId].length;
-  // const messageText = (typeof message == 'string') ? message : JSON.stringify(message);
-  // log.debug(`push ${messageText} to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`);
   log.debug(`push to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`,
     messageToLog(message));
   messages[clientId].push(message);

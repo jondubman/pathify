@@ -63,7 +63,7 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
-import { lastStartupTime } from 'shared/appEvents';
+import { lastStartupTime, AppUserActionEvent, AppUserAction } from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
 import locations, { LocationEvent, ModeChangeEvent, MotionEvent, TickEvent } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
@@ -170,7 +170,7 @@ const sagas = {
   },
 
   backgroundTapped: function* (action: Action) {
-    log.trace('saga backgroundTapped');
+    yield call(log.trace, 'saga backgroundTapped');
     yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
     yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
   },
@@ -184,7 +184,7 @@ const sagas = {
         const { center, option, zoom } = params;
         if (center) {
           let newCenter = center;
-          if (option == AbsoluteRelativeOption.relative) {
+          if (option === AbsoluteRelativeOption.relative) {
             const currentCenter = yield call(map.getCenter as any);
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
@@ -368,7 +368,7 @@ const sagas = {
     const params = action.params as PanTimelineParams;
     const { t, option } = params;
     let newRefTime = t;
-    if (option == AbsoluteRelativeOption.relative) {
+    if (option === AbsoluteRelativeOption.relative) {
       const refTime = yield select(state => state.options.refTime);
       newRefTime = refTime + t;
     }
@@ -408,7 +408,7 @@ const sagas = {
     const params = action.params as SaveEventsToStorageParams;
     const { events } = params;
     const keyValuePairs = events.map((event: GenericEvent) => ([ event.t.toString(), JSON.stringify(event) ]));
-    yield call(log.debug,
+    yield call(log.trace,
       `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
     yield call(AsyncStorage.multiSet, keyValuePairs);
   },
@@ -425,12 +425,12 @@ const sagas = {
             const sleepTime = (sequenceAction.params as SleepParams).for;
             await new Promise(resolve => setTimeout(resolve, sleepTime));
           }
-          if (sequenceAction.type == AppAction.repeatedAction) {
+          if (sequenceAction.type === AppAction.repeatedAction) {
             const times = (sequenceAction.params as RepeatedActionParams).times;
             for (let i = 0; i < times; i++) {
               await runSequenceActions([sequenceAction.params.repeat]);
             }
-          } else if (sequenceAction.type == AppAction.sequence) {
+          } else if (sequenceAction.type === AppAction.sequence) {
             await runSequenceActions(sequenceAction.params); // using recursion to support nested sequences
           } else {
             store.dispatch(sequenceAction); // note use of store.dispatch rather than yield put
@@ -481,14 +481,14 @@ const sagas = {
     })
     if (changedEvents.length) {
       // TODO Actually send these changed events to the server!
-      log.debug(`saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
+      yield call(log.debug, `saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
       yield put(newAction(ReducerAction.SERVER_SYNC_COMPLETED, timestamps));
     }
   },
 
   setAppOption: function* (action: Action) {
     // for now, this is just a pass through to the reducer.
-    log.debug('saga setAppOption', action);
+    yield call(log.debug, 'saga setAppOption', action);
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
   },
 
@@ -523,7 +523,7 @@ const sagas = {
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
 
     const refTime = (x[0] + x[1]) / 2;
-    log.trace('saga timelineZoomed', refTime);
+    yield call(log.trace, 'saga timelineZoomed', refTime);
     yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
     yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime }));
   },
@@ -533,7 +533,7 @@ const sagas = {
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
     const now = action.params as number;
-    // log.trace('timerTick', now);
+    // yield call(log.trace, 'timerTick', now);
     const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
     if (timelineNow) {
       // This is where the mode for the Timeline really takes effect.
@@ -558,7 +558,7 @@ const sagas = {
   // If named panel is closed, any opened panels will be closed, and the named panel will be opened.
   // If named panel is empty (or unknown), any open panels will be closed.
   togglePanelVisibility: function* (action: Action) {
-    log.trace('saga togglePanelVisibility', action.params);
+    yield call(log.debug, 'saga togglePanelVisibility', action.params);
     const name = action.params as string;
     const panels = yield select((state: AppState) => state.panels);
     const closeAll = !name || (name === '') || !panels[name];
@@ -587,6 +587,14 @@ const sagas = {
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
       const enabledNow = flags[flagName];
+      const startOrStopEvent: AppUserActionEvent = {
+        ...timeseries.newSyncedEvent(utils.now()),
+        type: EventType.USER_ACTION,
+        data: {
+          userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
+        }
+      }
+      yield put(newAction(AppAction.addEvents, { events: [ startOrStopEvent ] }));
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
@@ -615,7 +623,7 @@ const sagas = {
         const { option, zoom } = params;
         let newZoom = zoom;
         const currentCenter = yield call(map.getCenter as any); // will not change
-        if (option == AbsoluteRelativeOption.relative) {
+        if (option === AbsoluteRelativeOption.relative) {
           const currentZoom = yield call(map.getZoom as any);
           newZoom = currentZoom + zoom;
         }

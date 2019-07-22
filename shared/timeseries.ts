@@ -17,7 +17,7 @@ export interface TimeReference { // relative or absolute
 }
 
 export enum EventType { // TODO keep in sync with datamodel.prisma
-  'APP' = 'APP', // see AppStateChangeType
+  'APP' = 'APP', // see AppStateChange
   'LOC' = 'LOC', // geolocation result
   'MODE' = 'MODE', // see ModeType
   'MOTION' = 'MOTION', // isMoving: true or false
@@ -26,7 +26,7 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
   'SYSTEM' = 'SYSTEM', // reserved for future use
   'TEST' = 'TEST', // reserved for testing
   'TICK' = 'TICK', // heartbeat-type event mainly for debugging
-  'UI' = 'UI', // user action
+  'USER_ACTION' = 'USER_ACTION', // user action
 }
 
 export interface GenericEvent {

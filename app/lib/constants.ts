@@ -13,9 +13,14 @@ const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized 
 import { interval } from 'shared/timeseries';
 
 export enum TimespanKind {
-  'locations' = 'locations',
-  'other' = 'other',
-  'selection' = 'selection'
+  'APP_STATE' = 'APP_STATE',
+  'LOCATIONS' = 'LOCATIONS',
+  'MODE' = 'MODE',
+  'MOTION' = 'MOTION',
+  'OTHER' = 'OTHER',
+  'TICKS' = 'TICKS',
+  'TRACKING' = 'TRACKING',
+  'SELECTION' = 'SELECTION',
 }
 
 export interface MapStyle {
@@ -57,17 +62,18 @@ const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
 const mapLogoHeight = 34; // mapbox logo
-const initialTimelineHeight = 120; // thinking 150 max
+const initialTimelineHeight = 150;
 const panelWidth = 252; // fits on iPhone SE
 const clockHeight = 70;
 const clockMargin = 4;
 
 // helper: pad with zeros as needed
-const zeroPrefix = (s: string) => (s.length ? (s.length == 1 ? '0' + s : s) : '00')
+const zeroPrefix = (s: string) => (s.length ? (s.length === 1 ? '0' + s : s) : '00')
 // helper: dec should be between 0 and 1; e.g. 0.8 => 'cc'
 const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(16));
 
-const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity)); // 0 <= opacity <= 1
+// 0 <= opacity <= 1
+export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
 
 const colors = {
   appBackground: colorThemes.background,
@@ -126,10 +132,14 @@ const colors = {
     axisLabels: namedColors.gray,
     background: colorThemes.background,
     timespans: {
-      [TimespanKind.locations]: withOpacity(namedColors.green, 0.35),
-      [TimespanKind.other]: withOpacity(namedColors.azure, 0.35),
-      [TimespanKind.selection]: withOpacity(namedColors.white, 0.25),
-
+      [TimespanKind.APP_STATE]: namedColors.fuschia, // opacity applied later
+      [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),
+      [TimespanKind.OTHER]: withOpacity(namedColors.darkRed, 0.35),
+      [TimespanKind.MODE]: withOpacity(namedColors.purple, 0.25),
+      [TimespanKind.MOTION]: withOpacity(namedColors.yellow, 0.25),
+      [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25),
+      [TimespanKind.TICKS]: withOpacity(namedColors.navy, 0.25),
+      [TimespanKind.TRACKING]: withOpacity(namedColors.green, 0.25),
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),
@@ -277,7 +287,7 @@ const constants = {
     topOffset: safeAreaTop + buttonOffset,
   },
   timeline: {
-    barHeight: 40,
+    barHeight: 40, // big enough to be touchable
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
@@ -285,6 +295,7 @@ const constants = {
       height: initialTimelineHeight,
       zoomLevel: 1,
     },
+    miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,

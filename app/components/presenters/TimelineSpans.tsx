@@ -26,41 +26,66 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
 
     const yBase = timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars;
 
-    const y = (kind: TimespanKind): number => {
-      if (kind == TimespanKind.locations) {
-        return yBase - timeline.barHeight;
-      }
-      if (kind == TimespanKind.other) {
-        return yBase - timeline.barHeight * 2;
+    // yBase is at the bottom of the timeline. y should decrease from there. Notice this function is recursive.
+    const yTop = (kind: TimespanKind): number => {
+      switch (kind) {
+        case TimespanKind.APP_STATE:
+          return yBase - height(kind); // at the bottom
+        case TimespanKind.LOCATIONS:
+          return yTop(TimespanKind.TRACKING) - height(kind); // above TRACKING
+        case TimespanKind.MODE:
+          break;
+        case TimespanKind.MOTION:
+          break;
+        case TimespanKind.OTHER:
+          return yTop(TimespanKind.LOCATIONS) - height(kind); // above LOCATIONS
+        case TimespanKind.SELECTION:
+          return yBase - height(kind);
+        case TimespanKind.TICKS:
+          break;
+        case TimespanKind.TRACKING:
+          return yTop(TimespanKind.APP_STATE) - height(kind); // above APP_STATE
+        default:
+          break;
       }
       return 0;
     }
 
     const height = (kind: TimespanKind): number => {
-      if (kind == TimespanKind.selection) {
-        return timeline.default.height;
+      switch (kind) {
+        case TimespanKind.APP_STATE:
+          return constants.timeline.miniBarHeight;
+        case TimespanKind.LOCATIONS:
+          return constants.timeline.miniBarHeight;
+        case TimespanKind.MODE:
+          break;
+        case TimespanKind.MOTION:
+          break;
+        case TimespanKind.OTHER:
+          return constants.timeline.barHeight;
+        case TimespanKind.SELECTION:
+          return timeline.default.height;
+        case TimespanKind.TICKS:
+          break;
+        case TimespanKind.TRACKING:
+          return constants.timeline.miniBarHeight;
+        default:
+          break;
       }
-      return constants.timeline.barHeight;
+      return 0;
     }
 
     return data.map((ts: Timespan, index: number) => (
       <Rect
         key={`Rect${index}`}
-        style={{ fill: constants.colors.timeline.timespans[ts.kind] }}
+        style={{ fill: ts.color ? ts.color : constants.colors.timeline.timespans[ts.kind] }}
         x={scale.x(ts.tr[0])}
-        y={y(ts.kind)}
+        y={yTop(ts.kind)}
         width={scale.x(ts.tr[1]) - scale.x(ts.tr[0])}
         height={height(ts.kind)}
       />
     ))
   }
 }
-
-/*
-        y={
-          (timeline.initialHeight - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars) -
-          (timeline.barHeight * (index + 1))
-        }
-*/
 
 export default TimelineSpans;

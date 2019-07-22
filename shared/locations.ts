@@ -27,11 +27,11 @@ export interface MotionEvent extends GenericEvent {
 }
 
 export enum ModeType {
-  'VEHICLE' = 'VEHICLE',
   'BICYCLE' = 'BICYCLE',
   'ON_FOOT' = 'ON_FOOT',
   'RUNNING' = 'RUNNING',
-  'STILL'   = 'STILL',
+  'STILL' = 'STILL',
+  'VEHICLE' = 'VEHICLE',
   'WALKING' = 'WALKING',
 }
 
@@ -46,7 +46,7 @@ export interface TickEvent extends GenericEvent {
   // nothing added for now
 }
 
-const locEventFilter: EventFilter = (event: GenericEvent) => (event.type == EventType.LOC);
+const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
 
 const locations = {
 
@@ -68,7 +68,7 @@ const locations = {
           const epoch = (new Date(time)).getTime(); // msec (epoch)
 
           // only log a sample of the locations to show progress
-          if (!(index % 100) || index == maxIndex) { // TODO move this number to constants
+          if (!(index % 100) || index === maxIndex) { // TODO move this number to constants
             log.trace(`${index}/${maxIndex}: lat ${lat}, lon ${lon}, ele ${ele}, time ${time}, epoch ${epoch}`);
           }
           const event: LocationEvent = {

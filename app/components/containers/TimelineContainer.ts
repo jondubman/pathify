@@ -14,6 +14,7 @@ import { Track } from 'shared/tracks';
 export interface Timespan {
   kind: TimespanKind;
   tr: TimeRange;
+  color?: string;
 }
 
 export type Timespans = Timespan[];
@@ -41,7 +42,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const allowZoom = state.flags.allowContinuousTimelineZoom;
   const tracks = continuousTrackList(state);
   let timespans: Timespans = tracks.map((track: Track): Timespan => ({
-    kind: TimespanKind.locations,
+    kind: TimespanKind.LOCATIONS,
     tr: track.tr,
   }))
   timespans = timespans.concat(customTimespans(state)).concat(selectedTimespans(state));

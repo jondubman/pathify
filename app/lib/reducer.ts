@@ -68,7 +68,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         if (locationEvent.data.loc && locationEvent.t && locationEvent.type === EventType.LOC) {
           newState.userLocation = locationEvent;
           newState.events = timeseries.sortEvents([...newState.events, locationEvent]);
-          log.trace(`${newState.events.length} total events`);
+          // log.trace(`${newState.events.length} total events`);
         }
       }
       break;
@@ -85,7 +85,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         const tickEvent = params as TickEvent;
         if (tickEvent.t && tickEvent.type === EventType.TICK) {
           newState.events = timeseries.sortEvents([ ...newState.events, tickEvent ]);
-          log.trace(`${newState.events.length} total events`);
+          // log.trace(`${newState.events.length} total events`);
         }
       }
       break;

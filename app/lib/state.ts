@@ -28,12 +28,12 @@ export const initialAppState = {
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false,
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
-    startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
-    startupAction_loadStorage: true, // whether to load from storage when starting up the app
+    startupAction_clearStorage: true, // whether to clear storage when starting up the app (NOTE: true is destructive!)
+    startupAction_loadStorage: false, // whether to load from storage when starting up the app
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    tickEvents: true, // whether to store pulse events when timer ticks (helpful for debugging)
+    tickEvents: false, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
   options: {
