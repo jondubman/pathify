@@ -139,7 +139,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case ReducerAction.UI_FLAG_DISABLE:
+    case ReducerAction.FLAG_DISABLE:
       {
         const flagName = params as string;
         newState.flags = { ...state.flags };
@@ -147,7 +147,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case ReducerAction.UI_FLAG_ENABLE:
+    case ReducerAction.FLAG_ENABLE:
       {
         const flagName = params as string;
         newState.flags = { ...state.flags };
@@ -155,7 +155,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case ReducerAction.UI_FLAG_TOGGLE:
+    case ReducerAction.FLAG_TOGGLE:
       {
         const flagName = params as string;
         newState.flags = { ...state.flags };

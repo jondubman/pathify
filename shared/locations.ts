@@ -32,7 +32,6 @@ export enum ModeType {
   'RUNNING' = 'RUNNING',
   'STILL' = 'STILL',
   'VEHICLE' = 'VEHICLE',
-  'WALKING' = 'WALKING',
 }
 
 export interface ModeChangeEvent extends GenericEvent {

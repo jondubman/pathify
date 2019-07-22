@@ -32,7 +32,7 @@ const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(AppAction.uiFlagToggle, 'backgroundGeolocation'));
+    dispatch(newAction(AppAction.flagToggle, 'backgroundGeolocation'));
   }
   const dispatchers = {
     onPress,

@@ -20,9 +20,9 @@ export enum ReducerAction {
   'SET_PANEL_VISIBILITY' = 'SET_PANEL_VISIBILITY',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
   'SERVER_SYNC_COMPLETED' = 'SERVER_SYNC_COMPLETED',
-  'UI_FLAG_DISABLE' = 'UI_FLAG_DISABLE',
-  'UI_FLAG_ENABLE' = 'UI_FLAG_ENABLE',
-  'UI_FLAG_TOGGLE' = 'UI_FLAG_TOGGLE',
+  'FLAG_DISABLE' = 'FLAG_DISABLE',
+  'FLAG_ENABLE' = 'FLAG_ENABLE',
+  'FLAG_TOGGLE' = 'FLAG_TOGGLE',
 }
 
 // These enum strings are formatted in Pascal case so as never to match any reducerActions (similar to namespacing).
@@ -38,6 +38,8 @@ export enum AppAction {
   'centerMapOnUser' = 'centerMapOnUser',
   'clearStorage' = 'clearStorage',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
+  'flagDisable' = 'flagDisable',
+  'flagEnable' = 'flagEnable',
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
   'importGPX' = 'importGPX',
@@ -63,9 +65,7 @@ export enum AppAction {
   'timelineZoomed' = 'timelineZoomed',
   'timerTick' = 'timerTick',
   'togglePanelVisibility' = 'togglePanelVisibility',
-  'uiFlagDisable' = 'uiFlagDisable',
-  'uiFlagEnable' = 'uiFlagEnable',
-  'uiFlagToggle' = 'uiFlagToggle',
+  'flagToggle' = 'flagToggle',
   'userMovedMap' = 'userMovedMap',
   'zoomMap' = 'zoomMap', // see ZoomMapParams
 }

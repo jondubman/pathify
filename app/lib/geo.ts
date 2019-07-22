@@ -219,7 +219,6 @@ const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEve
       on_foot: ModeType.ON_FOOT,
       running: ModeType.RUNNING,
       still: ModeType.STILL,
-      walking: ModeType.WALKING,
     }
   const mode = mapActivityToMode[activity] || `unknown activity: ${activity}`;
   log.trace('newModeChangeEvent', activity, mode);

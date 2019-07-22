@@ -27,7 +27,7 @@ const mapStateToProps = (state: AppState): HelpButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): HelpButtonDispatchProps => {
   const onPress = () => {
     log.debug('HelpButton press');
-    dispatch(newAction(AppAction.uiFlagToggle, 'helpEnabled'));
+    dispatch(newAction(AppAction.flagToggle, 'helpEnabled'));
   }
   const dispatchers = {
     onPress,

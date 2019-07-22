@@ -244,6 +244,41 @@ const sagas = {
     }
   },
 
+  flagDisable: function* (action: Action) {
+    yield put(newAction(ReducerAction.FLAG_DISABLE, action.params));
+  },
+
+  flagEnable: function* (action: Action) {
+    yield put(newAction(ReducerAction.FLAG_ENABLE, action.params));
+  },
+
+  flagToggle: function* (action: Action) {
+    const flagName: string = action.params;
+    yield put(newAction(ReducerAction.FLAG_TOGGLE, action.params));
+
+    // Side effects are handled here.
+    // For now, only one flag has side effects:
+    if (flagName === 'backgroundGeolocation') {
+      const flags = yield select((state: AppState) => state.flags);
+      const enabledNow = flags[flagName];
+      const startOrStopEvent: AppUserActionEvent = {
+        ...timeseries.newSyncedEvent(utils.now()),
+        type: EventType.USER_ACTION,
+        data: {
+          userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
+        }
+      }
+      yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent] }));
+      yield call(Geo.enableBackgroundGeolocation, enabledNow);
+      if (flags.setPaceAfterStart && enabledNow) {
+        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
+        yield call(Geo.changePace, true, () => {
+          log.debug('BackgroundGeolocation pace manually set to moving');
+        })
+      }
+    }
+  },
+
   geolocation: function* (action: Action) {
     try {
       const locationEvent = action.params as LocationEvent;
@@ -331,13 +366,13 @@ const sagas = {
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
-    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'mapMoving'));
-    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'mapReorienting'));
+    yield put(newAction(ReducerAction.FLAG_DISABLE, 'mapMoving'));
+    yield put(newAction(ReducerAction.FLAG_DISABLE, 'mapReorienting'));
   },
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
-    yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapMoving'));
+    yield put(newAction(ReducerAction.FLAG_ENABLE, 'mapMoving'));
   },
 
   mapTapped: function* (action: Action) {
@@ -348,7 +383,7 @@ const sagas = {
     if (settingsOpen) {
       yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
     } else {
-      yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, 'mapFullScreen'));
+      yield put(newAction(ReducerAction.FLAG_TOGGLE, 'mapFullScreen'));
     }
   },
 
@@ -372,7 +407,7 @@ const sagas = {
       const refTime = yield select(state => state.options.refTime);
       newRefTime = refTime + t;
     }
-    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(ReducerAction.FLAG_DISABLE, 'timelineNow'));
     yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: newRefTime }));
   },
 
@@ -394,8 +429,8 @@ const sagas = {
     if (map) {
       yield call(log.debug, 'saga reorientMap');
       const obj = { heading: 0, duration: constants.map.reorientationTime };
-      yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapMoving'));
-      yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'mapReorienting'));
+      yield put(newAction(ReducerAction.FLAG_ENABLE, 'mapMoving'));
+      yield put(newAction(ReducerAction.FLAG_ENABLE, 'mapReorienting'));
       map.setCamera(obj);
     }
   },
@@ -415,7 +450,7 @@ const sagas = {
 
   // The sequence action is an array of actions to be executed in sequence, such that
   //    -- the sleep action can be interspersed, and works as expected, delaying subsequent actions in the sequence;
-  //    -- repeatedAction behaves as expected when containing a sub-sequence of
+  //    -- repeatedAction behaves as expected when containing a sub-sequence
   sequence: function* (action: Action) {
     try {
       const runSequenceActions = async (sequenceActions: Action[]) => {
@@ -441,6 +476,8 @@ const sagas = {
       setTimeout(async () => { // using setTimeout so we can trigger an async function
         await runSequenceActions(innerActions);
       }, 0)
+      // TODO evaluate the following:
+      //
       // for (let innerAction of innerActions) {
       //   yield put(innerAction);
       // }
@@ -496,7 +533,7 @@ const sagas = {
   startFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga startFollowingUser');
-      yield put(newAction(ReducerAction.UI_FLAG_ENABLE, 'followingUser'));
+      yield put(newAction(ReducerAction.FLAG_ENABLE, 'followingUser'));
       const map = MapUtils();
       if (map) {
         yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
@@ -510,7 +547,7 @@ const sagas = {
   stopFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
-      yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'followingUser'));
+      yield put(newAction(ReducerAction.FLAG_DISABLE, 'followingUser'));
       yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
@@ -524,7 +561,7 @@ const sagas = {
 
     const refTime = (x[0] + x[1]) / 2;
     yield call(log.trace, 'saga timelineZoomed', refTime);
-    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(ReducerAction.FLAG_DISABLE, 'timelineNow'));
     yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime }));
   },
 
@@ -567,40 +604,6 @@ const sagas = {
     } else {
       if (name) {
         yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
-      }
-    }
-  },
-
-  uiFlagDisable: function* (action: Action) {
-    yield put(newAction(ReducerAction.UI_FLAG_DISABLE, action.params));
-  },
-
-  uiFlagEnable: function* (action: Action) {
-    yield put(newAction(ReducerAction.UI_FLAG_ENABLE, action.params));
-  },
-
-  uiFlagToggle: function* (action: Action) {
-    const flagName: string = action.params;
-    yield put(newAction(ReducerAction.UI_FLAG_TOGGLE, action.params));
-
-    // side effects
-    if (flagName === 'backgroundGeolocation') {
-      const flags = yield select((state: AppState) => state.flags);
-      const enabledNow = flags[flagName];
-      const startOrStopEvent: AppUserActionEvent = {
-        ...timeseries.newSyncedEvent(utils.now()),
-        type: EventType.USER_ACTION,
-        data: {
-          userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
-        }
-      }
-      yield put(newAction(AppAction.addEvents, { events: [ startOrStopEvent ] }));
-      yield call(Geo.enableBackgroundGeolocation, enabledNow);
-      if (flags.setPaceAfterStart && enabledNow) {
-        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
-        yield call(Geo.changePace, true, () => {
-          log.debug('BackgroundGeolocation pace manually set to moving');
-        })
       }
     }
   },
