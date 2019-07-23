@@ -28,6 +28,7 @@ export const lastStartupTime = (events: GenericEvents): (Timepoint | null) => {
 }
 
 export enum AppUserAction {
+  // 'MENU_ITEM_SELECTED' = 'MENU_ITEM_SELECTED',
   'START' = 'START',
   'STOP' = 'STOP',
 }

@@ -16,6 +16,52 @@ export interface OptionalPulsar {
 // The key here is any unique string, whih could indicate a kind of pulsar (like 'origin'), or an id
 export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
+export interface MenuItem {
+  name: string;
+  defaultVisible?: boolean;
+  displayText: string;
+}
+
+export interface Menu {
+  items: MenuItem[],
+}
+
+export const menus = {
+  menuClock: {
+    items: [
+      { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
+      { name: 'clearData', displayText: 'Clear data' },
+      { name: 'editMark', displayText: 'Edit Mark' },
+      { name: 'jumpDateTime', displayText: 'Jump to Date & Time', defaultVisible: true },
+      { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
+      { name: 'removeMark', displayText: 'Remove Mark' },
+      { name: 'saveTimespan', displayText: 'Save Timespan' },
+      { name: 'selectTimespan', displayText: 'Select Timespan', defaultVisible: true }, // starts selection process
+      { name: 'zoomTimeline', displayText: 'Zoom Timeline', defaultVisible: true }, // in, out, level, etc.
+    ],
+  },
+  menuNext: {
+    items: [
+      { name: 'endActivity', displayText: 'End of Activity' },
+      { name: 'endTimespan', displayText: 'End of Timespan' },
+      { name: 'nextActivity', displayText: 'Next Activity' },
+      { name: 'nextMark', displayText: 'Next Mark' },
+      { name: 'nextTimespan', displayText: 'Next Timespan' },
+      { name: 'now', displayText: 'NOW', defaultVisible: true },
+    ],
+  },
+  menuPrev: {
+    items: [
+      { name: 'back', displayText: 'Back' }, // to where you were before
+      { name: 'prevActivity', displayText: 'Prev Activity' },
+      { name: 'prevMark', displayText: 'Previous Mark' },
+      { name: 'prevTimespan', displayText: 'Previous Timespan' },
+      { name: 'startActivity', displayText: 'Start of Activity' },
+      { name: 'startTimespan', displayText: 'Start of Timespan' },
+    ],
+  },
+}
+
 // Canonical interface for AppUIState included in AppState.
 // AppUIState is for transient, UI-related state changes, e.g. for menus.
 
@@ -33,6 +79,7 @@ export const initialAppState = {
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
+    settingsOpen: false, // settings panel visible state
     tickEvents: false, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
   },
@@ -47,10 +94,6 @@ export const initialAppState = {
     serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
     serverSyncTime: 0, // time of last server sync (or 0 if never)
     timelineZoomLevel: constants.timeline.default.zoomLevel,
-  },
-  panels: { // panels are subviews that sit above the main (perhaps map) view, which don't have to be modal.
-    geolocation: { open: false },
-    settings: { open: false },
   },
 }
 

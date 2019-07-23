@@ -24,7 +24,7 @@ export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatch
 
 const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
   return {
-    open: state.panels.settings.open,
+    open: state.flags.settingsOpen,
     mapOpacity: state.options.mapOpacity,
     mapStyle: dynamicMapStyle(state),
   }

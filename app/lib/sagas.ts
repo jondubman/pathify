@@ -65,9 +65,19 @@ import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import { lastStartupTime, AppUserActionEvent, AppUserAction } from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
-import locations, { LocationEvent, ModeChangeEvent, MotionEvent, TickEvent } from 'shared/locations';
+import locations, {
+  LocationEvent,
+  ModeChangeEvent,
+  MotionEvent,
+  TickEvent,
+} from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
-import timeseries, { EventType, GenericEvent, GenericEvents, TimeRange } from 'shared/timeseries';
+import timeseries, {
+  EventType,
+  GenericEvent,
+  GenericEvents,
+  TimeRange,
+} from 'shared/timeseries';
 import { continuousTracks } from 'shared/tracks';
 
 const sagas = {
@@ -144,7 +154,6 @@ const sagas = {
           response = {
             flags: state.flags,
             options: state.options,
-            panels: state.panels,
           }
           break;
         }
@@ -171,8 +180,7 @@ const sagas = {
 
   backgroundTapped: function* (action: Action) {
     yield call(log.trace, 'saga backgroundTapped');
-    yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
-    yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'geolocation', open: false }));
+    yield put(newAction(AppAction.flagDisable, 'settingsVisible'));
   },
 
   // Center map on absolute position or relative to current position (see CenterMapParams)
@@ -377,15 +385,17 @@ const sagas = {
 
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
-
-    const settingsOpen = yield select((state: AppState) => state.panels.settings.open);
-
+    const settingsOpen = yield select((state: AppState) => state.flags.settingsOpen);
     if (settingsOpen) {
-      yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name: 'settings', open: false }));
+      yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
     } else {
       yield put(newAction(ReducerAction.FLAG_TOGGLE, 'mapFullScreen'));
     }
   },
+
+  // menuSelect: function* (action: Action) {
+  //   const menuSelectEvent = action.params as MenuSelectEvent;
+  // },
 
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
@@ -588,23 +598,6 @@ const sagas = {
     const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
     if (now >= serverSyncTime + serverSyncInterval) {
       yield put(newAction(AppAction.serverSync, now));
-    }
-  },
-
-  // If named panel is open, it will be closed.
-  // If named panel is closed, any opened panels will be closed, and the named panel will be opened.
-  // If named panel is empty (or unknown), any open panels will be closed.
-  togglePanelVisibility: function* (action: Action) {
-    yield call(log.debug, 'saga togglePanelVisibility', action.params);
-    const name = action.params as string;
-    const panels = yield select((state: AppState) => state.panels);
-    const closeAll = !name || (name === '') || !panels[name];
-    if (!closeAll && panels[name].open) {
-      yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: false }));
-    } else {
-      if (name) {
-        yield put(newAction(ReducerAction.SET_PANEL_VISIBILITY, { name, open: true }));
-      }
     }
   },
 

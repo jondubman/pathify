@@ -17,7 +17,6 @@ export enum ReducerAction {
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'TICK_EVENT' = 'TICK_EVENT', // corresponds to AppAction.tickEvent
   'SET_APP_OPTION' = 'SET_APP_OPTION',
-  'SET_PANEL_VISIBILITY' = 'SET_PANEL_VISIBILITY',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
   'SERVER_SYNC_COMPLETED' = 'SERVER_SYNC_COMPLETED',
   'FLAG_DISABLE' = 'FLAG_DISABLE',
@@ -48,6 +47,7 @@ export enum AppAction {
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
+  // 'menuItemSelected' = 'menuItemSelected',
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'panTimeline' = 'panTimeline', // see PanTimelineParams
@@ -64,7 +64,6 @@ export enum AppAction {
   'stopFollowingUser' = 'stopFollowingUser',
   'timelineZoomed' = 'timelineZoomed',
   'timerTick' = 'timerTick',
-  'togglePanelVisibility' = 'togglePanelVisibility',
   'flagToggle' = 'flagToggle',
   'userMovedMap' = 'userMovedMap',
   'zoomMap' = 'zoomMap', // see ZoomMapParams

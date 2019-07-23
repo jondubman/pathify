@@ -55,7 +55,7 @@ export default class App extends Component {
     if (startupAction_clearStorage) {
       store.dispatch(newAction(AppAction.clearStorage));
     }
-    if (startupAction_loadStorage) {
+    else if (startupAction_loadStorage) { // It's counterproductive to try to load storage we just requested to clear.
       store.dispatch(newAction(AppAction.loadEventsFromStorage));
     }
     this.handleAppStateChange('startup'); // initialize

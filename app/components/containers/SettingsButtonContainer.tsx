@@ -20,14 +20,14 @@ export type SettingsButtonProps = SettingsButtonStateProps & SettingsButtonDispa
 
 const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
   return {
-    open: state.panels.settings.open,
+    open: state.flags.settingsOpen,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): SettingsButtonDispatchProps => {
   const onPress = () => {
     log.debug('SettingsButton press');
-    dispatch(newAction(AppAction.togglePanelVisibility, 'settings'));
+    dispatch(newAction(AppAction.flagToggle, 'settingsOpen'));
   }
   const dispatchers = {
     onPress,

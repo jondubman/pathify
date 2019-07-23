@@ -123,15 +123,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case ReducerAction.SET_PANEL_VISIBILITY:
-      {
-        const panelName = params.name as string;
-        const open = params.open as boolean;
-        newState.panels = { ...state.panels };
-        newState.panels[panelName].open = open;
-      }
-      break;
-
     case ReducerAction.SET_TIMER_TICK_INTERVAL:
       {
         const interval = params as number;
