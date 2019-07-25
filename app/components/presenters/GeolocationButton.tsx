@@ -7,24 +7,25 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-
 import constants from 'lib/constants';
 const colors = constants.colors.geolocationButton;
 const {
+  bottomOffset,
+  leftOffset,
   opacity,
-  size
+  size,
 } = constants.geolocationButton;
 
 const Styles = StyleSheet.create({
   button: { // round
     borderRadius: size / 2,
-    position: 'absolute',
-    paddingTop: size / 4,
-    width: size,
+    flexDirection: 'row',
     height: size,
     justifyContent: 'center',
-    flexDirection: 'row',
+    paddingTop: size / 4,
+    position: 'absolute',
     opacity,
+    width: size,
   },
   label: {
     color: constants.colors.byName.black,
@@ -54,8 +55,8 @@ const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.enabled ? colors.enabledBackground : colors.disabledBackground,
-      bottom: props.bottomOffset,
-      left: props.leftOffset,
+      bottom: bottomOffset,
+      left: leftOffset,
     }]}
     onPress={props.onPress}
     underlayColor={props.enabled ? colors.enabledUnderlay : colors.disabledUnderlay}

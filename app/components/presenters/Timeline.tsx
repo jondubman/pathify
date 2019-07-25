@@ -1,3 +1,5 @@
+// This is the core of the Timeline, which is based on VictoryChart.
+
 import * as d3 from 'd3';
 
 import React, {

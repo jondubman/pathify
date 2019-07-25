@@ -1,3 +1,5 @@
+// TODO this component is currently unused
+
 import { connect } from 'react-redux';
 
 import { AppState } from 'lib/state';

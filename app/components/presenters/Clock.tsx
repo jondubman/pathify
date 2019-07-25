@@ -154,7 +154,7 @@ const ClockTicks = () => {
 const Clock = (props: ClockProps) => (
   <TouchableHighlight
     style={Styles.clock}
-    onPress={props.onPress}
+    onPressIn={props.onPress}
     underlayColor={colors.underlay}
   >
     <View>

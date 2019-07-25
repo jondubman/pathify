@@ -36,6 +36,7 @@ export enum AppAction {
   'centerMap' = 'centerMap', // see CenterMapParams
   'centerMapOnUser' = 'centerMapOnUser',
   'clearStorage' = 'clearStorage',
+  'clockPress' = 'clockPress',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
   'flagDisable' = 'flagDisable',
   'flagEnable' = 'flagEnable',

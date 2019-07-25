@@ -1,3 +1,5 @@
+// SettingsPanel supports setting map style and opacity (with a slider).
+
 import React, {
 } from 'react';
 
@@ -99,7 +101,7 @@ const Styles = StyleSheet.create({
 
 const SettingsPanel = (props: SettingsPanelProps) => (
   <View style={Styles.view}>
-    { props.open ?
+    {props.open ?
       <View style={Styles.view}>
         <View style={Styles.panel}>
           <View style={Styles.subpanels}>

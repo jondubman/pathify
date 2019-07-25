@@ -9,13 +9,19 @@ import {
 } from 'react-native';
 
 import constants from 'lib/constants';
+import utils from 'lib/utils';
 
 import { AppUIProps } from 'containers/AppUIContainer';
+import CompassButtonContainer from 'containers/CompassButtonContainer';
+import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
+import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
+import PopupMenusContainer from 'containers/PopupMenusContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import TimelineContainer from 'containers/TimelineContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
+
 
 const AppStyles = StyleSheet.create({
   containingAppView: {
@@ -30,7 +36,8 @@ const AppStyles = StyleSheet.create({
 
 class AppUI extends Component<AppUIProps> {
   public render() {
-    const { showTimeline } = this.props;
+    const { showTimeline, timelineHeight} = this.props;
+    const width = utils.windowSize().width;
     return (
       <View style={AppStyles.containingAppView}>
         <StatusBar
@@ -40,7 +47,13 @@ class AppUI extends Component<AppUIProps> {
         <View style={AppStyles.safeAreaView}>
           <MapContainer />
           {showTimeline ? <TimelineContainer /> : null}
-          {showTimeline ? <TimelineControlsContainer /> : null}
+          {showTimeline ? <PopupMenusContainer /> : null}
+          <TimelineControlsContainer />
+          <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+            <CompassButtonContainer />
+            <FollowMeButtonContainer />
+            <GeolocationButtonContainer />
+          </View>
           <HelpButtonContainer />
           <SettingsPanelContainer />
         </View>

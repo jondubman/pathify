@@ -1,3 +1,5 @@
+// TODO this component is currently unused
+
 import * as React from 'react';
 
 import {

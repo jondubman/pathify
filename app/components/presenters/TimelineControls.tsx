@@ -1,3 +1,5 @@
+// This component renders the Clock, RefTime, top lines and center line of the timeline.
+
 import * as React from 'react';
 
 import {
@@ -14,7 +16,6 @@ import { TimelineControlsProps } from 'containers/TimelineControlsContainer';
 
 const Styles = StyleSheet.create({
   centerLine: {
-    // alignSelf: 'center',
     backgroundColor: constants.colors.timeline.centerLine,
     bottom: constants.timeline.bottomPaddingForAxis,
     left: utils.windowSize().width / 2 - constants.timeline.centerLineWidth / 2,
@@ -22,7 +23,6 @@ const Styles = StyleSheet.create({
     width: constants.timeline.centerLineWidth,
   },
   clock: {
-    // alignSelf: 'center',
     left: utils.windowSize().width / 2 - constants.clock.height / 2,
     position: 'absolute',
   },

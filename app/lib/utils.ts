@@ -8,6 +8,10 @@ type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] 
 
 const utils = {
 
+  deepCopy: (obj: Object): Object => (
+    JSON.parse(JSON.stringify(obj))
+  ),
+
   // return true if loc is inside bounds.
   // lonInset and latInset of 0 is the simple test.
   // lonInset or latInset > 0 shrinks the range that is considered inside the bounds.

@@ -242,6 +242,15 @@ const sagas = {
     }
   },
 
+  clockPress: function* (action: Action) {
+    const timelineShowing = yield select((state: AppState) => (!state.flags.mapFullScreen))
+    if (timelineShowing) {
+      yield put(newAction(AppAction.flagToggle, 'menuClockOpen'));
+    } else {
+      yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
+    }
+  },
+
   delayedAction: function* (action: Action) {
     try {
       const params = action.params as DelayedActionParams;
@@ -252,20 +261,8 @@ const sagas = {
     }
   },
 
-  flagDisable: function* (action: Action) {
-    yield put(newAction(ReducerAction.FLAG_DISABLE, action.params));
-  },
-
-  flagEnable: function* (action: Action) {
-    yield put(newAction(ReducerAction.FLAG_ENABLE, action.params));
-  },
-
-  flagToggle: function* (action: Action) {
-    const flagName: string = action.params;
-    yield put(newAction(ReducerAction.FLAG_TOGGLE, action.params));
-
-    // Side effects are handled here.
-    // For now, only one flag has side effects:
+  flag_sideEffects: function* (flagName: string) {
+    // Side effects (downstream!) of modifying app flags are handled here.
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
       const enabledNow = flags[flagName];
@@ -285,6 +282,30 @@ const sagas = {
         })
       }
     }
+    if (flagName === 'menuClockOpen') {
+      const flags = yield select((state: AppState) => state.flags);
+      if (flags.menuClockOpen) {
+        yield put(newAction(AppAction.flagDisable, 'mapFullScreen')); // show timeline when menuClock is open
+      }
+    }
+  },
+
+  flagDisable: function* (action: Action) {
+    const flagName: string = action.params;
+    yield put(newAction(ReducerAction.FLAG_DISABLE, flagName));
+    yield sagas.flag_sideEffects(flagName);
+  },
+
+  flagEnable: function* (action: Action) {
+    const flagName: string = action.params;
+    yield put(newAction(ReducerAction.FLAG_ENABLE, flagName));
+    yield sagas.flag_sideEffects(flagName);
+  },
+
+  flagToggle: function* (action: Action) {
+    const flagName: string = action.params;
+    yield put(newAction(ReducerAction.FLAG_TOGGLE, flagName));
+    yield sagas.flag_sideEffects(flagName);
   },
 
   geolocation: function* (action: Action) {
@@ -374,13 +395,13 @@ const sagas = {
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
-    yield put(newAction(ReducerAction.FLAG_DISABLE, 'mapMoving'));
-    yield put(newAction(ReducerAction.FLAG_DISABLE, 'mapReorienting'));
+    yield put(newAction(AppAction.flagDisable, 'mapMoving'));
+    yield put(newAction(AppAction.flagDisable, 'mapReorienting'));
   },
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
-    yield put(newAction(ReducerAction.FLAG_ENABLE, 'mapMoving'));
+    yield put(newAction(AppAction.flagEnable, 'mapMoving'));
   },
 
   mapTapped: function* (action: Action) {
@@ -389,7 +410,7 @@ const sagas = {
     if (settingsOpen) {
       yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
     } else {
-      yield put(newAction(ReducerAction.FLAG_TOGGLE, 'mapFullScreen'));
+      yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
     }
   },
 
@@ -417,7 +438,7 @@ const sagas = {
       const refTime = yield select(state => state.options.refTime);
       newRefTime = refTime + t;
     }
-    yield put(newAction(ReducerAction.FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
     yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: newRefTime }));
   },
 
@@ -439,8 +460,8 @@ const sagas = {
     if (map) {
       yield call(log.debug, 'saga reorientMap');
       const obj = { heading: 0, duration: constants.map.reorientationTime };
-      yield put(newAction(ReducerAction.FLAG_ENABLE, 'mapMoving'));
-      yield put(newAction(ReducerAction.FLAG_ENABLE, 'mapReorienting'));
+      yield put(newAction(AppAction.flagEnable, 'mapMoving'));
+      yield put(newAction(AppAction.flagEnable, 'mapReorienting'));
       map.setCamera(obj);
     }
   },
@@ -543,7 +564,7 @@ const sagas = {
   startFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga startFollowingUser');
-      yield put(newAction(ReducerAction.FLAG_ENABLE, 'followingUser'));
+      yield put(newAction(AppAction.flagEnable, 'followingUser'));
       const map = MapUtils();
       if (map) {
         yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
@@ -557,7 +578,7 @@ const sagas = {
   stopFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
-      yield put(newAction(ReducerAction.FLAG_DISABLE, 'followingUser'));
+      yield put(newAction(AppAction.flagDisable, 'followingUser'));
       yield call(Geo.stopBackgroundGeolocation, 'following');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
@@ -571,7 +592,7 @@ const sagas = {
 
     const refTime = (x[0] + x[1]) / 2;
     yield call(log.trace, 'saga timelineZoomed', refTime);
-    yield put(newAction(ReducerAction.FLAG_DISABLE, 'timelineNow'));
+    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
     yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime }));
   },
 

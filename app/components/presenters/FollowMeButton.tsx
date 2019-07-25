@@ -8,36 +8,36 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { FollowMeButtonProps } from 'containers/FollowMeButtonContainer';
 import constants from 'lib/constants';
+
 const colors = constants.colors.followMeButton;
 const {
   bottomOffset,
   rightOffset,
   opacity,
-  size
+  size,
 } = constants.followMeButton;
 
 const Styles = StyleSheet.create({
   button: { // round
     borderRadius: size / 2,
-    position: 'absolute',
-    paddingTop: size / 4,
-    width: size,
-    height: size,
-    right: rightOffset,
-    justifyContent: 'center',
+    bottom: bottomOffset,
     flexDirection: 'row',
+    height: size,
+    justifyContent: 'center',
     opacity,
+    paddingTop: size / 4,
+    position: 'absolute',
+    right: rightOffset,
+    width: size,
   },
 })
-
-import { FollowMeButtonProps } from 'containers/FollowMeButtonContainer';
 
 const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.active ? colors.background.active : colors.background.inactive,
-      bottom: bottomOffset,
     }]}
     onPress={props.onPress}
     underlayColor={colors.underlay}

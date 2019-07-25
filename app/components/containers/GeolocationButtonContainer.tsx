@@ -10,8 +10,6 @@ import GeolocationButton from 'presenters/GeolocationButton';
 import log from 'shared/log';
 
 interface GeolocationButtonStateProps {
-  bottomOffset: number,
-  leftOffset: number,
   enabled: boolean,
 }
 
@@ -23,8 +21,6 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
-    bottomOffset: constants.geolocationButton.bottomOffset,
-    leftOffset: constants.geolocationButton.leftOffset,
     enabled: state.flags.backgroundGeolocation,
   }
 }

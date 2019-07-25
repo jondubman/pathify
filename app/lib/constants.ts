@@ -54,7 +54,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 }
 
 const colorThemes = {
-  background: namedColors.navy,
+  background: namedColors.black,
   settings: namedColors.red,
 }
 
@@ -80,9 +80,9 @@ const colors = {
   appText: 'black',
   byName: namedColors, // all of them
   clock: {
-    background: withOpacity(namedColors.black, 0.5),
+    background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.7),
-    underlay: withOpacity(namedColors.blue, 0.5),
+    underlay: withOpacity(namedColors.blue, 0.25),
   },
   compassButton: {
     background: 'white',
@@ -107,6 +107,10 @@ const colors = {
     background: 'white',
     icon: 'black',
     underlay: namedColors.yellow,
+  },
+  menus: {
+    background: withOpacity(namedColors.black, 0.7),
+    border: withOpacity(namedColors.azure, 0.7)
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
@@ -164,12 +168,12 @@ const constants = {
       radius: 3,
     },
     height: clockHeight, // which is also width
-    margin: clockMargin,
     hourHand: {
       color: withOpacity(colors.byName.white, 1),
       lengthRatio: 0.6,
       thickness: 3,
     },
+    margin: clockMargin,
     minuteHand: {
       color: withOpacity(colors.byName.white, 1),
       lengthRatio: 1,

@@ -11,9 +11,6 @@ import Mapbox from '@mapbox/react-native-mapbox-gl';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-import CompassButtonContainer from 'containers/CompassButtonContainer';
-import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
-import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import { MapAreaProps } from 'containers/MapContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
@@ -96,7 +93,6 @@ class MapArea extends Component<MapAreaProps> {
           >
             <View style={hiddenStyle} />
           </TouchableWithoutFeedback>
-          <GeolocationButtonContainer />
         </View>
       )
     }
@@ -130,9 +126,6 @@ class MapArea extends Component<MapAreaProps> {
             <PulsarsContainer />
           </Mapbox.MapView>
         </View>
-        <FollowMeButtonContainer />
-        <CompassButtonContainer />
-        <GeolocationButtonContainer />
       </View>
     )
   }
