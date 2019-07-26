@@ -13,8 +13,9 @@ export interface PopupMenuItem {
   defaultVisible?: boolean;
   displayText: string; // TODO icons
 
-  left?: number; // relative to PopupMenu anchor point TODO
-  top?: number; // relative to PopupMenu anchor point TODO
+  itemStyle?: object;
+  itemUnderlayColor?: string,
+  textStyle?: object;
 }
 export type PopupMenuConfig = {
   defaultItemStyle?: string; // otherwise default style will be the global default
@@ -30,9 +31,9 @@ export type PopupMenuConfig = {
 }
 export enum PopupMenuName {
   'menuClock' = 'menuClock',
-  'menuNext' = 'menuNext',
-  'menuPrev' = 'menuPrev',
-  'menuZoomTimeline' = 'menuZoomTimeline',
+  // 'menuNext' = 'menuNext',
+  // 'menuPrev' = 'menuPrev',
+  // 'menuZoomTimeline' = 'menuZoomTimeline',
 }
 // TODO not sure how to avoid repeating the construct Map<PopupMenuName, PopupMenuConfig> a few times when using new;
 // new PopupMenusConfig gives an error, saying it refers to a type but it's being used as a value (?)
@@ -40,49 +41,55 @@ export type PopupMenusConfig = Map<PopupMenuName, PopupMenuConfig>;
 export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
   [PopupMenuName.menuClock, {
     items: [
-      { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
-      { name: 'clearData', displayText: 'Clear data' },
-      { name: 'editMark', displayText: 'Edit Mark' },
-      { name: 'jumpDateTime', displayText: 'Jump to Date & Time' },
-      { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
-      { name: 'removeMark', displayText: 'Remove Mark' },
-      { name: 'saveTimespan', displayText: 'Save Timespan' },
-      { name: 'selectTimespan', displayText: 'Select Timespan', defaultVisible: true }, // starts selection process
-      { name: 'zoomTimeline', displayText: 'Zoom Timeline', defaultVisible: true }, // in, out, level, etc.
+      // { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
+      // { name: 'clearData', displayText: 'Clear data' },
+      // { name: 'editMark', displayText: 'Edit Mark' },
+      // { name: 'dateTime', displayText: 'Date/Time' },
+      // { name: 'listView', displayText: 'List View', defaultVisible: true },
+      // { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
+
+      { name: 'next', displayText: 'NEXT', defaultVisible: true },
+      { name: 'now', displayText: 'NOW', defaultVisible: true },
+      { name: 'prev', displayText: 'PREVIOUS', defaultVisible: true },
+
+      // { name: 'removeMark', displayText: 'Remove Mark' },
+      // { name: 'saveTimespan', displayText: 'Save Timespan' },
+      // { name: 'selectTimespan', displayText: 'Select Timespan', defaultVisible: true }, // starts selection process
+      // { name: 'zoomTimeline', displayText: 'Zoom Timeline', defaultVisible: true }, // in, out, level, etc.
     ],
     // open derived dynamically from flags.menuClockOpen
     height: 280,
     width: utils.windowSize().width,
   }],
-  [PopupMenuName.menuNext, {
-    items: [
-      { name: 'endActivity', displayText: 'End of Activity' },
-      { name: 'endTimespan', displayText: 'End of Timespan' },
-      { name: 'nextActivity', displayText: 'Next Activity' },
-      { name: 'nextMark', displayText: 'Next Mark' },
-      { name: 'nextTimespan', displayText: 'Next Timespan' },
-      { name: 'now', displayText: 'NOW', defaultVisible: true },
-    ],
-    // open derived dynamically from flags.menuNextOpen
-  }],
-  [PopupMenuName.menuPrev, {
-    items: [
-      { name: 'back', displayText: 'Back' }, // to where you were before
-      { name: 'prevActivity', displayText: 'Prev Activity' },
-      { name: 'prevMark', displayText: 'Previous Mark' },
-      { name: 'prevTimespan', displayText: 'Previous Timespan' },
-      { name: 'startActivity', displayText: 'Start of Activity' },
-      { name: 'startTimespan', displayText: 'Start of Timespan' },
-    ],
-    // open derived dynamically from flags.menuPrevOpen
-  }],
-  [PopupMenuName.menuZoomTimeline, {
-    items: [
-      { name: 'in', displayText: 'In' },
-      { name: 'out', displayText: 'Out' },
-    ],
-    // open derived dynamically from flags.menuZoomTimelineOpen
-  }],
+  // [PopupMenuName.menuNext, {
+  //   items: [
+  //     { name: 'endActivity', displayText: 'End of Activity' },
+  //     { name: 'endTimespan', displayText: 'End of Timespan' },
+  //     { name: 'nextActivity', displayText: 'Next Activity' },
+  //     { name: 'nextMark', displayText: 'Next Mark' },
+  //     { name: 'nextTimespan', displayText: 'Next Timespan' },
+  //     { name: 'now', displayText: 'NOW', defaultVisible: true },
+  //   ],
+  //   // open derived dynamically from flags.menuNextOpen
+  // }],
+  // [PopupMenuName.menuPrev, {
+  //   items: [
+  //     { name: 'back', displayText: 'Back' }, // to where you were before
+  //     { name: 'prevActivity', displayText: 'Prev Activity' },
+  //     { name: 'prevMark', displayText: 'Previous Mark' },
+  //     { name: 'prevTimespan', displayText: 'Previous Timespan' },
+  //     { name: 'startActivity', displayText: 'Start of Activity' },
+  //     { name: 'startTimespan', displayText: 'Start of Timespan' },
+  //   ],
+  //   // open derived dynamically from flags.menuPrevOpen
+  // }],
+  // [PopupMenuName.menuZoomTimeline, {
+  //   items: [
+  //     { name: 'in', displayText: 'In' },
+  //     { name: 'out', displayText: 'Out' },
+  //   ],
+  //   // open derived dynamically from flags.menuZoomTimelineOpen
+  // }],
 ]) as PopupMenusConfig;
 
 interface PopupMenusStateProps {

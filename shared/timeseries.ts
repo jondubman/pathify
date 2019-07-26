@@ -1,4 +1,4 @@
-// Shared code (client + server) having to do with time series of events.
+// Shared code (client + server) to support time series of events.
 
 import log from './log';
 
@@ -19,6 +19,7 @@ export interface TimeReference { // relative or absolute
 export enum EventType { // TODO keep in sync with datamodel.prisma
   'APP' = 'APP', // see AppStateChange
   'LOC' = 'LOC', // geolocation result
+  'MARK' = 'MARK', // timeline mark, whether user-defined or automatically placed
   'MODE' = 'MODE', // see ModeType
   'MOTION' = 'MOTION', // isMoving: true or false
   'NONE' = 'NONE', // placeholder when creating events

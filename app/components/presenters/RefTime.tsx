@@ -39,7 +39,7 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
   },
   refTimeText: {
-    fontFamily: 'Futura',
+    fontFamily: constants.fonts.family,
     fontSize: 15,
   },
   rightHalf: {
@@ -50,7 +50,7 @@ const Styles = StyleSheet.create({
   },
   subText: {
     color: colors.subText,
-    fontFamily: 'Futura',
+    fontFamily: constants.fonts.family,
     fontSize: 10,
   },
   hoursMinutes: {

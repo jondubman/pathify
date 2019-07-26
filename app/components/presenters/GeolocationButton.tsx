@@ -29,8 +29,7 @@ const Styles = StyleSheet.create({
   },
   label: {
     color: constants.colors.byName.black,
-    fontFamily: 'Futura',
-    // fontWeight: 'bold',
+    fontFamily: constants.fonts.family,
     fontSize: 16,
     paddingTop: 2,
   },

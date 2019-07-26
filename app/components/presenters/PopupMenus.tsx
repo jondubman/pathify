@@ -1,22 +1,15 @@
 import * as React from 'react';
-import * as ReactDomServer from 'react-dom/server';
 
 import {
-  StyleSheet,
   Text,
   TouchableHighlight,
   View,
   ViewStyle,
 } from 'react-native';
 
-import { PopupMenuConfig, PopupMenuName, PopupMenusProps } from 'components/containers/PopupMenusContainer';
+import { PopupMenuConfig, PopupMenuItem, PopupMenuName, PopupMenusProps } from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
 import log from 'shared/log';
-
-const Styles = StyleSheet.create({
-  menus: {
-  },
-})
 
 class PopupMenus extends React.Component<PopupMenusProps> {
 
@@ -27,7 +20,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
   public render() {
     const { menus } = this.props;
     const renderMenu = (menuName: PopupMenuName, menuConfig: PopupMenuConfig) => {
-      const { bottom, left, top, right, height, width } = menuConfig;
+      const { bottom, left, top, right, height, width } = menuConfig; // TODO top, right
       const popupStyle = {
         backgroundColor: constants.colors.menus.background,
         borderBottomWidth: 0,
@@ -35,16 +28,33 @@ class PopupMenus extends React.Component<PopupMenusProps> {
         borderTopLeftRadius: constants.buttonSize / 2,
         borderTopRightRadius: constants.buttonSize / 2,
         borderWidth: 1,
-        left,
-        bottom,
+        position: 'absolute',
         height,
         width,
-        position: 'absolute',
       } as ViewStyle;
-      const Styles = StyleSheet.create({ popupStyle });
+      if (left) popupStyle.left = left;
+      if (right) popupStyle.right = right;
+      if (top) popupStyle.top = top;
+      if (bottom) popupStyle.bottom = bottom;
       return (
-        <View style={Styles.popupStyle as any} key={menuName}>
-        </View >
+        <View style={popupStyle} key={menuName}>
+          {menuConfig.items.map((item: PopupMenuItem) => (
+            <TouchableHighlight
+              key={item.name}
+              onPress={() => { log.debug('menu press', item.name); }}
+              style={{ ...constants.menus.defaultItemStyle, ...item.itemStyle} as any}
+              underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
+            >
+              {item.displayText ? (
+                <Text
+                  style={{ ...constants.menus.defaultTextStyle, ...item.textStyle }}
+                >
+                  {item.displayText}
+                </Text>
+              ) : <View />}
+            </TouchableHighlight>
+          ))}
+        </View>
       )
     }
     return (

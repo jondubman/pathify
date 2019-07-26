@@ -54,7 +54,7 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
       duration: pulseMsec,
     })
     this._pulseAnimation = Animated.loop(
-      Animated.sequence([pulseOutAnimation, pulseInAnimation]),
+      Animated.sequence([ pulseOutAnimation, pulseInAnimation ]),
     )
     this._pulseAnimation.start();
   }
@@ -69,12 +69,12 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
     // pulse directly affects the circleStrokeWidth, which gets drawn outside the circle's canonical radius.
     // To yield a circle with desiredRadius, circleRadius should be smaller when pulse is larger.
     const radius = pulse.interpolate({
-      inputRange: [pulseMin, pulseMax],
-      outputRange: [desiredRadius - pulseMin, desiredRadius - pulseMax],
+      inputRange: [ pulseMin, pulseMax ],
+      outputRange: [ desiredRadius - pulseMin, desiredRadius - pulseMax ],
     })
     const opacity = pulse.interpolate({
-      inputRange: [pulseMin, pulseMax],
-      outputRange: [0.5, 1],
+      inputRange: [ pulseMin, pulseMax ],
+      outputRange: [ 0.5, 1 ],
     })
     const circleStyle = {
       circleRadius: radius,

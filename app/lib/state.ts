@@ -2,23 +2,12 @@
 
 import { Polygon } from "@turf/helpers";
 
-import { initialMenus } from 'components/containers/PopupMenusContainer';
+import { initialMenus } from 'containers/PopupMenusContainer';
+import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from "lib/utils";
-import { LonLat, LocationEvent } from 'shared/locations';
+import { LocationEvent } from 'shared/locations';
 import { GenericEvents } from 'shared/timeseries';
-
-export interface OptionalPulsar {
-  loc: LonLat;
-  color: string;
-  visible: boolean;
-}
-
-// The key here is any unique string, whih could indicate a kind of pulsar (like 'origin'), or an id
-export type OptionalPulsars = { [key: string]: OptionalPulsar }
-
-// Canonical interface for AppUIState included in AppState.
-// AppUIState is for transient, UI-related state changes, e.g. for menus.
 
 const now = utils.now();
 
@@ -31,9 +20,9 @@ export const initialAppState = {
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false, // Help mode in the app
     menuClockOpen: true, // see initialMenus
-    menuNextOpen: false, // see initialMenus
-    menuPrevOpen: false, // see initialMenus
-    menuZoomTimelineOpen: false, // see initialMenus
+    // menuNextOpen: false, // see initialMenus
+    // menuPrevOpen: false, // see initialMenus
+    // menuZoomTimelineOpen: false, // see initialMenus
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: true, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     startupAction_loadStorage: false, // whether to load from storage when starting up the app (if clear is false)

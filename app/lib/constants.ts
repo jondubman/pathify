@@ -61,6 +61,7 @@ const colorThemes = {
 const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
+const fontFamily = 'Futura';
 const mapLogoHeight = 34; // mapbox logo
 const initialTimelineHeight = 150;
 const panelWidth = 252; // fits on iPhone SE
@@ -110,7 +111,9 @@ const colors = {
   },
   menus: {
     background: withOpacity(namedColors.black, 0.7),
-    border: withOpacity(namedColors.azure, 0.7)
+    border: withOpacity(namedColors.azure, 0.7),
+    buttons: withOpacity(namedColors.azure, 0.5),
+    underlayColor: withOpacity(namedColors.white, 0.5),
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
@@ -220,6 +223,7 @@ const constants = {
     colors: {
       default: 'white',
     },
+    family: fontFamily,
     sizes: {
       choice: 15,
       choiceLabel: 12,
@@ -260,21 +264,42 @@ const constants = {
     { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
+  marks: {
+    rectWidth: 5,
+    rectHeight: 5,
+    pointLength: 5,
+  },
+  menus: {
+    defaultItemStyle: {
+      alignSelf: 'center',
+      backgroundColor: colors.menus.buttons,
+      borderRadius: buttonSize / 2,
+      margin: 5,
+      padding: 5,
+    },
+    defaultItemUnderlayColor: colors.menus.underlayColor,
+    defaultTextStyle: {
+      color: colors.byName.black,
+      fontFamily,
+      fontSize: 16,
+      margin: 5,
+    },
+  },
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
   maxTimeGapForContinuousTrack: interval.seconds(5),
   panelWidth,
   refTime: {
-    bottomMargin: 5,
-    height: 44,
+    bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
+    height: 46,
     leftContentsWidth: 60,
     width: 126,
   },
   safeAreaBottom,
   safeAreaTop,
-  serverDelayAfterFailedRequest: interval.seconds(5),
-  serverUrl: 'https://pathify.app:3000/', // TODO could also be localhost:3000/
+  serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
+  serverUrl: 'https://pathify.app:3000/', // TODO
   serverSyncIntervalDefault: interval.seconds(10),
   settingsButton: {
     leftOffset: buttonOffset,

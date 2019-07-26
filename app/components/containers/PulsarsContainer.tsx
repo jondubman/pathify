@@ -9,8 +9,18 @@
 import { connect } from 'react-redux';
 
 import { pulsars } from 'lib/selectors';
-import { AppState, OptionalPulsars } from 'lib/state';
+import { AppState } from 'lib/state';
 import Pulsars from 'presenters/Pulsars';
+import { LonLat } from 'shared/locations';
+
+export interface OptionalPulsar {
+  loc: LonLat;
+  color: string;
+  visible: boolean;
+}
+
+// The key here is any unique string, whih could indicate a kind of pulsar (like 'origin'), or an id
+export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
 interface PulsarsStateProps {
   pulsars: OptionalPulsars;

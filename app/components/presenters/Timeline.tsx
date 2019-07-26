@@ -106,7 +106,7 @@ class Timeline extends Component<TimelinePanelProps> {
       },
     }
     const axisLabelStyle = {
-      fontFamily: 'Futura',
+      fontFamily: constants.fonts.family,
       fontSize: 10,
       letterSpacing: 'normal',
       padding: 0,
