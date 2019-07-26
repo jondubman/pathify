@@ -1,8 +1,9 @@
 //  Selector functions for Redux reducer
 
-import { AppState, OptionalPulsars } from 'lib/state';
+import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
 import utils from 'lib/utils';
+import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 
 import locations from 'shared/locations';

@@ -21,6 +21,7 @@ import {
 
 import constants from 'lib/constants';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
+import TimelineMarks from 'presenters/TimelineMarks';
 import TimelineSpans from 'presenters/TimelineSpans';
 import timeseries, { interval } from 'shared/timeseries';
 
@@ -56,11 +57,11 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { allowZoom, nowTime, refTime, startupTime, timeRange, timespans, zoomLevel } = this.props;
+    const { allowZoom, marks, nowTime, refTime, startupTime, timeRange, timespans, zoomLevel } = this.props;
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat, visibleTime } = zoomInfo;
-
+    // TODO the following # of days is currently arbitrary, belongs in constants if anywhere
     const someTimeAgo = timeseries.timeRoundDown(startupTime - interval.days(60), interval.days(1));
     const tickFormatFn = (t: Date) => {
       // TODO could customize string here to highlight special times/dates, e.g. 'noon'
@@ -74,7 +75,6 @@ class Timeline extends Component<TimelinePanelProps> {
       x: [refTime - visibleTime / 2, refTime + visibleTime / 2], // half the visible time goes on either side of refTime
       y: yDomain,
     }
-
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
       timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(refTime), interval.hours(1))
@@ -140,10 +140,8 @@ class Timeline extends Component<TimelinePanelProps> {
             tickFormat={tickFormatFn}
             tickValues={tickValues}
           />
-          <TimelineSpans
-            data={timespans}
-            ref={(timespans: any) => (this as any)._timespans = timespans}
-          />
+          <TimelineSpans data={timespans} />
+          <TimelineMarks data={marks} />
         </VictoryChart>
       </View>
     )

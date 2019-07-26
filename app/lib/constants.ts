@@ -109,6 +109,11 @@ const colors = {
     icon: 'black',
     underlay: namedColors.yellow,
   },
+  marks: {
+    default: namedColors.gray,
+    start: namedColors.green,
+    end: namedColors.red,
+  },
   menus: {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.7),
@@ -265,9 +270,9 @@ const constants = {
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
   marks: {
-    rectWidth: 5,
-    rectHeight: 5,
-    pointLength: 5,
+    rectWidth: 15,
+    rectHeight: 15,
+    pointLength: 15,
   },
   menus: {
     defaultItemStyle: {

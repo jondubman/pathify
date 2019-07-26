@@ -14,6 +14,8 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - RCTRestart (0.0.12):
+    - React
   - React (0.60.0):
     - React-Core (= 0.60.0)
     - React-DevSupport (= 0.60.0)
@@ -62,8 +64,6 @@ PODS:
   - React-jsinspector (0.60.0)
   - react-native-mapbox-gl (6.1.3):
     - React
-  - react-native-slider (2.0.0-rc.1):
-    - React
   - React-RCTActionSheet (0.60.0):
     - React-Core (= 0.60.0)
   - React-RCTAnimation (0.60.0):
@@ -88,8 +88,6 @@ PODS:
   - React-RCTWebSocket (0.60.0):
     - React-Core (= 0.60.0)
     - React-fishhook (= 0.60.0)
-  - RNBackgroundFetch (2.6.1):
-    - React
   - RNBackgroundGeolocation (3.0.9):
     - CocoaLumberjack (~> 3.5.1)
     - React
@@ -105,6 +103,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - RCTRestart (from `../node_modules/react-native-restart/ios`)
   - React (from `../node_modules/react-native/`)
   - React-Core (from `../node_modules/react-native/React`)
   - React-cxxreact (from `../node_modules/react-native/ReactCommon/cxxreact`)
@@ -114,7 +113,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - "react-native-mapbox-gl (from `../node_modules/@mapbox/react-native-mapbox-gl`)"
-  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -125,7 +123,6 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
-  - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -144,6 +141,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  RCTRestart:
+    :path: "../node_modules/react-native-restart/ios"
   React:
     :path: "../node_modules/react-native/"
   React-Core:
@@ -162,8 +161,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-mapbox-gl:
     :path: "../node_modules/@mapbox/react-native-mapbox-gl"
-  react-native-slider:
-    :path: "../node_modules/@react-native-community/slider"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -184,8 +181,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   React-RCTWebSocket:
     :path: "../node_modules/react-native/Libraries/WebSocket"
-  RNBackgroundFetch:
-    :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
     :path: "../node_modules/react-native-background-geolocation"
   RNCAsyncStorage:
@@ -203,6 +198,7 @@ SPEC CHECKSUMS:
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
+  RCTRestart: 3abdd55016c31254b996e0a55cc14cc2544fa3c1
   React: 4b3c068e793e96672dcd186a2b572fac43e4b031
   React-Core: 3dc86b22920597f813c62a96db3165950b64826b
   React-cxxreact: 0dacb291e59b81e7c3f22a2118bee853ba8a60d2
@@ -212,7 +208,6 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 7a3554f703a58963ec80b860144ea0f0e9b910e1
   React-jsinspector: d4ed52225912efe0019bb7f1a225aec20f23049a
   react-native-mapbox-gl: d0ac3b81a6cadbd7cadc80891da72e3e85379350
-  react-native-slider: 884693dd50f84745baa511ecdcde4c16f32182fb
   React-RCTActionSheet: b27ff3cf3a68f917c46d2b94abf938b625b96570
   React-RCTAnimation: 9e4708e5bd65fca8285ce7c0aa076f3f4fa5c2f8
   React-RCTBlob: 6eafcc3a24f33785692a7be24918ade607bc8719
@@ -223,13 +218,12 @@ SPEC CHECKSUMS:
   React-RCTText: 685fca2e13b024271048e7e247ef24476f28a41e
   React-RCTVibration: 4ee1cf208ab17a50fafb1c16ffe28fe594a64e4f
   React-RCTWebSocket: fca087d583724aa0e5fef7d911f0f2a28d0f2736
-  RNBackgroundFetch: 7c84c5bc191885588538fd65d568e9b833cd89fb
   RNBackgroundGeolocation: 4d0af84b16f77102288ef236616a055b1e070fe2
   RNCAsyncStorage: b63d6e83fc629b01df6b624688f17944cea5637f
   RNSVG: 0eb087cfb5d7937be93c45b163b26352a647e681
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   yoga: 616fde658be980aa60a2158835170f3f9c2d04b4
 
-PODFILE CHECKSUM: 94ef79be87db87e35666486ad91d45882b065a12
+PODFILE CHECKSUM: 27a305cdf502f6ff69d58ea26f4c38791ba4b741
 
-COCOAPODS: 1.7.4
+COCOAPODS: 1.7.5

@@ -22,6 +22,7 @@
 
 import { Polygon } from '@turf/helpers';
 import AsyncStorage from '@react-native-community/async-storage';
+import RNRestart from 'react-native-restart';
 import {
   call,
   delay,
@@ -72,6 +73,7 @@ import locations, {
   TickEvent,
 } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
+import { MarkEvent, MarkType } from 'shared/marks';
 import timeseries, {
   EventType,
   GenericEvent,
@@ -266,14 +268,22 @@ const sagas = {
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
       const enabledNow = flags[flagName];
+      const now = utils.now();
       const startOrStopEvent: AppUserActionEvent = {
-        ...timeseries.newSyncedEvent(utils.now()),
+        ...timeseries.newSyncedEvent(now),
         type: EventType.USER_ACTION,
         data: {
           userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
         }
       }
-      yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent] }));
+      const startOrEndMarkEvent: MarkEvent = {
+        ...timeseries.newSyncedEvent(now),
+        type: EventType.MARK,
+        data: {
+          subtype: enabledNow ? MarkType.START : MarkType.END,
+        },
+      }
+      yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
@@ -468,6 +478,13 @@ const sagas = {
 
   // See sequence saga.
   repeatedAction: function* () {
+  },
+
+  // TODO not for production use
+  restartApp: function* () {
+    yield call(log.warn, 'saga restartApp');
+    yield call(log.info, RNRestart);
+    yield call(RNRestart.Restart);
   },
 
   saveEventsToStorage: function* (action: Action) {

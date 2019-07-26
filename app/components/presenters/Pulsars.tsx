@@ -6,8 +6,7 @@ import React, {
 } from 'react';
 
 import Pulsar from 'presenters/Pulsar'; // singular
-import { PulsarsProps } from 'containers/PulsarsContainer';
-import { OptionalPulsars } from 'lib/state';
+import { OptionalPulsars, PulsarsProps } from 'containers/PulsarsContainer';
 
 class Pulsars extends Component<PulsarsProps> {
   public render() {

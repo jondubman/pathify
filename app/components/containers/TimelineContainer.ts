@@ -8,6 +8,7 @@ import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
 import log from 'shared/log';
+import { MarkEvents, markList } from 'shared/marks';
 import timeseries, { TimeRange } from 'shared/timeseries';
 import { Track } from 'shared/tracks';
 
@@ -21,6 +22,7 @@ export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
   allowZoom: boolean;
+  marks: MarkEvents;
   nowTime: number;
   refTime: number;
   startupTime: number;
@@ -41,13 +43,14 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const refTime = state.options.refTime;
   const allowZoom = state.flags.allowContinuousTimelineZoom;
   const tracks = continuousTrackList(state);
-  let timespans: Timespans = tracks.map((track: Track): Timespan => ({
+  const timespans: Timespans = tracks.map((track: Track): Timespan => ({
     kind: TimespanKind.LOCATIONS,
     tr: track.tr,
-  }))
-  timespans = timespans.concat(customTimespans(state)).concat(selectedTimespans(state));
+  })).concat(customTimespans(state)).concat(selectedTimespans(state));
+  const marks: MarkEvents = markList(state.events);
   return {
     allowZoom,
+    marks,
     nowTime,
     refTime,
     startupTime: state.options.startupTime,

@@ -36,14 +36,14 @@ target 'Pathify' do
 
   # https://github.com/react-native-community/react-native-async-storage/issues/78
   # pod 'react-native-async-storage', :path => '../node_modules/@react-native-community/async-storage'
-
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-
-
   pod 'react-native-mapbox-gl', :path => '../node_modules/@mapbox/react-native-mapbox-gl'
+
+  pod 'RCTRestart', :path => '../node_modules/react-native-restart/ios'
 
   target 'PathifyTests' do
     inherit! :search_paths

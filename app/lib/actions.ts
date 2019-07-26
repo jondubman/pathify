@@ -55,6 +55,7 @@ export enum AppAction {
   'tickEvent' = 'tickEvent',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
+  'restartApp' = 'restartApp',
   'saveEventsToStorage' = 'saveEventsToStorage',
   'serverSync' = 'serverSync',
   'sequence' = 'sequence', // see SequenceParams
