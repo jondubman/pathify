@@ -32,20 +32,20 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
         case TimespanKind.APP_STATE:
           return yBase - height(kind); // at the bottom
         case TimespanKind.LOCATIONS:
-          return yTop(TimespanKind.TRACKING) - height(kind); // above TRACKING
+          return yTop(TimespanKind.APP_STATE) - height(kind); // LOCATIONS above APP_STATE
         case TimespanKind.MODE:
           break;
         case TimespanKind.MOTION:
           break;
         case TimespanKind.OTHER:
-          return yTop(TimespanKind.LOCATIONS) - height(kind); // above LOCATIONS
+          return yTop(TimespanKind.LOCATIONS) - height(kind); // OTHER above LOCATIONS
         case TimespanKind.SELECTION:
           return yBase - height(kind);
         case TimespanKind.TICKS:
           break;
         case TimespanKind.TRACKING:
-          return yTop(TimespanKind.APP_STATE) - height(kind); // above APP_STATE
-        default:
+          return yTop(TimespanKind.OTHER) - height(kind); // TRACKING above OTHER
+        default: // rock, paper, scissors...
           break;
       }
       return 0;

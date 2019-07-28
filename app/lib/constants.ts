@@ -144,14 +144,14 @@ const colors = {
     axisLabels: namedColors.gray,
     background: colorThemes.background,
     timespans: {
-      [TimespanKind.APP_STATE]: namedColors.fuschia, // opacity applied later
+      [TimespanKind.APP_STATE]: namedColors.purple, // opacity applied later
       [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),
       [TimespanKind.OTHER]: withOpacity(namedColors.darkRed, 0.35),
-      [TimespanKind.MODE]: withOpacity(namedColors.purple, 0.25),
+      [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25),
       [TimespanKind.MOTION]: withOpacity(namedColors.yellow, 0.25),
       [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25),
       [TimespanKind.TICKS]: withOpacity(namedColors.navy, 0.25),
-      [TimespanKind.TRACKING]: withOpacity(namedColors.green, 0.25),
+      [TimespanKind.TRACKING]: withOpacity(namedColors.blue, 0.75),
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),
