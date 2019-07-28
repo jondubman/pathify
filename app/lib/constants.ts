@@ -270,9 +270,9 @@ const constants = {
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
   marks: {
-    rectWidth: 15,
+    rectWidth: 12,
     rectHeight: 15,
-    pointLength: 15,
+    pointLength: 28,
   },
   menus: {
     defaultItemStyle: {

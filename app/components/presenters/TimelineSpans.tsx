@@ -44,8 +44,8 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
         case TimespanKind.TICKS:
           break;
         case TimespanKind.TRACKING:
-          return yTop(TimespanKind.OTHER) - height(kind); // TRACKING above OTHER
-        default: // rock, paper, scissors...
+          return 0; // TRACKING on top
+        default:
           break;
       }
       return 0;
@@ -68,7 +68,7 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
         case TimespanKind.TICKS:
           break;
         case TimespanKind.TRACKING:
-          return constants.timeline.miniBarHeight;
+          return constants.timeline.barHeight;
         default:
           break;
       }
