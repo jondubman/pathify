@@ -45,6 +45,8 @@ target 'Pathify' do
 
   pod 'RCTRestart', :path => '../node_modules/react-native-restart/ios'
 
+  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
+
   target 'PathifyTests' do
     inherit! :search_paths
     # Pods for testing

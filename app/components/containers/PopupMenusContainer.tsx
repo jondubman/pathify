@@ -1,3 +1,4 @@
+import { ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import PopupMenus from 'components/presenters/PopupMenus';
@@ -11,35 +12,43 @@ export interface PopupMenuItem {
   name: string; // must be unique; canonical way to refer to this menu
 
   defaultVisible?: boolean;
-  displayText: string; // TODO icons
+  displayText: string; // TODO icons?
 
-  itemStyle?: object;
+  itemStyle?: object; // TODO ViewStyle?
   itemUnderlayColor?: string,
   textStyle?: object;
 }
+export type PopupMenuItems = PopupMenuItem[];
 export type PopupMenuConfig = {
-  defaultItemStyle?: string; // otherwise default style will be the global default
+  defaultItemStyle?: string; // otherwise item style will be the global default
   items: PopupMenuItem[];
   open?: boolean;
-
-  bottom?: number;
-  top?: number;
-  left?: number;
-  right?: number;
-  height?: number;
-  width?: number;
+  style: ViewStyle;
 }
 export enum PopupMenuName {
-  'menuClock' = 'menuClock',
-  // 'menuNext' = 'menuNext',
-  // 'menuPrev' = 'menuPrev',
-  // 'menuZoomTimeline' = 'menuZoomTimeline',
+  'activitySummary' = 'activitySummary',
+  'clockMenu' = 'clockMenu',
 }
 // TODO not sure how to avoid repeating the construct Map<PopupMenuName, PopupMenuConfig> a few times when using new;
 // new PopupMenusConfig gives an error, saying it refers to a type but it's being used as a value (?)
 export type PopupMenusConfig = Map<PopupMenuName, PopupMenuConfig>;
 export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
-  [PopupMenuName.menuClock, {
+  [ PopupMenuName.activitySummary, {
+    items: [
+    ] as PopupMenuItems,
+    // open derived dynamically from flags.activitySummaryOpen
+    style: {
+      left: 0,
+      right: 0,
+      // top: 0,
+      height: 200,
+      bottom: utils.windowSize().height - 200,
+      borderTopWidth: 0,
+      borderBottomLeftRadius: constants.buttonSize / 2,
+      borderBottomRightRadius: constants.buttonSize / 2,
+    } as ViewStyle,
+  }],
+  [ PopupMenuName.clockMenu, {
     items: [
       // { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
       // { name: 'clearData', displayText: 'Clear data' },
@@ -48,20 +57,25 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       // { name: 'listView', displayText: 'List View', defaultVisible: true },
       // { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
 
-      { name: 'next', displayText: 'NEXT', defaultVisible: true },
-      { name: 'now', displayText: 'NOW', defaultVisible: true },
-      { name: 'prev', displayText: 'PREVIOUS', defaultVisible: true },
+      // { name: 'next', displayText: 'NEXT', defaultVisible: true },
+      // { name: 'now', displayText: 'NOW', defaultVisible: true },
+      // { name: 'prev', displayText: 'PREVIOUS', defaultVisible: true },
 
       // { name: 'removeMark', displayText: 'Remove Mark' },
       // { name: 'saveTimespan', displayText: 'Save Timespan' },
       // { name: 'selectTimespan', displayText: 'Select Timespan', defaultVisible: true }, // starts selection process
       // { name: 'zoomTimeline', displayText: 'Zoom Timeline', defaultVisible: true }, // in, out, level, etc.
-    ],
-    // open derived dynamically from flags.menuClockOpen
-    height: 280,
-    width: utils.windowSize().width,
+    ] as PopupMenuItems,
+    // open derived dynamically from flags.clockMenuOpen
+    style: {
+      borderTopLeftRadius: constants.buttonSize / 2,
+      borderTopRightRadius: constants.buttonSize / 2,
+      left: 0,
+      right: 0,
+      height: 280,
+    } as ViewStyle,
   }],
-  // [PopupMenuName.menuNext, {
+  // [ PopupMenuName.menuNext, {
   //   items: [
   //     { name: 'endActivity', displayText: 'End of Activity' },
   //     { name: 'endTimespan', displayText: 'End of Timespan' },
@@ -72,7 +86,7 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
   //   ],
   //   // open derived dynamically from flags.menuNextOpen
   // }],
-  // [PopupMenuName.menuPrev, {
+  // [ PopupMenuName.menuPrev, {
   //   items: [
   //     { name: 'back', displayText: 'Back' }, // to where you were before
   //     { name: 'prevActivity', displayText: 'Prev Activity' },
@@ -83,7 +97,7 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
   //   ],
   //   // open derived dynamically from flags.menuPrevOpen
   // }],
-  // [PopupMenuName.menuZoomTimeline, {
+  // [ PopupMenuName.menuZoomTimeline, {
   //   items: [
   //     { name: 'in', displayText: 'In' },
   //     { name: 'out', displayText: 'Out' },
@@ -104,19 +118,27 @@ export type PopupMenusProps = PopupMenusStateProps & PopupMenusDispatchProps;
 const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
   // Set the open flag as needed based on state.flags.
   const menus: PopupMenusConfig = new Map<PopupMenuName, PopupMenuConfig>(state.menus);
-  for (let [menuName, menu] of menus) {
+  for (let [ menuName, menu ] of menus) {
+    // If open is not set already, inherit it from the corresponding AppState flag with a name ending in 'Open'
     if (typeof menu.open === 'undefined') {
       menus.set(menuName, { ...menu, open: state.flags[menuName + 'Open'] });
     }
   }
-  // Position menuClock
-  const menuClock = {
-    ...menus.get(PopupMenuName.menuClock),
-    bottom: dynamicTimelineHeight(state),
-    left: utils.windowSize().width / 2 - menus.get(PopupMenuName.menuClock)!.width! / 2,
-  } as PopupMenuConfig;
-  menus.set(PopupMenuName.menuClock, menuClock);
-
+  // Position clockMenu dynamically
+  if (menus.get(PopupMenuName.clockMenu)) {
+    const clockMenuBaseStyle = (menus.get(PopupMenuName.clockMenu) as PopupMenuConfig).style;
+    const clockMenu = {
+      ...menus.get(PopupMenuName.clockMenu),
+      style: {
+        ...clockMenuBaseStyle,
+        bottom: dynamicTimelineHeight(state), // position clockMenu above timeline
+      },
+    } as PopupMenuConfig;
+    if (state.flags.mapFullScreen) {
+      clockMenu.open = false; // hide clockMenu in mapFullScreen mode
+    }
+    menus.set(PopupMenuName.clockMenu, clockMenu);
+  }
   return { menus };
 }
 

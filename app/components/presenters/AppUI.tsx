@@ -47,7 +47,7 @@ class AppUI extends Component<AppUIProps> {
         <View style={AppStyles.safeAreaView}>
           <MapContainer />
           {showTimeline ? <TimelineContainer /> : null}
-          {showTimeline ? <PopupMenusContainer /> : null}
+          <PopupMenusContainer />
           <TimelineControlsContainer />
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
             <CompassButtonContainer />

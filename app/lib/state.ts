@@ -7,22 +7,20 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from "lib/utils";
 import { LocationEvent } from 'shared/locations';
-import { GenericEvents } from 'shared/timeseries';
+import { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const now = utils.now();
 
 export const initialAppState = {
   events: [] as GenericEvents,
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
+    activitySummaryOpen: false, // activitySummary is among the PopupMenus. See initialMenus.
     allowContinuousTimelineZoom: false, // false: discrete zoom only
     backgroundGeolocation: false, // until enabled
+    clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.
     followingUser: true, // should map follow user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false, // Help mode in the app
-    menuClockOpen: true, // see initialMenus
-    // menuNextOpen: false, // see initialMenus
-    // menuPrevOpen: false, // see initialMenus
-    // menuZoomTimelineOpen: false, // see initialMenus
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: true, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     startupAction_loadStorage: false, // whether to load from storage when starting up the app (if clear is false)
@@ -51,7 +49,9 @@ export const initialAppState = {
 // Canonical interface for AppState, the contents of the Redux store
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
-  userLocation?: LocationEvent;
+  currentActivity?: TimeRange;
   mapRegion?: Polygon | undefined;
+  selectedActivity?: TimeRange;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
+  userLocation?: LocationEvent;
 }

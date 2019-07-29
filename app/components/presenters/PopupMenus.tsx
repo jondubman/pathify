@@ -20,28 +20,21 @@ class PopupMenus extends React.Component<PopupMenusProps> {
   public render() {
     const { menus } = this.props;
     const renderMenu = (menuName: PopupMenuName, menuConfig: PopupMenuConfig) => {
-      const { bottom, left, top, right, height, width } = menuConfig; // TODO top, right
+
       const popupStyle = {
         backgroundColor: constants.colors.menus.background,
-        borderBottomWidth: 0,
         borderColor: constants.colors.menus.border,
-        borderTopLeftRadius: constants.buttonSize / 2,
-        borderTopRightRadius: constants.buttonSize / 2,
         borderWidth: 1,
         position: 'absolute',
-        height,
-        width,
+        ...menuConfig.style,
       } as ViewStyle;
-      if (left) popupStyle.left = left;
-      if (right) popupStyle.right = right;
-      if (top) popupStyle.top = top;
-      if (bottom) popupStyle.bottom = bottom;
-      return (
+
+      const foo = (
         <View style={popupStyle} key={menuName}>
           {menuConfig.items.map((item: PopupMenuItem) => (
             <TouchableHighlight
               key={item.name}
-              onPress={() => { log.debug('menu press', item.name); }}
+              onPress={() => { log.debug('PopupMenuItem press', item.name); }}
               style={{ ...constants.menus.defaultItemStyle, ...item.itemStyle} as any}
               underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
             >
@@ -56,10 +49,12 @@ class PopupMenus extends React.Component<PopupMenusProps> {
           ))}
         </View>
       )
+      // log.debug(menuName, popupStyle);
+      return foo;
     }
     return (
       <View>
-        {[...menus].map(([menuName, menuConfig]) => (
+        {[ ...menus ].map(([menuName, menuConfig]) => (
           menuConfig.open ? renderMenu(menuName, menuConfig) : null
         ))}
       </View>

@@ -32,8 +32,6 @@ const mapStateToProps = (state: AppState): ClockStateProps => {
 const mapDispatchToProps = (dispatch: Function): ClockDispatchProps => {
   const onPress = () => {
     log.debug('clock press');
-    // dispatch(newAction(AppAction.flagToggle, 'menuClockOpen'));
-    // dispatch(newAction(AppAction.flagToggle, 'timelineNow'));
     dispatch(newAction(AppAction.clockPress));
   }
   const dispatchers = {

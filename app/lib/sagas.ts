@@ -247,7 +247,7 @@ const sagas = {
   clockPress: function* (action: Action) {
     const timelineShowing = yield select((state: AppState) => (!state.flags.mapFullScreen))
     if (timelineShowing) {
-      yield put(newAction(AppAction.flagToggle, 'menuClockOpen'));
+      yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
     } else {
       yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
     }
@@ -285,6 +285,8 @@ const sagas = {
       }
       yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
+      yield put(newAction(AppAction.setAppOption, { currentActivity: [ now, Infinity ] }));
+      yield put(newAction(AppAction.flagEnable, 'activitySummaryOpen' ));
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         yield call(Geo.changePace, true, () => {
@@ -292,10 +294,10 @@ const sagas = {
         })
       }
     }
-    if (flagName === 'menuClockOpen') {
+    if (flagName === 'clockMenuOpen') {
       const flags = yield select((state: AppState) => state.flags);
-      if (flags.menuClockOpen) {
-        yield put(newAction(AppAction.flagDisable, 'mapFullScreen')); // show timeline when menuClock is open
+      if (flags.clockMenuOpen) {
+        yield put(newAction(AppAction.flagDisable, 'mapFullScreen')); // show timeline when clockMenu is open
       }
     }
   },
@@ -572,9 +574,12 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-    // for now, this is just a pass through to the reducer.
     yield call(log.debug, 'saga setAppOption', action);
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
+
+    // Now handle any side effects TODO
+    // for (let [ key, value ] of Object.entries(action.params)) {
+    // }
   },
 
   // follow the user, recentering map right away, kicking off background geolocation if needed
