@@ -29,7 +29,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
         ...menuConfig.style,
       } as ViewStyle;
 
-      const foo = (
+      return (
         <View style={popupStyle} key={menuName}>
           {menuConfig.items.map((item: PopupMenuItem) => (
             <TouchableHighlight
@@ -49,8 +49,6 @@ class PopupMenus extends React.Component<PopupMenusProps> {
           ))}
         </View>
       )
-      // log.debug(menuName, popupStyle);
-      return foo;
     }
     return (
       <View>

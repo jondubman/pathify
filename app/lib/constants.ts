@@ -118,15 +118,15 @@ const colors = {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.7),
     buttons: withOpacity(namedColors.azure, 0.5),
-    underlayColor: withOpacity(namedColors.white, 0.5),
+    underlayColor: 'transparent',
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
     hoursMinutes: namedColors.white,
     seconds: withOpacity(namedColors.white, 0.75),
-    msec: withOpacity(namedColors.white, 0), // TODO show sometimes
+    msec: withOpacity(namedColors.white, 0), // TODO show sometimes?
     subText: withOpacity(namedColors.white, 0.75),
-    underlay: withOpacity(namedColors.gray, 0.5),
+    underlay: 'transparent',
   },
   settingsButton: {
     background: 'white',
@@ -162,6 +162,9 @@ const colors = {
 // --------------------------------------------------------------------------------------------------------------------
 
 const constants = {
+  activitySummary: {
+    height: 100,
+  },
   appName: 'Pathify',
   buttonOffset,
   buttonSize,

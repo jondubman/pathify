@@ -68,7 +68,7 @@ const RefTime = (props: RefTimeProps) => (
   <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
     <View style={Styles.leftHalf}>
       <TouchableHighlight
-        onPress={() => { log.info('TODO-refTime-leftHalf') }}
+        onPress={props.onPress}
         style={Styles.leftContents}
         underlayColor={colors.underlay}
       >
@@ -77,7 +77,7 @@ const RefTime = (props: RefTimeProps) => (
       </TouchableHighlight>
     </View>
     <TouchableHighlight
-      onPress={() => { log.info('TODO-refTime-rightHalf') }}
+      onPress={props.onPress}
       style={Styles.rightHalf}
       underlayColor={colors.underlay}
     >

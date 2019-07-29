@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 
+import { AppAction, newAction } from 'lib/actions';
 import { dynamicTimelineHeight } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import RefTime from 'presenters/RefTime';
@@ -21,6 +22,7 @@ interface RefTimeStateProps {
 }
 
 interface RefTimeDispatchProps {
+  onPress: () => void;
 }
 
 export type RefTimeProps = RefTimeStateProps & RefTimeDispatchProps;
@@ -57,6 +59,9 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): RefTimeDispatchProps => {
   const dispatchers = {
+    onPress: () => {
+      dispatch(newAction(AppAction.clockPress)); // treat like clockPress
+    }
   }
   return dispatchers;
 }

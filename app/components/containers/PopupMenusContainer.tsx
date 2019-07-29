@@ -33,22 +33,21 @@ export enum PopupMenuName {
 // new PopupMenusConfig gives an error, saying it refers to a type but it's being used as a value (?)
 export type PopupMenusConfig = Map<PopupMenuName, PopupMenuConfig>;
 export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
-  [ PopupMenuName.activitySummary, {
+  [PopupMenuName.activitySummary, {
     items: [
     ] as PopupMenuItems,
     // open derived dynamically from flags.activitySummaryOpen
     style: {
       left: 0,
       right: 0,
-      // top: 0,
-      height: 200,
-      bottom: utils.windowSize().height - 200,
+      height: constants.activitySummary.height,
+      bottom: utils.windowSize().height - constants.activitySummary.height,
       borderTopWidth: 0,
       borderBottomLeftRadius: constants.buttonSize / 2,
       borderBottomRightRadius: constants.buttonSize / 2,
     } as ViewStyle,
   }],
-  [ PopupMenuName.clockMenu, {
+  [PopupMenuName.clockMenu, {
     items: [
       // { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
       // { name: 'clearData', displayText: 'Clear data' },
@@ -131,7 +130,8 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
       ...menus.get(PopupMenuName.clockMenu),
       style: {
         ...clockMenuBaseStyle,
-        bottom: dynamicTimelineHeight(state), // position clockMenu above timeline
+        // position clockMenu above timeline
+        bottom: dynamicTimelineHeight(state) + 6 * constants.timeline.topLineHeight,
       },
     } as PopupMenuConfig;
     if (state.flags.mapFullScreen) {

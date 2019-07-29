@@ -123,7 +123,7 @@ const timeseries = {
     return count;
   },
 
-  // TODO since events are sorted by time should just be done with a slice?
+  // TODO since events are sorted by time this could be done with a slice... can use binary search to determine indexes.
   filterByTime: (events: GenericEvents, tr: TimeRange = [0, Infinity]): GenericEvents => {
     return events.filter((e: GenericEvent) => (timeseries.timeInRange(e.t, tr)));
   },
