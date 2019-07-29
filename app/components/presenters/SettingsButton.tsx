@@ -12,19 +12,24 @@ import constants from 'lib/constants';
 import { SettingsButtonProps } from 'containers/SettingsButtonContainer';
 
 const colors = constants.colors.settingsButton;
-const { leftOffset, opacityWhenClosed, opacityWhenOpen, size, topOffset } = constants.settingsButton;
+const {
+  leftOffset,
+  opacityWhenClosed,
+  opacityWhenOpen,
+  size,
+topOffset } = constants.settingsButton;
 
 const Styles = StyleSheet.create({
   button: {
     borderRadius: size / 2,
-    position: 'absolute',
-    paddingTop: size / 4,
-    width: size,
-    height: size,
-    left: leftOffset,
-    top: topOffset,
-    justifyContent: 'center',
     flexDirection: 'row',
+    height: size,
+    justifyContent: 'center',
+    left: leftOffset,
+    paddingTop: size / 4,
+    position: 'absolute',
+    top: topOffset,
+    width: size,
   },
 })
 

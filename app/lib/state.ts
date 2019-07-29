@@ -34,12 +34,14 @@ export const initialAppState = {
   menus: initialMenus,
   options: { // non-boolean
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
+    currentActivity: null as TimeRange | null,
     mapOpacity: constants.map.default.opacity,
     mapStyle: constants.map.default.style,
     pulsars: {} as OptionalPulsars,
     refTime: now,
     startupTime: now,
     timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
+    selectedActivity: null as TimeRange | null,
     serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
     serverSyncTime: 0, // time of last server sync (or 0 if never)
     timelineZoomLevel: constants.timeline.default.zoomLevel,
@@ -49,9 +51,7 @@ export const initialAppState = {
 // Canonical interface for AppState, the contents of the Redux store
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
-  currentActivity?: TimeRange;
-  mapRegion?: Polygon | undefined;
-  selectedActivity?: TimeRange;
+  mapRegion?: Polygon;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
   userLocation?: LocationEvent;
 }

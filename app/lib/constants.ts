@@ -163,7 +163,7 @@ const colors = {
 
 const constants = {
   activitySummary: {
-    height: 100,
+    height: 200,
   },
   appName: 'Pathify',
   buttonOffset,
@@ -280,17 +280,18 @@ const constants = {
   menus: {
     defaultItemStyle: {
       alignSelf: 'center',
-      backgroundColor: colors.menus.buttons,
-      borderRadius: buttonSize / 2,
-      margin: 5,
-      padding: 5,
+      backgroundColor: 'transparent',
+      margin: 0,
+      padding: 0,
+      position: 'absolute',
     },
     defaultItemUnderlayColor: colors.menus.underlayColor,
     defaultTextStyle: {
-      color: colors.byName.black,
+      color: colors.byName.white,
       fontFamily,
       fontSize: 16,
-      margin: 5,
+      margin: 0,
+      padding: 0,
     },
   },
   months: [

@@ -7,6 +7,7 @@ import { dynamicTimelineHeight } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import log from 'shared/log';
+import { activityMetrics, ActivityMetricName } from 'shared/metrics';
 
 export interface PopupMenuItem {
   name: string; // must be unique; canonical way to refer to this menu
@@ -115,29 +116,65 @@ interface PopupMenusDispatchProps {
 export type PopupMenusProps = PopupMenusStateProps & PopupMenusDispatchProps;
 
 const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
-  // Set the open flag as needed based on state.flags.
-  const menus: PopupMenusConfig = new Map<PopupMenuName, PopupMenuConfig>(state.menus);
+
+  const menus: PopupMenusConfig = new Map(state.menus);
   for (let [ menuName, menu ] of menus) {
-    // If open is not set already, inherit it from the corresponding AppState flag with a name ending in 'Open'
+    // Set the open flag as needed based on state.flags.
+    // If open is not set already, inherit it from the corresponding AppState flag with a name ending in 'Open'.
     if (typeof menu.open === 'undefined') {
       menus.set(menuName, { ...menu, open: state.flags[menuName + 'Open'] });
     }
-  }
-  // Position clockMenu dynamically
-  if (menus.get(PopupMenuName.clockMenu)) {
-    const clockMenuBaseStyle = (menus.get(PopupMenuName.clockMenu) as PopupMenuConfig).style;
-    const clockMenu = {
-      ...menus.get(PopupMenuName.clockMenu),
-      style: {
-        ...clockMenuBaseStyle,
-        // position clockMenu above timeline
-        bottom: dynamicTimelineHeight(state) + 6 * constants.timeline.topLineHeight,
-      },
-    } as PopupMenuConfig;
-    if (state.flags.mapFullScreen) {
-      clockMenu.open = false; // hide clockMenu in mapFullScreen mode
+    if (menuName === PopupMenuName.clockMenu) {
+      const clockMenuBaseStyle = menu.style;
+      const clockMenu = {
+        ...menu,
+        style: {
+          ...clockMenuBaseStyle,
+          // position clockMenu above timeline and the horizontal separators that form its top edge
+          bottom: dynamicTimelineHeight(state) + 6 * constants.timeline.topLineHeight,
+        },
+      } as PopupMenuConfig;
+      if (state.flags.mapFullScreen) {
+        clockMenu.open = false; // hide clockMenu in mapFullScreen mode
+      }
+      menus.set(PopupMenuName.clockMenu, clockMenu);
     }
-    menus.set(PopupMenuName.clockMenu, clockMenu);
+    if (menuName === PopupMenuName.activitySummary && state.flags.activitySummaryOpen) { // otherwise no point
+      if (state.options.currentActivity) {
+        let activitySummary: PopupMenuConfig = { ...menus.get(PopupMenuName.activitySummary)! };
+        // let activitySummary: PopupMenuConfig = { ...menu! };
+
+        // TODO t is not always refTime in the general case
+        const metrics = activityMetrics(state.events, state.options.currentActivity, state.options.refTime);
+        const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance);
+        const totalDistanceDisplayText = totalDistanceMetric!.text! + ' ' + totalDistanceMetric!.units;
+
+        activitySummary.items = [
+          ...activitySummary.items,
+          {
+            displayText: 'Total distance',
+            name: 'totalDistanceLabel',
+            itemStyle: {
+              top: constants.safeAreaTop + constants.buttonOffset,
+              left: constants.buttonSize + constants.buttonOffset * 2,
+            },
+            textStyle: {},
+          },
+          {
+            displayText: totalDistanceDisplayText,
+            name: 'totalDistance',
+            itemStyle: {
+              top: constants.safeAreaTop + constants.buttonOffset + 20,
+              left: constants.buttonSize + constants.buttonOffset * 2,
+            },
+            textStyle: {},
+          },
+        ]
+        menus.set(PopupMenuName.activitySummary, activitySummary!);
+      } else {
+        log.warn('activitySummary open without state.options.currentActivity');
+      }
+    }
   }
   return { menus };
 }
