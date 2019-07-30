@@ -41,8 +41,6 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
     style: {
       left: 0,
       right: 0,
-      height: constants.activitySummary.height,
-      bottom: utils.windowSize().height - constants.activitySummary.height,
       borderTopWidth: 0,
       borderBottomLeftRadius: constants.buttonSize / 2,
       borderBottomRightRadius: constants.buttonSize / 2,
@@ -142,7 +140,14 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
     if (menuName === PopupMenuName.activitySummary && state.flags.activitySummaryOpen) { // otherwise no point
       if (state.options.currentActivity) {
         let activitySummary: PopupMenuConfig = { ...menus.get(PopupMenuName.activitySummary)! };
+        const height = state.flags.activitySummaryExpanded ?
+          constants.activitySummary.heightExpanded : constants.activitySummary.heightCollapsed
 
+        activitySummary.style = {
+          ...activitySummary.style,
+          bottom: utils.windowSize().height - height,
+          height,
+        }
         // TODO t is not always refTime in the general case
         const metrics = activityMetrics(state.events, state.options.currentActivity, state.options.refTime);
         const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;

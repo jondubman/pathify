@@ -19,5 +19,6 @@
     "**/.factorypath": true
   },
   "workbench.colorTheme": "Tomorrow Night Blue",
-  "search.quickOpen.includeHistory": false
+  "search.quickOpen.includeHistory": false,
+  "typescript.suggest.autoImports": false
 }

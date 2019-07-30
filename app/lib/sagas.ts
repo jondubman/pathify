@@ -81,7 +81,6 @@ import timeseries, {
   TimeRange,
 } from 'shared/timeseries';
 import { continuousTracks } from 'shared/tracks';
-import { min } from 'd3';
 
 const sagas = {
 

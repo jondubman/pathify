@@ -163,7 +163,8 @@ const colors = {
 
 const constants = {
   activitySummary: {
-    height: 200,
+    heightCollapsed: 108,
+    heightExpanded: 200,
   },
   appName: 'Pathify',
   buttonOffset,
