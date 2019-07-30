@@ -81,6 +81,7 @@ import timeseries, {
   TimeRange,
 } from 'shared/timeseries';
 import { continuousTracks } from 'shared/tracks';
+import { min } from 'd3';
 
 const sagas = {
 
@@ -284,9 +285,13 @@ const sagas = {
         },
       }
       yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
+
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
-      yield put(newAction(AppAction.setAppOption, { currentActivity: [ now, Infinity ] }));
-      yield put(newAction(AppAction.flagEnable, 'activitySummaryOpen' ));
+
+      yield put(newAction(AppAction.setAppOption, {
+        currentActivity: enabledNow ? [ now, Infinity ] : null }));
+
+      yield put(newAction(enabledNow ? AppAction.flagEnable : AppAction.flagDisable, 'activitySummaryOpen'));
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         yield call(Geo.changePace, true, () => {

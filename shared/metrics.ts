@@ -1,17 +1,25 @@
 import timeseries, { GenericEvents, Timepoint, TimeRange, EventType } from './timeseries';
 import { LocationEvent } from './locations';
+import log from './log';
 
 import { metersToMiles, metersPerSecondToMilesPerHour } from './units';
 
 export enum ActivityMetricName {
+  'averageSpeed' = 'averageSpeed',
+  'elevation' = 'elevation',
   'eventCount' = 'eventCount',
   'partialDistance' = 'partialDistance',
   'partialTime' = 'partialTime',
+  'speed' = 'speed',
   'totalDistance' = 'totalDistance',
   'totalTime' = 'totalTime',
 }
 
-export type ActivityMetric = any; // TODO could add units, display text etc., possibly for some if not all metrics
+export type ActivityMetric = {
+  text?: string;
+  units?: string;
+  value: number;
+}
 
 export type ActivityMetrics = Map<ActivityMetricName, ActivityMetric>;
 
@@ -23,29 +31,38 @@ export const activityMetrics = (events: GenericEvents,
                                 timeRange: TimeRange,
                                 t: Timepoint = timeRange[1]) : ActivityMetrics => {
 
-  const activityEvents = timeseries.filterByTime(events, timeRange);
-
   let firstOdo = 0;
   let lastOdo = 0;
+  let totalDistance: ActivityMetric | undefined;
+  const activityEvents = timeseries.filterByTime(events, timeRange);
 
-  for (let i = 0; i < events.length; i++) {
-    const event = events[i];
-    if (event.type === EventType.LOC) {
-      const locationEvent = event as LocationEvent;
-      if (locationEvent.data.odo) {
-        if (!firstOdo) {
-          firstOdo = locationEvent.data.odo;
+  try {
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      if (event.type === EventType.LOC) {
+        const locationEvent = event as LocationEvent;
+        if (locationEvent.data.odo) {
+          if (!firstOdo) {
+            firstOdo = locationEvent.data.odo;
+          }
+          lastOdo = locationEvent.data.odo;
         }
-        lastOdo = locationEvent.data.odo;
       }
     }
+    const totalDistanceMiles = metersToMiles(lastOdo - firstOdo);
+    totalDistance = {
+      text: totalDistanceMiles.toFixed(2),
+      units: 'mi',
+      value: totalDistanceMiles,
+    }
+  } catch (err) {
+    log.error('activityMetrics error', err);
+  } finally {
+    return new Map<ActivityMetricName, ActivityMetric>([
+      [ActivityMetricName.eventCount,  { value: activityEvents.length }],
+      [ActivityMetricName.partialTime, { value: t ? t - timeRange[0] : null }],
+      [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
+      [ActivityMetricName.totalTime, { value: timeRange[1] - timeRange[0] }],
+    ])
   }
-  const totalDistance = metersToMiles(lastOdo - firstOdo);
-
-  return new Map<ActivityMetricName, ActivityMetric>([
-    [ActivityMetricName.eventCount, activityEvents.length],
-    [ActivityMetricName.partialTime, t - timeRange[0]],
-    [ActivityMetricName.totalDistance, totalDistance],
-    [ActivityMetricName.totalTime, timeRange[1] - timeRange[0]],
-  ])
 }

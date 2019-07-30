@@ -300,6 +300,10 @@ const timeseries = {
     return [events[0].t, events[events.length - 1].t];
   },
 
+  timeRangesEqual: (tr1: TimeRange, tr2: TimeRange): boolean => (
+    tr1[0] === tr2[0] && tr1[1] === tr2[1]
+  ),
+
   // Make an integer timestamp (msec precision) 'unique' by adding a random number between 0 and 1 to it.
   // 'uniqified' timepoints make it easier to precisely filter discrete events from the global event list.
   // (Otherwise there might be multiple matches for a given timepoint.)

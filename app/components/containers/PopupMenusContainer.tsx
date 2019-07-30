@@ -118,7 +118,7 @@ export type PopupMenusProps = PopupMenusStateProps & PopupMenusDispatchProps;
 const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
 
   const menus: PopupMenusConfig = new Map(state.menus);
-  for (let [ menuName, menu ] of menus) {
+  for (let [menuName, menu] of menus) {
     // Set the open flag as needed based on state.flags.
     // If open is not set already, inherit it from the corresponding AppState flag with a name ending in 'Open'.
     if (typeof menu.open === 'undefined') {
@@ -127,7 +127,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
     if (menuName === PopupMenuName.clockMenu) {
       const clockMenuBaseStyle = menu.style;
       const clockMenu = {
-        ...menu,
+        ...menus.get(PopupMenuName.clockMenu),
         style: {
           ...clockMenuBaseStyle,
           // position clockMenu above timeline and the horizontal separators that form its top edge
@@ -142,12 +142,12 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
     if (menuName === PopupMenuName.activitySummary && state.flags.activitySummaryOpen) { // otherwise no point
       if (state.options.currentActivity) {
         let activitySummary: PopupMenuConfig = { ...menus.get(PopupMenuName.activitySummary)! };
-        // let activitySummary: PopupMenuConfig = { ...menu! };
 
         // TODO t is not always refTime in the general case
         const metrics = activityMetrics(state.events, state.options.currentActivity, state.options.refTime);
-        const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance);
-        const totalDistanceDisplayText = totalDistanceMetric!.text! + ' ' + totalDistanceMetric!.units;
+        const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
+        const totalDistanceDisplayText = totalDistanceMetric ?
+          totalDistanceMetric.text! + ' ' + totalDistanceMetric.units! : '';
 
         activitySummary.items = [
           ...activitySummary.items,
