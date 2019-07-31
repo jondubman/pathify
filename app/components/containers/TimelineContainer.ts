@@ -8,7 +8,11 @@ import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
 import log from 'shared/log';
-import { MarkEvents, markList } from 'shared/marks';
+import {
+  Activity,
+  MarkEvents,
+  markList
+} from 'shared/marks';
 import timeseries, { TimeRange } from 'shared/timeseries';
 import { Track } from 'shared/tracks';
 
@@ -25,6 +29,7 @@ export interface TimelineStateProps {
   marks: MarkEvents;
   nowTime: number;
   refTime: number;
+  selectedActivity: Activity | null;
   startupTime: number;
   timelineNow: boolean;
   timeRange: TimeRange;
@@ -53,6 +58,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     marks,
     nowTime,
     refTime,
+    selectedActivity: state.options.selectedActivity,
     startupTime: state.options.startupTime,
     timelineNow: state.flags.timelineNow,
     timeRange: timeseries.timeRangeOfEvents(state.events),

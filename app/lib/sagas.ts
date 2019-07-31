@@ -17,8 +17,10 @@
 //   yield fork
 //   yield cancel
 //
-// Note you must use yield select instead of accessing the store directly (yield the select effect)
-// Note also you should use yield call(log...) instead of log directly (yield call effect) so log happens at right time.
+// IMPORTANT:
+// Here, only, you must use yield select instead of accessing the store directly (yield the select effect)
+// Inside one of these sgas, you should generally use yield call for any async function call.
+// Use yield call(log...) instead of log directly (yield call effect) so the call happens at the right time.
 
 import { Polygon } from '@turf/helpers';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -32,6 +34,8 @@ import {
   // spawn,
   takeEvery,
 } from 'redux-saga/effects';
+
+import * as uuid from 'uuid/v4';
 
 import { DomainPropType } from 'victory-native';
 
@@ -73,7 +77,12 @@ import locations, {
   TickEvent,
 } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
-import { MarkEvent, MarkType } from 'shared/marks';
+import {
+  Activity,
+  containingActivity,
+  MarkEvent,
+  MarkType
+} from 'shared/marks';
 import timeseries, {
   EventType,
   GenericEvent,
@@ -233,7 +242,6 @@ const sagas = {
     }
   },
 
-
   clearStorage: function* () {
     try {
       const keys = yield call(AsyncStorage.getAllKeys);
@@ -268,6 +276,7 @@ const sagas = {
     // Side effects (downstream!) of modifying app flags are handled here.
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
+      const options = yield select((state: AppState) => state.options);
       const enabledNow = flags[flagName];
       const now = utils.now();
       const startOrStopEvent: AppUserActionEvent = {
@@ -277,10 +286,12 @@ const sagas = {
           userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
         }
       }
+      const newActivityId = enabledNow ? uuid.default() : options.currentActivity.id;
       const startOrEndMarkEvent: MarkEvent = {
         ...timeseries.newSyncedEvent(now),
         type: EventType.MARK,
         data: {
+          id: newActivityId,
           subtype: enabledNow ? MarkType.START : MarkType.END,
         },
       }
@@ -288,8 +299,11 @@ const sagas = {
 
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
 
-      yield put(newAction(AppAction.setAppOption, {
-        currentActivity: enabledNow ? [ now, Infinity ] : null }));
+      const newCurrentActivity: Activity | null = enabledNow ? {
+        id: newActivityId,
+        tr: [now, Infinity],
+      } : null;
+      yield put(newAction(AppAction.setAppOption, { currentActivity: newCurrentActivity }));
 
       yield put(newAction(enabledNow ? AppAction.flagEnable : AppAction.flagDisable, 'activitySummaryOpen'));
       if (flags.setPaceAfterStart && enabledNow) {
@@ -456,7 +470,7 @@ const sagas = {
       newRefTime = refTime + t;
     }
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: newRefTime }));
+    yield put(newAction(AppAction.setAppOption, { refTime: newRefTime }));
   },
 
   tickEvent: function* (action: Action) {
@@ -556,7 +570,7 @@ const sagas = {
   // Note: see timerTick which is what typically triggers this saga.
   serverSync: function* (action: Action) {
     const now = action.params as number;
-    yield put(newAction(ReducerAction.SET_APP_OPTION, { serverSyncTime: now }));
+    yield put(newAction(AppAction.setAppOption, { serverSyncTime: now }));
 
     const events: GenericEvents = yield select((state: AppState) => state.events);
     const changedEvents: GenericEvents = [];
@@ -582,9 +596,23 @@ const sagas = {
     yield call(log.debug, 'saga setAppOption', action);
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
-    // Now handle any side effects TODO
-    // for (let [ key, value ] of Object.entries(action.params)) {
-    // }
+    // Now handle any side effects
+
+    // whenever refTime is set, update selectedActivity automatically
+    if (action.params.refTime) {
+      const timelineNow = yield select(state => state.flags.timelineNow);
+      const events = yield select(state => state.events);
+      if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
+        const activity = yield call(containingActivity, events, action.params.refTime);
+        if (activity) {
+          yield call(log.debug, 'setAppOption setting selectedActivity to', activity);
+          yield put(newAction(ReducerAction.SET_APP_OPTION, { selectedActivity: activity }));
+          // yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
+        } else {
+          yield call(log.debug, 'WTF', activity);
+        }
+      }
+    }
   },
 
   // follow the user, recentering map right away, kicking off background geolocation if needed
@@ -620,7 +648,7 @@ const sagas = {
     const refTime = (x[0] + x[1]) / 2;
     yield call(log.trace, 'saga timelineZoomed', refTime);
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime }));
+    yield put(newAction(AppAction.setAppOption, { refTime }));
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -632,7 +660,7 @@ const sagas = {
     const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
     if (timelineNow) {
       // This is where the mode for the Timeline really takes effect.
-      yield put(newAction(ReducerAction.SET_APP_OPTION, { refTime: now }));
+      yield put(newAction(AppAction.setAppOption, { refTime: now }));
     }
     const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
     if (tickEvents) {

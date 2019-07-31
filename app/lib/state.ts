@@ -7,6 +7,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from "lib/utils";
 import { LocationEvent } from 'shared/locations';
+import { Activity } from 'shared/marks';
 import { GenericEvents, TimeRange } from 'shared/timeseries';
 
 const now = utils.now();
@@ -35,14 +36,14 @@ export const initialAppState = {
   menus: initialMenus,
   options: { // non-boolean
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
-    currentActivity: null as TimeRange | null,
+    currentActivity: null as Activity | null,
     mapOpacity: constants.map.default.opacity,
     mapStyle: constants.map.default.style,
     pulsars: {} as OptionalPulsars,
     refTime: now,
     startupTime: now,
     timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
-    selectedActivity: null as TimeRange | null,
+    selectedActivity: null as Activity | null,
     serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
     serverSyncTime: 0, // time of last server sync (or 0 if never)
     timelineZoomLevel: constants.timeline.default.zoomLevel,

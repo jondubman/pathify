@@ -4,12 +4,18 @@ import * as Victory from 'victory-native';
 const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
 import constants from 'lib/constants';
-import { MarkEvent, MarkEvents, MarkType } from 'shared/marks';
+import log from 'shared/log';
+import {
+  Activity,
+  MarkEvent,
+  MarkEvents,
+  MarkType
+} from 'shared/marks';
 import { Timepoint } from 'shared/timeseries';
-import { RSA_X931_PADDING } from 'constants';
 
 interface TimelineMarksProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
   data: MarkEvents;
+  selectedActivity: Activity | null;
 }
 
 class TimelineMarks extends React.Component<TimelineMarksProps> {
@@ -19,7 +25,7 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
   }
 
   public render() {
-    const data = this.props.data;
+    const { data, selectedActivity } = this.props;
     const {
       scale, // as in d3 scale
     } = this.props as any;
@@ -42,15 +48,16 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     const centerLine_y2 = (t: Timepoint): number => timeline.default.height - timeline.bottomPaddingForAxis;
 
     const colorFor = (mark: MarkEvent): string => {
-      const { subtype } = mark.data;
+      const { id, subtype } = mark.data;
       const colors = constants.colors.marks;
+      const selected: boolean = !!(id && selectedActivity && id === selectedActivity.id);
       switch(subtype) {
         case MarkType.NONE:
           return colors.default;
         case MarkType.START:
-          return colors.start;
+          return selected ? colors.start : constants.colors.byName.darkGreen;
         case MarkType.END:
-          return colors.end;
+          return selected ? colors.end : constants.colors.byName.darkRed;
         default:
           return colors.default;
       }

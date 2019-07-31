@@ -232,9 +232,10 @@ const timeseries = {
   //     If t is 5, index is 5 (events.length)
   //     If t is 6, index is 5 (events.length) (same)
   // This is like "stepping forward" one timepoint.
-  indexForNextTimepoint: (events: GenericEvents, t: Timepoint): (Timepoint | null) => {
+  indexForNextTimepoint: (events: GenericEvents, t: Timepoint, allowEqual: boolean = false): (Timepoint | null) => {
     for (let index = 0; index < events.length; index++) { // scan from the start
-      if (events[index].t > t) {
+      const eventTime = events[index].t;
+      if (eventTime > t || (allowEqual && eventTime === t)) {
         return index;
       }
     }
@@ -251,9 +252,10 @@ const timeseries = {
   //     If t is 5, index is 2
   //     If t is 6, index is 3
   // This is like "stepping backward" one timepoint.
-  indexForPreviousTimepoint: (events: GenericEvents, t: Timepoint): (Timepoint | null) => {
+  indexForPreviousTimepoint: (events: GenericEvents, t: Timepoint, allowEqual: boolean = false): (Timepoint | null) => {
     for (let index = events.length - 1; index >=  0; index--) { // scan backwards from the end
-      if (events[index].t < t) {
+      const eventTime = events[index].t;
+      if (eventTime < t || (allowEqual && eventTime === t)) {
         return index;
       }
     }

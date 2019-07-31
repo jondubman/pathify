@@ -154,7 +154,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
           height,
         }
         // TODO t is not always refTime in the general case
-        const metrics = activityMetrics(state.events, state.options.currentActivity, state.options.refTime);
+        const metrics = activityMetrics(state.events, state.options.currentActivity.tr, state.options.refTime);
         const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
         const totalDistanceDisplayText = totalDistanceMetric ?
           totalDistanceMetric.text! + ' ' + totalDistanceMetric.units! : '';
@@ -165,7 +165,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
             displayText: 'Total distance',
             name: 'totalDistanceLabel',
             itemStyle: {
-              top: dynamicAreaTop(),
+              top: dynamicAreaTop(state),
               left: constants.buttonSize + constants.buttonOffset * 2,
             },
             textStyle: {},
@@ -174,7 +174,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
             displayText: totalDistanceDisplayText,
             name: 'totalDistance',
             itemStyle: {
-              top: dynamicAreaTop() + 20,
+              top: dynamicAreaTop(state) + 20,
               left: constants.buttonSize + constants.buttonOffset * 2,
             },
             textStyle: {},

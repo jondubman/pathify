@@ -62,6 +62,7 @@ class Timeline extends Component<TimelinePanelProps> {
       marks,
       nowTime,
       refTime,
+      selectedActivity,
       startupTime,
       timeRange,
       timespans,
@@ -150,7 +151,7 @@ class Timeline extends Component<TimelinePanelProps> {
             tickValues={tickValues}
           />
           <TimelineSpans data={timespans} />
-          <TimelineMarks data={marks} />
+          <TimelineMarks data={marks} selectedActivity={selectedActivity} />
         </VictoryChart>
       </View>
     )
