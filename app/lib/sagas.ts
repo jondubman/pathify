@@ -250,6 +250,7 @@ const sagas = {
       yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
     } else {
       yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
+      yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
     }
   },
 

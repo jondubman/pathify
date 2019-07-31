@@ -13,7 +13,6 @@ import constants from 'lib/constants';
 
 const colors = constants.colors.followMeButton;
 const {
-  bottomOffset,
   rightOffset,
   opacity,
   size,
@@ -22,7 +21,6 @@ const {
 const Styles = StyleSheet.create({
   button: { // round
     borderRadius: size / 2,
-    bottom: bottomOffset,
     flexDirection: 'row',
     height: size,
     justifyContent: 'center',
@@ -38,6 +36,7 @@ const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.active ? colors.background.active : colors.background.inactive,
+      bottom: props.bottomOffset,
     }]}
     onPress={props.onPress}
     underlayColor={colors.underlay}

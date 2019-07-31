@@ -57,7 +57,16 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   public render() {
-    const { allowZoom, marks, nowTime, refTime, startupTime, timeRange, timespans, zoomLevel } = this.props;
+    const {
+      allowZoom,
+      marks,
+      nowTime,
+      refTime,
+      startupTime,
+      timeRange,
+      timespans,
+      zoomLevel
+    } = this.props;
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat, visibleTime } = zoomInfo;

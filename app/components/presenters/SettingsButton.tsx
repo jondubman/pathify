@@ -17,7 +17,8 @@ const {
   opacityWhenClosed,
   opacityWhenOpen,
   size,
-topOffset } = constants.settingsButton;
+  topOffset
+} = constants.settingsButton;
 
 const Styles = StyleSheet.create({
   button: {

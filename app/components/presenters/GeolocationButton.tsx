@@ -54,7 +54,7 @@ const GeolocationButton = (props: GeolocationButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.enabled ? colors.enabledBackground : colors.disabledBackground,
-      bottom: bottomOffset,
+      bottom: props.bottomOffset,
       left: leftOffset,
     }]}
     onPress={props.onPress}

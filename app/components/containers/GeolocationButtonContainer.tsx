@@ -4,12 +4,13 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import constants from 'lib/constants';
+import { dynamicLowerButtonBase } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import GeolocationButton from 'presenters/GeolocationButton';
 import log from 'shared/log';
 
 interface GeolocationButtonStateProps {
+  bottomOffset: number,
   enabled: boolean,
 }
 
@@ -21,6 +22,7 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
+    bottomOffset: dynamicLowerButtonBase(state),
     enabled: state.flags.backgroundGeolocation,
   }
 }

@@ -14,7 +14,7 @@ const now = utils.now();
 export const initialAppState = {
   events: [] as GenericEvents,
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
-    activitySummaryExpanded: false, // true: activitySummary is expanded, with greater height (false: collapsed)
+    activitySummaryExpanded: true, // true: activitySummary is expanded, with greater height (false: collapsed)
     activitySummaryOpen: false, // activitySummary is among the PopupMenus. See initialMenus.
     allowContinuousTimelineZoom: false, // false: discrete zoom only
     backgroundGeolocation: false, // until enabled

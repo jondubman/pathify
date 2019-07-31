@@ -4,12 +4,14 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import { dynamicAreaTop } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import HelpButton from 'presenters/HelpButton';
 import log from 'shared/log';
 
 interface HelpButtonStateProps {
   enabled: boolean;
+  topOffset: number;
 }
 
 interface HelpButtonDispatchProps {
@@ -21,6 +23,7 @@ export type HelpButtonProps = HelpButtonStateProps & HelpButtonDispatchProps;
 const mapStateToProps = (state: AppState): HelpButtonStateProps => {
   return {
     enabled: state.flags.helpEnabled,
+    topOffset: dynamicAreaTop(state),
   }
 }
 

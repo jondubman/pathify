@@ -107,6 +107,14 @@ export const selectedTimespans = (state: AppState): Timespans => {
   }
 }
 
+export const dynamicAreaTop = (state: AppState): number => (
+  constants.safeAreaTop
+)
+
+export const dynamicLowerButtonBase = (state: AppState): number => (
+  (state.flags.mapFullScreen ? constants.safeAreaBottom + constants.mapLogoHeight : constants.mapLogoHeight)
+)
+
 export const dynamicMapHeight = (state: AppState): number => {
   return utils.windowSize().height - dynamicTimelineHeight(state);
 }

@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 // This is referenced in getTransformModulePath in rn-cli.config.js.
 
 import { AppAction, newAction, ReducerAction } from 'lib/actions';
+import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
@@ -43,6 +44,7 @@ export default class App extends Component {
   componentDidMount() {
     log.info('----- App starting up! (device log)');
     log.debug('windowSize', utils.windowSize());
+    log.debug('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
     store.create(); // proactively create Redux store instance
 
     RNAppState.addEventListener('change', this.handleAppStateChange);

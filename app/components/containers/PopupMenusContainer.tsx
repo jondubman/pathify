@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 
 import PopupMenus from 'components/presenters/PopupMenus';
 import constants from 'lib/constants';
-import { dynamicTimelineHeight } from 'lib/selectors';
+import {
+  dynamicAreaTop,
+  dynamicTimelineHeight,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -70,7 +73,7 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       borderTopRightRadius: constants.buttonSize / 2,
       left: 0,
       right: 0,
-      height: 280,
+      height: constants.clockMenu.height,
     } as ViewStyle,
   }],
   // [ PopupMenuName.menuNext, {
@@ -141,7 +144,9 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
       if (state.options.currentActivity) {
         let activitySummary: PopupMenuConfig = { ...menus.get(PopupMenuName.activitySummary)! };
         const height = state.flags.activitySummaryExpanded ?
-          constants.activitySummary.heightExpanded : constants.activitySummary.heightCollapsed
+          constants.activitySummary.heightExpanded
+          :
+          constants.activitySummary.heightCollapsed + dynamicAreaTop(state);
 
         activitySummary.style = {
           ...activitySummary.style,
@@ -160,7 +165,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
             displayText: 'Total distance',
             name: 'totalDistanceLabel',
             itemStyle: {
-              top: constants.safeAreaTop + constants.buttonOffset,
+              top: dynamicAreaTop(),
               left: constants.buttonSize + constants.buttonOffset * 2,
             },
             textStyle: {},
@@ -169,7 +174,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
             displayText: totalDistanceDisplayText,
             name: 'totalDistance',
             itemStyle: {
-              top: constants.safeAreaTop + constants.buttonOffset + 20,
+              top: dynamicAreaTop() + 20,
               left: constants.buttonSize + constants.buttonOffset * 2,
             },
             textStyle: {},

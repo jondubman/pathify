@@ -63,7 +63,7 @@ const buttonSize = 50;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
 const mapLogoHeight = 34; // mapbox logo
-const initialTimelineHeight = 120; // maybe max 150
+const initialTimelineHeight = 90; // maybe max 150
 const panelWidth = 252; // fits on iPhone SE
 const clockHeight = 70;
 const clockMargin = 4;
@@ -163,8 +163,8 @@ const colors = {
 
 const constants = {
   activitySummary: {
-    heightCollapsed: 108,
-    heightExpanded: 200,
+    heightCollapsed: 60,
+    heightExpanded: 180,
   },
   appName: 'Pathify',
   buttonOffset,
@@ -210,6 +210,9 @@ const constants = {
       },
     },
   },
+  clockMenu: {
+    height: 240,
+  },
   colors,
   colorThemes,
   compassButton: {
@@ -223,7 +226,6 @@ const constants = {
     'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'
   ],
   followMeButton: {
-    bottomOffset: mapLogoHeight + safeAreaBottom,
     opacity: defaultOpacity,
     rightOffset: buttonOffset,
     size: buttonSize,
@@ -239,7 +241,6 @@ const constants = {
     },
   },
   geolocationButton: {
-    bottomOffset: safeAreaBottom + mapLogoHeight,
     leftOffset: buttonOffset,
     opacity: defaultOpacity,
     size: buttonSize,
@@ -248,7 +249,6 @@ const constants = {
     opacity: defaultOpacity,
     rightOffset: buttonOffset,
     size: buttonSize,
-    topOffset: safeAreaTop + buttonOffset,
   },
   headers: {
     Accept: 'application/json',
@@ -267,6 +267,7 @@ const constants = {
     opacityUnderPanels: defaultOpacity, // TODO adjust
     reorientationTime: interval.seconds(1) / 2,
   },
+  mapLogoHeight,
   mapStyles: [
     { name: 'None', opacity: 1, url: '' },
     { name: 'Default', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
@@ -316,14 +317,14 @@ const constants = {
     opacityWhenClosed: defaultOpacity,
     opacityWhenOpen: 1,
     size: buttonSize,
-    topOffset: safeAreaTop + buttonOffset,
+    topOffset: safeAreaTop,
   },
   settingsPanel: {
     height: 300, // tallest it can be without covering up Geolocation button on iPhone SE with Timeline showing
     leftOffset: buttonOffset,
     subpanelLeftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset,
-    topOffset: safeAreaTop + buttonOffset,
+    topOffset: safeAreaTop,
   },
   timeline: {
     barHeight: 40, // big enough to be touchable
@@ -331,7 +332,7 @@ const constants = {
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     default: {
-      height: initialTimelineHeight,
+      height: initialTimelineHeight + bottomPaddingForAxis,
       zoomLevel: 1,
     },
     miniBarHeight: 15,

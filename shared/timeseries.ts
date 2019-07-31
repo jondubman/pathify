@@ -49,7 +49,7 @@ export interface GenericEvent {
 //   event: GenericEvent;
 //   index: number;
 // }
-export type EventFilter = (event: GenericEvent) => Boolean;
+export type EventFilter = (event: GenericEvent) => Boolean; // true: event passes filter
 export type EventsFilter = (events: GenericEvents, filter: EventFilter) => GenericEvents;
 export type GenericEvents = GenericEvent[];
 
@@ -178,21 +178,86 @@ const timeseries = {
     return results;
   },
 
-  // Return the smallest index into events such that events[index].t > t.
-  // Return events.length if the given timepoint is beyond all given events.
-  // So given time series like [ 1, 2, 3, 4, 5 ], events.length is 5.
+  // Given events, a timepoint and an eventFilter, find the immediately preceding event(s) matching the filter.
+  // Note: Multiple matching events at the same timepoint will be returned. Filter is optional.
+  // Use case: Given some reference timepoint, find the prior MARK event with a START subtype.
+  findPreviousEvents: (events: GenericEvents, t: Timepoint,
+                       eventFilter: EventFilter = null, all: boolean = false): GenericEvents => {
+    const startingIndex = timeseries.indexForPreviousTimepoint(events, t);
+    if (startingIndex < 0) {
+      return [];
+    }
+    const previousEvents: GenericEvents = [];
+    for (let i = startingIndex; i >= 0; i--) {
+      const event = events[i];
+      if (!all && previousEvents.length && event.t !== previousEvents[0].t) {
+        break; // done accumulating events at the same timepoint
+      }
+      if (!eventFilter || eventFilter(event)) {
+        previousEvents.push(event);
+      }
+    }
+    return previousEvents;
+  },
+
+  // Given events, a timepoint and an eventFilter, find the immediately subsequent event(s) matching the filter.
+  // Note: Multiple matching events at the same timepoint may be returned. Filter is optional.
+  // Use case: Given some reference timepoint, find the subsequent MARK event with a END subtype.
+  findNextEvents: (events: GenericEvents, t: Timepoint,
+                   eventFilter: EventFilter = null, all: boolean = false): GenericEvents => {
+    const startingIndex = timeseries.indexForNextTimepoint(events, t);
+    if (startingIndex === events.length) {
+      return [];
+    }
+    const nextEvents: GenericEvents = [];
+    for (let i = startingIndex; i < events.length; i++) {
+      const event = events[i];
+      if (!all && nextEvents.length && event.t !== nextEvents[0].t) {
+        break; // done accumulating events at the same timepoint
+      }
+      if (!eventFilter || eventFilter(event)) {
+        nextEvents.push(event);
+      }
+    }
+    return nextEvents;
+  },
+
+  // Given Timepoint t, return the smallest index into events such that events[index].t > t.
+  // Return events.length if there are no events after t.
+  // So given time series like [ 1, 2, 3, 4, 5 ], with events.length of 5:
   //     If t is 0.5, index is 0
   //     If t is 1, index is 0
   //     If t is 1.5, index is 1
-  //     If t is 5, index is 4
-  //     If t is 6, index is 5
-  indexForTimepoint: (events: GenericEvents, t: Timepoint): (Timepoint | null) => {
-    for (let index = 0; index < events.length; index++) {
+  //     If t is 4.8, index is 4 (the index of the event with timepoint 5, the "next" timepoint)
+  //     If t is 5, index is 5 (events.length)
+  //     If t is 6, index is 5 (events.length) (same)
+  // This is like "stepping forward" one timepoint.
+  indexForNextTimepoint: (events: GenericEvents, t: Timepoint): (Timepoint | null) => {
+    for (let index = 0; index < events.length; index++) { // scan from the start
       if (events[index].t > t) {
         return index;
       }
     }
     return events.length;
+  },
+
+  // Given Timepoint t, return the largest index into events such that events[index].t < t.
+  // Return -1 if the given timepoint is prior to the events.
+  // So given time series like [ 1, 2, 3, 4, 5 ], with events.length of 5:
+  //     If t is 0.5, index is -1
+  //     If t is 1, index is still -1, because of strict <
+  //     If t is 1.5, index is 0
+  //     If t is 4.8, index is 3 (the index of the event with timepoint 4, the "previous" timepoint)
+  //     If t is 5, index is 2
+  //     If t is 6, index is 3
+  // This is like "stepping backward" one timepoint.
+  indexForPreviousTimepoint: (events: GenericEvents, t: Timepoint): (Timepoint | null) => {
+    for (let index = events.length - 1; index >=  0; index--) { // scan backwards from the end
+      if (events[index].t < t) {
+        return index;
+      }
+    }
+    return -1;
   },
 
   mergeEvents: (listOne: GenericEvents, listTwo: GenericEvents): GenericEvents => {

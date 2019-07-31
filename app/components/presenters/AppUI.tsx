@@ -36,7 +36,10 @@ const AppStyles = StyleSheet.create({
 
 class AppUI extends Component<AppUIProps> {
   public render() {
-    const { showTimeline, timelineHeight} = this.props;
+    const {
+      showTimeline,
+      timelineHeight
+    } = this.props;
     const width = utils.windowSize().width;
     return (
       <View style={AppStyles.containingAppView}>

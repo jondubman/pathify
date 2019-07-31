@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import {
+  dynamicLowerButtonBase,
   mapHidden,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -14,6 +15,7 @@ import FollowMeButton from 'presenters/FollowMeButton';
 
 interface FollowMeButtonStateProps {
   active: boolean;
+  bottomOffset: number;
   hidden: boolean;
 }
 
@@ -26,6 +28,7 @@ export type FollowMeButtonProps = FollowMeButtonStateProps & FollowMeButtonDispa
 const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): FollowMeButtonStateProps => {
   return {
     active: state.flags.followingUser,
+    bottomOffset: dynamicLowerButtonBase(state),
     hidden: mapHidden(state),
   }
 }

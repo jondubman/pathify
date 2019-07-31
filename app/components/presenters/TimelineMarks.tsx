@@ -36,7 +36,6 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
       return `${left},${top} ${right},${top} ${scaledX},${bottom} ${left},${top}`;
     }
 
-
     const centerLine_x1 = (t: Timepoint): number => (Math.round(scale.x(t)));
     const centerLine_x2 = centerLine_x1; // vertical line: identical x1, x2
     const centerLine_y1 = (t: Timepoint): number => 0;

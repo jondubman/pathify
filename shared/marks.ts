@@ -1,4 +1,4 @@
-import { EventType, GenericEvent, GenericEvents } from './timeseries';
+import { EventType, GenericEvent, GenericEvents, TimeRange } from './timeseries';
 
 export enum MarkType {
   'NONE' = 'NONE',
@@ -9,6 +9,7 @@ export enum MarkType {
 export interface MarkEvent extends GenericEvent {
   // type: EventType.MARK;
   data: {
+    id?: string; // use matching id for corresponding START and END marks
     subtype: MarkType;
   }
 }
@@ -23,4 +24,9 @@ export const markList = (events: GenericEvents): MarkEvents => {
     }
   }
   return marks;
+}
+
+export interface Activity {
+  id?: string;
+  tr: TimeRange;
 }
