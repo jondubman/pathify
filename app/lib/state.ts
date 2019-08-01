@@ -8,7 +8,7 @@ import constants from 'lib/constants';
 import utils from "lib/utils";
 import { LocationEvent } from 'shared/locations';
 import { Activity } from 'shared/marks';
-import { GenericEvents, TimeRange } from 'shared/timeseries';
+import { GenericEvents } from 'shared/timeseries';
 
 const now = utils.now();
 
@@ -43,7 +43,7 @@ export const initialAppState = {
     refTime: now,
     startupTime: now,
     timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
-    selectedActivity: null as Activity | null,
+    selectedActivity: null as Activity | null, // for now, no more than one Activity is 'selected' at a time
     serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
     serverSyncTime: 0, // time of last server sync (or 0 if never)
     timelineZoomLevel: constants.timeline.default.zoomLevel,

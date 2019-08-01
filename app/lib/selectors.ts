@@ -7,9 +7,14 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 
 import locations from 'shared/locations';
-import { interval, Timepoint, TimeRange, EventType } from 'shared/timeseries';
+import { Activity, MarkEvent } from 'shared/marks';
+import timeseries, { interval, Timepoint, TimeRange, EventType } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent, AppUserAction, AppUserActionEvent } from 'shared/appEvents';
+
+export const markSelected = (selectedActivity: Activity | null, mark: MarkEvent): boolean => (
+  !!(mark.data.id && selectedActivity && mark.data.id === selectedActivity.id)
+)
 
 export const continuousTrackList = (state: AppState): Tracks => {
   const tr: TimeRange = [0, utils.now()];
@@ -22,6 +27,42 @@ const colorForAppState = {
   [AppStateChange.ACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.35),
   [AppStateChange.INACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.25),
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.1),
+}
+
+const activityTimespans = (state: AppState): Timespans => {
+  const timespans: Timespans = [];
+  const { events } = state;
+  let startTime: Timepoint = 0;
+  for (let i = 0; i < events.length; i++) {
+    const e = events[i];
+    if (e.type === EventType.USER_ACTION) {
+      const { t } = e;
+      const { userAction } = (e as AppUserActionEvent).data;
+      if (userAction === AppUserAction.START) {
+        startTime = t;
+      }
+      if (userAction === AppUserAction.STOP) {
+        const tr: TimeRange = [startTime, t];
+        const timespan = {
+          kind: TimespanKind.ACTIVITY,
+          tr,
+        } as Timespan;
+        if (state.options.selectedActivity && timeseries.timeRangesEqual(state.options.selectedActivity.tr, tr)) {
+          timespan.color = constants.colors.timeline.selectedActivity; // TODO
+        }
+        timespans.push(timespan);
+        startTime = 0;
+      }
+    }
+  }
+  // Finally, add a timepsan representing the current state, if started.
+  if (startTime) {
+    timespans.push({
+      kind: TimespanKind.ACTIVITY,
+      tr: [startTime, utils.now()],
+    })
+  }
+  return timespans;
 }
 
 const appStateTimespans = (state: AppState): Timespans => {
@@ -54,41 +95,10 @@ const appStateTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-const trackingTimespans = (state: AppState): Timespans => {
-  const timespans: Timespans = [];
-  const { events } = state;
-  let startTime: Timepoint = 0;
-  for (let i = 0; i < events.length; i++) {
-    const e = events[i];
-    if (e.type === EventType.USER_ACTION) {
-      const { t } = e;
-      const { userAction } = (e as AppUserActionEvent).data;
-      if (userAction === AppUserAction.START) {
-        startTime = t;
-      }
-      if (userAction === AppUserAction.STOP) {
-        timespans.push({
-          kind: TimespanKind.TRACKING,
-          tr: [startTime, t ],
-        })
-        startTime = 0;
-      }
-    }
-  }
-  // Finally, add a timepsan representing the current state, if started.
-  if (startTime) {
-    timespans.push({
-      kind: TimespanKind.TRACKING,
-      tr: [ startTime, utils.now() ],
-    })
-  }
-  return timespans;
-}
-
 export const customTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
+  timespans.push(...activityTimespans(state));
   timespans.push(...appStateTimespans(state));
-  timespans.push(...trackingTimespans(state));
   return timespans;
 }
 
@@ -99,7 +109,7 @@ export const selectedTimespans = (state: AppState): Timespans => {
     const timespan: Timespan = {
       kind: TimespanKind.SELECTION,
       // TODO replace hard-coded selection with real one
-      tr: [ startupTime - interval.seconds(10), startupTime + interval.seconds(10) ],
+      tr: [ startupTime - interval.seconds(20), startupTime - interval.seconds(10) ],
     }
     return [timespan];
   } else {

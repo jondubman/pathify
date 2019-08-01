@@ -296,7 +296,7 @@ const timeseries = {
     if (timeseries.sortedByTime(events)) {
       return events;
     }
-    log.warn('sortEvents: sort required');
+    log.trace('sortEvents: sort required');
     const sortedEvents = [ ...events ].sort((a: GenericEvent, b: GenericEvent) => (a.t - b.t));
     if (!timeseries.sortedByTime(sortedEvents)) {
       log.warn('sortEvents: sort failed');

@@ -13,13 +13,13 @@ const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized 
 import { interval } from 'shared/timeseries';
 
 export enum TimespanKind {
+  'ACTIVITY' = 'ACTIVITY',
   'APP_STATE' = 'APP_STATE',
   'LOCATIONS' = 'LOCATIONS',
   'MODE' = 'MODE',
   'MOTION' = 'MOTION',
   'OTHER' = 'OTHER',
   'TICKS' = 'TICKS',
-  'TRACKING' = 'TRACKING',
   'SELECTION' = 'SELECTION',
 }
 
@@ -111,8 +111,10 @@ const colors = {
   },
   marks: {
     default: namedColors.gray,
-    start: namedColors.green,
-    end: namedColors.red,
+    start: withOpacity(namedColors.darkGreen, 0.75),
+    startSelected: namedColors.green,
+    end: withOpacity(namedColors.darkRed, 0.75),
+    endSelected: namedColors.red,
   },
   menus: {
     background: withOpacity(namedColors.black, 0.7),
@@ -143,15 +145,16 @@ const colors = {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
     background: colorThemes.background,
+    selectedActivity: withOpacity(namedColors.blue, 1),
     timespans: {
-      [TimespanKind.APP_STATE]: namedColors.purple, // opacity applied later
+      [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65),
+      [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
       [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),
       [TimespanKind.OTHER]: withOpacity(namedColors.darkRed, 0.35),
       [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25),
       [TimespanKind.MOTION]: withOpacity(namedColors.yellow, 0.25),
       [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25),
-      [TimespanKind.TICKS]: withOpacity(namedColors.navy, 0.25),
-      [TimespanKind.TRACKING]: withOpacity(namedColors.blue, 0.75),
+      [TimespanKind.TICKS]: withOpacity(namedColors.purple, 0.25),
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),
@@ -275,9 +278,11 @@ const constants = {
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
   marks: {
+    centerlineWidthDefault: 3,
+    centerlineWidthSelected: 3,
     rectWidth: 12,
-    rectHeight: 15,
-    pointLength: 28,
+    rectHeight: 0,
+    pointLength: 30,
   },
   menus: {
     defaultItemStyle: {

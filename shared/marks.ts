@@ -32,13 +32,13 @@ export interface Activity {
   tr: TimeRange;
 }
 
+// Given events and a timepoint t, the containingActivity is the most recently started activity
+// whose endpoint is greater than t.
 export const containingActivity = (events: GenericEvents, t: Timepoint): Activity | null => {
   try {
     const previousEndEventIds: string[] = [];
-    log.debug('containingActivity', t);
     const index = timeseries.indexForPreviousTimepoint(events, t, true); // true: allowEqual. Start scanning backward.
     for (let i = index; i >= 0; i--) { // scan back from there
-      log.debug('containingActivity i', i);
       const event = events[i];
       if (event.type === EventType.MARK) {
         const markEvent = event as MarkEvent;
@@ -50,7 +50,6 @@ export const containingActivity = (events: GenericEvents, t: Timepoint): Activit
         if (markEvent.data.subtype === MarkType.START) {
           const startEvent = markEvent;
           const startId = startEvent.data.id || '';
-          log.debug('containingActivity found startEvent at', startEvent.t, startId, previousEndEventIds);
           if (previousEndEventIds.indexOf(startId) === -1) { // not found
             // now seek a corresponding END
             const endEvent = timeseries.findNextEvents(events, t,
@@ -65,7 +64,6 @@ export const containingActivity = (events: GenericEvents, t: Timepoint): Activit
                 id: startId,
                 tr: [startEvent.t, endEvent.t],
               } as Activity;
-              log.debug('containingActivity found endEvent, returning', activity);
               return activity;
             }
           }

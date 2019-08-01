@@ -587,13 +587,13 @@ const sagas = {
     })
     if (changedEvents.length) {
       // TODO Actually send these changed events to the server!
-      yield call(log.debug, `saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
+      yield call(log.trace, `saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
       yield put(newAction(ReducerAction.SERVER_SYNC_COMPLETED, timestamps));
     }
   },
 
   setAppOption: function* (action: Action) {
-    yield call(log.debug, 'saga setAppOption', action);
+    yield call(log.trace, 'saga setAppOption', action);
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
     // Now handle any side effects
@@ -603,14 +603,8 @@ const sagas = {
       const timelineNow = yield select(state => state.flags.timelineNow);
       const events = yield select(state => state.events);
       if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
-        const activity = yield call(containingActivity, events, action.params.refTime);
-        if (activity) {
-          yield call(log.debug, 'setAppOption setting selectedActivity to', activity);
-          yield put(newAction(ReducerAction.SET_APP_OPTION, { selectedActivity: activity }));
-          // yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
-        } else {
-          yield call(log.debug, 'WTF', activity);
-        }
+        const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
+        yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
       }
     }
   },

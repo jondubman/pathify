@@ -29,10 +29,12 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
     // yBase is at the bottom of the timeline. y should decrease from there. Notice this function is recursive.
     const yTop = (kind: TimespanKind): number => {
       switch (kind) {
+        case TimespanKind.ACTIVITY:
+          return Math.round(yBase / 2) - height(kind) / 2;
         case TimespanKind.APP_STATE:
-          return yBase - height(kind); // at the bottom
+          return 0; // APP_STATE at the top
         case TimespanKind.LOCATIONS:
-          return yTop(TimespanKind.APP_STATE) - height(kind); // LOCATIONS above APP_STATE
+          return yBase - height(kind); // LOCATIONS at the bottom
         case TimespanKind.MODE:
           break;
         case TimespanKind.MOTION:
@@ -40,11 +42,9 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
         case TimespanKind.OTHER:
           return yTop(TimespanKind.LOCATIONS) - height(kind); // OTHER above LOCATIONS
         case TimespanKind.SELECTION:
-          return yBase - height(kind);
+          return yBase - height(kind); // top to bottom
         case TimespanKind.TICKS:
-          break;
-        case TimespanKind.TRACKING:
-          return 0; // TRACKING on top
+          break
         default:
           break;
       }
@@ -53,6 +53,8 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
 
     const height = (kind: TimespanKind): number => {
       switch (kind) {
+        case TimespanKind.ACTIVITY:
+          return constants.timeline.barHeight;
         case TimespanKind.APP_STATE:
           return constants.timeline.miniBarHeight;
         case TimespanKind.LOCATIONS:
@@ -67,8 +69,6 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
           return timeline.default.height;
         case TimespanKind.TICKS:
           break;
-        case TimespanKind.TRACKING:
-          return constants.timeline.barHeight;
         default:
           break;
       }

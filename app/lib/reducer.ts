@@ -31,12 +31,8 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         if (!newEvents.length) {
           break; // nothing to add
         }
-
-        log.debug('ADD_EVENTS: existing events count', state.events.length);
-
         if (!state.events.length) {  // special case: no existing events
           newState.events = newEvents;
-          log.debug('ADD_EVENTS: newState.events count', newState.events.length);
           break;
         }
         const mergedEvents: GenericEvents = timeseries.mergeEvents(state.events, newEvents);
@@ -56,11 +52,9 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         //     }
         //   // TODO consider eliminating duplicates, which would make ADD_EVENTS idempotent
         // }
-        log.debug('ADD_EVENTS: merged events count', mergedEvents.length);
         newState.events = mergedEvents;
       }
       break;
-
 
     case ReducerAction.GEOLOCATION:
       {
@@ -107,15 +101,12 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         }
         newState.events = events;
         const pending = countChanged - countSynced;
-        log.debug(`SERVER_SYNC_COMPLETED: ${countSynced}/${timestamps.length} synced, ${pending} pending`);
+        log.trace(`SERVER_SYNC_COMPLETED: ${countSynced}/${timestamps.length} synced, ${pending} pending`);
       }
       break;
 
     case ReducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
-        if (!params.refTime) { // this happens like every second, so logging it is noise
-          log.debug('ReducerAction.SET_APP_OPTION', params);
-        }
         newState.options = {
           ...state.options,
           ...params, // TODO watch out; zero validation of incoming params!
