@@ -26,6 +26,7 @@ export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
   allowZoom: boolean;
+  currentActivity: Activity | null;
   marks: MarkEvents;
   nowTime: number;
   refTime: number;
@@ -44,8 +45,8 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
+  const { currentActivity, refTime } = state.options;
   const nowTime = utils.now();
-  const refTime = state.options.refTime;
   const allowZoom = state.flags.allowContinuousTimelineZoom;
   const tracks = continuousTrackList(state);
   const timespans: Timespans = tracks.map((track: Track): Timespan => ({
@@ -55,6 +56,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const marks: MarkEvents = markList(state.events);
   return {
     allowZoom,
+    currentActivity,
     marks,
     nowTime,
     refTime,

@@ -59,6 +59,7 @@ class Timeline extends Component<TimelinePanelProps> {
   public render() {
     const {
       allowZoom,
+      currentActivity,
       marks,
       nowTime,
       refTime,
@@ -151,7 +152,7 @@ class Timeline extends Component<TimelinePanelProps> {
             tickValues={tickValues}
           />
           <TimelineSpans data={timespans} />
-          <TimelineMarks data={marks} selectedActivity={selectedActivity} />
+          <TimelineMarks data={marks} currentActivity={currentActivity} selectedActivity={selectedActivity} />
         </VictoryChart>
       </View>
     )

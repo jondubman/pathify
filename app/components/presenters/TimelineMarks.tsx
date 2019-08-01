@@ -10,10 +10,11 @@ import {
   MarkEvents,
   MarkType
 } from 'shared/marks';
-import { markSelected } from 'lib/selectors';
+import { activityIncludesMark } from 'lib/selectors';
 import { Timepoint } from 'shared/timeseries';
 
 interface TimelineMarksProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
+  currentActivity: Activity | null;
   data: MarkEvents;
   selectedActivity: Activity | null;
 }
@@ -25,7 +26,11 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
   }
 
   public render() {
-    const { data, selectedActivity } = this.props;
+    const {
+      currentActivity,
+      data,
+      selectedActivity
+    } = this.props;
     const {
       scale, // as in d3 scale
     } = this.props as any;
@@ -41,7 +46,7 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     const colorFor = (mark: MarkEvent): string => {
       const { subtype } = mark.data;
       const colors = constants.colors.marks;
-      const selected: boolean = markSelected(selectedActivity, mark);
+      const selected: boolean = activityIncludesMark(selectedActivity, mark);
       switch (subtype) {
         case MarkType.NONE:
           return colors.default;
@@ -73,7 +78,7 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     }
 
     const shapes = data.map((mark: MarkEvent, index: number) => (
-      markSelected(selectedActivity, mark) ?
+      activityIncludesMark(selectedActivity, mark) || activityIncludesMark(currentActivity, mark) ?
         <G key={`G${index}`}>
           <Line
             key={`MarkLine${index}`}

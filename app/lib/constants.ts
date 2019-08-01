@@ -145,15 +145,16 @@ const colors = {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
     background: colorThemes.background,
-    selectedActivity: withOpacity(namedColors.blue, 1),
+    currentActivity: withOpacity(namedColors.yellow, 0.75), // special case when timespan is selected
+    selectedActivity: withOpacity(namedColors.blue, 1), // special case when timespan is selected
     timespans: {
-      [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65),
+      [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65), // unselected state (selectedActivity color above)
       [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
       [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),
       [TimespanKind.OTHER]: withOpacity(namedColors.darkRed, 0.35),
-      [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25),
-      [TimespanKind.MOTION]: withOpacity(namedColors.yellow, 0.25),
-      [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25),
+      [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25), // TODO
+      [TimespanKind.MOTION]: withOpacity(namedColors.yellow, 0.25), // TODO
+      [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25), // spans the whole timeline vertically
       [TimespanKind.TICKS]: withOpacity(namedColors.purple, 0.25),
     },
     centerLine: withOpacity(namedColors.white, 0.5),

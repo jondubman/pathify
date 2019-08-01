@@ -1,4 +1,5 @@
 import log from './log';
+import { Activity } from './marks';
 import timeseries, { EventType, GenericEvent, GenericEvents, Timepoint, TimeRange } from './timeseries';
 
 export enum MarkType {
@@ -52,20 +53,18 @@ export const containingActivity = (events: GenericEvents, t: Timepoint): Activit
           const startId = startEvent.data.id || '';
           if (previousEndEventIds.indexOf(startId) === -1) { // not found
             // now seek a corresponding END
-            const endEvent = timeseries.findNextEvents(events, t,
+            const endEvents = timeseries.findNextEvents(events, t,
               (e: GenericEvent) => (
                 e.type === EventType.MARK &&
                 (e as MarkEvent).data.subtype === MarkType.END &&
                 (e as MarkEvent).data.id === startId )
-              )[0]
-
-            if (endEvent) {
-              const activity = {
-                id: startId,
-                tr: [startEvent.t, endEvent.t],
-              } as Activity;
-              return activity;
-            }
+              )
+            const endTime= endEvents.length ? endEvents[0].t : Infinity;
+            const activity = {
+              id: startId,
+              tr: [startEvent.t, endTime],
+            } as Activity;
+            return activity;
           }
         }
       }

@@ -12,8 +12,8 @@ import timeseries, { interval, Timepoint, TimeRange, EventType } from 'shared/ti
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent, AppUserAction, AppUserActionEvent } from 'shared/appEvents';
 
-export const markSelected = (selectedActivity: Activity | null, mark: MarkEvent): boolean => (
-  !!(mark.data.id && selectedActivity && mark.data.id === selectedActivity.id)
+export const activityIncludesMark = (activity: Activity | null, mark: MarkEvent): boolean => (
+  !!(mark.data.id && activity && mark.data.id === activity.id)
 )
 
 export const continuousTrackList = (state: AppState): Tracks => {
@@ -48,7 +48,10 @@ const activityTimespans = (state: AppState): Timespans => {
           tr,
         } as Timespan;
         if (state.options.selectedActivity && timeseries.timeRangesEqual(state.options.selectedActivity.tr, tr)) {
-          timespan.color = constants.colors.timeline.selectedActivity; // TODO
+          timespan.color = constants.colors.timeline.selectedActivity;
+        }
+        if (state.options.currentActivity && state.options.currentActivity.tr[0] == tr[0]) {
+          timespan.color = constants.colors.timeline.selectedActivity;
         }
         timespans.push(timespan);
         startTime = 0;
@@ -58,6 +61,7 @@ const activityTimespans = (state: AppState): Timespans => {
   // Finally, add a timepsan representing the current state, if started.
   if (startTime) {
     timespans.push({
+      color: constants.colors.timeline.currentActivity,
       kind: TimespanKind.ACTIVITY,
       tr: [startTime, utils.now()],
     })
