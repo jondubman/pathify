@@ -15,11 +15,10 @@ import { Geo } from 'lib/geo';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
-import { AppStateChangeEvent, AppStateChange } from 'shared/appEvents';
+import { AppStateChange } from 'shared/appEvents';
 import log from 'shared/log';
 
 import AppUIContainer from 'containers/AppUIContainer';
-import { EventType } from 'shared/timeseries';
 
 const mapNewStateToAppStateChange = {
   startup: AppStateChange.STARTUP,
@@ -28,14 +27,6 @@ const mapNewStateToAppStateChange = {
   inactive: AppStateChange.INACTIVE,
 }
 
-const newAppStateChangeEvent = (newState: string): AppStateChangeEvent => ({
-  t: utils.now(),
-  type: EventType.APP,
-  data: {
-    newState: mapNewStateToAppStateChange[newState] || `unknown new app state: ${newState}`,
-  },
-})
-
 export default class App extends Component {
   constructor(props: any) {
     super(props);
@@ -43,8 +34,8 @@ export default class App extends Component {
 
   componentDidMount() {
     log.info('----- App starting up! (device log)');
-    log.debug('windowSize', utils.windowSize());
-    log.debug('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
+    log.info('windowSize', utils.windowSize());
+    log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
     store.create(); // proactively create Redux store instance
 
     RNAppState.addEventListener('change', this.handleAppStateChange);
@@ -76,7 +67,7 @@ export default class App extends Component {
 
   handleAppStateChange(newState: string) {
     log.debug('app state change:', newState);
-    store.dispatch(newAction(AppAction.addEvents, { events: [ newAppStateChangeEvent(newState) ]}));
+    store.dispatch(newAction(AppAction.appStateChange, { newState: mapNewStateToAppStateChange[newState] } ));
   }
 
   render() {

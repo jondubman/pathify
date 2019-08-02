@@ -4,13 +4,11 @@ import { connect } from 'react-redux';
 import PopupMenus from 'components/presenters/PopupMenus';
 import constants from 'lib/constants';
 import {
-  dynamicAreaTop,
   dynamicTimelineHeight,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import utils from 'lib/utils';
 import log from 'shared/log';
-import { activityMetrics, ActivityMetricName } from 'shared/metrics';
+import { activitySummary } from 'lib/activitySummary';
 
 export interface PopupMenuItem {
   name: string; // must be unique; canonical way to refer to this menu
@@ -132,6 +130,7 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
         style: {
           ...clockMenuBaseStyle,
           // position clockMenu above timeline and the horizontal separators that form its top edge
+          // TODO the number 6 is magic; it's 3 bars * 2 pixels each. Should go in constants.
           bottom: dynamicTimelineHeight(state) + 6 * constants.timeline.topLineHeight,
         },
       } as PopupMenuConfig;
@@ -141,48 +140,11 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }
     if (menuName === PopupMenuName.activitySummary && state.flags.activitySummaryOpen) { // otherwise no point
-      if (state.options.currentActivity) {
-        let activitySummary: PopupMenuConfig = { ...menus.get(PopupMenuName.activitySummary)! };
-        const height = state.flags.activitySummaryExpanded ?
-          constants.activitySummary.heightExpanded
-          :
-          constants.activitySummary.heightCollapsed + dynamicAreaTop(state);
-
-        activitySummary.style = {
-          ...activitySummary.style,
-          bottom: utils.windowSize().height - height,
-          height,
-        }
-        // TODO t is not always refTime in the general case
-        const metrics = activityMetrics(state.events, state.options.currentActivity.tr, state.options.refTime);
-        const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
-        const totalDistanceDisplayText = totalDistanceMetric ?
-          totalDistanceMetric.text! + ' ' + totalDistanceMetric.units! : '';
-
-        activitySummary.items = [
-          ...activitySummary.items,
-          {
-            displayText: 'Total distance',
-            name: 'totalDistanceLabel',
-            itemStyle: {
-              top: dynamicAreaTop(state),
-              left: constants.buttonSize + constants.buttonOffset * 2,
-            },
-            textStyle: {},
-          },
-          {
-            displayText: totalDistanceDisplayText,
-            name: 'totalDistance',
-            itemStyle: {
-              top: dynamicAreaTop(state) + 20,
-              left: constants.buttonSize + constants.buttonOffset * 2,
-            },
-            textStyle: {},
-          },
-        ]
-        menus.set(PopupMenuName.activitySummary, activitySummary!);
+      if (state.options.currentActivity || state.options.selectedActivity) {
+        const activitySummaryPopup: PopupMenuConfig = menus.get(PopupMenuName.activitySummary)!;
+        menus.set(PopupMenuName.activitySummary, activitySummary(state, activitySummaryPopup));
       } else {
-        log.warn('activitySummary open without state.options.currentActivity');
+        log.warn('activitySummary open without currentActivity or selectedActivity');
       }
     }
   }

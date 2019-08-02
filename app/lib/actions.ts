@@ -31,6 +31,7 @@ export enum ReducerAction {
 // In these cases the AppAction is a wrapper that triggers the corresponding ReducerAction while handling side effects.
 export enum AppAction {
   'addEvents' = 'addEvents',
+  'appStateChange' = 'appStateChange',
   'appQuery' = 'appQuery', // see AppQueryParams
   'backgroundTapped' = 'backgroundTapped',
   'centerMap' = 'centerMap', // see CenterMapParams
@@ -103,6 +104,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 // From here on: types related to params for actions
 
 import { LonLat } from 'shared/locations';
+import { AppStateChange } from 'shared/appEvents';
 import { GenericEvents, TimeReference } from 'shared/timeseries';
 
 // TODO complete this list
@@ -115,6 +117,10 @@ export enum AbsoluteRelativeOption {
 export interface AddEventsParams {
   events: GenericEvents;
   saveToStorage?: boolean; // if explicitly set to false, client-side storage will not be affected
+}
+
+export interface AppStateChangeParams {
+  newState: AppStateChange;
 }
 
 export interface CenterMapParams {

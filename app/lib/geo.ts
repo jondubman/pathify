@@ -148,9 +148,9 @@ const geolocationOptions_lowPower: Config = {
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 10, // meters
 
-  stopDetectionDelay: 1, // minutes during which GPS is off and only the accelerometer is monitored
+  stopDetectionDelay: 1, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   stopOnStationary: false, // default false
-  stopTimeout: 3, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
+  stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
 const geolocationOptions_highPower: Config = {
@@ -168,15 +168,16 @@ const geolocationOptions_highPower: Config = {
 
   distanceFilter: 1, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: false, // default false (note true has major battery impact!)
+  preventSuspend: true, // default false (note true has major battery impact!) TODO
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
 
-  stopDetectionDelay: 1, // minutes during which GPS is off and only the accelerometer is monitored
+  stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   stopOnStationary: false, // default false
-  stopTimeout: 5, // minutes to keep monitoring accelerometer while GPS is off before app may get suspended
+  stopOnTerminate: false, // TODO
+  stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
 const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO

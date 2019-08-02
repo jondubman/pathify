@@ -46,6 +46,7 @@ import {
   ReducerAction,
 
   AddEventsParams,
+  AppStateChangeParams,
   CenterMapParams,
   DelayedActionParams,
   ImportEventsParams,
@@ -68,7 +69,13 @@ import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
-import { lastStartupTime, AppUserActionEvent, AppUserAction } from 'shared/appEvents';
+import {
+  lastStartupTime,
+  AppUserActionEvent,
+  AppStateChange,
+  AppStateChangeEvent,
+  AppUserAction,
+} from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
 import locations, {
   LocationEvent,
@@ -123,6 +130,21 @@ const sagas = {
       const eventsToStore = timeseries.filterEvents(sortedEvents, (event: GenericEvent) => (!event.temp))
       yield put(newAction(AppAction.saveEventsToStorage, { events: eventsToStore }));
     }
+  },
+
+  appStateChange: function* (action: Action) {
+    const params = action.params as AppStateChangeParams;
+    const { newState } = params;
+    const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
+      t: utils.now(),
+      type: EventType.APP,
+      data: {
+        newState,
+      },
+    })
+    yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
+    yield put(newAction(newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP ? AppAction.flagEnable
+      : AppAction.flagDisable, 'appActive'));
   },
 
   appQuery: function* (action: Action) {
@@ -345,17 +367,20 @@ const sagas = {
       yield put(newAction(ReducerAction.GEOLOCATION, locationEvent));
       yield put(newAction(AppAction.saveEventsToStorage, { events: [ locationEvent ] }));
 
-      // Potential cascading AppAction.centerMapOnUser:
-      const map = MapUtils();
-      if (map) {
-        const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
-          followingUser: state.flags.followingUser,
-          keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
-          loc: state.userLocation!.data.loc,
-        }))
-        const bounds = yield call(map.getVisibleBounds as any);
-        if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
-          yield put(newAction(AppAction.centerMapOnUser));
+      const appActive = yield select(state => state.flags.appActive);
+      if (appActive) {
+        // Potential cascading AppAction.centerMapOnUser:
+        const map = MapUtils();
+        if (map) {
+          const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
+            followingUser: state.flags.followingUser,
+            keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
+            loc: state.userLocation!.data.loc,
+          }))
+          const bounds = yield call(map.getVisibleBounds as any);
+          if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
+            yield put(newAction(AppAction.centerMapOnUser));
+          }
         }
       }
     } catch (err) {
@@ -605,6 +630,9 @@ const sagas = {
       if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
         const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
         yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
+        if (activity) {
+          yield put(newAction(AppAction.flagEnable, 'activitySummaryOpen')); // show it!
+        }
       }
     }
   },
@@ -649,25 +677,28 @@ const sagas = {
   // One second is the approximate frequency of location updates
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
-    const now = action.params as number;
-    // yield call(log.trace, 'timerTick', now);
-    const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
-    if (timelineNow) {
-      // This is where the mode for the Timeline really takes effect.
-      yield put(newAction(AppAction.setAppOption, { refTime: now }));
-    }
-    const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
-    if (tickEvents) {
-      const tickEvent = { ...timeseries.newEvent(now), type: EventType.TICK };
-      yield put(newAction(AppAction.tickEvent, tickEvent));
-    }
-    // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
-    // rather than depend on a separate long-running timer. That could also work, but this is sufficient
-    // when we don't need sub-second precision.
-    const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
-    const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
-    if (now >= serverSyncTime + serverSyncInterval) {
-      yield put(newAction(AppAction.serverSync, now));
+    const appActive = yield select((state: AppState) => state.flags.appActive);
+    if (appActive) {
+      const now = action.params as number;
+      // yield call(log.trace, 'timerTick', now);
+      const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
+      if (timelineNow) {
+        // This is where the mode for the Timeline really takes effect.
+        yield put(newAction(AppAction.setAppOption, { refTime: now }));
+      }
+      const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
+      if (tickEvents) {
+        const tickEvent = { ...timeseries.newEvent(now), type: EventType.TICK };
+        yield put(newAction(AppAction.tickEvent, tickEvent));
+      }
+      // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
+      // rather than depend on a separate long-running timer. That could also work, but this is sufficient
+      // when we don't need sub-second precision.
+      const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
+      const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
+      if (now >= serverSyncTime + serverSyncInterval) {
+        yield put(newAction(AppAction.serverSync, now));
+      }
     }
   },
 

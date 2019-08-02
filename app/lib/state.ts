@@ -18,6 +18,7 @@ export const initialAppState = {
     activitySummaryExpanded: true, // true: activitySummary is expanded, with greater height (false: collapsed)
     activitySummaryOpen: false, // activitySummary is among the PopupMenus. See initialMenus.
     allowContinuousTimelineZoom: false, // false: discrete zoom only
+    appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.
     followingUser: true, // should map follow user?
