@@ -12,6 +12,7 @@ import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitt
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 import { MapAreaProps } from 'containers/MapContainer';
+import PathsContainer from 'components/containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import log from 'shared/log';
@@ -64,7 +65,6 @@ class MapArea extends Component<MapAreaProps> {
       mapStyleURL,
       opacity,
       width,
-      userLocation,
     } = this.props;
 
     const hiddenStyle = {
@@ -123,6 +123,7 @@ class MapArea extends Component<MapAreaProps> {
             zoomEnabled={true}
             zoomLevel={constants.map.default.zoom}
           >
+            <PathsContainer />
             <PulsarsContainer />
           </Mapbox.MapView>
         </View>

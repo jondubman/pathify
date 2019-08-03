@@ -1,6 +1,12 @@
 import log from './log';
 import { Activity } from './marks';
-import timeseries, { EventType, GenericEvent, GenericEvents, Timepoint, TimeRange } from './timeseries';
+import timeseries, {
+  EventType,
+  GenericEvent,
+  GenericEvents,
+  Timepoint,
+  TimeRange
+} from './timeseries';
 
 export enum MarkType {
   'NONE' = 'NONE',

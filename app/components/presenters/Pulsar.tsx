@@ -81,7 +81,7 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
       circleColor: this.props.color || defaultCircleColor,
       circleOpacity: opacity,
       circleStrokeWidth: pulse,
-      circleStrokeColor: 'white',
+      circleStrokeColor: constants.colors.byName.white,
       circleStrokeOpacity: 1,
     }
     const pulsarId = id;

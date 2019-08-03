@@ -57,7 +57,6 @@ import {
   SaveEventsToStorageParams,
   SequenceParams,
   SleepParams,
-  ZoomMapParams,
 
   AbsoluteRelativeOption,
 } from 'lib/actions'
@@ -229,9 +228,9 @@ const sagas = {
             const currentCenter = yield call(map.getCenter as any);
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
-
-          yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
-
+          if (center[0] || center[1]) {
+            yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
+          }
           if (zoom) { // optional in CenterMapParams; applies for both absolute and relative
             const config = {
               centerCoordinate: center,
@@ -327,7 +326,6 @@ const sagas = {
       } : null;
       yield put(newAction(AppAction.setAppOption, { currentActivity: newCurrentActivity }));
 
-      yield put(newAction(enabledNow ? AppAction.flagEnable : AppAction.flagDisable, 'activitySummaryOpen'));
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         yield call(Geo.changePace, true, () => {
@@ -630,9 +628,6 @@ const sagas = {
       if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
         const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
         yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
-        if (activity) {
-          yield put(newAction(AppAction.flagEnable, 'activitySummaryOpen')); // show it!
-        }
       }
     }
   },
@@ -709,30 +704,6 @@ const sagas = {
       yield put(newAction(AppAction.stopFollowingUser));
     } catch (err) {
       yield call(log.error, 'userMovedMap', err);
-    }
-  },
-
-  zoomMap: function* (action: Action) {
-    try {
-      const map = MapUtils();
-      if (map && map.flyTo) {
-        const params = action.params as ZoomMapParams;
-        const { option, zoom } = params;
-        let newZoom = zoom;
-        const currentCenter = yield call(map.getCenter as any); // will not change
-        if (option === AbsoluteRelativeOption.relative) {
-          const currentZoom = yield call(map.getZoom as any);
-          newZoom = currentZoom + zoom;
-        }
-        const config = {
-          centerCoordinate: currentCenter,
-          zoom: newZoom,
-          duration: 1000, // TODO
-        }
-        yield call(map.setCamera as any, config);
-      }
-    } catch (err) {
-      yield call(log.error, 'saga centerMap', err);
     }
   },
 }

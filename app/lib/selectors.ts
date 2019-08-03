@@ -29,6 +29,7 @@ const colorForAppState = {
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.1),
 }
 
+// Each activityTimespan shows one Activity
 const activityTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
   const { events } = state;
@@ -59,16 +60,17 @@ const activityTimespans = (state: AppState): Timespans => {
     }
   }
   // Finally, add a timepsan representing the current state, if started.
-  if (startTime) {
+  if (state.options.currentActivity) {
     timespans.push({
       color: constants.colors.timeline.currentActivity,
       kind: TimespanKind.ACTIVITY,
-      tr: [startTime, utils.now()],
+      tr: [state.options.currentActivity.tr[0], utils.now()],
     })
   }
   return timespans;
 }
 
+// For debugging, appStateTimespans show appState over time.
 const appStateTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
   const { events } = state;
@@ -106,7 +108,7 @@ export const customTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-export const selectedTimespans = (state: AppState): Timespans => {
+export const selectionTimespans = (state: AppState): Timespans => {
   const experiment = true; // TODO
   if (experiment) {
     const { startupTime } = state.options;

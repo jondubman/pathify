@@ -5,7 +5,14 @@ export type Lat = number;
 export type LonLat = [Lon, Lat];
 
 import log from './log';
-import timeseries, { EventFilter, EventType, GenericEvent, GenericEvents, Timepoint } from './timeseries';
+import timeseries, {
+  EventFilter,
+  EventType,
+  GenericEvent,
+  GenericEvents,
+  Timepoint,
+  TimeRange
+} from './timeseries';
 
 export interface LocationEvent extends GenericEvent {
   data: {
@@ -39,6 +46,10 @@ export interface ModeChangeEvent extends GenericEvent {
     mode: ModeType;
     confidence: number;
   }
+}
+
+export interface Path {
+  coordinates: LonLat[];
 }
 
 export interface TickEvent extends GenericEvent {
@@ -85,6 +96,19 @@ const locations = {
     }) // trk map
 
   return events;
+  },
+
+  pathFromEvents: (sourceEvents: GenericEvents, tr: TimeRange): Path => {
+    const coordinates: LonLat[] = [];
+    const events = timeseries.filterByTime(sourceEvents, tr);
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      if (event.type === EventType.LOC) {
+        const locEvent = event as LocationEvent;
+        coordinates.push(locEvent.data.loc);
+      }
+    }
+    return { coordinates };
   },
 
   // Return a single LOC event (or null if none found within the "near" threshold) nearest in time to given Timepoint t.

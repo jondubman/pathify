@@ -69,7 +69,6 @@ export enum AppAction {
   'timerTick' = 'timerTick',
   'flagToggle' = 'flagToggle',
   'userMovedMap' = 'userMovedMap',
-  'zoomMap' = 'zoomMap', // see ZoomMapParams
 }
 
 export type ActionType = ReducerAction | AppAction;
@@ -167,9 +166,4 @@ export type SequenceParams = Action[];
 
 export interface SleepParams {
   for: number,
-}
-
-export interface ZoomMapParams {
-  option: AbsoluteRelativeOption;
-  zoom: number;
 }

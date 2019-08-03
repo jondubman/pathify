@@ -38,7 +38,7 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
   [PopupMenuName.activitySummary, {
     items: [
     ] as PopupMenuItems,
-    // open derived dynamically from flags.activitySummaryOpen
+    // open derived dynamically
     style: {
       left: 0,
       right: 0,
@@ -139,12 +139,11 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
       }
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }
-    if (menuName === PopupMenuName.activitySummary && state.flags.activitySummaryOpen) { // otherwise no point
+    if (menuName === PopupMenuName.activitySummary) {
       if (state.options.currentActivity || state.options.selectedActivity) {
         const activitySummaryPopup: PopupMenuConfig = menus.get(PopupMenuName.activitySummary)!;
+        activitySummaryPopup.open = true;
         menus.set(PopupMenuName.activitySummary, activitySummary(state, activitySummaryPopup));
-      } else {
-        log.warn('activitySummary open without currentActivity or selectedActivity');
       }
     }
   }
