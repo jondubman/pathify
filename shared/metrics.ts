@@ -28,8 +28,8 @@ export type ActivityMetrics = Map<ActivityMetricName, ActivityMetric>;
 // in to a 20 minute run, for example, which wouldn't be needed to calculate totals like the total distance.
 // "partials" are the metrics that depend on t, in contrast to totals.
 export const activityMetrics = (events: GenericEvents,
-                                timeRange: TimeRange,
-                                t: Timepoint = timeRange[1]) : ActivityMetrics => {
+  timeRange: TimeRange,
+  t: Timepoint = timeRange[1]): ActivityMetrics => {
 
   let firstOdo = 0;
   let lastOdo = 0;
@@ -71,8 +71,8 @@ export const activityMetrics = (events: GenericEvents,
     log.error('activityMetrics error', err);
   } finally {
     return new Map<ActivityMetricName, ActivityMetric>([
-      [ActivityMetricName.eventCount,  { value: activityEvents.length }],
-      [ActivityMetricName.partialDistance, partialDistance ? partialDistance : null ],
+      [ActivityMetricName.eventCount, { value: activityEvents.length }],
+      [ActivityMetricName.partialDistance, partialDistance ? partialDistance : null],
       [ActivityMetricName.partialTime, { value: t ? t - timeRange[0] : null }],
       [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
       [ActivityMetricName.totalTime, { value: timeRange[1] - timeRange[0] }],

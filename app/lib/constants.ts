@@ -169,6 +169,7 @@ const constants = {
   activitySummary: {
     heightCollapsed: 60,
     heightExpanded: 180,
+    lineSpacing: 20,
   },
   appName: 'Pathify',
   buttonOffset,

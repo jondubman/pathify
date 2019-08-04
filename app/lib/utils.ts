@@ -47,11 +47,35 @@ const utils = {
 
   mapArea: null, // reference to the singleton MapArea component
 
+  minutesFromMsec: (msec: number) => msec / 60000,
+
+  milesDisplay: (miles: number) => utils.precisionRound(miles, 2).toString(),
+
+  // input: some number like 8.5 representing minutes
+  // output: a string like 8:30 in this case
+  minutesToString: (minutes: number) => {
+    const minutesRounded = utils.precisionRound(minutes, 2);
+    const minutesOnly = Math.floor(minutesRounded);
+    const fraction = minutesRounded - minutesOnly;
+    let seconds = (fraction * 60).toFixed(0);
+    if (parseInt(seconds) < 10) {
+      seconds = '0' + seconds; // now, a string
+    }
+    return `${minutesOnly}:${seconds}`
+  },
+
+  msecToString: (msec: number) => utils.minutesToString(utils.minutesFromMsec(msec)),
+
   now: () => ( Date.now() ), // TODO allow the app's concept of the current time to be simulated, or real (this is real)
 
   objectWithoutKey: (object: any, key: string) => {
     const { [key]: deletedKey, ...otherKeys } = object;
     return otherKeys;
+  },
+
+  precisionRound: (num: number, precision: number) => {
+    const factor = Math.pow(10, precision);
+    return Math.round(num * factor) / factor;
   },
 
   twoDigitString: (n: number) => {

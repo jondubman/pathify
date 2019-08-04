@@ -535,8 +535,8 @@ const sagas = {
     const params = action.params as SaveEventsToStorageParams;
     const { events } = params;
     const keyValuePairs = events.map((event: GenericEvent) => ([ event.t.toString(), JSON.stringify(event) ]));
-    yield call(log.trace,
-      `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
+    // yield call(log.trace,
+    //   `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
     yield call(AsyncStorage.multiSet, keyValuePairs);
   },
 
@@ -616,7 +616,9 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-    yield call(log.trace, 'saga setAppOption', action);
+    if (!action.params.refTime) {
+      yield call(log.trace, 'saga setAppOption', action);
+    }
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
     // Now handle any side effects
