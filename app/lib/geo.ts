@@ -68,7 +68,7 @@ const geolocationOptions: Config = {
   // Application Options
   // -------------------
   stopOnTerminate: true, // set false to continue tracking after user terminates the app
-  startOnBoot: false, // set to true to enable background-tracking after the device reboots
+  startOnBoot: true, // set to true to enable background-tracking after the device reboots
   // heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
 
   // ------------------
@@ -142,7 +142,7 @@ const geolocationOptions_lowPower: Config = {
 
   distanceFilter: 10, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: false, // default false
+  preventSuspend: true, // default false TODO
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
@@ -170,13 +170,15 @@ const geolocationOptions_highPower: Config = {
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
   preventSuspend: true, // default false (note true has major battery impact!) TODO
 
+  startOnBoot: true, // set to true to enable background-tracking after the device reboots
+
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
 
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   stopOnStationary: false, // default false
-  stopOnTerminate: false, // TODO
+  stopOnTerminate: false,
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
