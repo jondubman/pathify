@@ -235,10 +235,13 @@ const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEve
   }
 }
 
+let reduxStore: Store | null = null;
+
 export const Geo = {
 
   initializeGeolocation: (store: Store) => {
     log.debug('initializeGeolocation');
+    reduxStore = store;
 
     // Now, configure the plugin, using those options.
     BackgroundGeolocation.ready(geolocationOptions_default, pluginState => {
@@ -331,7 +334,7 @@ export const Geo = {
   },
 
   // Geolocation may be needed for multiple reasons.
-  // Client who starts geolocation should specify a reason string, e.g. 'tracking' or 'followingUser'.
+  // Client who starts geolocation should specify a reason string, e.g. 'tracking' or 'following'.
   // Client should then pass the same reason when requesting to stopBackgroundGeolocation.
   // If any reasons still apply on stopBackgroundGeolocation, we leave geolocation on.
   // Resolves to true if background geolocation was started as a result of this request.
@@ -343,17 +346,39 @@ export const Geo = {
       return false;
     }
     reasons[reason] = true;
-    if (haveReasonBesides(reason)) {
-      log.debug(`BackgroundGeolocation requested for ${reason}, already running`);
-      log.trace('BackgroundGeolocation reasons', reasons);
-      return false;
-    }
+    // if (haveReasonBesides(reason)) {
+    //   log.debug(`BackgroundGeolocation requested for ${reason}, already running`);
+    //   log.trace('BackgroundGeolocation reasons', reasons);
+    //   return false;
+    // }
     return new Promise((resolve, reject) => {
-      const done = () => {
-        log.debug(`BackgroundGeolocation started for ${reason}`);
+      const started = () => {
+        const receieveLocation = (location: Location) => {
+          if (reduxStore) {
+            if (reduxStore.getState().flags.appActive === false) {
+              log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
+              reduxStore.dispatch(newAction(AppAction.geolocation, newLocationEvent(location)));
+            }
+          } else {
+            log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
+          }
+        }
+        const options = {
+          interval: 1000, // msec
+          persist: true, // to native SQLite database
+        }
+        if (reason === 'tracking') { // TODO
+          BackgroundGeolocation.watchPosition(receieveLocation, err => {
+            log.error('BackgroundGeolocation.watchPosition', err);
+            reject(err);
+          }, options)
+        }
         resolve(true);
       }
-      BackgroundGeolocation.start(done, err => { reject(err); });
+      BackgroundGeolocation.start(started, err => {
+        log.error('BackgroundGeolocation.start', err);
+        reject(err);
+      })
     })
   },
 
@@ -363,6 +388,14 @@ export const Geo = {
       log.debug(`BackgroundGeolocation already inactive for ${reason} in stopBackgroundGeolocation`);
       log.trace('BackgroundGeolocation reasons', reasons);
       return false;
+    }
+    if (reason === 'tracking') { // TODO
+      const success = () => {
+        log.debug('BackgroundGeolocation.stopWatchPosition success');
+      }
+      BackgroundGeolocation.stopWatchPosition(success, err => {
+        log.error('BackgroundGeolocation.stopWatchPosition', err);
+      })
     }
     reasons[reason] = false;
     if (haveReason()) { // still
