@@ -142,7 +142,7 @@ const geolocationOptions_lowPower: Config = {
 
   distanceFilter: 10, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: true, // default false TODO
+  preventSuspend: false, // default false TODO
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
