@@ -7,7 +7,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 
 import locations from 'shared/locations';
-import { Activity, MarkEvent } from 'shared/marks';
+import { Activity, MarkEvent, MarkType } from 'shared/marks';
 import timeseries, { interval, Timepoint, TimeRange, EventType } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent, AppUserAction, AppUserActionEvent } from 'shared/appEvents';
@@ -36,13 +36,13 @@ const activityTimespans = (state: AppState): Timespans => {
   let startTime: Timepoint = 0;
   for (let i = 0; i < events.length; i++) {
     const e = events[i];
-    if (e.type === EventType.USER_ACTION) {
+    if (e.type === EventType.MARK) {
       const { t } = e;
-      const { userAction } = (e as AppUserActionEvent).data;
-      if (userAction === AppUserAction.START) {
+      const { subtype } = (e as MarkEvent).data;
+      if (subtype === MarkType.START) {
         startTime = t;
       }
-      if (userAction === AppUserAction.STOP) {
+      if (subtype === MarkType.END) {
         const tr: TimeRange = [startTime, t];
         const timespan = {
           kind: TimespanKind.ACTIVITY,
@@ -108,8 +108,9 @@ export const customTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
+// NOTE: selection here means TimeRange selections, not related to selectedActivity
 export const selectionTimespans = (state: AppState): Timespans => {
-  const experiment = true; // TODO
+  const experiment = false; // TODO
   if (experiment) {
     const { startupTime } = state.options;
     const timespan: Timespan = {

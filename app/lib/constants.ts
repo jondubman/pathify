@@ -145,7 +145,7 @@ const colors = {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
     background: colorThemes.background,
-    currentActivity: withOpacity(namedColors.yellow, 0.75), // special case when timespan is selected
+    currentActivity: withOpacity(namedColors.green, 0.75),
     selectedActivity: withOpacity(namedColors.blue, 1), // special case when timespan is selected
     timespans: {
       [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65), // unselected state (selectedActivity color above)

@@ -1,5 +1,8 @@
 // Shared code (client + server) having to do specifically with location events and locations themselves.
 
+import * as turf from '@turf/helpers';
+import distance from '@turf/distance';
+
 export type Lon = number;
 export type Lat = number;
 export type LonLat = [Lon, Lat];
@@ -73,7 +76,7 @@ const locations = {
           const pt = trkpt.$;
           const lat = pt.lat && parseFloat(pt.lat); // required
           const lon = pt.lon && parseFloat(pt.lon); // required
-          const ele = (trkpt.ele && parseFloat(trkpt.ele[0])) || null;
+          const ele = (trkpt.ele && parseFloat(trkpt.ele[0])) || undefined;
           const time = (trkpt.time && trkpt.time[0]) || null; // UTC using ISO 8601
           const epoch = (new Date(time)).getTime(); // msec (epoch)
 
@@ -86,7 +89,7 @@ const locations = {
             type: EventType.LOC,
             data: {
               ele,
-              loc: [ lon, lat ],
+              loc: [lon, lat],
             },
             source: 'import', // TODO placeholder
           }
@@ -94,26 +97,11 @@ const locations = {
         }) // trkpt map
       }) // trkseg map
     }) // trk map
-
-  return events;
-  },
-
-  pathFromEvents: (sourceEvents: GenericEvents, tr: TimeRange): Path => {
-    const coordinates: LonLat[] = [];
-    const events = timeseries.filterByTime(sourceEvents, tr);
-    for (let i = 0; i < events.length; i++) {
-      const event = events[i];
-      if (event.type === EventType.LOC) {
-        const locEvent = event as LocationEvent;
-        coordinates.push(locEvent.data.loc);
-      }
-    }
-    return { coordinates };
+    return events;
   },
 
   // Return a single LOC event (or null if none found within the "near" threshold) nearest in time to given Timepoint t.
-  locEventNearestTimepoint: (events: GenericEvents, t: Timepoint, near: number): (LocationEvent | null)  => {
-
+  locEventNearestTimepoint: (events: GenericEvents, t: Timepoint, near: number): (LocationEvent | null) => {
     const nearestMatches: LocationEvents =
       timeseries.findEventsNearestTimepoint(events, t, true, true, near, locEventFilter) as LocationEvents;
 
@@ -122,6 +110,29 @@ const locations = {
     } else {
       return nearestMatches[0]; // TODO this should be good enough
     }
+  },
+
+  pathFromEvents: (sourceEvents: GenericEvents, tr: TimeRange): Path => {
+    const coordinates: LonLat[] = [];
+    let previousLoc: LonLat = null;
+    const events = timeseries.filterByTime(sourceEvents, tr);
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      if (event.type === EventType.LOC) {
+        const locEvent = event as LocationEvent;
+        const { loc } = locEvent.data;
+        coordinates.push(loc);
+        if (previousLoc) {
+          // diagnostics
+          const dist = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
+          if (dist > 0.1) {
+            log.debug('pathFromEvents: gap from', previousLoc, loc);
+          }
+        }
+        previousLoc = loc;
+      }
+    }
+    return { coordinates };
   },
 }
 

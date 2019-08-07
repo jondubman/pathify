@@ -233,9 +233,9 @@ const sagas = {
           }
           if (zoom) { // optional in CenterMapParams; applies for both absolute and relative
             const config = {
-              centerCoordinate: center,
-              zoom,
+              centerCoordinate: newCenter,
               duration: constants.map.centerMapDuration,
+              zoom,
             }
             yield call(map.setCamera as any, config);
           } else {
@@ -293,8 +293,8 @@ const sagas = {
     }
   },
 
+  //  After-effects (i.e. downstream side effects) of modifying app flags are handled here.
   flag_sideEffects: function* (flagName: string) {
-    // Side effects (downstream!) of modifying app flags are handled here.
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
       const options = yield select((state: AppState) => state.options);
@@ -380,7 +380,7 @@ const sagas = {
             yield put(newAction(AppAction.centerMapOnUser));
           }
         }
-      }
+    }
     } catch (err) {
       yield call(log.error, 'geolocation', err);
     }
@@ -402,12 +402,39 @@ const sagas = {
     try {
       const params = action.params as ImportGPXParams;
       yield call(log.info, 'importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
-      const gpx = (params.include as any).gpx;
-      const events = locations.eventsFromGPX(gpx);
+      const gpx = (params.include as any).gpx; // GPX as JSON (already converted from XML)
+      const gpxEvents = locations.eventsFromGPX(gpx);
+      const source = gpxEvents[0].source || 'import';
+      const id = uuid.default();
+      const startEvent: MarkEvent = {
+        ...timeseries.newSyncedEvent(gpxEvents[0].t),
+        source,
+        type: EventType.MARK,
+        data: {
+          id,
+          subtype: MarkType.START,
+        },
+      }
+      const endEvent: MarkEvent = {
+        ...timeseries.newSyncedEvent(gpxEvents[gpxEvents.length - 1].t + 1),
+        source,
+        type: EventType.MARK,
+        data: {
+          id,
+          subtype: MarkType.END,
+        },
+      }
+      const events = [
+        startEvent,
+        ...gpxEvents,
+        endEvent,
+      ]
       const relativeTo = utils.now(); // TODO may want more flexibility later
       const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
       yield call(log.debug, 'adjustedEvents',
-        relativeTo, adjustedEvents[0].t - relativeTo, adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
+        relativeTo,
+        adjustedEvents[0].t - relativeTo,
+        adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
       yield put(newAction(AppAction.addEvents, { events: adjustedEvents }));
     } catch (err) {
       yield call(log.error, 'importGPX', err);
@@ -619,17 +646,25 @@ const sagas = {
     if (!action.params.refTime) {
       yield call(log.trace, 'saga setAppOption', action);
     }
+    // First set the option itself:
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
-    // Now handle any side effects
+    // Then, any side effects:
 
-    // whenever refTime is set, update selectedActivity automatically
+    // Whenever refTime is set, update selectedActivity automatically based on marks.containingActivity,
+    // which looks for bookending MarkType.START and MarkType.END events.
     if (action.params.refTime) {
       const timelineNow = yield select(state => state.flags.timelineNow);
       const events = yield select(state => state.events);
+      const currentActivity = yield select(state => state.options.currentActivity);
       if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
         const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
-        yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
+        if (activity && currentActivity && currentActivity.tr[0] === (activity as Activity).tr[0]) {
+          // Avoid making the selectedActivity the currentActivity.
+          yield put(newAction(AppAction.setAppOption, { selectedActivity: null }));
+        } else {
+          yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
+        }
       }
     }
   },
