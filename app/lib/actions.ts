@@ -102,7 +102,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 
 // From here on: types related to params for actions
 
-import { LonLat } from 'shared/locations';
+import { LocationEvent, LonLat } from 'shared/locations';
 import { AppStateChange } from 'shared/appEvents';
 import { GenericEvents, TimeReference } from 'shared/timeseries';
 
@@ -131,6 +131,11 @@ export interface CenterMapParams {
 export interface DelayedActionParams {
   run: Action,
   after: number,
+}
+
+export interface GeolocationParams {
+  locationEvent: LocationEvent;
+  recheckMapBounds: boolean;
 }
 
 export interface ImportEventsParams {

@@ -49,6 +49,7 @@ import {
   AppStateChangeParams,
   CenterMapParams,
   DelayedActionParams,
+  GeolocationParams,
   ImportEventsParams,
   ImportGPXParams,
   LogActionParams,
@@ -361,26 +362,27 @@ const sagas = {
 
   geolocation: function* (action: Action) {
     try {
-      const locationEvent = action.params as LocationEvent;
+      const { locationEvent, recheckMapBounds } = action.params as GeolocationParams;
       yield put(newAction(ReducerAction.GEOLOCATION, locationEvent));
       yield put(newAction(AppAction.saveEventsToStorage, { events: [ locationEvent ] }));
-
-      const appActive = yield select(state => state.flags.appActive);
-      if (appActive) {
-        // Potential cascading AppAction.centerMapOnUser:
-        const map = MapUtils();
-        if (map) {
-          const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
-            followingUser: state.flags.followingUser,
-            keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
-            loc: state.userLocation!.data.loc,
-          }))
-          const bounds = yield call(map.getVisibleBounds as any);
-          if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
-            yield put(newAction(AppAction.centerMapOnUser));
+      if (recheckMapBounds) {
+        const appActive = yield select(state => state.flags.appActive);
+        if (appActive) {
+          // Potential cascading AppAction.centerMapOnUser:
+          const map = MapUtils();
+          if (map) {
+            const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
+              followingUser: state.flags.followingUser,
+              keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
+              loc: state.userLocation!.data.loc,
+            }))
+            const bounds = yield call(map.getVisibleBounds as any);
+            if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
+              yield put(newAction(AppAction.centerMapOnUser));
+            }
           }
         }
-    }
+      }
     } catch (err) {
       yield call(log.error, 'geolocation', err);
     }

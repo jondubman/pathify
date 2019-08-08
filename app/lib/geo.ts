@@ -258,7 +258,11 @@ export const Geo = {
       const onHeartbeat = (event: HeartbeatEvent) => {
       }
       const onLocation = (location: Location) => {
-        store.dispatch(newAction(AppAction.geolocation, newLocationEvent(location)));
+        const geolocationParams = {
+          locationEvent: newLocationEvent(location),
+          recheckMapBounds: true,
+        }
+        store.dispatch(newAction(AppAction.geolocation, geolocationParams));
       }
       const onLocationError = (error: LocationError) => {
         log.warn('LocationError', error);
@@ -357,14 +361,17 @@ export const Geo = {
           if (reduxStore) {
             if (reduxStore.getState().flags.appActive === false) {
               log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-              reduxStore.dispatch(newAction(AppAction.geolocation, newLocationEvent(location)));
+              reduxStore.dispatch(newAction(AppAction.geolocation, {
+                locationEvent: newLocationEvent(location),
+                recheckMapBounds: false,
+              }))
             }
           } else {
             log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
           }
         }
         const options = {
-          interval: 1000, // msec
+          interval: 1000, // msec TODO move to constants
           persist: true, // to native SQLite database
         }
         if (reason === 'tracking') { // TODO
