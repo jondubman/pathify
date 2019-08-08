@@ -130,6 +130,10 @@ const colors = {
     subText: withOpacity(namedColors.white, 0.75),
     underlay: 'transparent',
   },
+  paths: {
+    current: withOpacity(namedColors.green, 0.75),
+    default: withOpacity(namedColors.blue, 0.75),
+  },
   settingsButton: {
     background: 'white',
     icon: 'black',
@@ -308,6 +312,9 @@ const constants = {
   ],
   maxTimeGapForContinuousTrack: interval.seconds(5),
   panelWidth,
+  paths: {
+    width: 8,
+  },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
     height: 46,

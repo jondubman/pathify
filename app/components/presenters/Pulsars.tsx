@@ -6,18 +6,19 @@ import React, {
 } from 'react';
 
 import Pulsar from 'presenters/Pulsar'; // singular
-import { OptionalPulsars, PulsarsProps } from 'containers/PulsarsContainer';
+import { PulsarsProps } from 'containers/PulsarsContainer';
 
 class Pulsars extends Component<PulsarsProps> {
   public render() {
-    const pulsars = this.props.pulsars as OptionalPulsars;
+    const { keySuffix, pulsars } = this.props;
     return (
       <Fragment>
         {Object.keys(pulsars).map((key => {
           const pulsar = pulsars[key];
           const { loc, color, visible } = pulsar;
+          const compoundKey = key + keySuffix;
           return visible ?
-            <Pulsar key={key} id={key} loc={loc} color={color} />
+            <Pulsar key={compoundKey} id={key} loc={loc} color={color} />
             :
             null
         }))}

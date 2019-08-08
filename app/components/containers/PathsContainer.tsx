@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
-import locations, { Path } from 'shared/locations';
+import locations, { Path, PathType } from 'shared/locations';
 
 interface PathsStateProps {
   paths: Path[];
@@ -17,10 +17,10 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
   const paths: Path[] = [];
   const { currentActivity, selectedActivity } = state.options;
   if (currentActivity) {
-    paths.push(locations.pathFromEvents(state.events, currentActivity.tr));
+    paths.push({ ...locations.pathFromEvents(state.events, currentActivity.tr), type: PathType.CURRENT });
   }
   if (selectedActivity) {
-    paths.push(locations.pathFromEvents(state.events, selectedActivity.tr));
+    paths.push({ ...locations.pathFromEvents(state.events, selectedActivity.tr), type: PathType.DEFAULT });
   }
   return {
     paths,

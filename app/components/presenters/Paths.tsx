@@ -1,5 +1,4 @@
-// This renders a number of Path components at once.
-// Intended to be contained within a MapArea.
+// This renders a number of Path components at once, to be contained within a MapArea.
 
 import React, {
   Component,
@@ -10,15 +9,24 @@ import Mapbox from '@mapbox/react-native-mapbox-gl';
 
 import { PathsProps } from 'containers/PathsContainer';
 import constants from 'lib/constants';
-import { Path } from 'shared/locations';
+import { Path, PathSegment, PathType } from 'shared/locations';
 
-const lineLayerStyle = Mapbox.StyleSheet.create({
+const lineLayerStyleBase = {
   // lineCap: 'round', // TODO
-  lineColor: constants.colors.byName.blue,
   // lineDasharray: [1, 1],
   // lineJoin: 'round', // TODO
-  lineWidth: 10, // TODO constants
+  lineWidth: constants.paths.width,
   lineOpacity: 1,
+}
+
+const lineLayerStyleDefault = Mapbox.StyleSheet.create({
+  ...lineLayerStyleBase,
+  lineColor: constants.colors.paths.default,
+})
+
+const lineLayerStyleCurrent = Mapbox.StyleSheet.create({
+  ...lineLayerStyleBase,
+  lineColor: constants.colors.paths.current,
 })
 
 class Paths extends Component<PathsProps> {
@@ -29,30 +37,33 @@ class Paths extends Component<PathsProps> {
     }
     return (
       <Fragment>
-        {paths.map((path: Path, index: number) => {
-          if (path.coordinates.length < 2) {
-            return null;
-          }
-          const pathShape = {
-            type: 'Feature',
-            properties: {
-              name: `path${index}`,
-            },
-            geometry: {
-              type: 'LineString',
-              coordinates: path.coordinates,
-            },
-          }
-          return (
-            <Mapbox.ShapeSource id={`pathShape${index}`} key={`pathShape${index}`} shape={pathShape}>
-              <Mapbox.LineLayer
-                id={`path${index}`}
-                key={`path${index}`}
-                style={lineLayerStyle}
-              />
-            </Mapbox.ShapeSource>
-          )
-        })}
+        {paths.map((path: Path, pathIndex: number) => (
+          path.segments.map((segment: PathSegment, segmentIndex: number) => {
+            const index = `${pathIndex}.${segmentIndex}`;
+            if (segment.coordinates.length < 2) {
+              return null; // need at least one path segment to draw
+            }
+            const pathShape = {
+              type: 'Feature',
+              properties: {
+                name: `path${index}`,
+              },
+              geometry: {
+                type: 'LineString',
+                coordinates: segment.coordinates,
+              },
+            }
+            return (
+              <Mapbox.ShapeSource id={`pathShape${index}`} key={`pathShape${index}`} shape={pathShape}>
+                <Mapbox.LineLayer
+                  id={`path${index}`}
+                  key={`path${index}`}
+                  style={(path.type === PathType.CURRENT) ? lineLayerStyleCurrent : lineLayerStyleDefault}
+                />
+              </Mapbox.ShapeSource>
+            )
+          })
+        ))}
       </Fragment>
     )
   }

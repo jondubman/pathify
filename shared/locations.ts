@@ -8,6 +8,7 @@ export type Lat = number;
 export type LonLat = [Lon, Lat];
 
 import log from './log';
+import sharedConstants from './sharedConstants';
 import timeseries, {
   EventFilter,
   EventType,
@@ -51,12 +52,22 @@ export interface ModeChangeEvent extends GenericEvent {
   }
 }
 
-export interface Path {
+export enum PathType {
+  'CURRENT' = 'CURRENT',
+  'DEFAULT' = 'DEFAULT',
+}
+
+export interface PathSegment {
   coordinates: LonLat[];
 }
 
+export interface Path {
+  segments: PathSegment[],
+  type?: PathType;
+}
+
 export interface TickEvent extends GenericEvent {
-  // nothing added for now
+  // nothing more for now
 }
 
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
@@ -113,26 +124,36 @@ const locations = {
   },
 
   pathFromEvents: (sourceEvents: GenericEvents, tr: TimeRange): Path => {
-    const coordinates: LonLat[] = [];
-    let previousLoc: LonLat = null;
+    let segments: PathSegment[] = [];
+    let coordinates: LonLat[] = [];
+    let previousLoc: LonLat | null = null;
     const events = timeseries.filterByTime(sourceEvents, tr);
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       if (event.type === EventType.LOC) {
         const locEvent = event as LocationEvent;
         const { loc } = locEvent.data;
-        coordinates.push(loc);
         if (previousLoc) {
-          // diagnostics
-          const dist = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
-          if (dist > 0.1) {
-            log.debug('pathFromEvents: gap from', previousLoc, loc);
+          const lineSegmentLength = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
+          if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) {
+            log.debug('pathFromEvents lineSegmentLength', lineSegmentLength);
+            // new path segment
+            segments.push({ coordinates });
+            coordinates = []; // reset
+            previousLoc = null; // reset
+          } else {
+            coordinates.push(loc);
           }
+        } else {
+          coordinates.push(loc);
         }
         previousLoc = loc;
       }
     }
-    return { coordinates };
+    if (coordinates.length) {
+      segments.push({ coordinates });
+    }
+    return { segments };
   },
 }
 

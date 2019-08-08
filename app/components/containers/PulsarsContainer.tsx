@@ -23,6 +23,7 @@ export interface OptionalPulsar {
 export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
 interface PulsarsStateProps {
+  keySuffix: string;
   pulsars: OptionalPulsars;
 }
 
@@ -32,7 +33,11 @@ interface PulsarsDispatchProps {
 export type PulsarsProps = PulsarsStateProps & PulsarsDispatchProps;
 
 const mapStateToProps = (state: AppState): PulsarsStateProps => {
+  const { options } = state;
+  const keySuffix = (options.currentActivity || options.selectedActivity ? `${options.refTime}` : '') +
+    `${JSON.stringify(options.currentActivity)}${JSON.stringify(options.selectedActivity)}`;
   return {
+    keySuffix,
     pulsars: pulsars(state),
   }
 }
