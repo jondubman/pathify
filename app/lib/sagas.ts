@@ -218,6 +218,7 @@ const sagas = {
   // Note this has the side effect of disabling following on the map if the center is moved.
   centerMap: function* (action: Action) {
     try {
+      yield call(log.trace, 'saga centerMap');
       const map = MapUtils();
       if (map && map.flyTo) {
         const params = action.params as CenterMapParams;
@@ -683,6 +684,26 @@ const sagas = {
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
       yield call(log.error, 'saga startFollowingUser', err);
+    }
+  },
+
+  startStopActivity: function* () {
+    try {
+      const alreadyEnabled = yield select(state => state.flags.backgroundGeolocation);
+      yield put(newAction(AppAction.flagToggle, 'backgroundGeolocation'));
+      if (!alreadyEnabled) {
+        // yield put(newAction(AppAction.startFollowingUser));
+        yield put(newAction(AppAction.flagEnable, 'followingUser'));
+        yield put(newAction(AppAction.centerMap, {
+          center: [0, 0],
+          option: 'relative',
+          zoom: constants.map.default.zoomStartActivity,
+        } as CenterMapParams));
+      // } else {
+      //   // TODO
+      }
+    } catch (err) {
+      yield call(log.error, 'saga startStopActivity', err);
     }
   },
 

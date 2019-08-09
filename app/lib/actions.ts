@@ -65,6 +65,7 @@ export enum AppAction {
   'sleep' = 'sleep', // see SleepParams
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',
+  'startStopActivity' = 'startStopActivity',
   'timelineZoomed' = 'timelineZoomed',
   'timerTick' = 'timerTick',
   'flagToggle' = 'flagToggle',

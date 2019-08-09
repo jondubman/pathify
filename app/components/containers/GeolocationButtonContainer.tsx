@@ -3,11 +3,9 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AppAction, CenterMapParams, newAction } from 'lib/actions';
-import constants from 'lib/constants';
+import { AppAction, newAction } from 'lib/actions';
 import { dynamicLowerButtonBase } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import store from 'lib/store';
 import GeolocationButton from 'presenters/GeolocationButton';
 import log from 'shared/log';
 
@@ -32,15 +30,7 @@ const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(AppAction.flagToggle, 'backgroundGeolocation'));
-    if (store.getState().flags.backgroundGeolocation) { // if enabled now
-      dispatch(newAction(AppAction.startFollowingUser));
-      dispatch(newAction(AppAction.centerMap, {
-        center: [0, 0],
-        option: 'relative',
-        zoom: constants.map.default.zoomStartActivity,
-      } as CenterMapParams));
-    }
+    dispatch(newAction(AppAction.startStopActivity));
   }
   const dispatchers = {
     onPress,
