@@ -150,7 +150,7 @@ const timeseries = {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       if (eventFilter && !eventFilter(event)) {
-        continue;
+        continue; // ignore events rejected by the filter
       }
       if (event.t === t) {
         results.push(event);
@@ -272,15 +272,15 @@ const timeseries = {
   newEvent: (t: Timepoint): GenericEvent => {
     const timestamp = t || Date.now(); // TODO maybe require t
     return {
-      t: timestamp,
-      // these are placeholders, to be overridden
+      t: Math.round(timestamp), // TODO for now, avoid creating events with sub-millisecond precision timestamps
+      // The following are placeholders, to be overridden:
       type: EventType.NONE,
       data: {},
     }
   },
 
   // A synced event will be synchronized with the server (i.e. not private)
-  // timestamped now unless a timestamp is provided.
+  // timestamped now, unless a timestamp is provided.
   newSyncedEvent: (t: Timepoint): GenericEvent => {
     const timestamp = t || Date.now(); // TODO maybe require t
     return {
@@ -298,7 +298,7 @@ const timeseries = {
     }
     log.trace('sortEvents: sort required');
     const sortedEvents = [ ...events ].sort((a: GenericEvent, b: GenericEvent) => (a.t - b.t));
-    if (!timeseries.sortedByTime(sortedEvents)) {
+    if (!timeseries.sortedByTime(sortedEvents)) { // TODO avoid overhead of this call in production
       log.warn('sortEvents: sort failed');
     }
     return sortedEvents;

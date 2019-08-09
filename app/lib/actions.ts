@@ -26,7 +26,7 @@ export enum ReducerAction {
 
 // These enum strings are formatted in Pascal case so as never to match any reducerActions (similar to namespacing).
 // While reducers are synchronous, these are handled asynchronously, via sagas.
-// Each of these should correspond to a generator function in the sagas module with the same name.
+// Each of these must correspond to a generator function in the sagas module with the same name.
 // Some appActions and reducerActions have similar names (e.g. geolocation, GEOLOCATION).
 // In these cases the AppAction is a wrapper that triggers the corresponding ReducerAction while handling side effects.
 export enum AppAction {

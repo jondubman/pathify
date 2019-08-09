@@ -42,7 +42,7 @@ class MapArea extends Component<MapAreaProps> {
     this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
     this.onPress = this.onPress.bind(this);
     this.setCamera = this.setCamera.bind(this);
-    this.zoomTo = this.zoomTo.bind(this);
+    // this.zoomTo = this.zoomTo.bind(this);
   }
 
   getMap(): IMapUtils {
@@ -144,9 +144,8 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  // duration is optional
   // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
-  flyTo(coordinates: LonLat, duration: number) {
+  flyTo(coordinates: LonLat, duration: number = 0) {
     if (this._map) {
       const mapView = this._map as any;
       mapView.flyTo(coordinates, duration);
@@ -189,7 +188,6 @@ class MapArea extends Component<MapAreaProps> {
     return 0; // TODO should never happen
   }
 
-
   // duration is optional
   moveTo(coordinates: LonLat, duration: number) {
     if (this._map) {
@@ -229,11 +227,12 @@ class MapArea extends Component<MapAreaProps> {
 
   // TODO zoomTo is not really working right now
   // https://github.com/mapbox/react-native-mapbox-gl/issues/988
-  zoomTo(zoomLevel) {
-    if (this._map) {
-      // this._map.zoomTo(zoomLevel);
-    }
-  }
+  // zoomTo(zoomLevel: number) {
+  //   if (this._map) {
+  //     const mapView = this._map as any;
+  //     mapView.zoomTo(zoomLevel);
+  //   }
+  // }
 }
 
 // methods exposed for imperative use as needed
@@ -245,6 +244,7 @@ export interface IMapUtils {
   getVisibleBounds: () => Promise<Bounds>;
   getZoom: () => Promise<number>;
   setCamera: (config: object) => void;
+  // zoomTo: (zoomLevel: number) => void;
 }
 
 // ref to singleton MapArea component that is created

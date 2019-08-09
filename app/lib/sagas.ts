@@ -216,7 +216,8 @@ const sagas = {
     yield put(newAction(AppAction.flagDisable, 'settingsVisible'));
   },
 
-  // Center map on absolute position or relative to current position (see CenterMapParams)
+  // Center map on absolute position or relative to current position (see CenterMapParams).
+  // Note this has the side effect of disabling following on the map if the center is moved.
   centerMap: function* (action: Action) {
     try {
       const map = MapUtils();
@@ -232,7 +233,7 @@ const sagas = {
           if (center[0] || center[1]) {
             yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
           }
-          if (zoom) { // optional in CenterMapParams; applies for both absolute and relative
+          if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
             const config = {
               centerCoordinate: newCenter,
               duration: constants.map.centerMapDuration,
@@ -296,6 +297,7 @@ const sagas = {
 
   //  After-effects (i.e. downstream side effects) of modifying app flags are handled here.
   flag_sideEffects: function* (flagName: string) {
+
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
       const options = yield select((state: AppState) => state.options);
@@ -651,7 +653,7 @@ const sagas = {
     // First set the option itself:
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
-    // Then, any side effects:
+    // Then, handle side effects:
 
     // Whenever refTime is set, update selectedActivity automatically based on marks.containingActivity,
     // which looks for bookending MarkType.START and MarkType.END events.
@@ -661,8 +663,8 @@ const sagas = {
       const currentActivity = yield select(state => state.options.currentActivity);
       if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
         const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
-        if (activity && currentActivity && currentActivity.tr[0] === (activity as Activity).tr[0]) {
-          // Avoid making the selectedActivity the currentActivity.
+        if (activity && currentActivity && currentActivity.tr[0] === activity!.tr[0]) {
+          // Avoid a selectedActivity that would be redundant to currentActivity.
           yield put(newAction(AppAction.setAppOption, { selectedActivity: null }));
         } else {
           yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
@@ -678,7 +680,7 @@ const sagas = {
       yield put(newAction(AppAction.flagEnable, 'followingUser'));
       const map = MapUtils();
       if (map) {
-        yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
+        yield put(newAction(AppAction.centerMapOnUser)); // cascading app actions
       }
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
