@@ -40,6 +40,7 @@ import * as uuid from 'uuid/v4';
 import { DomainPropType } from 'victory-native';
 
 import {
+  AbsoluteRelativeOption,
   Action,
   AppAction,
   newAction,
@@ -58,8 +59,6 @@ import {
   SaveEventsToStorageParams,
   SequenceParams,
   SleepParams,
-
-  AbsoluteRelativeOption,
 } from 'lib/actions'
 
 import constants from 'lib/constants';
@@ -78,7 +77,6 @@ import {
 } from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
 import locations, {
-  LocationEvent,
   ModeChangeEvent,
   MotionEvent,
   TickEvent,

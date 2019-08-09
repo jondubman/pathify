@@ -258,9 +258,14 @@ export const Geo = {
       const onHeartbeat = (event: HeartbeatEvent) => {
       }
       const onLocation = (location: Location) => {
+        const locationEvent = newLocationEvent(location);
+        const recheckMapBounds = locationEvent.t > utils.now() - 5000; // TODO move to constants
         const geolocationParams = {
-          locationEvent: newLocationEvent(location),
-          recheckMapBounds: true,
+          locationEvent,
+          recheckMapBounds,
+        }
+        if (!recheckMapBounds) {
+          log.trace(`skipping recheckMapBounds for ${locationEvent.t}`);
         }
         store.dispatch(newAction(AppAction.geolocation, geolocationParams));
       }

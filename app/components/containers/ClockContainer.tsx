@@ -12,6 +12,7 @@ interface ClockStateProps {
   hours: number,
   minutes: number,
   seconds: number,
+  timelineNow: boolean;
 }
 
 interface ClockDispatchProps {
@@ -26,6 +27,7 @@ const mapStateToProps = (state: AppState): ClockStateProps => {
     hours: d.getHours(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),
+    timelineNow: state.flags.timelineNow,
   }
 }
 

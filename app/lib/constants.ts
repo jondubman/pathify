@@ -31,8 +31,10 @@ export interface MapStyle {
 
 const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 digit abbreviation
   // https://clrs.cc
+  // https://www.colorhexa.com
   aqua: '#7fdbff',
   azure: '#007fff',
+  azure_dark: '#003b76',
   blue: '#0074d9',
   fuschia: '#f012be',
   gray: '#aaaaaa',
@@ -42,6 +44,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   orange: '#ff851b',
   purple: '#b10dc9',
   red: '#ff4136',
+  red_dark: '#4a0400',
   silver: '#dddddd',
   teal: '#39cccc',
   yellow: '#ffdc00',
@@ -83,6 +86,8 @@ const colors = {
   clock: {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.7),
+    backgroundNow: withOpacity(namedColors.azure_dark, 0.75),
+    backgroundPaused: withOpacity(namedColors.red_dark, 0.75),
     underlay: withOpacity(namedColors.blue, 0.25),
   },
   compassButton: {
