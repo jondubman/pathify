@@ -85,6 +85,7 @@ import log, { messageToLog } from 'shared/log';
 import {
   Activity,
   containingActivity,
+  insertMissingStopMarks,
   MarkEvent,
   MarkType
 } from 'shared/marks';
@@ -456,12 +457,15 @@ const sagas = {
           const event = JSON.parse(keyValue[1]);
           events.push(event);
         }
+        // We now have events loaded from storage, but not yet added to the store.
+        // If the app shut down while tracking, there will be a START mark with a missing END.
+        const sortedFixedEvents = insertMissingStopMarks(events);
+        // const sortedEvents = timeseries.sortEvents(events);
         // This is why we have the special-case saveToStorage option. Avoid saving data that was just loaded.
-        const sortedEvents = timeseries.sortEvents(events);
-        yield put(newAction(AppAction.addEvents, { events: sortedEvents, saveToStorage: false }));
+        yield put(newAction(AppAction.addEvents, { events: sortedFixedEvents, saveToStorage: false }));
         if (__DEV__) { // log the following only in development
-          const tracks = yield call(continuousTracks, sortedEvents, constants.maxTimeGapForContinuousTrack);
-          yield call(log.debug, 'load event count', sortedEvents.length, 'loaded tracks', tracks.length, tracks);
+          const tracks = yield call(continuousTracks, sortedFixedEvents, constants.maxTimeGapForContinuousTrack);
+          yield call(log.debug, 'load event count', sortedFixedEvents.length, 'loaded tracks', tracks.length, tracks);
         }
       }
     } catch (err) {

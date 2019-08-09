@@ -120,6 +120,8 @@ const colors = {
     startSelected: namedColors.green,
     end: withOpacity(namedColors.darkRed, 0.75),
     endSelected: namedColors.red,
+    syntheticEnd: withOpacity(namedColors.yellow, 0.75),
+    syntheticEndSelected: namedColors.yellow,
   },
   menus: {
     background: withOpacity(namedColors.black, 0.7),

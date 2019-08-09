@@ -259,13 +259,14 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         const locationEvent = newLocationEvent(location);
+        locationEvent.data.extra = `onLocation ${utils.now()}`; // TODO
         const recheckMapBounds = locationEvent.t > utils.now() - 5000; // TODO move to constants
+        if (!recheckMapBounds) {
+          log.trace(`skipping recheckMapBounds for ${locationEvent.t}`);
+        }
         const geolocationParams = {
           locationEvent,
           recheckMapBounds,
-        }
-        if (!recheckMapBounds) {
-          log.trace(`skipping recheckMapBounds for ${locationEvent.t}`);
         }
         store.dispatch(newAction(AppAction.geolocation, geolocationParams));
       }
@@ -366,8 +367,10 @@ export const Geo = {
           if (reduxStore) {
             if (reduxStore.getState().flags.appActive === false) {
               log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
+              const locationEvent = newLocationEvent(location);
+              locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
               reduxStore.dispatch(newAction(AppAction.geolocation, {
-                locationEvent: newLocationEvent(location),
+                locationEvent,
                 recheckMapBounds: false,
               }))
             }

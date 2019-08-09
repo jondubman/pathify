@@ -44,7 +44,7 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     const centerLine_y2 = (t: Timepoint): number => timeline.default.height - timeline.bottomPaddingForAxis;
 
     const colorFor = (mark: MarkEvent): string => {
-      const { subtype } = mark.data;
+      const { subtype, synthetic } = mark.data;
       const colors = constants.colors.marks;
       const selected: boolean = activityIncludesMark(selectedActivity, mark);
       switch (subtype) {
@@ -53,7 +53,11 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
         case MarkType.START:
           return selected ? colors.startSelected : colors.start;
         case MarkType.END:
-          return selected ? colors.endSelected : colors.end;
+          if (synthetic) {
+            return selected ? colors.syntheticEndSelected : colors.syntheticEnd;
+          } else {
+            return selected ? colors.endSelected : colors.end;
+          }
         default:
           return colors.default;
       }
