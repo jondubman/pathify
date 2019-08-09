@@ -672,7 +672,7 @@ const sagas = {
     }
   },
 
-  // follow the user, recentering map right away, kicking off background geolocation if needed
+  // Follow the user, recentering map right away, kicking off background geolocation if needed.
   startFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga startFollowingUser');
@@ -693,7 +693,8 @@ const sagas = {
       yield put(newAction(AppAction.flagToggle, 'backgroundGeolocation'));
       if (!alreadyEnabled) {
         // yield put(newAction(AppAction.startFollowingUser));
-        yield put(newAction(AppAction.flagEnable, 'followingUser'));
+        yield put(newAction(AppAction.flagEnable, 'followingUser')); // handle map recentering ourselves
+        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield put(newAction(AppAction.centerMap, {
           center: [0, 0],
           option: 'relative',
