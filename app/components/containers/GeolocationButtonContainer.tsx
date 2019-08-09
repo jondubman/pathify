@@ -38,7 +38,7 @@ const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps 
       dispatch(newAction(AppAction.centerMap, {
         center: [0, 0],
         option: 'relative',
-        zoom: constants.map.default.zoom + 1, // TODO
+        zoom: constants.map.default.zoomStartActivity,
       } as CenterMapParams));
     }
   }

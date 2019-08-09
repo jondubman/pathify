@@ -272,6 +272,7 @@ const constants = {
       opacity: 1,
       style: 'Default', // e.g. None, Default, Topo, Satellite. See mapStyles name
       zoom: 14,
+      zoomStartActivity: 16,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
     reorientationTime: interval.seconds(1) / 2,
