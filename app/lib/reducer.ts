@@ -13,7 +13,7 @@ import {
   AppState,
 } from 'lib/state';
 import { GenericEvents } from 'shared/timeseries';
-import { LocationEvents, TickEvent } from 'shared/locations';
+import { LocationEvent, LocationEvents, TickEvent } from 'shared/locations';
 import log from 'shared/log';
 import timeseries, { EventType } from "shared/timeseries";
 
@@ -59,17 +59,22 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
     case ReducerAction.GEOLOCATION:
       {
         const locationEvents = params as LocationEvents;
-        for (let i = 0; i < locationEvents.length; i++) {
-          const locationEvent = locationEvents[i];
-          if (locationEvent.type === EventType.LOC &&
-              locationEvent.data &&
-              locationEvent.data.loc &&
-              (!state.userLocation || locationEvent.t > state.userLocation.t)) {
+        newState.events = timeseries.sortEvents([...newState.events, ...locationEvents]);
 
-            newState.userLocation = locationEvent;
+        // set newState.userLocation to be the most recent locationEvent
+        for (let i = newState.events.length - 1; i >= 0; i--) {
+          const event = newState.events[i];
+          if (event.type === EventType.LOC) {
+             const locationEvent = event as LocationEvent;
+             if (locationEvent.data &&
+                 locationEvent.data.loc &&
+                 (!state.userLocation || locationEvent.t > state.userLocation.t)) {
+
+              newState.userLocation = { ...locationEvent };
+              break;
+            }
           }
         }
-        newState.events = timeseries.sortEvents([...newState.events, ...locationEvents]);
       }
       break;
 

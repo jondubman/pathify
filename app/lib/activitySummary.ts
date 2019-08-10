@@ -34,16 +34,19 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       metrics = activityMetrics(state.events, tr, refTime);
     }
     if (metrics) {
-      const leftMargin = constants.buttonSize + constants.buttonOffset * 2;
       const center = utils.windowSize().width / 2;
+      const leftMargin = constants.buttonSize + constants.buttonOffset * 2;
+      const { lineSpacing } = constants.activitySummary;
+      const top = dynamicAreaTop(state);
+      const left = 0;
+
       // positions for metrics shown inside the activitySummary
       const positions = [ // [left, top] relative to top left of entire activitySummary
         [leftMargin, 0],
         [center, 0],
+        [leftMargin, lineSpacing * 3.25],
+        [center, lineSpacing * 3.25],
       ]
-      const top = dynamicAreaTop(state);
-      const left = 0;
-      const { lineSpacing } = constants.activitySummary;
 
       // Distance calculations
 
@@ -60,15 +63,22 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
             totalDistanceMetric.text! + ' ' + partialDistanceMetric.units!;
         }
       }
+
+
+      // Time calculations
       const timeText = metrics.get(ActivityMetricName.totalTime) ?
         utils.msecToString(metrics.get(ActivityMetricName.totalTime)!.value) : '';
+
+      // Speed calculations
+      const speedMetric = metrics.get(ActivityMetricName.speed);
+      const speedText = (speedMetric === null) ? '' : `${speedMetric!.text} ${speedMetric!.units}`;
 
       popup.items = [
         ...popup.items,
 
         // Distance: X of Y mi
         {
-          displayText: 'Distance',
+          displayText: partialDistanceDisplayText.length ? 'Distance' : '',
           name: 'distanceLabel',
           itemStyle: {
             left: left + positions[0][0],
@@ -104,6 +114,26 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
               top: top + positions[1][1] + lineSpacing,
             },
           textStyle: { },
+        },
+
+        // Speed: ##.## mph
+        {
+          displayText: 'Speed',
+          name: 'speedLabel',
+          itemStyle: {
+            left: left + positions[2][0],
+            top: top + positions[2][1],
+          },
+          textStyle: {},
+        },
+        {
+          displayText: speedText,
+          name: 'speedMetric',
+          itemStyle: {
+            left: left + positions[2][0],
+            top: top + positions[2][1] + lineSpacing,
+          },
+          textStyle: {},
         },
       ]
     }

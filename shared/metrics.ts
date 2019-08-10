@@ -33,6 +33,7 @@ export const activityMetrics = (events: GenericEvents,
 
   let firstOdo = 0;
   let lastOdo = 0;
+  let lastSpeed = 0, speedMetric: ActivityMetric = null;
   let partialDistance: ActivityMetric | undefined;
   let totalDistance: ActivityMetric | undefined;
 
@@ -49,6 +50,9 @@ export const activityMetrics = (events: GenericEvents,
             firstOdo = locationEvent.data.odo;
           }
           lastOdo = locationEvent.data.odo;
+          if (locationEvent.data.speed || locationEvent.data.speed === 0) {
+            lastSpeed = locationEvent.data.speed;
+          }
           if (event.t <= t) {
             partialDistance = {
               units: 'mi',
@@ -67,6 +71,7 @@ export const activityMetrics = (events: GenericEvents,
     if (partialDistance) {
       partialDistance.text = partialDistance.value.toFixed(2);
     }
+    speedMetric = { text: lastSpeed.toFixed(2), units: 'mph', value: lastSpeed };
   } catch (err) {
     log.error('activityMetrics error', err);
   } finally {
@@ -74,6 +79,7 @@ export const activityMetrics = (events: GenericEvents,
       [ActivityMetricName.eventCount, { value: activityEvents.length }],
       [ActivityMetricName.partialDistance, partialDistance ? partialDistance : null],
       [ActivityMetricName.partialTime, { value: t ? t - timeRange[0] : null }],
+      [ActivityMetricName.speed, speedMetric],
       [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
       [ActivityMetricName.totalTime, { value: timeRange[1] - timeRange[0] }],
     ])
