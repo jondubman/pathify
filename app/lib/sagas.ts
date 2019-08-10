@@ -364,9 +364,9 @@ const sagas = {
 
   geolocation: function* (action: Action) {
     try {
-      const { locationEvent, recheckMapBounds } = action.params as GeolocationParams;
-      yield put(newAction(ReducerAction.GEOLOCATION, locationEvent));
-      yield put(newAction(AppAction.saveEventsToStorage, { events: [ locationEvent ] }));
+      const { locationEvents, recheckMapBounds } = action.params as GeolocationParams;
+      yield put(newAction(ReducerAction.GEOLOCATION, locationEvents));
+      yield put(newAction(AppAction.saveEventsToStorage, { events: locationEvents }));
       if (recheckMapBounds) {
         const appActive = yield select(state => state.flags.appActive);
         if (appActive) {

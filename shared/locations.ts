@@ -26,6 +26,7 @@ export interface LocationEvent extends GenericEvent {
     odo?: number;
     speed?: number;
     // TODO battery level?
+    extra?: string; // for debugging
   }
 }
 

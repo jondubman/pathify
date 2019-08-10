@@ -17,9 +17,16 @@ import BackgroundGeolocation, {
   // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
-import { AppAction, newAction } from 'lib/actions';
+import { AppAction, GeolocationParams, newAction } from 'lib/actions';
+import constants from 'lib/constants';
 import { Store } from 'lib/store';
-import { LocationEvent, ModeChangeEvent, ModeType, MotionEvent } from 'shared/locations';
+import {
+  LocationEvent,
+  LocationEvents,
+  ModeChangeEvent,
+  ModeType,
+  MotionEvent
+} from 'shared/locations';
 import timeseries, { EventType } from 'shared/timeseries';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -236,6 +243,7 @@ const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEve
 }
 
 let reduxStore: Store | null = null;
+let eventQueue: LocationEvents = [];
 
 export const Geo = {
 
@@ -259,16 +267,28 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         const locationEvent = newLocationEvent(location);
-        locationEvent.data.extra = `onLocation ${utils.now()}`; // TODO
-        const recheckMapBounds = locationEvent.t > utils.now() - 5000; // TODO move to constants
-        if (!recheckMapBounds) {
-          log.trace(`skipping recheckMapBounds for ${locationEvent.t}`);
+        const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
+        locationEvent.data.extra = `onLocation ${utils.now()} ${eventIsOld?'old':'new'}`; // TODO
+        if (eventIsOld) {
+          eventQueue.push(locationEvent);
+        } else {
+          let geolocationParams: GeolocationParams;
+          // First, process everything in eventQueue as one batch, without rechecking map bounds yet.
+          if (eventQueue.length) {
+            geolocationParams = {
+              locationEvents: eventQueue,
+              recheckMapBounds: false,
+            }
+            store.dispatch(newAction(AppAction.geolocation, geolocationParams));
+            eventQueue = []; // reset
+          }
+          // Now, handle the latest geolocation, with exactly one map bounds check, now that everything is added.
+          geolocationParams = {
+            locationEvents: [locationEvent],
+            recheckMapBounds: true,
+          }
+          store.dispatch(newAction(AppAction.geolocation, geolocationParams));
         }
-        const geolocationParams = {
-          locationEvent,
-          recheckMapBounds,
-        }
-        store.dispatch(newAction(AppAction.geolocation, geolocationParams));
       }
       const onLocationError = (error: LocationError) => {
         log.warn('LocationError', error);
@@ -370,7 +390,7 @@ export const Geo = {
               const locationEvent = newLocationEvent(location);
               locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
               reduxStore.dispatch(newAction(AppAction.geolocation, {
-                locationEvent,
+                locationEvent: [locationEvent],
                 recheckMapBounds: false,
               }))
             }

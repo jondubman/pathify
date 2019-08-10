@@ -256,6 +256,7 @@ const constants = {
       choiceLabel: 12,
     },
   },
+  geolocationAgeThreshold: 5000, // msec; those older than this are queued when they arrive and submitted in batch
   geolocationButton: {
     leftOffset: buttonOffset,
     opacity: defaultOpacity,
