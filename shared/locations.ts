@@ -20,11 +20,12 @@ import timeseries, {
 
 export interface LocationEvent extends GenericEvent {
   data: {
-    ele?: number;
-    heading?: number;
+    accuracy?: number; // meters
+    ele?: number; // meters
+    heading?: number; // 0 <= degrees < 360
     loc: LonLat;
-    odo?: number;
-    speed?: number;
+    odo?: number; // meters
+    speed?: number; // mph (converted from meters per second)
     // TODO battery level?
     extra?: string; // for debugging
   }

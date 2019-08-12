@@ -21,7 +21,6 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       bottom: utils.windowSize().height - height,
       height,
     }
-    // TODO t is not always refTime in the general case
     const { currentActivity, refTime, selectedActivity } = state.options;
     let metrics: ActivityMetrics | null = null;
     if (selectedActivity) {
@@ -41,29 +40,26 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       const left = 0;
 
       // positions for metrics shown inside the activitySummary
+      const rowGap = lineSpacing * 3.25;
       const positions = [ // [left, top] relative to top left of entire activitySummary
         [leftMargin, 0],
         [center, 0],
-        [leftMargin, lineSpacing * 3.25],
-        [center, lineSpacing * 3.25],
+        [leftMargin, rowGap],
+        [center, rowGap],
       ]
+      const position = (x: number, y: number) => ({
+        left: left + positions[x][0],
+        top: top + positions[y][1],
+      })
+      const below = (style: any) => ({
+        left: style.left,
+        top: style.top + lineSpacing,
+      })
 
       // Distance calculations
-
-      const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
-      const totalDistanceDisplayText = totalDistanceMetric ?
-        totalDistanceMetric.text! + ' ' + totalDistanceMetric.units! : '';
       const partialDistanceMetric = metrics.get(ActivityMetricName.partialDistance)!;
-      let partialDistanceDisplayText = '';
-      if (partialDistanceMetric) {
-        if (!selectedActivity && currentActivity && state.flags.timelineNow) {
-          partialDistanceDisplayText = totalDistanceDisplayText;
-        } else {
-          partialDistanceDisplayText = partialDistanceMetric.text! + ' of ' +
-            totalDistanceMetric.text! + ' ' + partialDistanceMetric.units!;
-        }
-      }
-
+      const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
+      const distanceMetric = state.flags.timelineNow ? totalDistanceMetric : partialDistanceMetric;
 
       // Time calculations
       const timeText = metrics.get(ActivityMetricName.totalTime) ?
@@ -78,41 +74,29 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
 
         // Distance: X of Y mi
         {
-          displayText: partialDistanceDisplayText.length ? 'Distance' : '',
+          displayText: distanceMetric.displayText ? 'Distance' : '',
           name: 'distanceLabel',
-          itemStyle: {
-            left: left + positions[0][0],
-            top: top + positions[0][1],
-          },
+          itemStyle: position(0, 0),
           textStyle: {},
         },
         {
-          displayText: partialDistanceDisplayText,
-          name: 'compoundDistance',
-          itemStyle: {
-            left: left + positions[0][0],
-            top: top + positions[0][1] + lineSpacing,
-          },
+          displayText: distanceMetric.displayText || '',
+          name: 'distance',
+          itemStyle: below(position(0, 0)),
           textStyle: {},
         },
 
         // Time: HR:MIN:SEC (use dynamic formatting for time)
         {
           displayText: 'Time',
-            name: 'timeLabel',
-              itemStyle: {
-              left: left + positions[1][0],
-              top: top + positions[1][1],
-            },
+          name: 'timeLabel',
+          itemStyle: position(1, 1),
           textStyle: { },
         },
         {
           displayText: timeText,
-            name: 'timeMetric',
-            itemStyle: {
-              left: left + positions[1][0],
-              top: top + positions[1][1] + lineSpacing,
-            },
+          name: 'time',
+          itemStyle: below(position(1, 1)),
           textStyle: { },
         },
 
@@ -120,19 +104,13 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
         {
           displayText: 'Speed',
           name: 'speedLabel',
-          itemStyle: {
-            left: left + positions[2][0],
-            top: top + positions[2][1],
-          },
+          itemStyle: position(2, 2),
           textStyle: {},
         },
         {
           displayText: speedText,
-          name: 'speedMetric',
-          itemStyle: {
-            left: left + positions[2][0],
-            top: top + positions[2][1] + lineSpacing,
-          },
+          name: 'speed',
+          itemStyle: below(position(2, 2)),
           textStyle: {},
         },
       ]

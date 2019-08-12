@@ -20,6 +20,7 @@ import BackgroundGeolocation, {
 import { AppAction, GeolocationParams, newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import { Store } from 'lib/store';
+import utils from 'lib/utils';
 import {
   LocationEvent,
   LocationEvents,
@@ -27,9 +28,9 @@ import {
   ModeType,
   MotionEvent
 } from 'shared/locations';
-import timeseries, { EventType } from 'shared/timeseries';
-import utils from 'lib/utils';
 import log from 'shared/log';
+import timeseries, { EventType } from 'shared/timeseries';
+import { metersPerSecondToMilesPerHour } from 'shared/units';
 
 const geolocationOptions: Config = {
   // --------------
@@ -203,11 +204,13 @@ const newLocationEvent = (info: Location): LocationEvent => {
     ...timeseries.newSyncedEvent(t),
     type: EventType.LOC,
     data: {
+      accuracy: info.coords.accuracy,
       ele: info.coords.altitude,
       heading: info.coords.heading,
       loc: [info.coords.longitude, info.coords.latitude],
       odo: info.odometer,
-      speed: info.coords.speed,
+      speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
+        : undefined,
     },
   }
 }
