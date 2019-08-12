@@ -327,7 +327,10 @@ const sagas = {
         id: newActivityId,
         tr: [now, Infinity],
       } : null;
-      yield put(newAction(AppAction.setAppOption, { currentActivity: newCurrentActivity }));
+      yield put(newAction(AppAction.setAppOption, {
+        currentActivity: newCurrentActivity,
+        selectedActivity: null,
+      }))
 
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.

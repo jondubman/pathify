@@ -2,7 +2,7 @@ import timeseries, { GenericEvents, Timepoint, TimeRange, EventType } from './ti
 import { LocationEvent } from './locations';
 import log from './log';
 
-import { metersToMiles } from './units';
+import { metersToMiles, msecToString } from './units';
 
 export enum ActivityMetricName {
   'averageSpeed' = 'averageSpeed',
@@ -38,11 +38,19 @@ export const activityMetrics = (events: GenericEvents,
   let partialDistance: ActivityMetric | undefined;
   let totalDistance: ActivityMetric | undefined;
   const speedUnits = 'mph';
-  const timeUnits = 'elapsed time'; // TODO
   const filterRange = [timeRange[0], Math.max(timeRange[1], t)] as TimeRange; // expand timeRange to cover t if needed
   const activityEvents = timeseries.filterByTime(events, filterRange);
 
-  const totalTime = Math.max(0, timeRange[1] - timeRange[0]);
+  const totalTimeValue = Math.max(0, timeRange[1] - timeRange[0]);
+  const partialTimeValue = t ? Math.max(0, t - timeRange[0]) : totalTimeValue;
+  const partialTimeDisplayText = (partialTimeValue === totalTimeValue) ?
+    `${msecToString(partialTimeValue)}` :
+    `${msecToString(partialTimeValue)}/${msecToString(totalTimeValue)}`;
+  const partialTime = {
+    displayText: partialTimeDisplayText,
+    units: 'time',
+    value: partialTimeValue,
+  }
   try {
     for (let i = 0; i < activityEvents.length; i++) {
       const event = activityEvents[i];
@@ -101,15 +109,12 @@ export const activityMetrics = (events: GenericEvents,
     return new Map<ActivityMetricName, ActivityMetric>([
       [ActivityMetricName.eventCount, { value: activityEvents.length }],
       [ActivityMetricName.partialDistance, partialDistance ? partialDistance : totalDistance],
-      [ActivityMetricName.partialTime, {
-        units: timeUnits,
-        value: t ? Math.max(0, t - timeRange[0]) : totalTime,
-      }],
+      [ActivityMetricName.partialTime, partialTime],
       [ActivityMetricName.speed, speedMetric],
       [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
       [ActivityMetricName.totalTime, {
-        units: timeUnits,
-        value: totalTime,
+        units: 'total time',
+        value: totalTimeValue,
       }],
     ])
   }

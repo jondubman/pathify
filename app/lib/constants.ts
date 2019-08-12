@@ -326,7 +326,7 @@ const constants = {
   defaultTextStyle: {
       color: colors.byName.white,
       fontFamily,
-      fontSize: 20,
+      fontSize: 16,
       margin: 0,
       padding: 0,
       textAlign: 'center', // centers text horizontally

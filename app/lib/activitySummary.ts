@@ -33,9 +33,9 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
     } else if (currentActivity) {
       let tr = { ...currentActivity.tr };
       if (tr[1] === Infinity) {
-        tr[1] = utils.now(); // TODO maybe turn this into a utility function
+        tr[1] = Math.max(utils.now(), refTime);
       }
-      metrics = activityMetrics(state.events, tr, refTime);
+      metrics = activityMetrics(state.events, tr, state.flags.timelineNow ? tr[1] : refTime); // now means now
     }
     if (metrics) {
       // Distance calculations
@@ -45,8 +45,8 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
 
       // Time calculations
       const timeMetric = metrics.get(ActivityMetricName.partialTime);
-      const timeText = timeMetric ?
-        utils.msecToString(metrics.get(ActivityMetricName.partialTime)!.value) : '';
+      const timeText = timeMetric && timeMetric.displayText ?
+        timeMetric.displayText : utils.msecToString(metrics.get(ActivityMetricName.partialTime)!.value);
 
       // Speed calculations
       const speedMetric = metrics.get(ActivityMetricName.speed);
