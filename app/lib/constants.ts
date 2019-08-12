@@ -301,7 +301,6 @@ const constants = {
   },
   menus: {
     defaultItemStyle: {
-      alignSelf: 'center',
       backgroundColor: 'transparent',
       margin: 0,
       padding: 0,

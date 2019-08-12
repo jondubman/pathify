@@ -33,7 +33,8 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       metrics = activityMetrics(state.events, tr, refTime);
     }
     if (metrics) {
-      const center = utils.windowSize().width / 2;
+      const { width } = utils.windowSize();
+      const center = width / 2;
       const leftMargin = constants.buttonSize + constants.buttonOffset * 2;
       const { lineSpacing } = constants.activitySummary;
       const top = dynamicAreaTop(state);
@@ -52,7 +53,8 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
         top: top + positions[y][1],
       })
       const below = (style: any) => ({
-        left: style.left,
+        left: style.left || undefined,
+        right: style.right || undefined,
         top: style.top + lineSpacing,
       })
 
@@ -77,7 +79,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           displayText: distanceMetric.displayText ? 'Distance' : '',
           name: 'distanceLabel',
           itemStyle: position(0, 0),
-          textStyle: {},
+          textStyle: { },
         },
         {
           displayText: distanceMetric.displayText || '',

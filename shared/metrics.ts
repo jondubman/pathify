@@ -90,7 +90,7 @@ export const activityMetrics = (events: GenericEvents,
       if (partialDistanceText === totalDistanceMilesText) { // TODO confirm this is always what is preferred
         partialDistance.displayText = totalDistance.displayText;
       } else {
-        partialDistance.displayText = `${partialDistanceText} of ${totalDistanceMilesText} mi`;
+        partialDistance.displayText = `${partialDistanceText} / ${totalDistanceMilesText}`;
       }
     }
   } catch (err) {
