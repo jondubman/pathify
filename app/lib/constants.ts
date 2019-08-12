@@ -184,7 +184,7 @@ const constants = {
     heightCollapsed: 60,
     heightExpanded: 180,
     itemBorderRadius: 5,
-    itemHeight: 50,
+    itemHeight: 55,
     itemMargin: 5,
   },
   appName: 'Pathify',
@@ -315,10 +315,18 @@ const constants = {
       padding: 0,
     },
     defaultItemUnderlayColor: colors.menus.underlayColor,
-    defaultTextStyle: {
+    defaultLabelStyle: {
       color: colors.byName.white,
       fontFamily,
-      fontSize: 16,
+      fontSize: 12,
+      margin: 0,
+      padding: 0,
+      textAlign: 'center', // centers text horizontally
+    },
+  defaultTextStyle: {
+      color: colors.byName.white,
+      fontFamily,
+      fontSize: 20,
       margin: 0,
       padding: 0,
       textAlign: 'center', // centers text horizontally

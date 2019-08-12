@@ -16,6 +16,8 @@ export interface PopupMenuItem {
   itemContainerStyle?: ViewStyle;
   itemStyle?: object; // TODO ViewStyle?
   itemUnderlayColor?: string,
+  label?: string, // optional
+  labelStyle?: ViewStyle;
   textStyle?: object;
 }
 export type PopupMenuItems = PopupMenuItem[];

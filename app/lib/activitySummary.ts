@@ -43,12 +43,13 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       const distanceMetric = state.flags.timelineNow ? totalDistanceMetric : partialDistanceMetric;
 
       // Time calculations
-      const timeText = metrics.get(ActivityMetricName.partialTime) ?
+      const timeMetric = metrics.get(ActivityMetricName.partialTime);
+      const timeText = timeMetric ?
         utils.msecToString(metrics.get(ActivityMetricName.partialTime)!.value) : '';
 
       // Speed calculations
       const speedMetric = metrics.get(ActivityMetricName.speed);
-      const speedText = (speedMetric === null) ? '' : `${speedMetric!.text} ${speedMetric!.units}`;
+      const speedText = (speedMetric === null) ? '' : speedMetric!.text || '';
 
       const itemContainerStyle = {
         height: constants.activitySummary.itemHeight,
@@ -65,10 +66,11 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       popup.items = [
         ...popup.items,
         {
-          displayText: distanceMetric.displayText!,
+          displayText: distanceMetric.text!,
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
+          label: distanceMetric.units || '',
           name: 'distanceLabel',
         },
         {
@@ -76,6 +78,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
+          label: (timeMetric && timeMetric.units) || '',
           name: 'time',
         },
         {
@@ -83,6 +86,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
+          label: (speedMetric && speedMetric.units) || '',
           name: 'speed',
         },
       ]

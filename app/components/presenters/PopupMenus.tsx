@@ -1,4 +1,6 @@
-import * as React from 'react';
+import React, {
+  Fragment,
+} from 'react';
 
 import {
   Text,
@@ -45,13 +47,24 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                   style={{ ...constants.menus.defaultItemStyle, ...item.itemStyle} as any}
                   underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
                 >
-                  {item.displayText ? (
-                    <Text
-                      style={{ ...constants.menus.defaultTextStyle as ViewStyle, ...item.textStyle }}
-                    >
-                      {item.displayText}
-                    </Text>
-                  ) : <View />}
+                  <Fragment>
+                    {item.displayText ? (
+                      <Text
+                        key='displayText'
+                        style={{ ...constants.menus.defaultTextStyle as ViewStyle, ...item.textStyle }}
+                      >
+                        {item.displayText}
+                      </Text>
+                    ) : <View />}
+                    {item.label ? (
+                      <Text
+                        key='label'
+                        style={{ ...constants.menus.defaultLabelStyle as ViewStyle, ...item.labelStyle }}
+                      >
+                        {item.label}
+                      </Text>
+                    ) : <View />}
+                  </Fragment>
                 </TouchableHighlight>
               </View>
             ))}

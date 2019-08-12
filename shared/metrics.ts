@@ -37,10 +37,12 @@ export const activityMetrics = (events: GenericEvents,
   let lastSpeed = 0, speedMetric: ActivityMetric = null;
   let partialDistance: ActivityMetric | undefined;
   let totalDistance: ActivityMetric | undefined;
-
+  const speedUnits = 'mph';
+  const timeUnits = 'elapsed time'; // TODO
   const filterRange = [timeRange[0], Math.max(timeRange[1], t)] as TimeRange; // expand timeRange to cover t if needed
   const activityEvents = timeseries.filterByTime(events, filterRange);
 
+  const totalTime = Math.max(0, timeRange[1] - timeRange[0]);
   try {
     for (let i = 0; i < activityEvents.length; i++) {
       const event = activityEvents[i];
@@ -54,7 +56,7 @@ export const activityMetrics = (events: GenericEvents,
             speedMetric = {
               displayText: `${lastSpeedText} mph`,
               text: lastSpeedText,
-              units: 'mph',
+              units: speedUnits,
               value: lastSpeed
             }
           }
@@ -69,7 +71,7 @@ export const activityMetrics = (events: GenericEvents,
           }
           if (locationEvent.t <= t) {
             partialDistance = {
-              units: 'mi',
+              units: 'miles',
               value: metersToMiles(lastOdo - firstOdo),
             }
           }
@@ -81,7 +83,7 @@ export const activityMetrics = (events: GenericEvents,
     totalDistance = {
       displayText: `${totalDistanceMilesText} mi`,
       text: totalDistanceMiles.toFixed(2),
-      units: 'mi',
+      units: 'miles',
       value: totalDistanceMiles,
     }
     if (partialDistance) {
@@ -99,10 +101,16 @@ export const activityMetrics = (events: GenericEvents,
     return new Map<ActivityMetricName, ActivityMetric>([
       [ActivityMetricName.eventCount, { value: activityEvents.length }],
       [ActivityMetricName.partialDistance, partialDistance ? partialDistance : totalDistance],
-      [ActivityMetricName.partialTime, { value: t ? t - timeRange[0] : timeRange[1] - timeRange[0] }],
+      [ActivityMetricName.partialTime, {
+        units: timeUnits,
+        value: t ? Math.max(0, t - timeRange[0]) : totalTime,
+      }],
       [ActivityMetricName.speed, speedMetric],
       [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
-      [ActivityMetricName.totalTime, { value: timeRange[1] - timeRange[0] }],
+      [ActivityMetricName.totalTime, {
+        units: timeUnits,
+        value: totalTime,
+      }],
     ])
   }
 }
