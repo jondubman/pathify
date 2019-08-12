@@ -81,18 +81,18 @@ export const activityMetrics = (events: GenericEvents,
     const totalDistanceMiles = metersToMiles(lastOdo - firstOdo);
     const totalDistanceMilesText = totalDistanceMiles.toFixed(2);
     totalDistance = {
-      displayText: `${totalDistanceMilesText} mi`,
-      text: totalDistanceMiles.toFixed(2),
+      displayText: totalDistanceMilesText,
+      text: totalDistanceMilesText,
       units: 'miles',
       value: totalDistanceMiles,
     }
     if (partialDistance) {
       const partialDistanceText = partialDistance.value.toFixed(2);
       partialDistance.text = partialDistanceText;
-      if (partialDistanceText === totalDistanceMilesText) { // TODO confirm this is always what is preferred
+      if (partialDistanceText === totalDistanceMilesText) {
         partialDistance.displayText = totalDistance.displayText;
       } else {
-        partialDistance.displayText = `${partialDistanceText} / ${totalDistanceMilesText}`;
+        partialDistance.displayText = `${partialDistanceText}/${totalDistanceMilesText}`;
       }
     }
   } catch (err) {

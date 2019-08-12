@@ -18,7 +18,8 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
 
     popup.contentsStyle = {
       ...popup.contentsStyle,
-      top: dynamicAreaTop(state),
+      top: dynamicAreaTop(state) - constants.activitySummary.itemMargin,
+      // TODO subtracting itemMargin here is sort of a trick to tuck the top row's marginTop above the content area.
     },
     popup.style = {
       ...popup.style,
@@ -66,9 +67,9 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       popup.items = [
         ...popup.items,
         {
-          displayText: distanceMetric.text!,
+          displayText: (distanceMetric && distanceMetric.displayText) || '',
           itemContainerStyle,
-          itemStyle,
+          itemStyle, // TODO shrink to fit if string is too long
           itemUnderlayColor: constants.colors.byName.blue,
           label: distanceMetric.units || '',
           name: 'distanceLabel',
