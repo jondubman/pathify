@@ -29,24 +29,33 @@ class PopupMenus extends React.Component<PopupMenusProps> {
         ...menuConfig.style,
       } as ViewStyle;
 
+      const contentsStyle = menuConfig.contentsStyle || {};
+
       return (
         <View style={popupStyle} key={menuName}>
-          {menuConfig.items.map((item: PopupMenuItem) => (
-            <TouchableHighlight
-              key={item.name}
-              onPress={() => { log.debug('PopupMenuItem press', item.name); }}
-              style={{ ...constants.menus.defaultItemStyle, ...item.itemStyle} as any}
-              underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
-            >
-              {item.displayText ? (
-                <Text
-                  style={{ ...constants.menus.defaultTextStyle, ...item.textStyle }}
+          <View style={contentsStyle}>
+            {menuConfig.items.map((item: PopupMenuItem) => (
+              <View
+               key={item.name}
+               style={item.itemContainerStyle || constants.menus.defaultItemContainerStyle}
+              >
+                <TouchableHighlight
+                  key={item.name}
+                  onPress={() => { log.debug('PopupMenuItem press', item.name); }}
+                  style={{ ...constants.menus.defaultItemStyle, ...item.itemStyle} as any}
+                  underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
                 >
-                  {item.displayText}
-                </Text>
-              ) : <View />}
-            </TouchableHighlight>
-          ))}
+                  {item.displayText ? (
+                    <Text
+                      style={{ ...constants.menus.defaultTextStyle as ViewStyle, ...item.textStyle }}
+                    >
+                      {item.displayText}
+                    </Text>
+                  ) : <View />}
+                </TouchableHighlight>
+              </View>
+            ))}
+          </View>
         </View>
       )
     }

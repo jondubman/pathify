@@ -7,21 +7,20 @@ import {
   dynamicTimelineHeight,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import log from 'shared/log';
 import { activitySummary } from 'lib/activitySummary';
 
 export interface PopupMenuItem {
   name: string; // must be unique; canonical way to refer to this menu
-
   defaultVisible?: boolean;
   displayText: string; // TODO icons?
-
+  itemContainerStyle?: ViewStyle;
   itemStyle?: object; // TODO ViewStyle?
   itemUnderlayColor?: string,
   textStyle?: object;
 }
 export type PopupMenuItems = PopupMenuItem[];
 export type PopupMenuConfig = {
+  contentsStyle?: ViewStyle;
   defaultItemStyle?: string; // otherwise item style will be the global default
   items: PopupMenuItem[];
   open?: boolean;
@@ -36,6 +35,13 @@ export enum PopupMenuName {
 export type PopupMenusConfig = Map<PopupMenuName, PopupMenuConfig>;
 export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
   [PopupMenuName.activitySummary, {
+    contentsStyle: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginLeft: constants.buttonSize + constants.buttonOffset,
+      marginRight: constants.buttonSize + constants.buttonOffset,
+    },
     items: [
     ] as PopupMenuItems,
     // open derived dynamically

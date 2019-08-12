@@ -99,7 +99,7 @@ export const activityMetrics = (events: GenericEvents,
     return new Map<ActivityMetricName, ActivityMetric>([
       [ActivityMetricName.eventCount, { value: activityEvents.length }],
       [ActivityMetricName.partialDistance, partialDistance ? partialDistance : totalDistance],
-      [ActivityMetricName.partialTime, { value: t ? t - timeRange[0] : null }],
+      [ActivityMetricName.partialTime, { value: t ? t - timeRange[0] : timeRange[1] - timeRange[0] }],
       [ActivityMetricName.speed, speedMetric],
       [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
       [ActivityMetricName.totalTime, { value: timeRange[1] - timeRange[0] }],

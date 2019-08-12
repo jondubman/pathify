@@ -80,6 +80,9 @@ const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(1
 export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
 
 const colors = {
+  activitySummary: {
+    itemBackground: withOpacity(namedColors.blue, 0.25),
+  },
   appBackground: colorThemes.background,
   appText: 'black',
   byName: namedColors, // all of them
@@ -180,7 +183,9 @@ const constants = {
   activitySummary: {
     heightCollapsed: 60,
     heightExpanded: 180,
-    lineSpacing: 20,
+    itemBorderRadius: 5,
+    itemHeight: 50,
+    itemMargin: 5,
   },
   appName: 'Pathify',
   buttonOffset,
@@ -300,11 +305,14 @@ const constants = {
     pointLength: 30,
   },
   menus: {
+    defaultItemContainerStyle: {
+    },
     defaultItemStyle: {
+      alignSelf: 'center',
       backgroundColor: 'transparent',
+      justifyContent: 'center', // centers item vertically
       margin: 0,
       padding: 0,
-      position: 'absolute',
     },
     defaultItemUnderlayColor: colors.menus.underlayColor,
     defaultTextStyle: {
@@ -313,6 +321,7 @@ const constants = {
       fontSize: 16,
       margin: 0,
       padding: 0,
+      textAlign: 'center', // centers text horizontally
     },
   },
   months: [
