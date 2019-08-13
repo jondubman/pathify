@@ -1,6 +1,7 @@
 import timeseries, { GenericEvents, Timepoint, TimeRange, EventType } from './timeseries';
 import { LocationEvent } from './locations';
 import log from './log';
+import sharedConstants from './sharedConstants';
 
 import { metersToMiles, msecToString } from './units';
 
@@ -37,7 +38,6 @@ export const activityMetrics = (events: GenericEvents,
   let lastSpeed = 0, speedMetric: ActivityMetric = null;
   let partialDistance: ActivityMetric | undefined;
   let totalDistance: ActivityMetric | undefined;
-  const speedUnits = 'mph';
   const filterRange = [timeRange[0], Math.max(timeRange[1], t)] as TimeRange; // expand timeRange to cover t if needed
   const activityEvents = timeseries.filterByTime(events, filterRange);
 
@@ -58,14 +58,16 @@ export const activityMetrics = (events: GenericEvents,
         const locationEvent = event as LocationEvent;
         if (locationEvent.t <= t) {
           // speed
-          if (locationEvent.data.speed || locationEvent.data.speed === 0) {
-            lastSpeed = locationEvent.data.speed;
-            const lastSpeedText = lastSpeed.toFixed(2);
-            speedMetric = {
-              displayText: `${lastSpeedText} mph`,
-              text: lastSpeedText,
-              units: speedUnits,
-              value: lastSpeed
+          if (locationEvent.t + sharedConstants.metrics.speed.maxAgeCurrent >= t) {
+            if (locationEvent.data.speed && locationEvent.data.speed >= 0) {
+              lastSpeed = locationEvent.data.speed;
+              const lastSpeedText = lastSpeed.toFixed(1);
+              speedMetric = {
+                displayText: `${lastSpeedText} mph`,
+                text: lastSpeedText,
+                units: 'Speed (mph)',
+                value: lastSpeed,
+              }
             }
           }
         }
@@ -79,7 +81,7 @@ export const activityMetrics = (events: GenericEvents,
           }
           if (locationEvent.t <= t) {
             partialDistance = {
-              units: 'miles',
+              units: 'miles / total',
               value: metersToMiles(lastOdo - firstOdo),
             }
           }
@@ -91,7 +93,7 @@ export const activityMetrics = (events: GenericEvents,
     totalDistance = {
       displayText: totalDistanceMilesText,
       text: totalDistanceMilesText,
-      units: 'miles',
+      units: 'Distance (miles)',
       value: totalDistanceMiles,
     }
     if (partialDistance) {
@@ -113,7 +115,7 @@ export const activityMetrics = (events: GenericEvents,
       [ActivityMetricName.speed, speedMetric],
       [ActivityMetricName.totalDistance, totalDistance ? totalDistance : null],
       [ActivityMetricName.totalTime, {
-        units: 'total time',
+        units: 'Total time',
         value: totalTimeValue,
       }],
     ])
