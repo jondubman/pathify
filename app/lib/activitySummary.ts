@@ -66,8 +66,10 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
         padding: constants.activitySummary.itemMargin,
         width: '50%',
       }
+      const itemBackground = selectedActivity ? constants.colors.activitySummary.itemBackground_selected :
+        constants.colors.activitySummary.itemBackground_current;
       const itemStyle = {
-        backgroundColor: constants.colors.activitySummary.itemBackground,
+        backgroundColor: itemBackground,
         borderRadius: constants.activitySummary.itemBorderRadius,
         height: '100%',
         width: '100%',

@@ -81,7 +81,8 @@ export const withOpacity = (color: string, opacity: number): string => (color + 
 
 const colors = {
   activitySummary: {
-    itemBackground: withOpacity(namedColors.blue, 0.25),
+    itemBackground_current: withOpacity(namedColors.green, 0.5),
+    itemBackground_selected: withOpacity(namedColors.azure, 0.5),
   },
   appBackground: colorThemes.background,
   appText: 'black',
