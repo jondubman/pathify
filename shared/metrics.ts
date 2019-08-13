@@ -41,6 +41,7 @@ export const activityMetrics = (events: GenericEvents,
   const filterRange = [timeRange[0], Math.max(timeRange[1], t)] as TimeRange; // expand timeRange to cover t if needed
   const activityEvents = timeseries.filterByTime(events, filterRange);
 
+  // Time (don't need to look at events for this)
   const totalTimeValue = Math.max(0, timeRange[1] - timeRange[0]);
   const partialTimeValue = t ? Math.max(0, t - timeRange[0]) : totalTimeValue;
   const partialTimeDisplayText = (partialTimeValue === totalTimeValue) ?
@@ -48,7 +49,7 @@ export const activityMetrics = (events: GenericEvents,
     `${msecToString(partialTimeValue)}/${msecToString(totalTimeValue)}`;
   const partialTime = {
     displayText: partialTimeDisplayText,
-    units: 'time',
+    units: 'Elapsed Time',
     value: partialTimeValue,
   }
   try {
@@ -88,6 +89,7 @@ export const activityMetrics = (events: GenericEvents,
         }
       }
     }
+    // Set totalDistance
     const totalDistanceMiles = metersToMiles(lastOdo - firstOdo);
     const totalDistanceMilesText = totalDistanceMiles.toFixed(2);
     totalDistance = {
@@ -96,6 +98,7 @@ export const activityMetrics = (events: GenericEvents,
       units: 'Distance (miles)',
       value: totalDistanceMiles,
     }
+    // Finalize partialDistance
     if (partialDistance) {
       const partialDistanceText = partialDistance.value.toFixed(2);
       partialDistance.text = partialDistanceText;

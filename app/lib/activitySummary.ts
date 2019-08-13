@@ -53,7 +53,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
 
       // Time calculations
       const timeMetric = metrics.get(ActivityMetricName.partialTime);
-      if (!timeText) {
+      if (!timeText!) {
         timeText = timeMetric && timeMetric.displayText ?
                      timeMetric.displayText : msecToString(metrics.get(ActivityMetricName.partialTime)!.value);
       }
@@ -84,7 +84,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           name: 'distanceLabel',
         },
         {
-          displayText: timeText,
+          displayText: timeText!,
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
