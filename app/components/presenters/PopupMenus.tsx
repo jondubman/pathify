@@ -43,8 +43,11 @@ class PopupMenus extends React.Component<PopupMenusProps> {
               >
                 <TouchableHighlight
                   key={item.name}
-                  onPress={() => { log.debug('PopupMenuItem press', item.name); }}
-                  style={{ ...constants.menus.defaultItemStyle, ...item.itemStyle} as any}
+                  onPress={() => {
+                    log.debug('PopupMenuItem press', item.name);
+                    this.props.menuItemSelected && this.props.menuItemSelected(item.name);
+                  }}
+                  style={{ ...constants.menus.defaultItemStyle, ...menuConfig.defaultItemStyle!, ...item.itemStyle} as any}
                   underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
                 >
                   <Fragment>

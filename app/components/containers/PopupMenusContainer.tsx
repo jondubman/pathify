@@ -2,6 +2,7 @@ import { ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import PopupMenus from 'components/presenters/PopupMenus';
+import { AppAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import {
   dynamicTimelineHeight,
@@ -23,7 +24,7 @@ export interface PopupMenuItem {
 export type PopupMenuItems = PopupMenuItem[];
 export type PopupMenuConfig = {
   contentsStyle?: ViewStyle;
-  defaultItemStyle?: string; // otherwise item style will be the global default
+  defaultItemStyle?: ViewStyle; // otherwise item style will be the global default
   items: PopupMenuItem[];
   open?: boolean;
   style: ViewStyle;
@@ -32,6 +33,18 @@ export enum PopupMenuName {
   'activitySummary' = 'activitySummary',
   'clockMenu' = 'clockMenu',
 }
+
+// for clockMenu
+const itemContainerStyle = {
+
+}
+const itemStyle = {
+  backgroundColor: constants.colors.byName.azure_dark,
+  borderRadius: constants.activitySummary.itemBorderRadius,
+  height: 100,
+  width: 100,
+}
+
 // TODO not sure how to avoid repeating the construct Map<PopupMenuName, PopupMenuConfig> a few times when using new;
 // new PopupMenusConfig gives an error, saying it refers to a type but it's being used as a value (?)
 export type PopupMenusConfig = Map<PopupMenuName, PopupMenuConfig>;
@@ -56,6 +69,9 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
     } as ViewStyle,
   }],
   [PopupMenuName.clockMenu, {
+    defaultItemStyle: {
+      margin: 10,
+    },
     items: [
       // { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
       // { name: 'clearData', displayText: 'Clear data' },
@@ -65,7 +81,13 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       // { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
 
       // { name: 'next', displayText: 'NEXT', defaultVisible: true },
-      // { name: 'now', displayText: 'NOW', defaultVisible: true },
+      { name: 'now',
+        displayText: 'NOW',
+        defaultVisible: true,
+        itemContainerStyle,
+        itemStyle,
+        itemUnderlayColor: constants.colors.byName.aqua,
+      },
       // { name: 'prev', displayText: 'PREVIOUS', defaultVisible: true },
 
       // { name: 'removeMark', displayText: 'Remove Mark' },
@@ -118,11 +140,12 @@ interface PopupMenusStateProps {
 }
 
 interface PopupMenusDispatchProps {
+  menuItemSelected?: (name: string) => void; // TODO
 }
 
 export type PopupMenusProps = PopupMenusStateProps & PopupMenusDispatchProps;
 
-const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
+const mapStateToProps = (state: AppState): PopupMenusStateProps => {
 
   const menus: PopupMenusConfig = new Map(state.menus);
   for (let [menuName, menu] of menus) {
@@ -160,6 +183,9 @@ const mapStateToProps = (state: AppState): PopupMenusDispatchProps => {
 
 const mapDispatchToProps = (dispatch: Function): PopupMenusDispatchProps => {
   const dispatchers = {
+    menuItemSelected: (name: string): void => {
+      dispatch(newAction(AppAction.menuItemSelected, name));
+    }
   }
   return dispatchers;
 }

@@ -1,5 +1,14 @@
-import timeseries, { GenericEvents, Timepoint, TimeRange, EventType } from './timeseries';
-import { LocationEvent } from './locations';
+import timeseries, {
+  GenericEvents,
+  Timepoint,
+  TimeRange,
+  EventType
+} from './timeseries';
+import {
+  LocationEvent,
+  ModeChangeEvent,
+  ModeType
+} from './locations';
 import log from './log';
 import sharedConstants from './sharedConstants';
 
@@ -35,9 +44,13 @@ export const activityMetrics = (events: GenericEvents,
 
   let firstOdo = 0;
   let lastOdo = 0;
+
   let lastSpeed = 0, speedMetric: ActivityMetric = null;
+  const speedUnits = 'Speed (mph)';
+
   let partialDistance: ActivityMetric | undefined;
   let totalDistance: ActivityMetric | undefined;
+
   const filterRange = [timeRange[0], Math.max(timeRange[1], t)] as TimeRange; // expand timeRange to cover t if needed
   const activityEvents = timeseries.filterByTime(events, filterRange);
 
@@ -55,24 +68,37 @@ export const activityMetrics = (events: GenericEvents,
   try {
     for (let i = 0; i < activityEvents.length; i++) {
       const event = activityEvents[i];
-      if (event.type === EventType.LOC) {
-        const locationEvent = event as LocationEvent;
-        if (locationEvent.t <= t) {
-          // speed
+      if (event.t <= t) {
+        // Speed
+        // Special case: STILL mode change implies speed should now be zero, regardless of the last report from the GPS.
+        if (event.type === EventType.MODE) {
+          const modeChangeEvent = event as ModeChangeEvent;
+          if (modeChangeEvent.data.mode === ModeType.STILL) {
+            speedMetric = {
+              text: '0',
+              units: speedUnits,
+              value: 0,
+            }
+          }
+        }
+        if (event.type === EventType.LOC) {
+          const locationEvent = event as LocationEvent;
           if (locationEvent.t + sharedConstants.metrics.speed.maxAgeCurrent >= t) {
             if (locationEvent.data.speed && locationEvent.data.speed >= 0) {
               lastSpeed = locationEvent.data.speed;
-              const lastSpeedText = lastSpeed.toFixed(1);
+              const lastSpeedText = lastSpeed.toFixed(1); // 0.1 mph is probably more than sufficient accuracy
               speedMetric = {
-                displayText: `${lastSpeedText} mph`,
                 text: lastSpeedText,
-                units: 'Speed (mph)',
+                units: speedUnits,
                 value: lastSpeed,
               }
             }
           }
         }
-        // distance
+      }
+      if (event.type === EventType.LOC) {
+        const locationEvent = event as LocationEvent;
+        // Distance
         if (locationEvent.data.odo) {
           if (!firstOdo) {
             firstOdo = locationEvent.data.odo;

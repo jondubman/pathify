@@ -89,10 +89,10 @@ const colors = {
   byName: namedColors, // all of them
   clock: {
     background: withOpacity(namedColors.black, 0.7),
-    border: withOpacity(namedColors.azure, 0.7),
+    border: withOpacity(namedColors.azure, 0.9),
     backgroundNow: withOpacity(namedColors.azure_dark, 0.75),
     backgroundPaused: withOpacity(namedColors.red_dark, 0.75),
-    underlay: withOpacity(namedColors.blue, 0.25),
+    underlay: withOpacity(namedColors.black, 0.5),
   },
   compassButton: {
     background: 'white',
@@ -195,7 +195,7 @@ const constants = {
   clock: {
     border: {
       width: 1,
-      color: withOpacity(colors.byName.azure, 1),
+      color: withOpacity(colors.byName.white, 0.65),
     },
     centerCircle: {
       color: withOpacity(colors.byName.red, 1),
@@ -221,7 +221,7 @@ const constants = {
     ticks: {
       count: 60,
       major: {
-        color: withOpacity(colors.byName.white, 0.65),
+        color: withOpacity(colors.byName.white, 0.75),
         length: 10,
         width: 1,
       },

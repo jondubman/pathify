@@ -505,9 +505,12 @@ const sagas = {
     }
   },
 
-  // menuSelect: function* (action: Action) {
-  //   const menuSelectEvent = action.params as MenuSelectEvent;
-  // },
+  menuItemSelected: function* (action: Action) {
+    const menuItem: string = action.params;
+    if (menuItem === 'now') {
+      yield put(newAction(AppAction.flagToggle, 'timelineNow'));
+    }
+  },
 
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;

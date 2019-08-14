@@ -49,7 +49,7 @@ export enum AppAction {
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
-  // 'menuItemSelected' = 'menuItemSelected',
+  'menuItemSelected' = 'menuItemSelected',
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'panTimeline' = 'panTimeline', // see PanTimelineParams
