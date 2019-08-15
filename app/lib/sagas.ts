@@ -39,6 +39,8 @@ import * as uuid from 'uuid/v4';
 
 import { DomainPropType } from 'victory-native';
 
+import { MenuItem } from 'containers/PopupMenusContainer';
+
 import {
   AbsoluteRelativeOption,
   Action,
@@ -507,8 +509,20 @@ const sagas = {
 
   menuItemSelected: function* (action: Action) {
     const menuItem: string = action.params;
-    if (menuItem === 'now') {
+    if (menuItem === MenuItem.NOW) {
       yield put(newAction(AppAction.flagToggle, 'timelineNow'));
+    }
+    if (menuItem === MenuItem.ZOOM_IN) {
+      const level = yield select(state => state.options.timelineZoomLevel);
+      if (level > 0) {
+        yield put(newAction(AppAction.setAppOption, { timelineZoomLevel: level - 1 }));
+      }
+    }
+    if (menuItem === MenuItem.ZOOM_OUT) {
+      const level = yield select(state => state.options.timelineZoomLevel);
+      if (level < constants.timeline.zoomLevels.length - 1) {
+        yield put(newAction(AppAction.setAppOption, { timelineZoomLevel: level + 1 }));
+      }
     }
   },
 
@@ -749,7 +763,6 @@ const sagas = {
       // yield call(log.trace, 'timerTick', now);
       const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
       if (timelineNow) {
-        // This is where the mode for the Timeline really takes effect.
         yield put(newAction(AppAction.setAppOption, { refTime: now }));
       }
       const tickEvents = yield select((state: AppState) => state.flags.tickEvents);

@@ -10,8 +10,25 @@ import {
 import { AppState } from 'lib/state';
 import { activitySummary } from 'lib/activitySummary';
 
+export enum MenuItem {
+  // activitySummary
+  'DISTANCE' = 'DISTANCE',
+  'TIME' = 'TIME',
+  'SPEED' = 'SPEED',
+
+  // clockMenu
+  'CLEAR' = 'CLEAR',
+  'LIST' = 'LIST',
+  'MARK' = 'MARK',
+  'NEXT' = 'NEXT',
+  'NOW' = 'NOW',
+  'PREV' = 'PREV',
+  'ZOOM_IN' = 'ZOOM_IN',
+  'ZOOM_OUT' = 'ZOOM_OUT',
+}
+
 export interface PopupMenuItem {
-  name: string; // must be unique; canonical way to refer to this menu
+  name: MenuItem; // must be unique; canonical way to refer to this menu
   defaultVisible?: boolean;
   displayText: string; // TODO icons?
   itemContainerStyle?: ViewStyle;
@@ -36,13 +53,14 @@ export enum PopupMenuName {
 
 // for clockMenu
 const itemContainerStyle = {
-
+  marginLeft: 5,
+  marginTop: 5,
 }
 const itemStyle = {
   backgroundColor: constants.colors.byName.azure_dark,
   borderRadius: constants.activitySummary.itemBorderRadius,
-  height: 100,
-  width: 100,
+  height: 60,
+  width: 60,
 }
 
 // TODO not sure how to avoid repeating the construct Map<PopupMenuName, PopupMenuConfig> a few times when using new;
@@ -69,8 +87,13 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
     } as ViewStyle,
   }],
   [PopupMenuName.clockMenu, {
+    contentsStyle: {
+      alignItems: 'flex-end',
+      flexDirection: 'row',
+      // flexWrap: 'wrap',
+    },
     defaultItemStyle: {
-      margin: 10,
+      margin: 5,
     },
     items: [
       // { name: 'cancelSelection', displayText: 'Cancel Selection' }, // starts selection process
@@ -81,12 +104,29 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       // { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
 
       // { name: 'next', displayText: 'NEXT', defaultVisible: true },
-      { name: 'now',
+      {
+        name: MenuItem.ZOOM_OUT,
+        displayText: '-',
+        defaultVisible: true,
+        itemContainerStyle,
+        itemStyle,
+        itemUnderlayColor: constants.colors.byName.azure,
+      },
+      {
+        name: MenuItem.ZOOM_IN,
+        displayText: '+',
+        defaultVisible: true,
+        itemContainerStyle,
+        itemStyle,
+        itemUnderlayColor: constants.colors.byName.azure,
+      },
+      {
+        name: MenuItem.NOW,
         displayText: 'NOW',
         defaultVisible: true,
         itemContainerStyle,
         itemStyle,
-        itemUnderlayColor: constants.colors.byName.aqua,
+        itemUnderlayColor: constants.colors.byName.azure,
       },
       // { name: 'prev', displayText: 'PREVIOUS', defaultVisible: true },
 

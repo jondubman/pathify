@@ -1,4 +1,7 @@
-import { PopupMenuConfig } from 'containers/PopupMenusContainer';
+import {
+  MenuItem,
+  PopupMenuConfig
+} from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
 import {
   dynamicAreaTop,
@@ -83,7 +86,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemStyle, // TODO shrink to fit if string is too long
           itemUnderlayColor: constants.colors.byName.blue,
           label: distanceMetric.units || '',
-          name: 'distanceLabel',
+          name: MenuItem.DISTANCE,
         },
         {
           displayText: timeText!,
@@ -91,7 +94,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
           label: (timeMetric && timeMetric.units) || '',
-          name: 'time',
+          name: MenuItem.TIME,
         },
         {
           displayText: speedText,
@@ -99,7 +102,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
           label: (speedMetric && speedMetric.units) || '',
-          name: 'speed',
+          name: MenuItem.SPEED,
         },
       ]
     }
