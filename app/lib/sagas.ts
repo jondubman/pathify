@@ -221,10 +221,10 @@ const sagas = {
   // Note this has the side effect of disabling following on the map if the center is moved.
   centerMap: function* (action: Action) {
     try {
-      yield call(log.trace, 'saga centerMap');
       const map = MapUtils();
       if (map && map.flyTo) {
         const params = action.params as CenterMapParams;
+        yield call(log.trace, 'saga centerMap', params);
         const { center, option, zoom } = params;
         if (center) {
           let newCenter = center;
@@ -237,9 +237,9 @@ const sagas = {
           }
           if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
             const config = {
+              animationDuration: constants.map.centerMapDuration,
               centerCoordinate: newCenter,
-              duration: constants.map.centerMapDuration,
-              zoom,
+              zoomLevel: zoom,
             }
             yield call(map.setCamera as any, config);
           } else {
@@ -253,6 +253,7 @@ const sagas = {
   },
 
   // This has the side effect of panning the map component imperatively. Note use of flyTo which makes it more fluid.
+  // Centering the map should not affect zoom.
   centerMapOnUser: function* () {
     try {
       const map = MapUtils();
@@ -684,13 +685,15 @@ const sagas = {
       const timelineNow = yield select(state => state.flags.timelineNow);
       const events = yield select(state => state.events);
       const currentActivity = yield select(state => state.options.currentActivity);
-      if (!timelineNow) { // TODO make sure to handle case of transitionining to NOW mode
+      if (timelineNow) {
+        yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
+      } else {
         const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
         if (activity && currentActivity && currentActivity.tr[0] === activity!.tr[0]) {
           // Avoid a selectedActivity that would be redundant to currentActivity.
-          yield put(newAction(AppAction.setAppOption, { selectedActivity: null }));
+          yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
         } else {
-          yield put(newAction(AppAction.setAppOption, { selectedActivity: activity }));
+          yield put(newAction(AppAction.setAppOption, { selectedActivity: activity })); // recursive
         }
       }
     }

@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 
-import Mapbox from '@mapbox/react-native-mapbox-gl';
+import Mapbox from '@react-native-mapbox-gl/maps';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
@@ -25,7 +25,8 @@ export type Bounds = [LonLat, LonLat] | null;
 
 class MapArea extends Component<MapAreaProps> {
 
-  _map: null; // set by MapBox.MapView ref function below
+  _camera: Mapbox.Camera | null = null; // set by Camera ref function below
+  _map: Mapbox.MapView | null = null; // set by MapBox.MapView ref function below
 
   constructor(props: MapAreaProps) {
     super(props);
@@ -42,7 +43,6 @@ class MapArea extends Component<MapAreaProps> {
     this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
     this.onPress = this.onPress.bind(this);
     this.setCamera = this.setCamera.bind(this);
-    // this.zoomTo = this.zoomTo.bind(this);
   }
 
   getMap(): IMapUtils {
@@ -101,28 +101,30 @@ class MapArea extends Component<MapAreaProps> {
         <View style={viewStyle}>
           <Mapbox.MapView
             attributionEnabled={true}
-            centerCoordinate={[ mapCenterLon, mapCenterLat ]}
             compassEnabled={false}
             contentInset={[ 0, 0, 0, 0 ]}
-            heading={0}
             logoEnabled={true}
             onPress={this.onPress}
             onRegionDidChange={this.onRegionDidChange}
             onRegionWillChange={this.onRegionWillChange}
             pitchEnabled={false}
             ref={map => {
-              this._map = map;
+              this._map = map as Mapbox.MapView;
               singletonMap = this;
             }}
             rotateEnabled={true}
             scrollEnabled={true}
-            showUserLocation={false}
             style={mapStyle}
             styleURL={mapStyleURL}
-            userTrackingMode={Mapbox.UserTrackingModes.None}
             zoomEnabled={true}
-            zoomLevel={constants.map.default.zoom}
           >
+            <Mapbox.Camera
+              centerCoordinate={[mapCenterLon, mapCenterLat]}
+              followUserLocation={false}
+              heading={0}
+              ref={camera => { this._camera = camera }}
+              zoomLevel={constants.map.default.zoom}
+            />
             <PathsContainer />
             <PulsarsContainer />
           </Mapbox.MapView>
@@ -138,25 +140,25 @@ class MapArea extends Component<MapAreaProps> {
   // all coords: [lon, lat]
   // duration is msec.
   fitBounds(neCoords: LonLat, swCoords: LonLat, padding: number, duration: number) {
-    if (this._map) {
-      const mapView = this._map as any;
-      mapView.fitBounds(neCoords, swCoords, padding, duration);
+    if (this._camera) {
+      const camera = this._camera!;
+      camera.fitBounds(neCoords, swCoords, padding, duration);
     }
   }
 
   // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
   flyTo(coordinates: LonLat, duration: number = 0) {
-    if (this._map) {
-      const mapView = this._map as any;
-      mapView.flyTo(coordinates, duration);
+    if (this._camera) {
+      const camera = this._camera!;
+      camera.flyTo(coordinates, duration);
     }
   }
 
   async getCenter(): Promise<LonLat> {
     if (this._map) {
-      const mapView = this._map as any;
+      const mapView = this._map;
       const center = await mapView.getCenter();
-      return center;
+      return center as LonLat;
     }
     return [0, 0]; // TODO should never happen
   }
@@ -164,7 +166,7 @@ class MapArea extends Component<MapAreaProps> {
   // coordinates is [ lon, lat ]
   async getPointInView(coordinates) {
     if (this._map) {
-      const mapView = this._map as any;
+      const mapView = this._map;
       return await mapView.getPointInView(coordinates);
     }
   }
@@ -172,8 +174,9 @@ class MapArea extends Component<MapAreaProps> {
   // return the coordinate bounds [NE [lon, lat], SW [lon, lat]] visible in the users’s viewport.
   async getVisibleBounds(): Promise<Bounds> {
     if (this._map) {
-      const mapView = this._map as any;
-      const bounds = await mapView.getVisibleBounds();
+      const mapView = this._map;
+      // TODO casting types until index.d.ts TypeScript declaration is fixed
+      const bounds = await mapView.getVisibleBounds() as unknown as Bounds;
       return bounds;
     }
     return null;
@@ -181,7 +184,7 @@ class MapArea extends Component<MapAreaProps> {
 
   async getZoom(): Promise<number> {
     if (this._map) {
-      const mapView = this._map as any;
+      const mapView = this._map;
       const zoom = await mapView.getZoom();
       return zoom;
     }
@@ -190,9 +193,9 @@ class MapArea extends Component<MapAreaProps> {
 
   // duration is optional
   moveTo(coordinates: LonLat, duration: number) {
-    if (this._map) {
-      const mapView = this._map as any;
-      mapView.moveTo(coordinates, duration);
+    if (this._camera) {
+      const camera = this._camera!;
+      camera.moveTo(coordinates, duration);
     }
   }
 
@@ -221,18 +224,11 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   setCamera(config: object) {
-    const mapView = this._map as any;
-    mapView.setCamera(config);
+    if (this._camera) {
+      const camera = this._camera!;
+      camera.setCamera(config);
+    }
   }
-
-  // TODO zoomTo is not really working right now
-  // https://github.com/mapbox/react-native-mapbox-gl/issues/988
-  // zoomTo(zoomLevel: number) {
-  //   if (this._map) {
-  //     const mapView = this._map as any;
-  //     mapView.zoomTo(zoomLevel);
-  //   }
-  // }
 }
 
 // methods exposed for imperative use as needed
@@ -244,10 +240,10 @@ export interface IMapUtils {
   getVisibleBounds: () => Promise<Bounds>;
   getZoom: () => Promise<number>;
   setCamera: (config: object) => void;
-  // zoomTo: (zoomLevel: number) => void;
 }
 
 // ref to singleton MapArea component that is created
+// TODO this seems cumbersome - seek a simpler way
 let singletonMap: (Component<MapAreaProps> & IMapUtils) | null = null;
 
 export function MapUtils(): IMapUtils | null {

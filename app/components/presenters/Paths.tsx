@@ -5,7 +5,7 @@ import React, {
   Fragment,
 } from 'react';
 
-import Mapbox from '@mapbox/react-native-mapbox-gl';
+import Mapbox from '@react-native-mapbox-gl/maps';
 
 import { PathsProps } from 'containers/PathsContainer';
 import constants from 'lib/constants';
@@ -19,15 +19,15 @@ const lineLayerStyleBase = {
   lineOpacity: 1,
 }
 
-const lineLayerStyleDefault = Mapbox.StyleSheet.create({
+const lineLayerStyleDefault = {
   ...lineLayerStyleBase,
   lineColor: constants.colors.paths.default,
-})
+}
 
-const lineLayerStyleCurrent = Mapbox.StyleSheet.create({
+const lineLayerStyleCurrent = {
   ...lineLayerStyleBase,
   lineColor: constants.colors.paths.current,
-})
+}
 
 class Paths extends Component<PathsProps> {
   public render() {
