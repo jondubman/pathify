@@ -672,9 +672,9 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-    if (!action.params.refTime) {
-      yield call(log.trace, 'saga setAppOption', action);
-    }
+    // if (!action.params.refTime) {
+    //   yield call(log.trace, 'saga setAppOption', action);
+    // }
     // First set the option itself:
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
@@ -692,7 +692,10 @@ const sagas = {
         const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
         if (activity && currentActivity && currentActivity.tr[0] === activity!.tr[0]) {
           // Avoid a selectedActivity that would be redundant to currentActivity.
-          yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
+          const selectedActivity = yield select(state => state.options.selectedActivity);
+          if (selectedActivity) {
+            yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
+          }
         } else {
           yield put(newAction(AppAction.setAppOption, { selectedActivity: activity })); // recursive
         }

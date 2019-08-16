@@ -13,6 +13,7 @@ import { activitySummary } from 'lib/activitySummary';
 export enum MenuItem {
   // activitySummary
   'DISTANCE' = 'DISTANCE',
+  'ELEVATION' = 'ELEVATION',
   'TIME' = 'TIME',
   'SPEED' = 'SPEED',
 

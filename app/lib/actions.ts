@@ -41,6 +41,7 @@ export enum AppAction {
   'delayedAction' = 'delayedAction', // see DelayedActionParams
   'flagDisable' = 'flagDisable',
   'flagEnable' = 'flagEnable',
+  'flagToggle' = 'flagToggle',
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
   'importGPX' = 'importGPX',
@@ -68,7 +69,6 @@ export enum AppAction {
   'startStopActivity' = 'startStopActivity',
   'timelineZoomed' = 'timelineZoomed',
   'timerTick' = 'timerTick',
-  'flagToggle' = 'flagToggle',
   'userMovedMap' = 'userMovedMap',
 }
 

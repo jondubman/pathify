@@ -49,20 +49,27 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       }
     }
     if (metrics) {
-      // Distance calculations
+      // Distance
       const partialDistanceMetric = metrics.get(ActivityMetricName.partialDistance)!;
       const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
       const distanceMetric = timelineNow ? totalDistanceMetric : partialDistanceMetric;
 
-      // Time calculations
+      // Elevation
+      const elevationMetric = metrics.get(ActivityMetricName.elevation);
+      const partialElevationGainMetric = metrics.get(ActivityMetricName.partialElevationGain);
+      const partialElevationLossMetric = metrics.get(ActivityMetricName.partialElevationLoss);
+      const totalElevationGainMetric = metrics.get(ActivityMetricName.totalElevationGain);
+      const totalElevationLossMetric = metrics.get(ActivityMetricName.totalElevationGain);
+
+      // Time
       const timeMetric = metrics.get(ActivityMetricName.partialTime);
       if (!timeText!) {
         timeText = timeMetric && timeMetric.displayText ?
                      timeMetric.displayText : msecToString(metrics.get(ActivityMetricName.partialTime)!.value);
       }
-      // Speed calculations
+      // Speed
       const speedMetric = metrics.get(ActivityMetricName.speed);
-      const speedText = (speedMetric === null) ? '' : speedMetric!.text || '';
+      const speedText = (speedMetric === null) ? '' : speedMetric!.text || ' ';
 
       const itemContainerStyle = {
         height: constants.activitySummary.itemHeight,
@@ -81,7 +88,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       popup.items = [
         ...popup.items,
         {
-          displayText: (distanceMetric && distanceMetric.displayText) || '',
+          displayText: (distanceMetric && distanceMetric.displayText) || ' ',
           itemContainerStyle,
           itemStyle, // TODO shrink to fit if string is too long
           itemUnderlayColor: constants.colors.byName.blue,
@@ -103,6 +110,14 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemUnderlayColor: constants.colors.byName.blue,
           label: (speedMetric && speedMetric.units) || '',
           name: MenuItem.SPEED,
+        },
+        {
+          displayText: elevationMetric === null ? ' ' : elevationMetric!.value!.toString(),
+          itemContainerStyle,
+          itemStyle,
+          itemUnderlayColor: constants.colors.byName.blue,
+          label: (elevationMetric && elevationMetric.units) || '',
+          name: MenuItem.ELEVATION,
         },
       ]
     }
