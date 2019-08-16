@@ -178,43 +178,43 @@ export const activityMetrics = (events: GenericEvents,
     if (elevation || elevation === 0) {
       elevationMetric = {
         units: 'Elevation (feet)',
-        value: metersToFeet(elevation),
+        value: Math.round(metersToFeet(elevation)),
       }
     }
     if (maxElevation || maxElevation === 0) {
       maxElevationMetric = {
         units: 'Max elevation (feet)',
-        value: metersToFeet(maxElevation),
+        value: Math.round(metersToFeet(maxElevation)),
       }
     }
     if (minElevation || minElevation === 0) {
       minElevationMetric = {
         units: 'Min elevation (feet)',
-        value: metersToFeet(minElevation),
+        value: Math.round(metersToFeet(minElevation)),
       }
     }
     if (partialElevationGain) {
       partialElevationGainMetric = {
         units: 'Elevation gain (feet)',
-        value: metersToFeet(partialElevationGain),
+        value: Math.round(metersToFeet(partialElevationGain)),
       }
     }
     if (partialElevationLoss) {
       partialElevationLossMetric = {
         units: 'Elevation loss (feet)',
-        value: metersToFeet(partialElevationLoss),
+        value: Math.round(metersToFeet(partialElevationLoss)),
       }
     }
     if (totalElevationGain) {
       totalElevationGainMetric = {
         units: 'Total ascent (feet)',
-        value: metersToFeet(partialElevationGain),
+        value: Math.round(metersToFeet(partialElevationGain)),
       }
     }
     if (totalElevationLoss) {
       totalElevationLossMetric = {
         units: 'Total descent (feet)',
-        value: metersToFeet(partialElevationLoss),
+        value: Math.round(metersToFeet(partialElevationLoss)),
       }
     }
     // Set totalDistance

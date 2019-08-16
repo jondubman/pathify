@@ -109,7 +109,7 @@ const colors = {
     // icon: 'black',
     opacity: 0.75,
     disabledBackground: namedColors.green,
-    disabledUnderlay: namedColors.darkGreen, // in transition
+    disabledUnderlay: namedColors.yellow, // in transition
     enabledBackground: namedColors.red,
     enabledUnderlay: namedColors.darkRed, // in transition
   },
