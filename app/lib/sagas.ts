@@ -324,6 +324,7 @@ const sagas = {
       }
       yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
 
+      // yield call(Geo.resetOdometer);
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
 
       const newCurrentActivity: Activity | null = enabledNow ? {
@@ -568,9 +569,9 @@ const sagas = {
     const map = MapUtils();
     if (map) {
       yield call(log.debug, 'saga reorientMap');
-      const obj = { heading: 0, duration: constants.map.reorientationTime };
       yield put(newAction(AppAction.flagEnable, 'mapMoving'));
       yield put(newAction(AppAction.flagEnable, 'mapReorienting'));
+      const obj = { heading: 0, animationDuration: constants.map.reorientationTime };
       map.setCamera(obj);
     }
   },
