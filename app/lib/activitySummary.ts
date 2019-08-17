@@ -15,6 +15,7 @@ import { msecToString } from 'shared/units';
 export const activitySummary = (state: AppState, activitySummary: PopupMenuConfig): PopupMenuConfig => {
   const popup = { ...activitySummary };
   const { activitySummaryExpanded, timelineNow } = state.flags;
+  const { itemsWhenCollapsed, itemsWhenExpanded } = constants.activitySummary;
   try {
     const height = activitySummaryExpanded ?
       constants.activitySummary.heightExpanded + dynamicAreaTop(state)
@@ -88,49 +89,44 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
         width: '100%',
       }
 
+      const itemBase = {
+        itemContainerStyle,
+        itemStyle,
+        itemUnderlayColor: constants.colors.byName.blue,
+      }
       popup.items = [
         ...popup.items,
         {
           displayText: (distanceMetric && distanceMetric.text) || ' ',
-          itemContainerStyle,
-          itemStyle, // TODO shrink to fit if string is too long
-          itemUnderlayColor: constants.colors.byName.blue,
-          label: distanceMetric.label || ' ',
+          ...itemBase,
+          label: (distanceMetric && distanceMetric.label) || ' ',
           name: MenuItem.DISTANCE,
         },
         {
           displayText: timeText!,
-          itemContainerStyle,
-          itemStyle,
-          itemUnderlayColor: constants.colors.byName.blue,
+          ...itemBase,
           label: (timeMetric && timeMetric.label) || ' ',
           name: MenuItem.TIME,
         },
         {
           displayText: speedText,
-          itemContainerStyle,
-          itemStyle,
-          itemUnderlayColor: constants.colors.byName.blue,
+          ...itemBase,
           label: (speedMetric && speedMetric.label) || ' ',
           name: MenuItem.SPEED,
         },
         {
           displayText: elevationMetric === null || !elevationMetric!.value ? ' ' : elevationMetric!.value.toString(),
-          itemContainerStyle,
-          itemStyle,
-          itemUnderlayColor: constants.colors.byName.blue,
+          ...itemBase,
           label: (elevationMetric && elevationMetric.label) || ' ',
           name: MenuItem.ELEVATION,
         },
         {
           displayText: modeMetric === null ? ' ' : modeMetric!.text!,
-          itemContainerStyle,
-          itemStyle,
-          itemUnderlayColor: constants.colors.byName.blue,
+          ...itemBase,
           label: (modeMetric && modeMetric.label) || ' ',
           name: MenuItem.MODE,
         },
-      ]
+      ].slice(0, activitySummaryExpanded ? itemsWhenExpanded : itemsWhenCollapsed);
     }
   } catch (err) {
     log.error('activitySummary', err);

@@ -187,6 +187,8 @@ const constants = {
     itemBorderRadius: 5,
     itemHeight: 55,
     itemMargin: 5,
+    itemsWhenCollapsed: 2,
+    itemsWhenExpanded: 6,
   },
   appName: 'Pathify',
   buttonOffset,
