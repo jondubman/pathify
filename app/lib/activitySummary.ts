@@ -17,7 +17,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
   const { activitySummaryExpanded, timelineNow } = state.flags;
   try {
     const height = activitySummaryExpanded ?
-      constants.activitySummary.heightExpanded
+      constants.activitySummary.heightExpanded + dynamicAreaTop(state)
       :
       constants.activitySummary.heightCollapsed + dynamicAreaTop(state);
 

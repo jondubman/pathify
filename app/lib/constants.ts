@@ -182,8 +182,8 @@ const colors = {
 
 const constants = {
   activitySummary: {
-    heightCollapsed: 65,
-    heightExpanded: 185,
+    heightCollapsed: 60,
+    heightExpanded: 166,
     itemBorderRadius: 5,
     itemHeight: 55,
     itemMargin: 5,

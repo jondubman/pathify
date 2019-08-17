@@ -1,5 +1,7 @@
 //  Selector functions for Redux reducer
 
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
 import utils from 'lib/utils';
@@ -124,8 +126,9 @@ export const selectionTimespans = (state: AppState): Timespans => {
   }
 }
 
+// TODO This is not technically a selector as it doesn't refer to state
 export const dynamicAreaTop = (state: AppState): number => (
-  constants.safeAreaTop
+  constants.safeAreaTop || getStatusBarHeight()
 )
 
 export const dynamicLowerButtonBase = (state: AppState): number => (
