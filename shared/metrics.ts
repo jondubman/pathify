@@ -17,13 +17,11 @@ import { metersToFeet, metersToMiles, msecToString } from './units';
 // These are camel case rather than upper case simply as a stylistic preference.
 // ActivityMetricName is the way to refer to a particular metric, but such a name is not a guarantee that it must exist.
 export enum ActivityMetricName {
-  'averagePace' = 'averagePace',
-  'averageSpeed' = 'averageSpeed',
+  'distance' = 'distance',
   'elevation' = 'elevation',
+  'elevationGain' = 'elevationGain',
+  'elevationLoss' = 'elevationLoss',
   'eventCount' = 'eventCount',
-  'maxElevation' = 'maxElevation',
-  'maxSpeed' = 'maxSpeed',
-  'minElevation' = 'minElevation',
   'minPace' = 'minPace',
   'mode' = 'mode',
   'movingTime' = 'movingTime',
@@ -31,25 +29,22 @@ export enum ActivityMetricName {
   'paceLastTenSeconds' = 'paceLastTenSeconds',
   'paceLastMinute' = 'paceLastMinute',
   'paceLastMile' = 'paceLastMile',
-  'partialDistance' = 'partialDistance',
-  'partialElevationGain' = 'partialElevationGain',
-  'partialElevationLoss' = 'partialElevationLoss',
-  'partialTime' = 'partialTime',
   'stoppedTime' = 'stoppedTime',
   'speed' = 'speed',
-  'totalDistance' = 'totalDistance',
-  'totalElevationGain' = 'totalElevationGain',
-  'totalElevationLoss' = 'totalElevationLoss',
-  'totalTime' = 'totalTime',
+  'time' = 'time',
 }
 
 export type ActivityMetric = { // example:
+  average?: number;            // over entire activity
   label?: string;              // 'mi'
+  max?: number;                // over entire activity
+  min?: number;                // over entire activity
   text?: string;               // '4.5'
-  value?: number;               // 4.5
+  partialValue?: number;       // 3.2 (if like 3.2/4.5 miles)
+  totalValue?: number;         // 4.5
 }
 
-type Optional<T> = T | null;
+type Optional<T> = T | null; // TODO This simple construct is very generally useful and belongs in shared code.
 export type ActivityMetrics = Map<ActivityMetricName, Optional<ActivityMetric>>;
 
 // Compute ActivityMetrics given events, a (minimum) TimeRange to filter them by, and an optional reference timepoint
@@ -65,76 +60,90 @@ export const activityMetrics = (events: GenericEvents,
 
   // distance
   let firstOdo = 0, lastOdo = 0;
-  let partialDistanceMetric: Optional<ActivityMetric> = null;
-  let totalDistanceMetric: Optional<ActivityMetric> = null;
+  let distanceMetric: Optional<ActivityMetric> = {
+    label: 'Distance (miles)',
+  }
 
   // elevation
   let elevationPrevious, elevation, elevationMetric: ActivityMetric = { label: 'Elevation (feet)' };
-  let maxElevation, maxElevationMetric: Optional<ActivityMetric> = null;
-  let minElevation, minElevationMetric: Optional<ActivityMetric> = null;
   let modeMetric: ActivityMetric = {
     label: 'Mode',
     text: ' ',
   }
-  let partialElevationGain = 0, partialElevationGainMetric: Optional<ActivityMetric> = null;
-  let partialElevationLoss = 0, partialElevationLossMetric: Optional<ActivityMetric> = null;
-  let totalElevationGain = 0, totalElevationGainMetric: Optional<ActivityMetric> = null;
-  let totalElevationLoss = 0, totalElevationLossMetric: Optional<ActivityMetric> = null;
+  let elevationGain = 0;
+  const elevationGainMetric: Optional<ActivityMetric> = {
+    label: 'Elevation gain (feet)',
+  }
+  let elevationLoss = 0;
+  const elevationLossMetric: Optional<ActivityMetric> = {
+    label: 'Elevation loss (feet)',
+  }
+  let maxElevation: number, minElevation: number;
 
   // speed
-  let lastSpeed = 0, speedMetric: Optional<ActivityMetric> = null;
-  const speedLabel = 'Speed (mph)';
-
-  // Time (don't need to look at events for this)
-  const totalTimeValue = Math.max(0, timeRange[1] - timeRange[0]);
-  const totalTimeMetric: ActivityMetric = {
-    label: 'Total time',
-    value: totalTimeValue,
+  let lastSpeed = 0, speedMetric: Optional<ActivityMetric> = {
+    label: 'Speed (mph)',
   }
+
+  // Metrics that do not require iterating through events:
+
+  // Event count
+  const eventCountMetric: ActivityMetric = {
+    label: '# of events',
+    text: activityEvents.length.toString(),
+    totalValue: activityEvents.length,
+  }
+
+  // Time
+  const totalTimeValue = Math.max(0, timeRange[1] - timeRange[0]);
   const partialTimeValue = t ? Math.max(0, t - timeRange[0]) : totalTimeValue;
   const partialTimeDisplayText = (partialTimeValue === totalTimeValue) ?
     `${msecToString(partialTimeValue)}` :
     `${msecToString(partialTimeValue)}/${msecToString(totalTimeValue)}`;
-  const partialTimeMetric: ActivityMetric = {
-    label: 'Elapsed Time',
+  const timeMetric: ActivityMetric = {
+    label: 'Elapsed time',
     text: partialTimeDisplayText,
-    value: partialTimeValue,
+    partialValue: partialTimeValue,
+    totalValue: totalTimeValue,
   }
 
   // TODO this will do odd things if events are out of time order. Verify they are not. Maybe add a data quality metric?
   try {
+    let partialEventCount = 0;
     for (let i = 0; i < activityEvents.length; i++) {
       const event = activityEvents[i];
       if (event.t <= t) { // for calculating "up to time t"
-        // Speed
-        // Special case: STILL mode change implies speed should now be zero, regardless of the last report from the GPS.
+        // event count
+        partialEventCount++;
+        eventCountMetric.partialValue = partialEventCount;
+        eventCountMetric.text = (partialEventCount === activityEvents.length) ?
+          activityEvents.length.toString() : `${partialEventCount}/${activityEvents.length}`;
+
         if (event.type === EventType.MODE) {
           const modeChangeEvent = event as ModeChangeEvent;
           const { mode } = modeChangeEvent.data;
           switch (mode) {
             case ModeType.BICYCLE:
-              modeMetric.text = 'bicycling'
+              modeMetric.text = 'Bicycling'
               break;
             case ModeType.ON_FOOT:
-              modeMetric.text = 'walking';
+              modeMetric.text = 'Walking';
               break;
             case ModeType.STILL:
-              modeMetric.text = 'still';
+              modeMetric.text = 'Still';
               break;
             case ModeType.RUNNING:
-              modeMetric.text = 'running';
+              modeMetric.text = 'Running';
               break;
             case ModeType.VEHICLE:
-              modeMetric.text = 'in vehicle';
+              modeMetric.text = 'Driving';
               break;
             default:
               break;
           }
+        // Special case: STILL mode change implies speed should now be zero, regardless of the last report from the GPS.
           if (mode === ModeType.STILL) {
-            speedMetric = {
-              text: '0',
-              label: speedLabel,
-            }
+            speedMetric.text = '0'; // hard-coded zero
           }
         }
         if (event.type === EventType.LOC) {
@@ -143,20 +152,17 @@ export const activityMetrics = (events: GenericEvents,
             if (locationEvent.data.speed && locationEvent.data.speed >= 0) {
               lastSpeed = locationEvent.data.speed;
               const lastSpeedText = lastSpeed.toFixed(1); // 0.1 mph is probably more than sufficient accuracy
-              speedMetric = {
-                text: lastSpeedText,
-                label: speedLabel,
-                value: lastSpeed,
-              }
+              speedMetric.text = lastSpeedText;
+              speedMetric.partialValue = lastSpeed;
             }
             if (locationEvent.data.ele) {
               elevation = locationEvent.data.ele;
               if (elevationPrevious) {
                 const difference = elevation - elevationPrevious;
                 if (difference > 0) {
-                  partialElevationGain += difference; // this will add to partialElevationGain
+                  elevationGain += difference;
                 } else {
-                  partialElevationLoss -= difference; // this will add to partialElevationLoss
+                  elevationLoss -= difference;
                 }
               }
               // note elevationPrevious is set below
@@ -179,9 +185,9 @@ export const activityMetrics = (events: GenericEvents,
           if (elevationPrevious) {
             const difference = latestElevation - elevationPrevious;
             if (difference > 0) {
-              totalElevationGain += difference; // this will add to partialElevationGain
+              elevationGain += difference;
             } else {
-              totalElevationLoss -= difference; // this will add to partialElevationLoss
+              elevationLoss -= difference;
             }
           }
           elevationPrevious = latestElevation;
@@ -193,92 +199,53 @@ export const activityMetrics = (events: GenericEvents,
           }
           lastOdo = locationEvent.data.odo;
           if (locationEvent.t <= t) {
-            partialDistanceMetric = {
-              label: 'miles / total',
-              value: metersToMiles(lastOdo - firstOdo),
-            }
+            distanceMetric.label = 'Miles / Total',
+            distanceMetric.partialValue = metersToMiles(lastOdo - firstOdo);
           }
         }
       }
     }
-    // Finalize the elevation metrics
+    // Finalize the elevation metric
     if (elevation || elevation === 0) {
-      elevationMetric.value = Math.round(metersToFeet(elevation));
+      elevationMetric.totalValue = Math.round(metersToFeet(elevation));
     }
     if (maxElevation || maxElevation === 0) {
-      maxElevationMetric = {
-        label: 'Max elevation (feet)',
-        value: Math.round(metersToFeet(maxElevation)),
-      }
+      elevationMetric.max = Math.round(metersToFeet(maxElevation));
     }
     if (minElevation || minElevation === 0) {
-      minElevationMetric = {
-        label: 'Min elevation (feet)',
-        value: Math.round(metersToFeet(minElevation)),
-      }
+      elevationMetric.min = Math.round(metersToFeet(minElevation));
     }
-    if (partialElevationGain) {
-      partialElevationGainMetric = {
-        label: 'Elevation gain (feet)',
-        value: Math.round(metersToFeet(partialElevationGain)),
-      }
+    if (elevationGain) {
+      elevationGainMetric.totalValue = Math.round(metersToFeet(elevationGain));
     }
-    if (partialElevationLoss) {
-      partialElevationLossMetric = {
-        label: 'Elevation loss (feet)',
-        value: Math.round(metersToFeet(partialElevationLoss)),
-      }
+    if (elevationLoss) {
+      // label: 'Total descent (feet)',
+      elevationLossMetric.totalValue = Math.round(metersToFeet(elevationLoss));
     }
-    if (totalElevationGain) {
-      totalElevationGainMetric = {
-        label: 'Total ascent (feet)',
-        value: Math.round(metersToFeet(partialElevationGain)),
-      }
+    if (elevationGain) {
+      // label: 'Total ascent (feet)',
+      elevationGainMetric.totalValue = Math.round(metersToFeet(elevationGain));
     }
-    if (totalElevationLoss) {
-      totalElevationLossMetric = {
-        label: 'Total descent (feet)',
-        value: Math.round(metersToFeet(partialElevationLoss)),
-      }
-    }
-    // Set totalDistance
     const totalDistanceMiles = metersToMiles(lastOdo - firstOdo);
     const totalDistanceMilesText = totalDistanceMiles.toFixed(2);
-    totalDistanceMetric = {
-      label: 'Distance (miles)',
-      text: totalDistanceMilesText,
-      value: totalDistanceMiles,
-    }
-    // Finalize partialDistance
-    if (partialDistanceMetric) {
-      const partialDistanceText = partialDistanceMetric.value!.toFixed(2);
-      partialDistanceMetric.text = partialDistanceText;
-      if (partialDistanceText === totalDistanceMilesText) {
-        partialDistanceMetric.text = totalDistanceMetric.text;
-      } else {
-        partialDistanceMetric.text = `${partialDistanceText}/${totalDistanceMilesText}`;
-      }
+    const partialDistanceMilesText = distanceMetric.partialValue!.toFixed(2);
+    if (partialDistanceMilesText === totalDistanceMilesText) {
+      distanceMetric.text = `${totalDistanceMilesText}`;
     } else {
-      partialDistanceMetric = totalDistanceMetric;
+      distanceMetric.text = `${partialDistanceMilesText}/${totalDistanceMilesText}`;
     }
   } catch (err) {
     log.error('activityMetrics error', err);
   } finally {
     return new Map<ActivityMetricName, Optional<ActivityMetric>>([
+      [ActivityMetricName.distance, distanceMetric],
       [ActivityMetricName.elevation, elevationMetric],
-      [ActivityMetricName.eventCount, { value: activityEvents.length }],
-      [ActivityMetricName.maxElevation, maxElevationMetric],
-      [ActivityMetricName.minElevation, minElevationMetric],
+      [ActivityMetricName.eventCount, eventCountMetric],
       [ActivityMetricName.mode, modeMetric],
-      [ActivityMetricName.partialDistance, partialDistanceMetric],
-      [ActivityMetricName.partialElevationGain, partialElevationGainMetric],
-      [ActivityMetricName.partialElevationLoss, partialElevationLossMetric],
-      [ActivityMetricName.partialTime, partialTimeMetric],
       [ActivityMetricName.speed, speedMetric],
-      [ActivityMetricName.totalDistance, totalDistanceMetric],
-      [ActivityMetricName.totalElevationGain, totalElevationGainMetric],
-      [ActivityMetricName.totalElevationLoss, totalElevationLossMetric],
-      [ActivityMetricName.totalTime, totalTimeMetric],
+      [ActivityMetricName.elevationGain, elevationGainMetric],
+      [ActivityMetricName.elevationLoss, elevationLossMetric],
+      [ActivityMetricName.time, timeMetric],
     ])
   }
 }

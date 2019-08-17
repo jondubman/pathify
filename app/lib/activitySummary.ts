@@ -51,25 +51,21 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
     }
     if (metrics) {
       // Distance
-      const partialDistanceMetric = metrics.get(ActivityMetricName.partialDistance)!;
-      const totalDistanceMetric = metrics.get(ActivityMetricName.totalDistance)!;
-      const distanceMetric = timelineNow ? totalDistanceMetric : partialDistanceMetric;
+      const distanceMetric = metrics.get(ActivityMetricName.distance)!;
 
       // Elevation
       const elevationMetric = metrics.get(ActivityMetricName.elevation);
-      const partialElevationGainMetric = metrics.get(ActivityMetricName.partialElevationGain);
-      const partialElevationLossMetric = metrics.get(ActivityMetricName.partialElevationLoss);
-      const totalElevationGainMetric = metrics.get(ActivityMetricName.totalElevationGain);
-      const totalElevationLossMetric = metrics.get(ActivityMetricName.totalElevationGain);
+      // const elevationGainMetric = metrics.get(ActivityMetricName.elevationGain);
+      // const elevationLossMetric = metrics.get(ActivityMetricName.elevationLoss);
 
       // Mode
       const modeMetric = metrics.get(ActivityMetricName.mode);
 
       // Time
-      const timeMetric = metrics.get(ActivityMetricName.partialTime);
+      const timeMetric = metrics.get(ActivityMetricName.time);
       if (!timeText!) {
         timeText = timeMetric && timeMetric.text ?
-                     timeMetric.text : msecToString(metrics.get(ActivityMetricName.partialTime)!.value!);
+                   timeMetric.text : msecToString(metrics.get(ActivityMetricName.time)!.totalValue!);
       }
       // Speed
       const speedMetric = metrics.get(ActivityMetricName.speed);
@@ -117,7 +113,8 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           name: MenuItem.SPEED,
         },
         {
-          displayText: elevationMetric === null || !elevationMetric!.value ? ' ' : elevationMetric!.value.toString(),
+          displayText: elevationMetric === null || !elevationMetric!.partialValue ?
+            ' ' : elevationMetric!.partialValue.toString(),
           ...itemBase,
           label: (elevationMetric && elevationMetric.label) || ' ',
           name: MenuItem.ELEVATION,
