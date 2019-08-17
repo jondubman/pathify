@@ -75,6 +75,8 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       const speedMetric = metrics.get(ActivityMetricName.speed);
       const speedText = (speedMetric === null) ? ' ' : speedMetric!.text || ' ';
 
+      // Other metrics
+      const eventCountMetric = metrics.get(ActivityMetricName.eventCount);
       const itemContainerStyle = {
         height: constants.activitySummary.itemHeight,
         padding: constants.activitySummary.itemMargin,
@@ -126,6 +128,12 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           label: (modeMetric && modeMetric.label) || ' ',
           name: MenuItem.MODE,
         },
+        {
+          displayText: (eventCountMetric && eventCountMetric.text) ? eventCountMetric.text : ' ',
+          ...itemBase,
+          label: (eventCountMetric && eventCountMetric.label) ? eventCountMetric.label : ' ',
+          name: MenuItem.EVENT_COUNT
+        }
       ].slice(0, activitySummaryExpanded ? itemsWhenExpanded : itemsWhenCollapsed);
     }
   } catch (err) {

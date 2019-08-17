@@ -14,6 +14,7 @@ export enum MenuItem {
   // activitySummary
   'DISTANCE' = 'DISTANCE',
   'ELEVATION' = 'ELEVATION',
+  'EVENT_COUNT' = 'EVENT_COUNT',
   'MODE' = 'MODE',
   'TIME' = 'TIME',
   'SPEED' = 'SPEED',
