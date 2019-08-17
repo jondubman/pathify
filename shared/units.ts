@@ -7,14 +7,21 @@ export const minutesFromMsec = (msec: number) => msec / 60000;
 // input: some number like 8.5 representing minutes
 // output: a string like 8:30 in this case
 export const minutesToString = (minutes: number) => {
-  const minutesRounded = precisionRound(minutes, 2);
+  const hours = Math.floor(minutes / 60);
+  const minutesRounded = precisionRound(minutes % 60, 2);
   const minutesOnly = Math.floor(minutesRounded);
   const fraction = minutesRounded - minutesOnly;
   let seconds = (fraction * 60).toFixed(0);
   if (parseInt(seconds) < 10) {
     seconds = '0' + seconds; // now, a string
   }
-  return `${minutesOnly}:${seconds}`
+  if (hours) {
+    const zeroPaddedMinutes = minutesOnly < 10 ? `0${minutesOnly}` : minutesOnly;
+    return `${hours}:${zeroPaddedMinutes}:${seconds}`;
+  }
+   else {
+    return `${minutesOnly}:${seconds}`;
+  }
 }
 
 export const msecToString = (msec: number) => minutesToString(minutesFromMsec(msec));
