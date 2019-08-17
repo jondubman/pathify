@@ -61,15 +61,18 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       const totalElevationGainMetric = metrics.get(ActivityMetricName.totalElevationGain);
       const totalElevationLossMetric = metrics.get(ActivityMetricName.totalElevationGain);
 
+      // Mode
+      const modeMetric = metrics.get(ActivityMetricName.mode);
+
       // Time
       const timeMetric = metrics.get(ActivityMetricName.partialTime);
       if (!timeText!) {
-        timeText = timeMetric && timeMetric.displayText ?
-                     timeMetric.displayText : msecToString(metrics.get(ActivityMetricName.partialTime)!.value);
+        timeText = timeMetric && timeMetric.text ?
+                     timeMetric.text : msecToString(metrics.get(ActivityMetricName.partialTime)!.value!);
       }
       // Speed
       const speedMetric = metrics.get(ActivityMetricName.speed);
-      const speedText = (speedMetric === null) ? '' : speedMetric!.text || ' ';
+      const speedText = (speedMetric === null) ? ' ' : speedMetric!.text || ' ';
 
       const itemContainerStyle = {
         height: constants.activitySummary.itemHeight,
@@ -88,11 +91,11 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       popup.items = [
         ...popup.items,
         {
-          displayText: (distanceMetric && distanceMetric.displayText) || ' ',
+          displayText: (distanceMetric && distanceMetric.text) || ' ',
           itemContainerStyle,
           itemStyle, // TODO shrink to fit if string is too long
           itemUnderlayColor: constants.colors.byName.blue,
-          label: distanceMetric.units || '',
+          label: distanceMetric.label || ' ',
           name: MenuItem.DISTANCE,
         },
         {
@@ -100,7 +103,7 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
-          label: (timeMetric && timeMetric.units) || '',
+          label: (timeMetric && timeMetric.label) || ' ',
           name: MenuItem.TIME,
         },
         {
@@ -108,16 +111,24 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
-          label: (speedMetric && speedMetric.units) || '',
+          label: (speedMetric && speedMetric.label) || ' ',
           name: MenuItem.SPEED,
         },
         {
-          displayText: elevationMetric === null ? ' ' : elevationMetric!.value!.toString(),
+          displayText: elevationMetric === null || !elevationMetric!.value ? ' ' : elevationMetric!.value.toString(),
           itemContainerStyle,
           itemStyle,
           itemUnderlayColor: constants.colors.byName.blue,
-          label: (elevationMetric && elevationMetric.units) || '',
+          label: (elevationMetric && elevationMetric.label) || ' ',
           name: MenuItem.ELEVATION,
+        },
+        {
+          displayText: modeMetric === null ? ' ' : modeMetric!.text!,
+          itemContainerStyle,
+          itemStyle,
+          itemUnderlayColor: constants.colors.byName.blue,
+          label: (modeMetric && modeMetric.label) || ' ',
+          name: MenuItem.MODE,
         },
       ]
     }
