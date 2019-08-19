@@ -170,8 +170,9 @@ const sagas = {
               events = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
             }
           }
-          if (query.limit) {
-            events = events.slice(0, query.limit)
+          if (query.startIndex || query.limit) {
+            const startIndex = query.startIndex || 0;
+            events = events.slice(startIndex, startIndex + (query.limit || (events.length - startIndex)));
           }
           response = query.count ? events.length : events;
           break;
