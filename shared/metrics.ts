@@ -207,7 +207,7 @@ export const activityMetrics = (events: GenericEvents,
     }
     // Finalize the elevation metric
     if (elevation || elevation === 0) {
-      elevationMetric.totalValue = Math.round(metersToFeet(elevation));
+      elevationMetric.partialValue = Math.round(metersToFeet(elevation));
     }
     if (maxElevation || maxElevation === 0) {
       elevationMetric.max = Math.round(metersToFeet(maxElevation));
@@ -228,11 +228,13 @@ export const activityMetrics = (events: GenericEvents,
     }
     const totalDistanceMiles = metersToMiles(lastOdo - firstOdo);
     const totalDistanceMilesText = totalDistanceMiles.toFixed(2);
-    const partialDistanceMilesText = distanceMetric.partialValue!.toFixed(2);
-    if (partialDistanceMilesText === totalDistanceMilesText) {
-      distanceMetric.text = `${totalDistanceMilesText}`;
-    } else {
+    distanceMetric.text = `${totalDistanceMilesText}`;
+    if (distanceMetric.partialValue) {
+      const partialDistanceMilesText = distanceMetric.partialValue.toFixed(2);
       distanceMetric.text = `${partialDistanceMilesText}/${totalDistanceMilesText}`;
+      if (partialDistanceMilesText !== totalDistanceMilesText) {
+        distanceMetric.text = `${partialDistanceMilesText}/${totalDistanceMilesText}`;
+      }
     }
   } catch (err) {
     log.error('activityMetrics error', err);

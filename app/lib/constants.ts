@@ -301,7 +301,7 @@ const constants = {
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],
   marks: {
-    centerlineWidthDefault: 3,
+    centerlineWidthDefault: 1.5,
     centerlineWidthSelected: 3,
     rectWidth: 12,
     rectHeight: 0,
@@ -375,82 +375,98 @@ const constants = {
     centerLineWidth: 3,
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
-      zoomLevel: 1,
+      zoomLevel: 7, // see zoomLevels
     },
     miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.
-    zoomLevels: [
-      // visibleTime is #milliseconds visible at a given time (which has no relation to refTime.)
-      //
-      // Note the ratios of successive pairs of intervals aims to be somewhat consistently close to 5,
-      // (ranging from 3.5 to 6), rounded so they are easy to understand, like a half hour, half day, etc.
-      //
-      // tickFormat:  https://github.com/d3/d3-time-format/blob/master/README.md#timeFormat
+    zoomLevels: [ // read as: "Just *under* specified visibleTime threshold implies specified tickInterval, tickFormat"
       {
-        // level 0: zoomed in all the way
-        name: '10 seconds',
-        tickInterval: interval.seconds(2), // 1/5 of visibleTime
-        tickFormat: '%-I:%M:%S',
-        visibleTime: interval.seconds(10), // 1/6 of default
-      },
-      {
-        // level 1: default
-        name: '1 minute',
-        tickInterval: interval.seconds(10), // 1/6 of visibleTime
-        tickFormat: '%-I:%M:%S',
-        visibleTime: interval.minutes(1), // 4x previous visibleTime
-      },
-      {
-        // level 2: one level zoomed out
-        name: '5 minutes',
-        tickInterval: interval.minutes(1), // 1/5 of visibleTime
-        tickFormat: '%-I:%M %p',
-        visibleTime: interval.minutes(5), // 5x previous visibleTime
-      },
-      {
-        // level 3
-        name: '30 minutes', // half hour
-        tickInterval: interval.minutes(5), // 1/6 of visibleTime
-        tickFormat: '%-I:%M %p',
-        visibleTime: interval.minutes(30), // 6x previous visibleTime
-      },
-      {
-        // level 4
-        name: '2 hours',
-        tickInterval: interval.minutes(30), // 1/4 of visibleTime
-        tickFormat: '%-I:%M %p',
-        visibleTime: interval.hours(2), // 4x previous visibleTime
-      },
-      {
-        // level 5
-        name: '12 hours',
-        tickInterval: interval.hours(2), // 1/6 of visibleTime
-        tickFormat: '%-I:%M %p',
-        visibleTime: interval.hours(12), // 6x previous visibleTime
-      },
-      {
-        // level 6
-        name: '2 days',
-        tickInterval: interval.hours(12), // 1/4 of visibleTime
-        tickFormat: '%a %-I %p',
-        visibleTime: interval.days(2), // 4x previous visibleTime
-      },
-      {
-        // level 7
-        name: '1 week',
-        tickInterval: interval.days(1), // 1/7 of visibleTime
-        tickFormat: '%a %d',
-        visibleTime: interval.days(7), // 6x previous visibleTime
-      },
-      {
-        // level 8
-        name: '4 weeks',
-        tickInterval: interval.weeks(1), // 1/4 of visibleTime
+        tickInterval: interval.weeks(1),
         tickFormat: '%a %b %d',
-        visibleTime: interval.weeks(4), // 4x previous visibleTime
+        visibleTime: interval.weeks(4), // upper limit
+      },
+      {
+        tickInterval: interval.weeks(1),
+        tickFormat: '%a %b %d',
+        visibleTime: interval.weeks(1),
+      },
+      {
+        tickInterval: interval.days(1),
+        tickFormat: '%a %d',
+        visibleTime: interval.days(4),
+      },
+      {
+        tickInterval: interval.hours(12),
+        tickFormat: '%a %d', // Wed 28
+        visibleTime: interval.days(2),
+      },
+      {
+        tickInterval: interval.hours(8),
+        tickFormat: '%a %-I %p',
+        visibleTime: interval.hours(24),
+      },
+      {
+        tickInterval: interval.hours(4),
+        tickFormat: '%a %-I %p',
+        visibleTime: interval.hours(12),
+      },
+      {
+        tickInterval: interval.hours(2),
+        tickFormat: '%a %-I %p',
+        visibleTime: interval.hours(4),
+      },
+      {
+        tickInterval: interval.hours(1),
+        tickFormat: '%a %-I %p', // Wed 11 AM
+        visibleTime: interval.hours(2),
+      },
+      {
+        tickInterval: interval.minutes(30),
+        tickFormat: '%-I:%M %p', // 11:00 AM
+        visibleTime: interval.hours(1),
+      },
+      {
+        tickInterval: interval.minutes(10),
+        tickFormat: '%-I:%M %p',
+        visibleTime: interval.minutes(30),
+      },
+      {
+        tickInterval: interval.minutes(5),
+        tickFormat: '%-I:%M %p',
+        visibleTime: interval.minutes(10),
+      },
+      {
+        tickInterval: interval.minutes(2),
+        tickFormat: '%-I:%M %p',
+        visibleTime: interval.minutes(5),
+      },
+      {
+        tickInterval: interval.minutes(1),
+        tickFormat: '%-I:%M %p',
+        visibleTime: interval.minutes(2),
+      },
+      {
+        tickInterval: interval.seconds(30),
+        tickFormat: '%-I:%M:%S', // 11:20:10
+        visibleTime: interval.minutes(1),
+      },
+      {
+        tickInterval: interval.seconds(10),
+        tickFormat: '%-I:%M:%S',
+        visibleTime: interval.seconds(30),
+      },
+      {
+        tickInterval: interval.seconds(5),
+        tickFormat: '%-I:%M:%S',
+        visibleTime: interval.seconds(10),
+      },
+      {
+        tickInterval: interval.seconds(1),
+        tickFormat: '%-I:%M:%S',
+        visibleTime: interval.seconds(5),
       },
     ],
   },

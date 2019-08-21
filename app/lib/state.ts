@@ -46,6 +46,8 @@ export const initialAppState = {
     selectedActivity: null as Activity | null, // for now, no more than one Activity is 'selected' at a time
     serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
     serverSyncTime: 0, // time of last server sync (or 0 if never)
+    timelineSliderValue: 0, // 0 <= value <= 1
+    timelineVisibleTime: constants.timeline.zoomLevels[constants.timeline.default.zoomLevel].visibleTime,
     timelineZoomLevel: constants.timeline.default.zoomLevel,
   },
 }

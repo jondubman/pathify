@@ -67,11 +67,12 @@ class Timeline extends Component<TimelinePanelProps> {
       startupTime,
       timeRange,
       timespans,
+      visibleTime,
       zoomLevel
     } = this.props;
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
-    const { tickInterval, tickFormat, visibleTime } = zoomInfo;
+    const { tickInterval, tickFormat } = zoomInfo;
     // TODO the following # of days is currently arbitrary, belongs in constants if anywhere
     const someTimeAgo = timeseries.timeRoundDown(startupTime - interval.days(60), interval.days(1));
     const tickFormatFn = (t: Date) => {

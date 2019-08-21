@@ -35,6 +35,7 @@ export interface TimelineStateProps {
   timelineNow: boolean;
   timeRange: TimeRange;
   timespans: Timespans;
+  visibleTime: number;
   zoomLevel: number;
 }
 
@@ -65,6 +66,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     timelineNow: state.flags.timelineNow,
     timeRange: timeseries.timeRangeOfEvents(state.events),
     timespans,
+    visibleTime: state.options.timelineVisibleTime,
     zoomLevel: state.options.timelineZoomLevel,
   }
 }

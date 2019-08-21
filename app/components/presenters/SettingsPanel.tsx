@@ -5,7 +5,6 @@ import React, {
 
 import {
   // GestureResponderEvent,
-  // Slider,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -137,7 +136,8 @@ const SettingsPanel = (props: SettingsPanelProps) => (
                 </View>
                 <View style={Styles.opacitySliderView}>
                   <Slider
-                    minimumTrackTintColor={constants.colors.byName.azure}
+                    maximumTrackTintColor={constants.colors.byName.azure}
+                    minimumTrackTintColor={constants.colors.byName.black}
                     onValueChange={(value: number) => { props.onSetMapOpacity(value) }}
                     style={Styles.opacitySlider}
                     value={props.mapOpacity}

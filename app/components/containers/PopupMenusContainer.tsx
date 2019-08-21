@@ -2,7 +2,11 @@ import { ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
 import PopupMenus from 'components/presenters/PopupMenus';
-import { AppAction, newAction } from 'lib/actions';
+import {
+  AppAction,
+  newAction,
+  SliderMovedParams
+} from 'lib/actions';
 import constants from 'lib/constants';
 import {
   dynamicTimelineHeight,
@@ -16,8 +20,9 @@ export enum MenuItem {
   'ELEVATION' = 'ELEVATION',
   'EVENT_COUNT' = 'EVENT_COUNT',
   'MODE' = 'MODE',
-  'TIME' = 'TIME',
   'SPEED' = 'SPEED',
+  'TIME' = 'TIME',
+  'TIMELINE_ZOOM' = 'TIMELINE_ZOOM',
 
   // clockMenu
   'CLEAR' = 'CLEAR',
@@ -30,16 +35,23 @@ export enum MenuItem {
   'ZOOM_OUT' = 'ZOOM_OUT',
 }
 
-export interface PopupMenuItem {
+export enum PopupMenuItemType {
+  'BUTTON' = 'BUTTON', // default
+  'SLIDER' = 'SLIDER',
+}
+
+export interface PopupMenuItem { // TODO icons?
   name: MenuItem; // must be unique; canonical way to refer to this menu
-  defaultVisible?: boolean;
-  displayText: string; // TODO icons?
+  defaultVisible?: boolean; // TODO is this needed?
+  displayText?: string; // required for type BUTTON or default
   itemContainerStyle?: ViewStyle;
   itemStyle?: object; // TODO ViewStyle?
   itemUnderlayColor?: string,
   label?: string, // optional
   labelStyle?: ViewStyle;
+  props?: any;
   textStyle?: object;
+  type?: string;
 }
 export type PopupMenuItems = PopupMenuItem[];
 export type PopupMenuConfig = {
@@ -107,6 +119,11 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       // { name: 'markTimepoint', displayText: 'Mark Timepoint', defaultVisible: true },
 
       // { name: 'next', displayText: 'NEXT', defaultVisible: true },
+      {
+        name: MenuItem.TIMELINE_ZOOM,
+        defaultVisible: true,
+        type: PopupMenuItemType.SLIDER,
+      },
       {
         name: MenuItem.ZOOM_OUT,
         displayText: '-',
@@ -183,7 +200,8 @@ interface PopupMenusStateProps {
 }
 
 interface PopupMenusDispatchProps {
-  menuItemSelected?: (name: string) => void; // TODO
+  menuItemSelected: (name: string) => void;
+  sliderMoved: (name: string, value: number) => void;
 }
 
 export type PopupMenusProps = PopupMenusStateProps & PopupMenusDispatchProps;
@@ -211,6 +229,13 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
       if (state.flags.mapFullScreen) {
         clockMenu.open = false; // hide clockMenu in mapFullScreen mode
       }
+      const timelineZoomItem = clockMenu.items.find(item => item.name === MenuItem.TIMELINE_ZOOM);
+      if (timelineZoomItem) {
+        if (!timelineZoomItem.props) {
+          timelineZoomItem.props = {};
+        }
+        (timelineZoomItem.props as any).sliderValue = state.options.timelineSliderValue;
+      }
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }
     if (menuName === PopupMenuName.activitySummary) {
@@ -226,9 +251,12 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): PopupMenusDispatchProps => {
   const dispatchers = {
-    menuItemSelected: (name: string): void => {
+    menuItemSelected: (name: string) => {
       dispatch(newAction(AppAction.menuItemSelected, name));
-    }
+    },
+    sliderMoved: (name: string, value: number) => {
+      dispatch(newAction(AppAction.sliderMoved, { name, value } as SliderMovedParams));
+    },
   }
   return dispatchers;
 }

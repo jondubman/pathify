@@ -64,6 +64,7 @@ export enum AppAction {
   'setAppOption' = 'setAppOption',
   'setPanelVisibility' = 'setPanelVisibility',
   'sleep' = 'sleep', // see SleepParams
+  'sliderMoved' = 'sliderMoved',
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',
   'startStopActivity' = 'startStopActivity',
@@ -172,4 +173,9 @@ export type SequenceParams = Action[];
 
 export interface SleepParams {
   for: number,
+}
+
+export interface SliderMovedParams {
+  name: string;
+  value: number;
 }

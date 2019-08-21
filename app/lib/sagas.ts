@@ -61,6 +61,7 @@ import {
   SaveEventsToStorageParams,
   SequenceParams,
   SleepParams,
+  SliderMovedParams,
 } from 'lib/actions'
 
 import constants from 'lib/constants';
@@ -95,6 +96,7 @@ import timeseries, {
   EventType,
   GenericEvent,
   GenericEvents,
+  interval,
   TimeRange,
 } from 'shared/timeseries';
 import { continuousTracks } from 'shared/tracks';
@@ -517,14 +519,14 @@ const sagas = {
     }
     if (menuItem === MenuItem.ZOOM_IN) {
       const level = yield select(state => state.options.timelineZoomLevel);
-      if (level > 0) {
-        yield put(newAction(AppAction.setAppOption, { timelineZoomLevel: level - 1 }));
+      if (level < constants.timeline.zoomLevels.length - 1) {
+        yield put(newAction(AppAction.setAppOption, { timelineZoomLevel: level + 1 }));
       }
     }
     if (menuItem === MenuItem.ZOOM_OUT) {
       const level = yield select(state => state.options.timelineZoomLevel);
-      if (level < constants.timeline.zoomLevels.length - 1) {
-        yield put(newAction(AppAction.setAppOption, { timelineZoomLevel: level + 1 }));
+      if (level > 0) {
+        yield put(newAction(AppAction.setAppOption, { timelineZoomLevel: level - 1 }));
       }
     }
   },
@@ -640,6 +642,29 @@ const sagas = {
   // Mostly, more things will happen in parallel than you might anticipate, due to the somewhat subtle semantics of
   // these redux-saga generators, which cannot use async/await.
   sleep: function* () {
+  },
+
+  sliderMoved: function* (action: Action) {
+    const params = action.params as SliderMovedParams;
+    const { value } = params; // between 0 and 1
+    const { zoomLevels } = constants.timeline;
+    // TODO does this math belong in the timeline component?
+    const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
+    const minVisibleTime = zoomLevels[zoomLevels.length - 1].visibleTime; // a relatively small number (order 10K)
+    const logMax = Math.log2(maxVisibleTime); // larger
+    const logMin = Math.log2(minVisibleTime); // smaller
+    const visibleTime = Math.pow(2, logMax - (logMax - logMin) * value);
+    for (let level = 0; level < zoomLevels.length; level++) {
+      if (zoomLevels[level].visibleTime <= visibleTime) {
+        // yield call(log.trace, 'saga sliderMoved', params.name, params.value, (visibleTime / interval.hour).toFixed(2), level);
+        yield put(newAction(AppAction.setAppOption, {
+          timelineSliderValue: value,
+          timelineVisibleTime: visibleTime,
+          timelineZoomLevel: Math.max(0, level),
+        }))
+        break;
+      }
+    }
   },
 
   setPanelVisibility: function* () {

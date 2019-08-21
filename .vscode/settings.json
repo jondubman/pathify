@@ -20,5 +20,9 @@
   },
   "workbench.colorTheme": "Tomorrow Night Blue",
   "search.quickOpen.includeHistory": false,
-  "typescript.suggest.autoImports": false
+  "typescript.suggest.autoImports": false,
+  "search.exclude": {
+    "**/app/shared": true,
+    "**/server/src/shared": true
+  }
 }

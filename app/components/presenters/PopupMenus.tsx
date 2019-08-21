@@ -3,13 +3,45 @@ import React, {
 } from 'react';
 
 import {
+  StyleSheet,
   Text,
   TouchableHighlight,
   View,
   ViewStyle,
 } from 'react-native';
 
-import { PopupMenuConfig, PopupMenuItem, PopupMenuName, PopupMenusProps } from 'containers/PopupMenusContainer';
+import Slider from '@react-native-community/slider';
+
+const Styles = StyleSheet.create({
+  opacitySlider: {
+    borderWidth: 1,
+    borderColor: constants.colors.byName.fuschia,
+    borderRadius: 5,
+    // position: 'relative',
+    // top: 0,
+    // bottom: 0,
+    // right: 0,
+    // left: 0,
+  },
+  opacitySliderView: {
+    backgroundColor: constants.colors.byName.azure_dark,
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 2,
+    width: 300, // TODO
+    position: 'absolute',
+    top: 0,
+  },
+})
+
+import {
+  PopupMenuConfig,
+  PopupMenuItem,
+  PopupMenuItemType,
+  PopupMenuName,
+  PopupMenusProps
+} from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
 import log from 'shared/log';
 
@@ -41,34 +73,59 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                key={item.name}
                style={item.itemContainerStyle || constants.menus.defaultItemContainerStyle}
               >
-                <TouchableHighlight
-                  key={item.name}
-                  onPress={() => {
-                    log.debug('PopupMenuItem press', item.name);
-                    this.props.menuItemSelected && this.props.menuItemSelected(item.name);
-                  }}
-                  style={{ ...constants.menus.defaultItemStyle, ...menuConfig.defaultItemStyle!, ...item.itemStyle} as any}
-                  underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
-                >
-                  <Fragment>
-                    {item.displayText ? (
-                      <Text
-                        key='displayText'
-                        style={{ ...constants.menus.defaultTextStyle as ViewStyle, ...item.textStyle }}
-                      >
-                        {item.displayText}
-                      </Text>
-                    ) : <View />}
-                    {item.label ? (
-                      <Text
-                        key='label'
-                        style={{ ...constants.menus.defaultLabelStyle as ViewStyle, ...item.labelStyle }}
-                      >
-                        {item.label}
-                      </Text>
-                    ) : <View />}
-                  </Fragment>
-                </TouchableHighlight>
+                {/* BUTTON */}
+                {!item.type || item.type === PopupMenuItemType.BUTTON ?
+                  <TouchableHighlight
+                    key={item.name}
+                    onPress={() => {
+                      log.debug('PopupMenuItem press', item.name);
+                      this.props.menuItemSelected && this.props.menuItemSelected(item.name);
+                    }}
+                    style={{
+                      ...constants.menus.defaultItemStyle,
+                      ...menuConfig.defaultItemStyle!,
+                      ...item.itemStyle} as ViewStyle}
+                    underlayColor={item.itemUnderlayColor || constants.menus.defaultItemUnderlayColor}
+                  >
+                    <Fragment>
+                      {item.displayText ? (
+                        <Text
+                          key='displayText'
+                          style={{ ...constants.menus.defaultTextStyle as ViewStyle, ...item.textStyle }}
+                        >
+                          {item.displayText}
+                        </Text>
+                      ) : <View />}
+                      {item.label ? (
+                        <Text
+                          key='label'
+                          style={{ ...constants.menus.defaultLabelStyle as ViewStyle, ...item.labelStyle }}
+                        >
+                          {item.label}
+                        </Text>
+                      ) : <View />}
+                    </Fragment>
+                  </TouchableHighlight>
+                : null }
+
+                {/* SLIDER */}
+                {item.type === PopupMenuItemType.SLIDER ?
+                <View style={Styles.opacitySliderView}>
+                  <Slider
+                    minimumTrackTintColor={constants.colors.byName.black}
+                    maximumTrackTintColor={constants.colors.byName.black}
+                    minimumValue={0}
+                    maximumValue={1}
+                    onSlidingComplete={() => item.props.initialValue = null}
+                    onSlidingStart={(value: number) => item.props.initialValue = value}
+                    onValueChange={(value: number) => {
+                      this.props.sliderMoved(item.name, value)
+                    }}
+                    style={Styles.opacitySlider}
+                    value={item.props ? (item.props.initialValue || item.props.sliderValue) : 0}
+                  />
+                </View>
+                : null }
               </View>
             ))}
           </View>
