@@ -637,10 +637,7 @@ const sagas = {
     const params = action.params as SliderMovedParams;
     const { value } = params; // between 0 and 1
     // yield call(log.trace, 'saga sliderMoved', value, timelineVisibleTime(value));
-    yield put(newAction(AppAction.setAppOption, {
-      timelineVisibleTime: timelineVisibleTime(value),
-      timelineZoomValue: value,
-    }))
+    yield put(newAction(AppAction.setAppOption, { timelineZoomValue: value }));
   },
 
   setPanelVisibility: function* () {
