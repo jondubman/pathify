@@ -177,3 +177,28 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   }
   return pulsars;
 }
+
+// value (from logarithmic timeline zoom slider) is between 0 and 1.
+// visibleTime is the number of msec shown on the timeline.
+export const timelineVisibleTime = (value: number): number => {
+  const { zoomLevels } = constants.timeline;
+  const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
+  const minVisibleTime = zoomLevels[zoomLevels.length - 1].visibleTime; // a relatively small number (order 10K)
+  const logMax = Math.log2(maxVisibleTime); // larger
+  const logMin = Math.log2(minVisibleTime); // smaller
+  const visibleTime = Math.pow(2, logMax - (logMax - logMin) * value);
+  return visibleTime;
+}
+
+// value (from logarithmic timeline zoom slider) is between 0 and 1.
+// returned number is index for one of the constants.timeline.zoomLevels that's the best fit given this slider value.
+export const timelineZoomLevel = (value: number): number => {
+  const { zoomLevels } = constants.timeline;
+  const visibleTime = timelineVisibleTime(value);
+  for (let level = 0; level < zoomLevels.length; level++) {
+    if (zoomLevels[level].visibleTime <= Math.round(visibleTime)) {
+      return level;
+    }
+  }
+  return 0; // fallback
+}

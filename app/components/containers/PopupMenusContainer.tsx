@@ -31,8 +31,6 @@ export enum MenuItem {
   'NEXT' = 'NEXT',
   'NOW' = 'NOW',
   'PREV' = 'PREV',
-  'ZOOM_IN' = 'ZOOM_IN',
-  'ZOOM_OUT' = 'ZOOM_OUT',
 }
 
 export enum PopupMenuItemType {
@@ -123,22 +121,6 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
         name: MenuItem.TIMELINE_ZOOM,
         defaultVisible: true,
         type: PopupMenuItemType.SLIDER,
-      },
-      {
-        name: MenuItem.ZOOM_OUT,
-        displayText: '-',
-        defaultVisible: true,
-        itemContainerStyle,
-        itemStyle,
-        itemUnderlayColor: constants.colors.byName.azure,
-      },
-      {
-        name: MenuItem.ZOOM_IN,
-        displayText: '+',
-        defaultVisible: true,
-        itemContainerStyle,
-        itemStyle,
-        itemUnderlayColor: constants.colors.byName.azure,
       },
       {
         name: MenuItem.NOW,
@@ -234,7 +216,7 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
         if (!timelineZoomItem.props) {
           timelineZoomItem.props = {};
         }
-        (timelineZoomItem.props as any).sliderValue = state.options.timelineSliderValue;
+        (timelineZoomItem.props as any).sliderValue = state.options.timelineZoomValue;
       }
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }

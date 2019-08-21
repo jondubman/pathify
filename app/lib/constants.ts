@@ -376,17 +376,18 @@ const constants = {
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
       zoomLevel: 7, // see zoomLevels
+      zoomValue: 0.7, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below
     },
     miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.
-    zoomLevels: [ // read as: "Just *under* specified visibleTime threshold implies specified tickInterval, tickFormat"
+    zoomLevels: [ // read as: "time intervals up to the visibleTime threshold yield this tickInterval and tickFormat"
       {
         tickInterval: interval.weeks(1),
         tickFormat: '%a %b %d',
-        visibleTime: interval.weeks(4), // upper limit
+        visibleTime: interval.weeks(4), // upper limit (minimum zoom)
       },
       {
         tickInterval: interval.weeks(1),
@@ -461,12 +462,12 @@ const constants = {
       {
         tickInterval: interval.seconds(5),
         tickFormat: '%-I:%M:%S',
-        visibleTime: interval.seconds(10),
+        visibleTime: interval.seconds(8),
       },
       {
         tickInterval: interval.seconds(1),
         tickFormat: '%-I:%M:%S',
-        visibleTime: interval.seconds(5),
+        visibleTime: interval.seconds(5), // lower limit (maximum zoom)
       },
     ],
   },

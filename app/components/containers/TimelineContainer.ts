@@ -3,7 +3,13 @@ import { DomainPropType } from 'victory-native';
 
 import { AppAction, newAction } from 'lib/actions';
 import { TimespanKind } from 'lib/constants';
-import { continuousTrackList, customTimespans, selectionTimespans } from 'lib/selectors';
+import {
+  continuousTrackList,
+  customTimespans,
+  selectionTimespans,
+  timelineVisibleTime,
+  timelineZoomLevel,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
@@ -66,8 +72,8 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     timelineNow: state.flags.timelineNow,
     timeRange: timeseries.timeRangeOfEvents(state.events),
     timespans,
-    visibleTime: state.options.timelineVisibleTime,
-    zoomLevel: state.options.timelineZoomLevel,
+    visibleTime: timelineVisibleTime(state.options.timelineZoomValue),
+    zoomLevel: timelineZoomLevel(state.options.timelineZoomValue),
   }
 }
 
