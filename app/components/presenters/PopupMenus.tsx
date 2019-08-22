@@ -19,8 +19,8 @@ const Styles = StyleSheet.create({
     // borderColor: constants.colors.byName.blue,
   },
   opacitySliderView: {
-    // marginLeft: 20,
-    // marginRight: 20,
+    marginLeft: constants.clockMenu.sliderMargin,
+    marginRight: constants.clockMenu.sliderMargin,
     marginBottom: 10,
     marginTop: 2,
     position: 'absolute',

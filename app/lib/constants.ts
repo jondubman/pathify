@@ -236,6 +236,7 @@ const constants = {
   },
   clockMenu: {
     height: 240,
+    sliderMargin: 20,
   },
   colors,
   colorThemes,

@@ -216,7 +216,7 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
       if (timelineZoomItem) {
         timelineZoomItem.itemStyle = {
           ...timelineZoomItem.itemStyle,
-          width: utils.windowSize().width,
+          width: utils.windowSize().width - constants.clockMenu.sliderMargin * 2,
         }
         timelineZoomItem.props = {
           ...timelineZoomItem.props,

@@ -16,7 +16,6 @@ export const initialAppState = {
   events: [] as GenericEvents,
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     activitySummaryExpanded: true, // true: activitySummary is expanded, with greater height (false: collapsed)
-    allowContinuousTimelineZoom: false, // false: discrete zoom only
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.
@@ -32,6 +31,7 @@ export const initialAppState = {
     settingsOpen: false, // settings panel visible state
     tickEvents: false, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
+    timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
   },
   menus: initialMenus,
   options: { // non-boolean
