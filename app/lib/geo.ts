@@ -62,7 +62,7 @@ const geolocationOptions: Config = {
   // stopTimeout: 3, // minutes
 
   // desired % confidence to trigger an activity state-change
-  minimumActivityRecognitionConfidence: 65,
+  minimumActivityRecognitionConfidence: 32,
 
   // defaults to 0. Delays stop-detection system, in which location-services is turned off and only the accelerometer is monitored.
   // Stop-detection will only engage if this timer expires. The timer is cancelled if any movement is detected before expiration.
@@ -125,11 +125,17 @@ const geolocationOptions: Config = {
   // Note plugin is highly optimized for motion-activity-updates. Disabling these is not advised.
   disableMotionActivityUpdates: false, // default false
 
+  // Configure the initial tracking- state after BackgroundGeolocation.start is called.
+  // The plugin will immediately enter the tracking-state, bypassing the stationary state.
+  // If the device is not currently moving, the stop detection system will still engage.
+  // After stopTimeout minutes without movement, the plugin will enter the stationary state, as usual.
+  isMoving: true,
+
   // Optionally, you can specify reset: true to #ready. This will esentially force the supplied {config} to be
   // applied with each launch of your application, making it behave like the traditional #configure method.
   // https://github.com/transistorsoft/react-native-background-geolocation/blob/master/docs/README.md#resetconfig-successfn-failurefn
   // https://transistorsoft.github.io/react-native-background-geolocation/classes/_react_native_background_geolocation_.backgroundgeolocation.html#ready
-  reset: true,
+  reset: true, // TODO
 }
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
@@ -196,7 +202,7 @@ const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
 
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
-const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
+// const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
 const newLocationEvent = (info: Location): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
@@ -270,6 +276,13 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         const locationEvent = newLocationEvent(location);
+        if (!store.getState().userLocation) {
+          // This is the first userLocation to arrive.
+          store.dispatch(newAction(AppAction.centerMap, {
+            center: locationEvent.data.loc,
+            option: 'absolute',
+          }))
+        }
         const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
         locationEvent.data.extra = `onLocation ${utils.now()} ${eventIsOld?'old':'new'}`; // TODO
         if (eventIsOld) {
@@ -310,6 +323,7 @@ export const Geo = {
       if (pluginState.enabled) {
         log.trace('BackgroundGeolocation configured and ready', pluginState);
       }
+      BackgroundGeolocation.getCurrentPosition({}, onLocation); // fetch an initial location
     }, err => {
       log.error('BackgroundGeolocation failed to configure', err);
     })
@@ -386,31 +400,31 @@ export const Geo = {
     // }
     return new Promise((resolve, reject) => {
       const started = () => {
-        const receieveLocation = (location: Location) => {
-          if (reduxStore) {
-            if (reduxStore.getState().flags.appActive === false) {
-              log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-              const locationEvent = newLocationEvent(location);
-              locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
-              reduxStore.dispatch(newAction(AppAction.geolocation, {
-                locationEvent: [locationEvent],
-                recheckMapBounds: false,
-              }))
-            }
-          } else {
-            log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
-          }
-        }
-        const options = {
-          interval: 1000, // msec TODO move to constants
-          persist: true, // to native SQLite database
-        }
-        if (reason === 'tracking') { // TODO
-          BackgroundGeolocation.watchPosition(receieveLocation, err => {
-            log.error('BackgroundGeolocation.watchPosition', err);
-            reject(err);
-          }, options)
-        }
+        // const receieveLocation = (location: Location) => {
+        //   if (reduxStore) {
+        //     if (reduxStore.getState().flags.appActive === false) {
+        //       log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
+        //       const locationEvent = newLocationEvent(location);
+        //       locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
+        //       reduxStore.dispatch(newAction(AppAction.geolocation, {
+        //         locationEvent: [locationEvent],
+        //         recheckMapBounds: false,
+        //       }))
+        //     }
+        //   } else {
+        //     log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
+        //   }
+        // }
+        // const options = {
+        //   interval: 1000, // msec TODO move to constants
+        //   persist: true, // to native SQLite database
+        // }
+        // if (reason === 'tracking') { // TODO
+        //   BackgroundGeolocation.watchPosition(receieveLocation, err => {
+        //     log.error('BackgroundGeolocation.watchPosition', err);
+        //     reject(err);
+        //   }, options)
+        // }
         resolve(true);
       }
       BackgroundGeolocation.start(started, err => {

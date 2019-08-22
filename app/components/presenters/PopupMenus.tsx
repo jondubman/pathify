@@ -14,22 +14,15 @@ import Slider from '@react-native-community/slider';
 
 const Styles = StyleSheet.create({
   opacitySlider: {
-    borderWidth: 1,
-    borderColor: constants.colors.byName.fuschia,
-    borderRadius: 5,
-    // position: 'relative',
-    // top: 0,
-    // bottom: 0,
-    // right: 0,
-    // left: 0,
+    backgroundColor: constants.colors.byName.azure_dark,
+    // // borderWidth: 1,
+    // borderColor: constants.colors.byName.blue,
   },
   opacitySliderView: {
-    backgroundColor: constants.colors.byName.azure_dark,
+    // marginLeft: 20,
+    // marginRight: 20,
     marginBottom: 10,
-    marginLeft: 10,
-    marginRight: 10,
     marginTop: 2,
-    width: 300, // TODO
     position: 'absolute',
     top: 0,
   },
@@ -53,7 +46,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
 
   public render() {
     const { menus } = this.props;
-    const renderMenu = (menuName: PopupMenuName, menuConfig: PopupMenuConfig) => {
+    const renderMenu = (menuName: PopupMenuName, menuConfig: PopupMenuConfig) => { // called in a loop below
 
       const popupStyle = {
         backgroundColor: constants.colors.menus.background,
@@ -110,21 +103,21 @@ class PopupMenus extends React.Component<PopupMenusProps> {
 
                 {/* SLIDER */}
                 {item.type === PopupMenuItemType.SLIDER ?
-                <View style={Styles.opacitySliderView}>
-                  <Slider
-                    minimumTrackTintColor={constants.colors.byName.black}
-                    maximumTrackTintColor={constants.colors.byName.black}
-                    minimumValue={0}
-                    maximumValue={1}
-                    onSlidingComplete={() => item.props.initialValue = null}
-                    onSlidingStart={(value: number) => item.props.initialValue = value}
-                    onValueChange={(value: number) => {
-                      this.props.sliderMoved(item.name, value)
-                    }}
-                    style={Styles.opacitySlider}
-                    value={item.props ? (item.props.initialValue || item.props.sliderValue) : 0}
-                  />
-                </View>
+                  <View style={{...Styles.opacitySliderView, ...item.itemStyle}}>
+                    <Slider
+                      minimumTrackTintColor={constants.colors.byName.black}
+                      maximumTrackTintColor={constants.colors.byName.black}
+                      minimumValue={0}
+                      maximumValue={1}
+                      onSlidingComplete={() => item.props.initialValue = null}
+                      onSlidingStart={(value: number) => item.props.initialValue = value}
+                      onValueChange={(value: number) => {
+                        this.props.sliderMoved(item.name, value)
+                      }}
+                      style={Styles.opacitySlider}
+                      value={item.props ? (item.props.initialValue || item.props.sliderValue) : 0}
+                    />
+                  </View>
                 : null }
               </View>
             ))}

@@ -192,6 +192,7 @@ const sagas = {
           response = {
             flags: state.flags,
             options: state.options,
+            userLocation: state.userLocation,
           }
           break;
         }
@@ -225,6 +226,7 @@ const sagas = {
   // Note this has the side effect of disabling following on the map if the center is moved.
   centerMap: function* (action: Action) {
     try {
+      const haveUserLocation = yield select(state => !!state.userLocation);
       const map = MapUtils();
       if (map && map.flyTo) {
         const params = action.params as CenterMapParams;
@@ -236,7 +238,7 @@ const sagas = {
             const currentCenter = yield call(map.getCenter as any);
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
-          if (center[0] || center[1]) {
+          if ((center[0] || center[1]) && haveUserLocation) {
             yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
           }
           if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
@@ -327,8 +329,6 @@ const sagas = {
         },
       }
       yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
-
-      // yield call(Geo.resetOdometer);
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
 
       const newCurrentActivity: Activity | null = enabledNow ? {
@@ -376,6 +376,7 @@ const sagas = {
   geolocation: function* (action: Action) {
     try {
       const { locationEvents, recheckMapBounds } = action.params as GeolocationParams;
+      const priorLocation = yield select(state => state.userLocation);
       yield put(newAction(ReducerAction.GEOLOCATION, locationEvents));
       yield put(newAction(AppAction.saveEventsToStorage, { events: locationEvents }));
       if (recheckMapBounds) {
@@ -390,7 +391,8 @@ const sagas = {
               loc: state.userLocation!.data.loc,
             }))
             const bounds = yield call(map.getVisibleBounds as any);
-            if (followingUser && loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))) {
+            if (followingUser &&
+               (!priorLocation || (loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))))) {
               yield put(newAction(AppAction.centerMapOnUser));
             }
           }
@@ -709,7 +711,7 @@ const sagas = {
       yield put(newAction(AppAction.flagEnable, 'followingUser'));
       const map = MapUtils();
       if (map) {
-        yield put(newAction(AppAction.centerMapOnUser)); // cascading app actions
+        yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
       }
       yield call(Geo.startBackgroundGeolocation, 'following');
     } catch (err) {
@@ -755,6 +757,8 @@ const sagas = {
 
     const refTime = (x[0] + x[1]) / 2;
     yield call(log.trace, 'saga timelineZoomed', refTime);
+
+    // TODO do not disable timelineNow unless refTime is changing
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));
     yield put(newAction(AppAction.setAppOption, { refTime }));
   },

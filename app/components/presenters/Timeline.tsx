@@ -49,7 +49,6 @@ class Timeline extends Component<TimelinePanelProps> {
   }
 
   // This responds to user zoom interaction (which won't be happening if allowZoom is false)
-  // TODO review panning of the timeline
   public handleZoom(domain: DomainPropType, props: any) {
     this.setState({ zoomDomain: domain }, () => {
       this.props.zoomDomainChanged(domain);

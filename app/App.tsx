@@ -41,7 +41,6 @@ export default class App extends Component {
     RNAppState.addEventListener('change', this.handleAppStateChange);
 
     Geo.initializeGeolocation(store);
-    store.dispatch(newAction(AppAction.startFollowingUser));
 
     const { startupAction_clearStorage, startupAction_loadStorage } = store.getState().flags;
     if (startupAction_clearStorage) {

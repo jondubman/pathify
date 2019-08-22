@@ -13,6 +13,7 @@ import {
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import { activitySummary } from 'lib/activitySummary';
+import utils from 'lib/utils';
 
 export enum MenuItem {
   // activitySummary
@@ -43,7 +44,7 @@ export interface PopupMenuItem { // TODO icons?
   defaultVisible?: boolean; // TODO is this needed?
   displayText?: string; // required for type BUTTON or default
   itemContainerStyle?: ViewStyle;
-  itemStyle?: object; // TODO ViewStyle?
+  itemStyle?: ViewStyle;
   itemUnderlayColor?: string,
   label?: string, // optional
   labelStyle?: ViewStyle;
@@ -103,7 +104,6 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
     contentsStyle: {
       alignItems: 'flex-end',
       flexDirection: 'row',
-      // flexWrap: 'wrap',
     },
     defaultItemStyle: {
       margin: 5,
@@ -119,6 +119,7 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       // { name: 'next', displayText: 'NEXT', defaultVisible: true },
       {
         name: MenuItem.TIMELINE_ZOOM,
+        itemContainerStyle: {},
         defaultVisible: true,
         type: PopupMenuItemType.SLIDER,
       },
@@ -213,10 +214,14 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
       }
       const timelineZoomItem = clockMenu.items.find(item => item.name === MenuItem.TIMELINE_ZOOM);
       if (timelineZoomItem) {
-        if (!timelineZoomItem.props) {
-          timelineZoomItem.props = {};
+        timelineZoomItem.itemStyle = {
+          ...timelineZoomItem.itemStyle,
+          width: utils.windowSize().width,
         }
-        (timelineZoomItem.props as any).sliderValue = state.options.timelineZoomValue;
+        timelineZoomItem.props = {
+          ...timelineZoomItem.props,
+          sliderValue: state.options.timelineZoomValue,
+        }
       }
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }

@@ -14,7 +14,9 @@ Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 import { MapAreaProps } from 'containers/MapContainer';
 import PathsContainer from 'components/containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
+import { AppAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
+import store from 'lib/store';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
@@ -45,7 +47,7 @@ class MapArea extends Component<MapAreaProps> {
     this.setCamera = this.setCamera.bind(this);
   }
 
-  getMap(): IMapUtils {
+  getMap(): IMapUtils{
     return {
       flyTo: this.flyTo,
       moveTo: this.moveTo,
@@ -81,8 +83,6 @@ class MapArea extends Component<MapAreaProps> {
       height,
       opacity,
     }
-    const mapCenterLon = constants.map.default.lon;
-    const mapCenterLat = constants.map.default.lat;
     if (mapHidden) {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
       // onPressIn is instantaneous, unlike onPress which waits for the tap to end.
@@ -111,6 +111,10 @@ class MapArea extends Component<MapAreaProps> {
             ref={map => {
               this._map = map as Mapbox.MapView;
               singletonMap = this;
+              // startFollowingUser deferred until map loaded, so map centering is possible when 1st location comes in.
+              setTimeout(() => {
+                store.dispatch(newAction(AppAction.startFollowingUser));
+              }, 0);
             }}
             rotateEnabled={true}
             scrollEnabled={true}
@@ -119,7 +123,7 @@ class MapArea extends Component<MapAreaProps> {
             zoomEnabled={true}
           >
             <Mapbox.Camera
-              centerCoordinate={[mapCenterLon, mapCenterLat]}
+
               followUserLocation={false}
               heading={0}
               ref={camera => { this._camera = camera }}
