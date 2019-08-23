@@ -400,31 +400,31 @@ export const Geo = {
     // }
     return new Promise((resolve, reject) => {
       const started = () => {
-        // const receieveLocation = (location: Location) => {
-        //   if (reduxStore) {
-        //     if (reduxStore.getState().flags.appActive === false) {
-        //       log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-        //       const locationEvent = newLocationEvent(location);
-        //       locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
-        //       reduxStore.dispatch(newAction(AppAction.geolocation, {
-        //         locationEvent: [locationEvent],
-        //         recheckMapBounds: false,
-        //       }))
-        //     }
-        //   } else {
-        //     log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
-        //   }
-        // }
-        // const options = {
-        //   interval: 1000, // msec TODO move to constants
-        //   persist: true, // to native SQLite database
-        // }
-        // if (reason === 'tracking') { // TODO
-        //   BackgroundGeolocation.watchPosition(receieveLocation, err => {
-        //     log.error('BackgroundGeolocation.watchPosition', err);
-        //     reject(err);
-        //   }, options)
-        // }
+        const receieveLocation = (location: Location) => {
+          if (reduxStore) {
+            if (reduxStore.getState().flags.appActive === false) {
+              log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
+              const locationEvent = newLocationEvent(location);
+              locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
+              reduxStore.dispatch(newAction(AppAction.geolocation, {
+                locationEvent: [locationEvent],
+                recheckMapBounds: false,
+              }))
+            }
+          } else {
+            log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
+          }
+        }
+        const options = {
+          interval: 1000, // msec TODO move to constants
+          persist: true, // to native SQLite database
+        }
+        if (reason === 'tracking') { // TODO
+          BackgroundGeolocation.watchPosition(receieveLocation, err => {
+            log.error('BackgroundGeolocation.watchPosition', err);
+            reject(err);
+          }, options)
+        }
         resolve(true);
       }
       BackgroundGeolocation.start(started, err => {

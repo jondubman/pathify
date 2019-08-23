@@ -119,7 +119,7 @@ export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
       // { name: 'next', displayText: 'NEXT', defaultVisible: true },
       {
         name: MenuItem.TIMELINE_ZOOM,
-        itemContainerStyle: {},
+        itemContainerStyle: { marginBottom: 20 },
         defaultVisible: true,
         type: PopupMenuItemType.SLIDER,
       },

@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import React, {
   Fragment,
 } from 'react';
@@ -13,18 +15,13 @@ import {
 import Slider from '@react-native-community/slider';
 
 const Styles = StyleSheet.create({
-  opacitySlider: {
+  slider: {
     backgroundColor: constants.colors.byName.azure_dark,
-    // // borderWidth: 1,
-    // borderColor: constants.colors.byName.blue,
   },
-  opacitySliderView: {
+  sliderView: {
     marginLeft: constants.clockMenu.sliderMargin,
     marginRight: constants.clockMenu.sliderMargin,
-    marginBottom: 10,
-    marginTop: 2,
     position: 'absolute',
-    top: 0,
   },
 })
 
@@ -38,7 +35,14 @@ import {
 import constants from 'lib/constants';
 import log from 'shared/log';
 
+const initialState = {
+  initialSliderValue: null as number | null,
+}
+type State = Readonly<typeof initialState>
+
 class PopupMenus extends React.Component<PopupMenusProps> {
+
+  public readonly state: State = initialState;
 
   constructor(props: any) {
     super(props);
@@ -103,19 +107,26 @@ class PopupMenus extends React.Component<PopupMenusProps> {
 
                 {/* SLIDER */}
                 {item.type === PopupMenuItemType.SLIDER ?
-                  <View style={{...Styles.opacitySliderView, ...item.itemStyle}}>
+                  <View style={{...Styles.sliderView, ...item.itemStyle}}>
                     <Slider
                       minimumTrackTintColor={constants.colors.byName.black}
                       maximumTrackTintColor={constants.colors.byName.black}
                       minimumValue={0}
                       maximumValue={1}
-                      onSlidingComplete={() => item.props.initialValue = null}
-                      onSlidingStart={(value: number) => item.props.initialValue = value}
-                      onValueChange={(value: number) => {
-                        this.props.sliderMoved(item.name, value)
+                      onSlidingComplete={(value: number) => {
+                        this.setState({ initialSliderValue: null});
+                        this.props.sliderMoved(item.name, value);
                       }}
-                      style={Styles.opacitySlider}
-                      value={item.props ? (item.props.initialValue || item.props.sliderValue) : 0}
+                      onSlidingStart={(value: number) => {
+                        this.setState({ initialSliderValue: value });
+                      }}
+                      onValueChange={
+                        _.debounce((value: number) => {
+                          this.props.sliderMoved(item.name, value);
+                        }, 4) // max updates per second TODO constants
+                      }
+                      style={Styles.slider}
+                      value={this.state.initialSliderValue || item.props.sliderValue}
                     />
                   </View>
                 : null }

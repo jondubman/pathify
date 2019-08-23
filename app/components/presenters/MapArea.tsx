@@ -114,7 +114,7 @@ class MapArea extends Component<MapAreaProps> {
               // startFollowingUser deferred until map loaded, so map centering is possible when 1st location comes in.
               setTimeout(() => {
                 store.dispatch(newAction(AppAction.startFollowingUser));
-              }, 0);
+              }, 500); // TODO constant - should not be needed
             }}
             rotateEnabled={true}
             scrollEnabled={true}

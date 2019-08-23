@@ -126,7 +126,7 @@ export const selectionTimespans = (state: AppState): Timespans => {
   }
 }
 
-// TODO This is not technically a selector as it doesn't refer to state
+// This is not technically a selector as it doesn't refer to state
 export const dynamicAreaTop = (state: AppState): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )

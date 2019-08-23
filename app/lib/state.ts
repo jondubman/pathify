@@ -19,7 +19,7 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.
-    followingUser: false, // is map following user?
+    followingUser: true, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false, // Help mode in the app
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation

@@ -391,9 +391,11 @@ const sagas = {
               loc: state.userLocation!.data.loc,
             }))
             const bounds = yield call(map.getVisibleBounds as any);
-            if (followingUser &&
-               (!priorLocation || (loc && (keepMapCenteredWhenFollowing || !utils.locWellBounded(loc, bounds))))) {
-              yield put(newAction(AppAction.centerMapOnUser));
+            if (followingUser) {
+              const outOfBounds = keepMapCenteredWhenFollowing || (loc && bounds && !utils.locWellBounded(loc, bounds));
+              if (!priorLocation || outOfBounds) {
+                  yield put(newAction(AppAction.centerMapOnUser));
+              }
             }
           }
         }
@@ -732,8 +734,6 @@ const sagas = {
           option: 'relative',
           zoom: constants.map.default.zoomStartActivity,
         } as CenterMapParams));
-      // } else {
-      //   // TODO
       }
     } catch (err) {
       yield call(log.error, 'saga startStopActivity', err);

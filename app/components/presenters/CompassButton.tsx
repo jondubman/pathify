@@ -11,7 +11,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import constants from 'lib/constants';
 const colors = constants.colors.compassButton;
 const {
-  bottomOffset,
+  aboveDynamicBase,
   opacity,
   rightOffset,
   size
@@ -20,15 +20,14 @@ const {
 const Styles = StyleSheet.create({
   button: { // round
     borderRadius: size / 2,
-    position: 'absolute',
-    paddingTop: size / 4,
-    width: size,
-    height: size,
-    bottom: bottomOffset,
-    right: rightOffset,
-    justifyContent: 'center',
     flexDirection: 'row',
+    height: size,
+    justifyContent: 'center',
+    paddingTop: size / 4,
+    position: 'absolute',
+    right: rightOffset,
     opacity,
+    width: size,
   },
 })
 
@@ -40,7 +39,7 @@ const CompassButton = (props: CompassButtonProps) => (props.hidden ? null : (
     <TouchableHighlight
       style={[Styles.button, {
         backgroundColor: props.reorienting ? colors.underlay : colors.background,
-        bottom: bottomOffset,
+        bottom: props.bottomOffset + aboveDynamicBase,
       }]}
       onPress={props.onPress}
       underlayColor={colors.underlay}

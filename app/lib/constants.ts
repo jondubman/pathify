@@ -51,6 +51,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 
   darkerGray: '#888888',
   darkGreen: '#239c31',
+  darkerGreen: '#114c18',
   darkRed: '#bf0a00',
   black: '#000000',
   white: '#ffffff',
@@ -90,8 +91,8 @@ const colors = {
   clock: {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.9),
-    backgroundNow: withOpacity(namedColors.azure_dark, 0.75),
-    backgroundPaused: withOpacity(namedColors.red_dark, 0.75),
+    backgroundNow: withOpacity(namedColors.darkerGreen, 0.65),
+    backgroundPaused: withOpacity(namedColors.azure_dark, 0.75),
     underlay: withOpacity(namedColors.black, 0.5),
   },
   compassButton: {
@@ -216,7 +217,7 @@ const constants = {
       thickness: 2,
     },
     secondHand: {
-      color: withOpacity(colors.byName.red, 1),
+      color: withOpacity(colors.byName.orange, 1),
       lengthRatio: 1,
       thickness: 1,
     },
@@ -228,7 +229,7 @@ const constants = {
         width: 1,
       },
       minor: {
-        color: withOpacity(colors.byName.blue, 1),
+        color: withOpacity(colors.byName.gray, 0.75),
         length: 5,
         width: 1,
       },
@@ -241,7 +242,7 @@ const constants = {
   colors,
   colorThemes,
   compassButton: {
-    bottomOffset: mapLogoHeight + safeAreaBottom + buttonSize + buttonOffset * 2,
+    aboveDynamicBase: buttonSize + buttonOffset * 2,
     rightOffset: buttonOffset,
     mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
     opacity: defaultOpacity,
@@ -395,13 +396,13 @@ const constants = {
       },
       {
         tickInterval: interval.days(1),
-        tickFormat: '%a %d',
-        visibleTime: interval.days(4),
+        tickFormat: '%a %d', // Wed 28
+        visibleTime: interval.days(3),
       },
       {
         tickInterval: interval.hours(12),
-        tickFormat: '%a %d', // Wed 28
-        visibleTime: interval.days(2),
+        tickFormat: ' %a %p %d', // Wed PM 28
+        visibleTime: interval.hours(36),
       },
       {
         tickInterval: interval.hours(8),
