@@ -1,5 +1,5 @@
 // SettingsPanel supports setting map style and opacity (with a slider).
-
+import _ from 'lodash'
 import React, {
 } from 'react';
 
@@ -98,61 +98,88 @@ const Styles = StyleSheet.create({
   },
 })
 
-const SettingsPanel = (props: SettingsPanelProps) => (
-  <View style={Styles.view}>
-    {props.open ?
+const initialState = {
+  initialSliderValue: null as number | null,
+}
+type State = Readonly<typeof initialState>
+
+class SettingsPanel extends React.Component<SettingsPanelProps> {
+
+  public readonly state: State = initialState;
+
+  constructor(props: any) {
+    super(props);
+  }
+
+  public render() {
+    const { props } = this;
+    return (
       <View style={Styles.view}>
-        <View style={Styles.panel}>
-          <View style={Styles.subpanels}>
-            <View style={Styles.subpanel}>
-              <View style={Styles.subpanelContents}>
-                <View style={Styles.choiceLabel}>
-                  <Text style={Styles.choiceLabelText}>
-                    MAP STYLE
-                  </Text>
-                </View>
-                <View style={Styles.multiSelect}>
-                  {constants.mapStyles.map((mapStyle: MapStyle, index: number) => (
-                    <TouchableHighlight
-                      key={index}
-                      onPress={() => { props.onSelectMapStyle(mapStyle.name)} }
-                      style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
-                      underlayColor={constants.colors.settingsPanel.choiceUnderlay}
-                    >
-                      <Text style={[Styles.text, (mapStyle.name === props.mapStyle.name) ? Styles.chosenText : null]}>
-                        {mapStyle.name}
+        {props.open ?
+          <View style={Styles.view}>
+            <View style={Styles.panel}>
+              <View style={Styles.subpanels}>
+                <View style={Styles.subpanel}>
+                  <View style={Styles.subpanelContents}>
+                    <View style={Styles.choiceLabel}>
+                      <Text style={Styles.choiceLabelText}>
+                        MAP STYLE
                       </Text>
-                    </TouchableHighlight>
-                  ))}
+                    </View>
+                    <View style={Styles.multiSelect}>
+                      {constants.mapStyles.map((mapStyle: MapStyle, index: number) => (
+                        <TouchableHighlight
+                          key={index}
+                          onPress={() => { props.onSelectMapStyle(mapStyle.name)} }
+                          style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
+                          underlayColor={constants.colors.settingsPanel.choiceUnderlay}
+                        >
+                          <Text style={[Styles.text, (mapStyle.name === props.mapStyle.name) ? Styles.chosenText : null]}>
+                            {mapStyle.name}
+                          </Text>
+                        </TouchableHighlight>
+                      ))}
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
-            <View style={Styles.subpanel}>
-              <View style={Styles.subpanelContents}>
-                <View style={Styles.choiceLabel}>
-                  <Text style={Styles.choiceLabelText}>
-                    MAP OPACITY
-                  </Text>
-                </View>
-                <View style={Styles.opacitySliderView}>
-                  <Slider
-                    maximumTrackTintColor={constants.colors.byName.azure}
-                    minimumTrackTintColor={constants.colors.byName.black}
-                    onValueChange={(value: number) => { props.onSetMapOpacity(value) }}
-                    style={Styles.opacitySlider}
-                    value={props.mapOpacity}
-                  />
+                <View style={Styles.subpanel}>
+                  <View style={Styles.subpanelContents}>
+                    <View style={Styles.choiceLabel}>
+                      <Text style={Styles.choiceLabelText}>
+                        MAP OPACITY
+                      </Text>
+                    </View>
+                    <View style={Styles.opacitySliderView}>
+                      <Slider
+                        maximumTrackTintColor={constants.colors.byName.azure}
+                        minimumTrackTintColor={constants.colors.byName.black}
+                        onSlidingComplete={(value: number) => {
+                          this.setState({ initialSliderValue: null });
+                        }}
+                        onSlidingStart={(value: number) => {
+                          this.setState({ initialSliderValue: value });
+                        }}
+                        onValueChange={
+                          _.debounce((value: number) => {
+                            props.onSetMapOpacity(value);
+                          }, 4) // max updates per second TODO constants
+                        }
+                        style={Styles.opacitySlider}
+                        value={this.state.initialSliderValue || props.mapOpacity}
+                      />
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
-        </View>
+          :
+          null
+        }
+        <SettingsButtonContainer />
       </View>
-      :
-      null
-    }
-    <SettingsButtonContainer />
-  </View>
-)
+    )
+  }
+}
 
 export default SettingsPanel;

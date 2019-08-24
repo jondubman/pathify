@@ -51,7 +51,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 
   darkerGray: '#888888',
   darkGreen: '#239c31',
-  darkerGreen: '#114c18',
+  darkerGreen: '#035a0d',
   darkRed: '#bf0a00',
   black: '#000000',
   white: '#ffffff',

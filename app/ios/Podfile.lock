@@ -88,12 +88,12 @@ PODS:
     - React-Core (= 0.60.5)
   - React-RCTWebSocket (0.60.5):
     - React-Core (= 0.60.5)
-  - RNBackgroundGeolocation (3.0.9):
+  - RNBackgroundGeolocation (3.2.0):
     - CocoaLumberjack (~> 3.5.1)
     - React
   - RNCAsyncStorage (1.6.1):
     - React
-  - RNSVG (9.6.2):
+  - RNSVG (9.6.4):
     - React
   - RNVectorIcons (6.6.0):
     - React
@@ -218,9 +218,9 @@ SPEC CHECKSUMS:
   React-RCTText: b074d89033583d4f2eb5faf7ea2db3a13c7553a2
   React-RCTVibration: 2105b2e0e2b66a6408fc69a46c8a7fb5b2fdade0
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
-  RNBackgroundGeolocation: 4d0af84b16f77102288ef236616a055b1e070fe2
+  RNBackgroundGeolocation: 8cc02b38a945bd3bb8f0793bfe4ba65f191c86fa
   RNCAsyncStorage: 2e2e3feb9bdadc752a026703d8c4065ca912e75a
-  RNSVG: ff9b094e39dd4a437ebe17d1c7ceed286e75f426
+  RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 

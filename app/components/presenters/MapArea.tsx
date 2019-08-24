@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {
   Component,
 } from 'react';
@@ -112,9 +113,9 @@ class MapArea extends Component<MapAreaProps> {
               this._map = map as Mapbox.MapView;
               singletonMap = this;
               // startFollowingUser deferred until map loaded, so map centering is possible when 1st location comes in.
-              setTimeout(() => {
+              setTimeout(_.once(() => {
                 store.dispatch(newAction(AppAction.startFollowingUser));
-              }, 500); // TODO constant - should not be needed
+              }), 500); // TODO random-looking constant - which also should not be needed
             }}
             rotateEnabled={true}
             scrollEnabled={true}
