@@ -122,7 +122,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                       onValueChange={
                         _.debounce((value: number) => {
                           this.props.sliderMoved(item.name, value);
-                        }, 4) // max updates per second TODO constants
+                        }, constants.sliderDebounce.wait, constants.sliderDebounce.options)
                       }
                       style={Styles.slider}
                       value={this.state.initialSliderValue || item.props.sliderValue}

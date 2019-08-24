@@ -155,6 +155,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                         minimumTrackTintColor={constants.colors.byName.black}
                         onSlidingComplete={(value: number) => {
                           this.setState({ initialSliderValue: null });
+                          props.onSetMapOpacity(value);
                         }}
                         onSlidingStart={(value: number) => {
                           this.setState({ initialSliderValue: value });
@@ -162,7 +163,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                         onValueChange={
                           _.debounce((value: number) => {
                             props.onSetMapOpacity(value);
-                          }, 4) // max updates per second TODO constants
+                          }, constants.sliderDebounce.wait, constants.sliderDebounce.options)
                         }
                         style={Styles.opacitySlider}
                         value={this.state.initialSliderValue || props.mapOpacity}

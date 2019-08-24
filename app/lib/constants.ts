@@ -368,6 +368,13 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
+  sliderDebounce: {
+    wait: 250,
+    options: {
+      leading: true,
+      trailing: true,
+    },
+  },
   timeline: {
     barHeight: 40, // big enough to be touchable
     bottomPaddingForAxis,
