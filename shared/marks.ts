@@ -17,11 +17,9 @@ export enum MarkType {
 
 export interface MarkEvent extends GenericEvent {
   // type: EventType.MARK;
-  data: {
-    id?: string; // use matching id for corresponding START and END marks
-    subtype: MarkType;
-    synthetic?: boolean;
-  }
+  id?: string; // use matching id for corresponding START and END marks
+  subtype: MarkType;
+  synthetic?: boolean;
 }
 export type MarkEvents = MarkEvent[];
 
@@ -51,22 +49,22 @@ export const containingActivity = (events: GenericEvents, t: Timepoint): Activit
       const event = events[i];
       if (event.type === EventType.MARK) {
         const markEvent = event as MarkEvent; // found a mark
-        if (markEvent.data.subtype === MarkType.END) {
-          if (markEvent.data.id) { // found an END mark
-            previousEndEventIds.push(markEvent.data.id);
+        if (markEvent.subtype === MarkType.END) {
+          if (markEvent.id) { // found an END mark
+            previousEndEventIds.push(markEvent.id);
           }
         }
-        if (markEvent.data.subtype === MarkType.START) {
+        if (markEvent.subtype === MarkType.START) {
           const startEvent = markEvent; // found a START mark
-          const startId = startEvent.data.id || '';
+          const startId = startEvent.id || '';
           const startTime = startEvent.t;
           if (previousEndEventIds.indexOf(startId) === -1) { // if we haven't encountered END mark for this START mark
             // then seek the corresponding END (with matching mark id), scanning forward
             const endEvents = timeseries.findNextEvents(events, t,
               (e: GenericEvent) => (
                 e.type === EventType.MARK &&
-                (e as MarkEvent).data.subtype === MarkType.END &&
-                (e as MarkEvent).data.id === startId )
+                (e as MarkEvent).subtype === MarkType.END &&
+                (e as MarkEvent).id === startId )
               )
             if (endEvents.length) {
               const endTime = endEvents[0].t; // there should be only one (TODO assert)
@@ -117,12 +115,12 @@ export const insertMissingStopMarks = (originalEvents: GenericEvents): GenericEv
       const event = events[i];
       if (event.type === EventType.MARK) {
         const markEvent = event as MarkEvent;
-        if (markEvent.data.id) {
-          if (markEvent.data.subtype === MarkType.START) {
-            startEventIds.push(markEvent.data.id);
+        if (markEvent.id) {
+          if (markEvent.subtype === MarkType.START) {
+            startEventIds.push(markEvent.id);
           }
-          if (markEvent.data.subtype === MarkType.END) {
-            endEventIds.push(markEvent.data.id);
+          if (markEvent.subtype === MarkType.END) {
+            endEventIds.push(markEvent.id);
           }
         }
       }
@@ -136,10 +134,10 @@ export const insertMissingStopMarks = (originalEvents: GenericEvents): GenericEv
       const event = events[j];
       if (event.type === EventType.MARK) {
         const markEvent = event as MarkEvent;
-        if (markEvent.data.subtype === MarkType.START) {
-          if (markEvent.data.id && endEventIds.indexOf(markEvent.data.id) < 0) {
+        if (markEvent.subtype === MarkType.START) {
+          if (markEvent.id && endEventIds.indexOf(markEvent.id) < 0) {
             let priorLocationEventTime = event.t;
-            const startId = markEvent.data.id;
+            const startId = markEvent.id;
             const threshold = sharedConstants.containingActivityTimeThreshold;
             for (let k = j + 1; k < events.length; k++) {
               const e = events[k];
@@ -155,11 +153,9 @@ export const insertMissingStopMarks = (originalEvents: GenericEvents): GenericEv
             const endMark: MarkEvent = {
               ...timeseries.newSyncedEvent(priorLocationEventTime),
               type: EventType.MARK,
-              data: {
-                id: startId,
-                subtype: MarkType.END,
-                synthetic: true,
-              },
+              id: startId,
+              subtype: MarkType.END,
+              synthetic: true,
             }
             log.debug('insertMissingStopMarks: adding', endMark);
             syntheticEndMarks.push(endMark);

@@ -19,24 +19,20 @@ import timeseries, {
 } from './timeseries';
 
 export interface LocationEvent extends GenericEvent {
-  data: {
-    accuracy?: number; // meters
-    ele?: number; // meters
-    heading?: number; // 0 <= degrees < 360
-    loc: LonLat;
-    odo?: number; // meters
-    speed?: number; // mph (converted from meters per second)
-    // TODO battery level?
-    extra?: string; // for debugging
-  }
+  accuracy?: number; // meters
+  ele?: number; // meters
+  extra?: string; // for debugging
+  heading?: number; // 0 <= degrees < 360
+  loc: LonLat;
+  odo?: number; // meters
+  speed?: number; // mph (converted from meters per second)
+  // TODO battery level?
 }
 
 export type LocationEvents = LocationEvent[];
 
 export interface MotionEvent extends GenericEvent {
-  data: {
-    isMoving: boolean;
-  }
+  isMoving: boolean;
 }
 
 export enum ModeType {
@@ -48,10 +44,8 @@ export enum ModeType {
 }
 
 export interface ModeChangeEvent extends GenericEvent {
-  data: {
-    mode: ModeType;
-    confidence: number;
-  }
+  mode: ModeType;
+  confidence: number;
 }
 
 export enum PathType {
@@ -100,10 +94,8 @@ const locations = {
           const event: LocationEvent = {
             ...timeseries.newEvent(epoch),
             type: EventType.LOC,
-            data: {
-              ele,
-              loc: [lon, lat],
-            },
+            ele,
+            loc: [lon, lat],
             source: 'import', // TODO placeholder
           }
           events.push(event);
@@ -134,7 +126,7 @@ const locations = {
       const event = events[i];
       if (event.type === EventType.LOC) {
         const locEvent = event as LocationEvent;
-        const { loc } = locEvent.data;
+        const { loc } = locEvent;
         if (previousLoc) {
           const lineSegmentLength = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
           if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) {

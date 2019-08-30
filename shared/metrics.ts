@@ -121,7 +121,7 @@ export const activityMetrics = (events: GenericEvents,
 
         if (event.type === EventType.MODE) {
           const modeChangeEvent = event as ModeChangeEvent;
-          const { mode } = modeChangeEvent.data;
+          const { mode } = modeChangeEvent;
           switch (mode) {
             case ModeType.BICYCLE:
               modeMetric.text = 'Bicycling'
@@ -149,14 +149,14 @@ export const activityMetrics = (events: GenericEvents,
         if (event.type === EventType.LOC) {
           const locationEvent = event as LocationEvent;
           if (locationEvent.t + sharedConstants.metrics.speed.maxAgeCurrent >= t) {
-            if (locationEvent.data.speed && locationEvent.data.speed >= 0) {
-              lastSpeed = locationEvent.data.speed;
+            if (locationEvent.speed && locationEvent.speed >= 0) {
+              lastSpeed = locationEvent.speed;
               const lastSpeedText = lastSpeed.toFixed(1); // 0.1 mph is probably more than sufficient accuracy
               speedMetric.text = lastSpeedText;
               speedMetric.partialValue = lastSpeed;
             }
-            if (locationEvent.data.ele) {
-              elevation = locationEvent.data.ele;
+            if (locationEvent.ele) {
+              elevation = locationEvent.ele;
               if (elevationPrevious) {
                 const difference = elevation - elevationPrevious;
                 if (difference > 0) {
@@ -174,8 +174,8 @@ export const activityMetrics = (events: GenericEvents,
       if (event.type === EventType.LOC) {
         const locationEvent = event as LocationEvent;
         // elevation
-        if (locationEvent.data.ele || locationEvent.data.ele === 0) {
-          const latestElevation = locationEvent.data.ele;
+        if (locationEvent.ele || locationEvent.ele === 0) {
+          const latestElevation = locationEvent.ele;
           if (!maxElevation || latestElevation >= maxElevation) {
             maxElevation = latestElevation;
           }
@@ -193,11 +193,11 @@ export const activityMetrics = (events: GenericEvents,
           elevationPrevious = latestElevation;
         }
         // distance
-        if (locationEvent.data.odo) {
+        if (locationEvent.odo) {
           if (!firstOdo) {
-            firstOdo = locationEvent.data.odo;
+            firstOdo = locationEvent.odo;
           }
-          lastOdo = locationEvent.data.odo;
+          lastOdo = locationEvent.odo;
           if (locationEvent.t <= t) {
             distanceMetric.label = 'Miles / Total',
             distanceMetric.partialValue = metersToMiles(lastOdo - firstOdo);

@@ -209,15 +209,13 @@ const newLocationEvent = (info: Location): LocationEvent => {
   return {
     ...timeseries.newSyncedEvent(t),
     type: EventType.LOC,
-    data: {
-      accuracy: info.coords.accuracy,
-      ele: info.coords.altitude,
-      heading: info.coords.heading,
-      loc: [info.coords.longitude, info.coords.latitude],
-      odo: info.odometer,
-      speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
+    accuracy: info.coords.accuracy,
+    ele: info.coords.altitude,
+    heading: info.coords.heading,
+    loc: [info.coords.longitude, info.coords.latitude],
+    odo: info.odometer,
+    speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
         : undefined,
-    },
   }
 }
 
@@ -226,7 +224,7 @@ const newMotionEvent = (info: Location, isMoving: boolean): MotionEvent => {
   return {
     ...timeseries.newSyncedEvent(t),
     type: EventType.MOTION,
-    data: { isMoving },
+    isMoving,
   }
 }
 
@@ -244,10 +242,8 @@ const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEve
   return {
     ...timeseries.newSyncedEvent(t),
     type: EventType.MODE,
-    data: {
-      mode,
-      confidence,
-    },
+    mode,
+    confidence,
   }
 }
 
@@ -279,12 +275,12 @@ export const Geo = {
         if (!store.getState().userLocation) {
           // This is the first userLocation to arrive.
           store.dispatch(newAction(AppAction.centerMap, {
-            center: locationEvent.data.loc,
+            center: locationEvent.loc,
             option: 'absolute',
           }))
         }
         const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
-        locationEvent.data.extra = `onLocation ${utils.now()} ${eventIsOld?'old':'new'}`; // TODO
+        locationEvent.extra = `onLocation ${utils.now()} ${eventIsOld?'old':'new'}`; // TODO
         if (eventIsOld) {
           eventQueue.push(locationEvent);
         } else {
@@ -405,7 +401,7 @@ export const Geo = {
             if (reduxStore.getState().flags.appActive === false) {
               log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
               const locationEvent = newLocationEvent(location);
-              locationEvent.data.extra = `watchPosition ${utils.now()}`; // TODO
+              locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
               reduxStore.dispatch(newAction(AppAction.geolocation, {
                 locationEvent: [locationEvent],
                 recheckMapBounds: false,

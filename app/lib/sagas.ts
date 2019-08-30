@@ -142,9 +142,7 @@ const sagas = {
     const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
       t: utils.now(),
       type: EventType.APP,
-      data: {
-        newState,
-      },
+      newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
     yield put(newAction(newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP ? AppAction.flagEnable
@@ -265,8 +263,8 @@ const sagas = {
       const map = MapUtils();
       if (map && map.flyTo) {
         const loc = yield select((state: AppState) => state.userLocation);
-        if (loc && loc.data && loc.data.loc) {
-          yield call(map.flyTo as any, loc.data.loc);
+        if (loc && loc.loc) {
+          yield call(map.flyTo as any, loc.loc);
         }
       }
     } catch (err) {
@@ -315,18 +313,14 @@ const sagas = {
       const startOrStopEvent: AppUserActionEvent = {
         ...timeseries.newSyncedEvent(now),
         type: EventType.USER_ACTION,
-        data: {
-          userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
-        }
+        userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
       }
       const newActivityId = enabledNow ? uuid.default() : options.currentActivity.id;
       const startOrEndMarkEvent: MarkEvent = {
         ...timeseries.newSyncedEvent(now),
         type: EventType.MARK,
-        data: {
-          id: newActivityId,
-          subtype: enabledNow ? MarkType.START : MarkType.END,
-        },
+        id: newActivityId,
+        subtype: enabledNow ? MarkType.START : MarkType.END,
       }
       yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
@@ -388,7 +382,7 @@ const sagas = {
             const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
               followingUser: state.flags.followingUser,
               keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
-              loc: state.userLocation!.data.loc,
+              loc: state.userLocation!.loc,
             }))
             const bounds = yield call(map.getVisibleBounds as any);
             if (followingUser) {
@@ -429,19 +423,15 @@ const sagas = {
         ...timeseries.newSyncedEvent(gpxEvents[0].t),
         source,
         type: EventType.MARK,
-        data: {
-          id,
-          subtype: MarkType.START,
-        },
+        id,
+        subtype: MarkType.START,
       }
       const endEvent: MarkEvent = {
         ...timeseries.newSyncedEvent(gpxEvents[gpxEvents.length - 1].t + 1),
         source,
         type: EventType.MARK,
-        data: {
-          id,
-          subtype: MarkType.END,
-        },
+        id,
+        subtype: MarkType.END,
       }
       const events = [
         startEvent,

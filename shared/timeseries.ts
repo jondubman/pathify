@@ -33,8 +33,6 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
 export interface GenericEvent {
   t: Timepoint;
   type: EventType;
-  // subtype?: string;
-  data?: object;
   source?: string; // generally either our own client ID, or something else if from server (like 'server')
                    // undefined for private/local events which do not get uploaded
 
@@ -275,7 +273,6 @@ const timeseries = {
       t: Math.round(timestamp), // TODO for now, avoid creating events with sub-millisecond precision timestamps
       // The following are placeholders, to be overridden:
       type: EventType.NONE,
-      data: {},
     }
   },
 

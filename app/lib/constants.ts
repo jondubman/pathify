@@ -368,7 +368,7 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
-  sliderDebounce: {
+  sliderDebounce: { // https://lodash.com/docs/4.17.15#debounce
     wait: 250,
     options: {
       leading: true,

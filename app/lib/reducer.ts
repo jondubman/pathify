@@ -67,8 +67,8 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           const event = locationEvents[i];
           if (event.type === EventType.LOC) { // TODO if not, input is invalid
              const locationEvent = event as LocationEvent;
-             if (locationEvent.data &&
-                 locationEvent.data.loc &&
+             if (locationEvent &&
+                 locationEvent.loc &&
                  (!state.userLocation || locationEvent.t > state.userLocation.t)) {
                                       // Ignore redundant locationEvent with same timepoint as what we already have
               newState.userLocation = { ...locationEvent };

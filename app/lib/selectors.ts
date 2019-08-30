@@ -15,7 +15,7 @@ import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent, AppUserAction, AppUserActionEvent } from 'shared/appEvents';
 
 export const activityIncludesMark = (activity: Activity | null, mark: MarkEvent): boolean => (
-  !!(mark.data.id && activity && mark.data.id === activity.id)
+  !!(mark.id && activity && mark.id === activity.id)
 )
 
 export const continuousTrackList = (state: AppState): Tracks => {
@@ -40,7 +40,7 @@ const activityTimespans = (state: AppState): Timespans => {
     const e = events[i];
     if (e.type === EventType.MARK) {
       const { t } = e;
-      const { subtype } = (e as MarkEvent).data;
+      const { subtype } = (e as MarkEvent);
       if (subtype === MarkType.START) {
         startTime = t;
       }
@@ -82,7 +82,7 @@ const appStateTimespans = (state: AppState): Timespans => {
     const e = events[i];
     if (e.type === EventType.APP) {
       const { t } = e;
-      const { newState } = (e as AppStateChangeEvent).data;
+      const { newState } = (e as AppStateChangeEvent);
       if (previousState !== AppStateChange.NONE) {
         timespans.push({
           kind: TimespanKind.APP_STATE,
@@ -158,7 +158,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars };
   if (state.userLocation) {
     pulsars.userLocation = {
-      loc: state.userLocation.data.loc,
+      loc: state.userLocation.loc,
       color: constants.colors.user,
       visible: true,
     }
@@ -169,7 +169,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
                                                    constants.timeline.nearTimeThreshold);
     if (loc) {
       pulsars.priorLocation = {
-        loc: loc.data.loc,
+        loc: loc.loc,
         color: constants.colors.byName.red,
         visible: true,
       }
