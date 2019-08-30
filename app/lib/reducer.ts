@@ -83,13 +83,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case ReducerAction.MAP_REGION:
-      {
-        const mapRegion = params as Polygon;
-        newState.mapRegion = mapRegion;
-      }
-      break;
-
     case ReducerAction.TICK_EVENT:
       {
         const tickEvent = params as TickEvent;
@@ -97,27 +90,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           newState.events = timeseries.sortEvents([ ...newState.events, tickEvent ]);
           // log.trace(`${newState.events.length} total events`);
         }
-      }
-      break;
-
-    case ReducerAction.SERVER_SYNC_COMPLETED:
-      {
-        const timestamps = params as number[];
-        const events = [ ...newState.events ];
-        let countChanged = 0, countSynced = 0;
-        for (let i = 0; i < events.length; i++) {
-          const { changed } = events[i];
-          if (changed) {
-            countChanged++;
-            if (timestamps.includes(changed)) {
-              events[i].changed = 0; // This is where it is reset.
-              countSynced++;
-            }
-          }
-        }
-        newState.events = events;
-        const pending = countChanged - countSynced;
-        log.trace(`SERVER_SYNC_COMPLETED: ${countSynced}/${timestamps.length} synced, ${pending} pending`);
       }
       break;
 

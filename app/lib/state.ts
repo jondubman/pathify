@@ -44,8 +44,6 @@ export const initialAppState = {
     startupTime: now,
     timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
     selectedActivity: null as Activity | null, // for now, no more than one Activity is 'selected' at a time
-    serverSyncInterval: constants.serverSyncIntervalDefault, // msec, how often to sync with server
-    serverSyncTime: 0, // time of last server sync (or 0 if never)
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (see constants.timeline for meaning)
   },
 }

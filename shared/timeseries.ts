@@ -37,7 +37,6 @@ export interface GenericEvent {
                    // undefined for private/local events which do not get uploaded
 
   // used locally only (not committed to server):
-  changed?: Timepoint; // timestamp if/when last changed. Used to identify events to sync with server.
   temp?: boolean; // true means do not persist anywhere
 }
 
@@ -278,11 +277,11 @@ const timeseries = {
 
   // A synced event will be synchronized with the server (i.e. not private)
   // timestamped now, unless a timestamp is provided.
+  // TODO meaning of synced vs non-synced will change with Realm
   newSyncedEvent: (t: Timepoint): GenericEvent => {
     const timestamp = t || Date.now(); // TODO maybe require t
     return {
       ...timeseries.newEvent(timestamp),
-      changed: timeseries.uniqify(timestamp), // uniqifying it will facilitate filtering the event list by this value
       source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
     }
   },

@@ -18,7 +18,6 @@ export enum ReducerAction {
   'TICK_EVENT' = 'TICK_EVENT', // corresponds to AppAction.tickEvent
   'SET_APP_OPTION' = 'SET_APP_OPTION',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
-  'SERVER_SYNC_COMPLETED' = 'SERVER_SYNC_COMPLETED',
   'FLAG_DISABLE' = 'FLAG_DISABLE',
   'FLAG_ENABLE' = 'FLAG_ENABLE',
   'FLAG_TOGGLE' = 'FLAG_TOGGLE',
@@ -59,7 +58,6 @@ export enum AppAction {
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'restartApp' = 'restartApp',
   'saveEventsToStorage' = 'saveEventsToStorage',
-  'serverSync' = 'serverSync',
   'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
   'setPanelVisibility' = 'setPanelVisibility',

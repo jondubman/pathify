@@ -637,33 +637,6 @@ const sagas = {
   setPanelVisibility: function* () {
   },
 
-  // Initiate or continue syncing data with the server.
-  // This doesn't neecssarily sync everything that is pending at once, particularly with a big backlog.
-  // Note: see timerTick which is what typically triggers this saga.
-  serverSync: function* (action: Action) {
-    const now = action.params as number;
-    yield put(newAction(AppAction.setAppOption, { serverSyncTime: now }));
-
-    const events: GenericEvents = yield select((state: AppState) => state.events);
-    const changedEvents: GenericEvents = [];
-    const timestamps: number[] = [];
-
-    // For now, just loop through the whole array and accumulate the changed ones.
-    // This simple approach will work fine until we have quite a large volume of data.
-    // TODO use classical for loop for better perf?
-    events.forEach(event => {
-      if (event.changed) {
-        changedEvents.push(event);
-        timestamps.push(event.changed);
-      }
-    })
-    if (changedEvents.length) {
-      // TODO Actually send these changed events to the server!
-      yield call(log.trace, `saga serverSync at ${now} syncing ${changedEvents.length} of ${events.length} total`);
-      yield put(newAction(ReducerAction.SERVER_SYNC_COMPLETED, timestamps));
-    }
-  },
-
   setAppOption: function* (action: Action) {
     // if (!action.params.refTime) {
     //   yield call(log.trace, 'saga setAppOption', action);
@@ -769,14 +742,6 @@ const sagas = {
       if (tickEvents) {
         const tickEvent = { ...timeseries.newEvent(now), type: EventType.TICK };
         yield put(newAction(AppAction.tickEvent, tickEvent));
-      }
-      // The approach for occasional scheduled actions such as server sync is to leverage this tick timer
-      // rather than depend on a separate long-running timer. That could also work, but this is sufficient
-      // when we don't need sub-second precision.
-      const serverSyncInterval = yield select((state: AppState) => state.options.serverSyncInterval);
-      const serverSyncTime = yield select((state: AppState) => state.options.serverSyncTime);
-      if (now >= serverSyncTime + serverSyncInterval) {
-        yield put(newAction(AppAction.serverSync, now));
       }
     }
   },
