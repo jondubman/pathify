@@ -42,12 +42,9 @@ export default class App extends Component {
 
     Geo.initializeGeolocation(store);
 
-    const { startupAction_clearStorage, startupAction_loadStorage } = store.getState().flags;
+    const { startupAction_clearStorage } = store.getState().flags;
     if (startupAction_clearStorage) {
       store.dispatch(newAction(AppAction.clearStorage));
-    }
-    else if (startupAction_loadStorage) { // It's counterproductive to try to load storage we just requested to clear.
-      store.dispatch(newAction(AppAction.loadEventsFromStorage));
     }
     this.handleAppStateChange('startup'); // initialize
 

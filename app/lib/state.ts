@@ -24,7 +24,6 @@ export const initialAppState = {
     helpEnabled: false, // Help mode in the app
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
-    startupAction_loadStorage: true, // whether to load from storage when starting up the app (if clear is false)
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)

@@ -1,7 +1,7 @@
 // Redux reducer for the app
 // TODO reorganize using combineReducers or something better
 
-import { Polygon } from "@turf/helpers";
+// import { Polygon } from "@turf/helpers";
 
 import {
   Action,
@@ -13,8 +13,7 @@ import {
   AppState,
 } from 'lib/state';
 import { GenericEvents } from 'shared/timeseries';
-import { LocationEvent, LocationEvents, TickEvent } from 'shared/locations';
-import log from 'shared/log';
+import { LocationEvent, LocationEvents } from 'shared/locations';
 import timeseries, { EventType } from "shared/timeseries";
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.
@@ -36,22 +35,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           break;
         }
         const mergedEvents: GenericEvents = timeseries.mergeEvents(state.events, newEvents);
-
-        // Merge sort two non-empty sorted event lists into mergedEvents (replaced by timeseries.mergeEvents)
-        // let eventsIndex = 0, newEventsIndex = 0;
-        // while (eventsIndex < state.events.length || newEventsIndex < newEvents.length) {
-        //   if (eventsIndex < state.events.length &&
-        //      (newEventsIndex >= newEvents.length || state.events[eventsIndex].t <= newEvents[newEventsIndex].t)) {
-        //       mergedEvents.push(state.events[eventsIndex]);
-        //       eventsIndex++;
-        //     }
-        //   else if (newEventsIndex < newEvents.length &&
-        //       (eventsIndex >= state.events.length || newEvents[newEventsIndex].t <= state.events[eventsIndex].t)) {
-        //       mergedEvents.push(newEvents[newEventsIndex]);
-        //       newEventsIndex++;
-        //     }
-        //   // TODO consider eliminating duplicates, which would make ADD_EVENTS idempotent
-        // }
         newState.events = mergedEvents;
       }
       break;
@@ -77,20 +60,10 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
             }
           }
         }
-        if (newEvents.length) {
-          newState.events = timeseries.sortEvents([...newState.events, ...newEvents]);
-        }
       }
       break;
 
-    case ReducerAction.TICK_EVENT:
-      {
-        const tickEvent = params as TickEvent;
-        if (tickEvent.t && tickEvent.type === EventType.TICK) {
-          newState.events = timeseries.sortEvents([ ...newState.events, tickEvent ]);
-          // log.trace(`${newState.events.length} total events`);
-        }
-      }
+    case ReducerAction.TICK_EVENT: // TODO
       break;
 
     case ReducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state

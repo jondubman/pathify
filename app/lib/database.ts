@@ -1,15 +1,16 @@
-// TODO with Realm
-
 import Realm from 'realm';
-// import log from 'shared/log';
 
-const GenericEventSchema = {
-  name: 'GenericEvent',
+// NOTE: There are corresponding TypeScript types that need to be kept in sync with this, and Schema migrations must be
+// provided if the schema should change. The TypeScript types are
+
+const EventSchema: Realm.ObjectSchema = {
+  name: 'EventSchema',
   properties: {
     // GenericEvent
-    source: 'string?',
-    t: { type: 'int', indexed: true },
-    type: 'string',
+    source: 'string?', // optional
+    t: { type: 'int', indexed: true }, // required
+    type: 'string', // required. Based on this, there may be additional properties: All are said to be optional here for
+                    // the Realm scehema, but the corresponding TypeScript types clarify what is truly optional.
 
     // AppStateChangeEvent
     newState: 'string?',
@@ -40,7 +41,7 @@ const GenericEventSchema = {
   }
 }
 
-const config = { schema: [GenericEventSchema] } as Realm.Configuration;
+const config = { schema: [EventSchema] } as Realm.Configuration;
 const realm = new Realm(config);
 
 realm.write(() => {

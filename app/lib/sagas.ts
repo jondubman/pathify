@@ -58,7 +58,6 @@ import {
   LogActionParams,
   PanTimelineParams,
   RepeatedActionParams,
-  SaveEventsToStorageParams,
   SequenceParams,
   SleepParams,
   SliderMovedParams,
@@ -66,7 +65,7 @@ import {
 
 import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
-import { timelineVisibleTime } from 'lib/selectors';
+// import { timelineVisibleTime } from 'lib/selectors';
 import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
@@ -89,18 +88,15 @@ import log, { messageToLog } from 'shared/log';
 import {
   Activity,
   containingActivity,
-  insertMissingStopMarks,
+  insertMissingStopMarks, // TODO call insertMissingStopMarks when the app loads
   MarkEvent,
   MarkType
 } from 'shared/marks';
 import timeseries, {
   EventType,
   GenericEvent,
-  GenericEvents,
-  interval,
   TimeRange,
 } from 'shared/timeseries';
-import { continuousTracks } from 'shared/tracks';
 
 const sagas = {
 
@@ -125,15 +121,11 @@ const sagas = {
 
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
-    const { events, saveToStorage: saveEventsToStorage } = params;
+    const { events } = params;
 
     const sortedEvents = timeseries.sortEvents(events);
 
     yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
-    if (saveEventsToStorage !== false) { // note undefined defaults to true
-      const eventsToStore = timeseries.filterEvents(sortedEvents, (event: GenericEvent) => (!event.temp))
-      yield put(newAction(AppAction.saveEventsToStorage, { events: eventsToStore }));
-    }
   },
 
   appStateChange: function* (action: Action) {
@@ -196,11 +188,6 @@ const sagas = {
         }
         case 'ping': {
           response = 'pong';
-          break;
-        }
-        case 'storage': { // TODO development-only
-          const keys = yield call(AsyncStorage.getAllKeys);
-          response = keys.length;
           break;
         }
         case 'userLocation': {
@@ -372,7 +359,6 @@ const sagas = {
       const { locationEvents, recheckMapBounds } = action.params as GeolocationParams;
       const priorLocation = yield select(state => state.userLocation);
       yield put(newAction(ReducerAction.GEOLOCATION, locationEvents));
-      yield put(newAction(AppAction.saveEventsToStorage, { events: locationEvents }));
       if (recheckMapBounds) {
         const appActive = yield select(state => state.flags.appActive);
         if (appActive) {
@@ -450,34 +436,6 @@ const sagas = {
     }
   },
 
-  loadEventsFromStorage: function* (action: Action) {
-    try {
-      const keys = yield call(AsyncStorage.getAllKeys);
-      yield call(log.debug, 'loadEventsFromStorage: key count:', keys.length);
-      if (keys.length) {
-        // Note the context (AsyncStorage) needs to be passed in so 'this' is correct inside AsyncStorage's multiGet.
-        const keyValuePairs = yield call([AsyncStorage, AsyncStorage.multiGet], keys);
-        const events: GenericEvents = [];
-        for (const keyValue of keyValuePairs) {
-          const event = JSON.parse(keyValue[1]);
-          events.push(event);
-        }
-        // We now have events loaded from storage, but not yet added to the store.
-        // If the app shut down while tracking, there will be a START mark with a missing END.
-        const sortedFixedEvents = insertMissingStopMarks(events);
-        // const sortedEvents = timeseries.sortEvents(events);
-        // This is why we have the special-case saveToStorage option. Avoid saving data that was just loaded.
-        yield put(newAction(AppAction.addEvents, { events: sortedFixedEvents, saveToStorage: false }));
-        if (__DEV__) { // log the following only in development
-          const tracks = yield call(continuousTracks, sortedFixedEvents, constants.maxTimeGapForContinuousTrack);
-          yield call(log.debug, 'load event count', sortedFixedEvents.length, 'loaded tracks', tracks.length, tracks);
-        }
-      }
-    } catch (err) {
-      yield call(log.error, 'loadEventsFromStorage', err);
-    }
-  },
-
   // Generate a client-side log with an Action
   log: function* (action: Action) {
     const params = action.params as LogActionParams;
@@ -543,8 +501,6 @@ const sagas = {
       const tickEvent = action.params as TickEvent;
       yield call(log.trace, 'saga tickEvent', tickEvent);
       yield put(newAction(ReducerAction.TICK_EVENT, tickEvent));
-      // TODO make this opt-in for debugging
-      // yield put(newAction(AppAction.saveEventsToStorage, { events: [ tickEvent ] }));
     } catch (err) {
       yield call(log.error, 'tickEvent', err);
     }
@@ -571,15 +527,6 @@ const sagas = {
     yield call(log.warn, 'saga restartApp');
     yield call(log.info, RNRestart);
     yield call(RNRestart.Restart);
-  },
-
-  saveEventsToStorage: function* (action: Action) {
-    const params = action.params as SaveEventsToStorageParams;
-    const { events } = params;
-    const keyValuePairs = events.map((event: GenericEvent) => ([ event.t.toString(), JSON.stringify(event) ]));
-    // yield call(log.trace,
-    //   `saga saveEventsToStorage: saving ${keyValuePairs.length} event${keyValuePairs.length >1 ? 's' : ''}`);
-    yield call(AsyncStorage.multiSet, keyValuePairs);
   },
 
   // The sequence action is an array of actions to be executed in sequence, such that

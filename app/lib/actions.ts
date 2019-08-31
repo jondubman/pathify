@@ -44,7 +44,6 @@ export enum AppAction {
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
   'importGPX' = 'importGPX',
-  'loadEventsFromStorage' = 'loadEventsFromStorage',
   'log' = 'log', // see LogActionParams
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
@@ -57,7 +56,6 @@ export enum AppAction {
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'restartApp' = 'restartApp',
-  'saveEventsToStorage' = 'saveEventsToStorage',
   'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
   'setPanelVisibility' = 'setPanelVisibility',
@@ -161,10 +159,6 @@ export interface PanTimelineParams {
 export interface RepeatedActionParams {
   repeat: Action,
   times: number,
-}
-
-export interface SaveEventsToStorageParams {
-  events: GenericEvents,
 }
 
 export type SequenceParams = Action[];
