@@ -10,10 +10,10 @@ export type LonLat = [Lon, Lat];
 import log from './log';
 import sharedConstants from './sharedConstants';
 import timeseries, {
+  Events,
   EventFilter,
   EventType,
   GenericEvent,
-  GenericEvents,
   Timepoint,
   TimeRange
 } from './timeseries';
@@ -106,7 +106,7 @@ const locations = {
   },
 
   // Return a single LOC event (or null if none found within the "near" threshold) nearest in time to given Timepoint t.
-  locEventNearestTimepoint: (events: GenericEvents, t: Timepoint, near: number): (LocationEvent | null) => {
+  locEventNearestTimepoint: (events: Events, t: Timepoint, near: number): (LocationEvent | null) => {
     const nearestMatches: LocationEvents =
       timeseries.findEventsNearestTimepoint(events, t, true, true, near, locEventFilter) as LocationEvents;
 
@@ -117,29 +117,32 @@ const locations = {
     }
   },
 
-  pathFromEvents: (sourceEvents: GenericEvents, tr: TimeRange): Path => {
+  // TODO this function shouldn't need to exist, but Realm is returning { '0': lon, '1': lat } rather than [lon, lat]
+  lonLat: (loc: any): LonLat => [loc['0'], loc['1']],
+
+  pathFromEvents: (sourceEvents: Events, tr: TimeRange): Path => {
     let segments: PathSegment[] = [];
     let coordinates: LonLat[] = [];
     let previousLoc: LonLat | null = null;
     const events = timeseries.filterByTime(sourceEvents, tr);
-    for (let i = 0; i < events.length; i++) {
-      const event = events[i];
+    for (let e of events) {
+      const event = e as any as GenericEvent;
       if (event.type === EventType.LOC) {
         const locEvent = event as LocationEvent;
-        const { loc } = locEvent;
+        const loc = locations.lonLat(locEvent.loc);
         if (previousLoc) {
           const lineSegmentLength = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
-          if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) {
+          if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) { // gap exceeds limit
             log.debug('pathFromEvents lineSegmentLength', lineSegmentLength);
-            // new path segment
+            // new discontiguous path segment
             segments.push({ coordinates });
             coordinates = []; // reset
             previousLoc = null; // reset
           } else {
-            coordinates.push(loc);
+            coordinates.push(loc); // typical case
           }
         } else {
-          coordinates.push(loc);
+          coordinates.push(loc); // first loc
         }
         previousLoc = loc;
       }

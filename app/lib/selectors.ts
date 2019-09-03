@@ -2,6 +2,7 @@
 
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
+import database from 'lib/database';
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
 import utils from 'lib/utils';
@@ -10,9 +11,9 @@ import { Timespan, Timespans } from 'containers/TimelineContainer';
 
 import locations from 'shared/locations';
 import { Activity, MarkEvent, MarkType } from 'shared/marks';
-import timeseries, { interval, Timepoint, TimeRange, EventType } from 'shared/timeseries';
+import timeseries, { Events, GenericEvent, interval, Timepoint, TimeRange, EventType } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
-import { AppStateChange, AppStateChangeEvent, AppUserAction, AppUserActionEvent } from 'shared/appEvents';
+import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
 export const activityIncludesMark = (activity: Activity | null, mark: MarkEvent): boolean => (
   !!(mark.id && activity && mark.id === activity.id)
@@ -20,7 +21,7 @@ export const activityIncludesMark = (activity: Activity | null, mark: MarkEvent)
 
 export const continuousTrackList = (state: AppState): Tracks => {
   const tr: TimeRange = [0, utils.now()];
-  return continuousTracks(state.events, constants.maxTimeGapForContinuousTrack, tr);
+  return continuousTracks(database.events(), constants.maxTimeGapForContinuousTrack, tr);
 }
 
 const colorForAppState = {
@@ -34,13 +35,12 @@ const colorForAppState = {
 // Each activityTimespan shows one Activity
 const activityTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
-  const { events } = state;
   let startTime: Timepoint = 0;
-  for (let i = 0; i < events.length; i++) {
-    const e = events[i];
-    if (e.type === EventType.MARK) {
-      const { t } = e;
-      const { subtype } = (e as MarkEvent);
+  for (let e of database.events()) {
+    const event = e as any as GenericEvent;
+    if (event.type === EventType.MARK) {
+      const { t } = event;
+      const { subtype } = (event as MarkEvent);
       if (subtype === MarkType.START) {
         startTime = t;
       }
@@ -75,14 +75,14 @@ const activityTimespans = (state: AppState): Timespans => {
 // For debugging, appStateTimespans show appState over time.
 const appStateTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
-  const { events } = state;
   let previousState = AppStateChange.NONE;
   let previousTimepoint: Timepoint = 0;
-  for (let i = 0; i < events.length; i++) {
-    const e = events[i];
-    if (e.type === EventType.APP) {
-      const { t } = e;
-      const { newState } = (e as AppStateChangeEvent);
+
+  for (let e of database.events()) {
+    const event = e as any as GenericEvent;
+    if (event.type === EventType.APP) {
+      const { t } = event;
+      const { newState } = (event as AppStateChangeEvent);
       if (previousState !== AppStateChange.NONE) {
         timespans.push({
           kind: TimespanKind.APP_STATE,
@@ -164,7 +164,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     }
   }
   if (!state.flags.timelineNow) {
-    const loc = locations.locEventNearestTimepoint(state.events,
+    const loc = locations.locEventNearestTimepoint(database.events(),
                                                    state.options.refTime,
                                                    constants.timeline.nearTimeThreshold);
     if (loc) {

@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 
+import database from 'lib/database';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
 import locations, { Path, PathType } from 'shared/locations';
@@ -17,10 +18,10 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
   const paths: Path[] = [];
   const { currentActivity, selectedActivity } = state.options;
   if (currentActivity) {
-    paths.push({ ...locations.pathFromEvents(state.events, currentActivity.tr), type: PathType.CURRENT });
+    paths.push({ ...locations.pathFromEvents(database.events(), currentActivity.tr), type: PathType.CURRENT });
   }
   if (selectedActivity) {
-    paths.push({ ...locations.pathFromEvents(state.events, selectedActivity.tr), type: PathType.DEFAULT });
+    paths.push({ ...locations.pathFromEvents(database.events(), selectedActivity.tr), type: PathType.DEFAULT });
   }
   return {
     paths,

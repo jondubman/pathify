@@ -12,7 +12,6 @@ import {
   initialAppState,
   AppState,
 } from 'lib/state';
-import { GenericEvents } from 'shared/timeseries';
 import { LocationEvent, LocationEvents } from 'shared/locations';
 import timeseries, { EventType } from "shared/timeseries";
 
@@ -24,28 +23,11 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
   const { params } = action;
   switch (action.type) {
 
-    case ReducerAction.ADD_EVENTS:
-      {
-        const newEvents = params as GenericEvents;
-        if (!newEvents.length) {
-          break; // nothing to add
-        }
-        if (!state.events.length) {  // special case: no existing events
-          newState.events = newEvents;
-          break;
-        }
-        const mergedEvents: GenericEvents = timeseries.mergeEvents(state.events, newEvents);
-        newState.events = mergedEvents;
-      }
-      break;
-
+    // Set newState.userLocation to be the most recent locationEvent
     case ReducerAction.GEOLOCATION:
       {
         // Ignore a redundant locationEvent, one with the same timepoint as userLocation.
         const locationEvents = params as LocationEvents;
-        const newEvents: LocationEvents = [];
-
-        // set newState.userLocation to be the most recent locationEvent
         for (let i = locationEvents.length - 1; i >= 0; i--) {
           const event = locationEvents[i];
           if (event.type === EventType.LOC) { // TODO if not, input is invalid
@@ -55,7 +37,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
                  (!state.userLocation || locationEvent.t > state.userLocation.t)) {
                                       // Ignore redundant locationEvent with same timepoint as what we already have
               newState.userLocation = { ...locationEvent };
-              newEvents.push(locationEvent);
               break;
             }
           }

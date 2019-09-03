@@ -8,12 +8,10 @@ import constants from 'lib/constants';
 import utils from "lib/utils";
 import { LocationEvent } from 'shared/locations';
 import { Activity } from 'shared/marks';
-import { GenericEvents } from 'shared/timeseries';
 
 const now = utils.now();
 
 export const initialAppState = {
-  events: [] as GenericEvents,
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     activitySummaryExpanded: true, // true: activitySummary is expanded, with greater height (false: collapsed)
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false

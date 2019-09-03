@@ -31,14 +31,6 @@ describe('GenericEvents tests', function () {
   it('should countEvents', function () {
     expect(timeseries.countEvents(eventList) === eventList.length);
   })
-  it('should findEventsAtTimepoint', function() {
-    for (let i = 0; i < eventList.length; i++) {
-      const timepoint = eventList[i].t;
-      const results = timeseries.findEventsAtTimepoint(eventList, timepoint);
-      expect(results.length).to.equal(1);
-      expect(results[0].t).to.equal(timepoint);
-    }
-  })
   it('should findEventsNearestTimepoint', function () {
     for (let i = 0; i < eventList.length; i++) {
 

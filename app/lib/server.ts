@@ -1,3 +1,5 @@
+// Note: This currently uses long-polling which is reliable but not the most efficient. TODO upgrade to WebSockets.
+
 import { newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import store from 'lib/store';

@@ -27,7 +27,7 @@ const locEvents: LocationEvents = function() {
     events.push({
       t: timepoint(i),
       type: EventType.LOC,
-      loc: [ lon, lat ],
+      loc: [lon, lat],
     })
     lon += lonIncrement;
     lat += latIncrement;

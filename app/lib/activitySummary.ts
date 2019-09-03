@@ -3,6 +3,7 @@ import {
   PopupMenuConfig
 } from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
+import database from 'lib/database';
 import {
   dynamicAreaTop,
 } from 'lib/selectors';
@@ -37,13 +38,13 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
     let timeText: string;
     let metrics: ActivityMetrics | null = null;
     if (selectedActivity) {
-      metrics = activityMetrics(state.events, selectedActivity.tr, refTime);
+      metrics = activityMetrics(database.events(), selectedActivity.tr, refTime);
     } else if (currentActivity) {
       let tr = { ...currentActivity.tr };
       if (tr[1] === Infinity) {
         tr[1] = Math.max(utils.now(), refTime);
       }
-      metrics = activityMetrics(state.events, tr, timelineNow ? tr[1] : refTime); // now means now
+      metrics = activityMetrics(database.events(), tr, timelineNow ? tr[1] : refTime);
       if (timelineNow) {
         // special case to ensure time is as current as can be
         timeText = msecToString(Math.max(0, refTime - tr[0]));

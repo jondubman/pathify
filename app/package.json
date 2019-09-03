@@ -8,7 +8,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.6.1",
     "@react-native-community/cli": "^2.9.0",
     "@react-native-community/slider": "^2.0.0",
     "@react-native-mapbox-gl/maps": "^7.0.1",

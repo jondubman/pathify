@@ -1,5 +1,6 @@
 import timeseries, {
-  GenericEvents,
+  Events,
+  GenericEvent,
   Timepoint,
   TimeRange,
   EventType
@@ -51,12 +52,12 @@ export type ActivityMetrics = Map<ActivityMetricName, Optional<ActivityMetric>>;
 // (defaulting to end of timeRange) for any metrics that are "up to time t" like the distance traveled 5 minutes
 // in to a 20 minute run, for example, which wouldn't be needed to calculate totals like the total distance.
 // "partials" are the metrics that depend on t, in contrast to totals.
-export const activityMetrics = (events: GenericEvents,
+export const activityMetrics = (events: Events,
   timeRange: TimeRange,
   t: Timepoint = timeRange[1]): ActivityMetrics => {
 
-  const filterRange = [timeRange[0], Math.max(timeRange[1], t)] as TimeRange; // expand timeRange to cover t if needed
-  const activityEvents = timeseries.filterByTime(events, filterRange);
+  // expand timeRange to cover t if needed
+  const activityEvents = events.filtered('t >= $0 AND t <= $1', timeRange[0], Math.max(timeRange[1], t));
 
   // distance
   let firstOdo = 0, lastOdo = 0;
@@ -106,12 +107,10 @@ export const activityMetrics = (events: GenericEvents,
     partialValue: partialTimeValue,
     totalValue: totalTimeValue,
   }
-
-  // TODO this will do odd things if events are out of time order. Verify they are not. Maybe add a data quality metric?
   try {
     let partialEventCount = 0;
-    for (let i = 0; i < activityEvents.length; i++) {
-      const event = activityEvents[i];
+    for (let e of activityEvents) {
+      const event = e as any as GenericEvent;
       if (event.t <= t) { // for calculating "up to time t"
         // event count
         partialEventCount++;

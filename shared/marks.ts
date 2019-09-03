@@ -2,6 +2,7 @@ import log from './log';
 import { Activity } from './marks';
 import sharedConstants from './sharedConstants';
 import timeseries, {
+  Events,
   EventType,
   GenericEvent,
   GenericEvents,
@@ -23,13 +24,10 @@ export interface MarkEvent extends GenericEvent {
 }
 export type MarkEvents = MarkEvent[];
 
-export const markList = (events: GenericEvents): MarkEvents => {
+export const markList = (events: Events): MarkEvents => {
   const marks: MarkEvents = [];
-  for (let i = 0; i < events.length; i++) {
-    const event = events[i];
-    if (event.type === EventType.MARK) {
-      marks.push(event as MarkEvent);
-    }
+  for (let e of events.filtered('type == "MARK"')) {
+    marks.push(e as any as MarkEvent);
   }
   return marks;
 }
@@ -38,74 +36,75 @@ export interface Activity {
   id?: string;
   tr: TimeRange;
 }
+export type Activites = Activity[];
 
-// Given events and a timepoint t, the containingActivity is the most recently started activity
-// whose endpoint is greater than t.
-export const containingActivity = (events: GenericEvents, t: Timepoint): Activity | null => {
+// Given events and a timepoint t, containingActivities are those with a START <= t and an END >= t. To obtain these:
+// Filter events to include only marks (including START/END). Iterate through results, accumulating START markers with
+// timepoint < t. An END mark with an id previously seen removes START marker from the list.
+// Past timepoint t, any END mark with id previously seen adds an activity to a list of containingActivities.
+
+export const containingActivities = (events: Events, t: Timepoint): Activites | null => {
   try {
-    const previousEndEventIds: string[] = [];
-    const index = timeseries.indexForPreviousTimepoint(events, t, true); // true: allowEqual (as in <= rather than <)
-    for (let i = index; i >= 0; i--) { // scan backward from there
-      const event = events[i];
-      if (event.type === EventType.MARK) {
-        const markEvent = event as MarkEvent; // found a mark
+    let activities: Activites = [];
+    let startMarks: MarkEvents = [];
+    const markEvents = events.filtered('type == "MARK"');
+    for (let e of markEvents) {
+      const markEvent = e as any as MarkEvent;
+      if (!markEvent.id) {
+        continue;
+      }
+      if (markEvent.t <= t) { // note <= to handle edge case of START marker right at t
+        if (markEvent.subtype === MarkType.START) {
+          startMarks.push(markEvent);
+        }
+      }
+      if (markEvent.t < t) { // note strict <
         if (markEvent.subtype === MarkType.END) {
-          if (markEvent.id) { // found an END mark
-            previousEndEventIds.push(markEvent.id);
+          if (markEvent.id) {
+            startMarks = startMarks.filter((e: MarkEvent) => e.id !== markEvent.id);
           }
         }
-        if (markEvent.subtype === MarkType.START) {
-          const startEvent = markEvent; // found a START mark
-          const startId = startEvent.id || '';
-          const startTime = startEvent.t;
-          if (previousEndEventIds.indexOf(startId) === -1) { // if we haven't encountered END mark for this START mark
-            // then seek the corresponding END (with matching mark id), scanning forward
-            const endEvents = timeseries.findNextEvents(events, t,
-              (e: GenericEvent) => (
-                e.type === EventType.MARK &&
-                (e as MarkEvent).subtype === MarkType.END &&
-                (e as MarkEvent).id === startId )
-              )
-            if (endEvents.length) {
-              const endTime = endEvents[0].t; // there should be only one (TODO assert)
-              return {
-                id: startId,
-                tr: [startTime, endTime],
-              } as Activity;
+      } else { // By timepoint t we no longer care about START marks, or END marks with unfamiliar ids.
+        if (markEvent.subtype === MarkType.END) {
+          const startMark = startMarks.find((e: MarkEvent) => e.id === markEvent.id);
+          if (startMark) {
+            // This is an END mark with an id previously seen.
+            const activity: Activity = {
+              id: startMark.id,
+              tr: [startMark.t, markEvent.t],
             }
-            // else {
-            //   // No END event, which implies an an unfinished activity.
-            //   // For the endTime, choose the timepoint of the last event in the sequence starting from startTime
-            //   // such that there is no time gap between consecutive LocationEvents of greater than some threshold.
-            //   let priorLocationEventTime: number = 0;
-            //   for (let j = i; j < events.length; j++) {
-            //     const event = events[j];
-            //     const threshold = sharedConstants.containingActivityTimeThreshold;
-            //     if (event.type === EventType.LOC) {
-            //       if (priorLocationEventTime && event.t - priorLocationEventTime > threshold) {
-            //         return {
-            //           id: startId,
-            //           tr: [startTime, priorLocationEventTime],
-            //         } as Activity;
-            //       }
-            //       priorLocationEventTime = event.t;
-            //     }
-            //   }
-            // }
+            activities.push(activity);
           }
         }
       }
     }
-    return null;
+    return activities;
+  } catch (err) {
+    log.error('containingActivities', err);
+    return [];
+  }
+}
+
+// Given events and a timepoint t, 'the' containingActivity (singular) is defined as the most recently started activity
+// whose endpoint is greater than t. To obtain this, we get all the containingActivities, then sort by endpoint and
+// choose the first.
+export const containingActivity = (events: Events, t: Timepoint): Activity | null => {
+  try {
+    // note null endpoint is treated as timestamp of Infinity for purposes of comparison
+    const comparingEndpoints = (a: Activity, b: Activity) => (a.tr[1] || Infinity) > (b.tr[1] || Infinity) ? 1 : -1;
+    const activities = containingActivities(events, t);
+    if (!activities || !activities.length) {
+      return null;
+    }
+    return activities.sort(comparingEndpoints)[0];
   } catch(err) {
     log.error('containingActivity', err);
     return null;
   }
 }
 
-export const insertMissingStopMarks = (originalEvents: GenericEvents): GenericEvents => {
+export const insertMissingStopMarks = (events: GenericEvents): GenericEvents => { // TODO-Realm postpone
   log.trace('insertMissingStopMarks');
-  const events = timeseries.sortEvents([ ...originalEvents ]);
   // const startEventIds: string[] = [];
   try {
     // first pass: collect all the END marks
@@ -167,6 +166,6 @@ export const insertMissingStopMarks = (originalEvents: GenericEvents): GenericEv
   } catch(err) {
     log.error('insertMissingStopMarks', err);
   } finally {
-    return timeseries.sortEvents(events);
+    return events;
   }
 }

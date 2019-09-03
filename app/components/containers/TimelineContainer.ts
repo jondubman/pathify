@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { DomainPropType } from 'victory-native';
 
 import { AppAction, newAction } from 'lib/actions';
+import database from 'lib/database';
 import { TimespanKind } from 'lib/constants';
 import {
   continuousTrackList,
@@ -19,7 +20,7 @@ import {
   MarkEvents,
   markList
 } from 'shared/marks';
-import timeseries, { TimeRange } from 'shared/timeseries';
+import timeseries, { Events, TimeRange } from 'shared/timeseries';
 import { Track } from 'shared/tracks';
 
 export interface Timespan {
@@ -60,7 +61,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     kind: TimespanKind.LOCATIONS,
     tr: track.tr,
   })).concat(customTimespans(state)).concat(selectionTimespans(state));
-  const marks: MarkEvents = markList(state.events);
+  const marks: MarkEvents = markList(database.events());
   return {
     allowZoom,
     currentActivity,
@@ -70,7 +71,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     selectedActivity: state.options.selectedActivity,
     startupTime: state.options.startupTime,
     timelineNow: state.flags.timelineNow,
-    timeRange: timeseries.timeRangeOfEvents(state.events),
+    timeRange: timeseries.timeRangeOfEvents(database.events()),
     timespans,
     visibleTime: timelineVisibleTime(state.options.timelineZoomValue),
     zoomLevel: timelineZoomLevel(state.options.timelineZoomValue),

@@ -19,11 +19,10 @@
 //
 // IMPORTANT:
 // Here, only, you must use yield select instead of accessing the store directly (yield the select effect)
-// Inside one of these sgas, you should generally use yield call for any async function call.
+// Inside one of these sagas, you should generally use yield call for any async function call.
 // Use yield call(log...) instead of log directly (yield call effect) so the call happens at the right time.
 
 import { Polygon } from '@turf/helpers';
-import AsyncStorage from '@react-native-community/async-storage';
 import RNRestart from 'react-native-restart';
 import {
   call,
@@ -64,6 +63,7 @@ import {
 } from 'lib/actions'
 
 import constants from 'lib/constants';
+import database from 'lib/database';
 import { Geo } from 'lib/geo';
 // import { timelineVisibleTime } from 'lib/selectors';
 import { postToServer } from 'lib/server';
@@ -94,7 +94,6 @@ import {
 } from 'shared/marks';
 import timeseries, {
   EventType,
-  GenericEvent,
   TimeRange,
 } from 'shared/timeseries';
 
@@ -122,10 +121,9 @@ const sagas = {
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
     const { events } = params;
-
-    const sortedEvents = timeseries.sortEvents(events);
-
-    yield put(newAction(ReducerAction.ADD_EVENTS, sortedEvents));
+    if (events && events.length) {
+      yield call(database.createEvents, events);
+    }
   },
 
   appStateChange: function* (action: Action) {
@@ -151,31 +149,34 @@ const sagas = {
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
         case 'events': {
-          let timeRange = query.timeRange || [ 0, Infinity ];
-          if (query.sinceLastStartup) {
-            timeRange = [ lastStartupTime(state.events) || timeRange[0], Math.min(timeRange[1], Infinity) ];
-          }
-          let events = timeRange ? timeseries.filterByTime(state.events, timeRange) : [ ...state.events ];
-          if (query.filterTypes) {
-            if (query.exclude) {
-              events = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
-            } else {
-              events = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
-            }
-          }
-          if (query.startIndex || query.limit) {
-            const startIndex = query.startIndex || 0;
-            events = events.slice(startIndex, startIndex + (query.limit || (events.length - startIndex)));
-          }
-          response = query.count ? events.length : events;
+          let events = database.events();
+          // TODO reimplement this filtering using Realm-JS API
+
+          // let timeRange = query.timeRange || [0, Infinity];
+          // if (query.sinceLastStartup) {
+          //   timeRange = [lastStartupTime(events) || timeRange[0], Math.min(timeRange[1], Infinity)];
+          // }
+          // let events = timeRange ? timeseries.filterByTime(events, timeRange) : [...events];
+          // if (query.filterTypes) {
+          //   if (query.exclude) {
+          //     events = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
+          //   } else {
+          //     events = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
+          //   }
+          // }
+          // if (query.startIndex || query.limit) {
+          //   const startIndex = query.startIndex || 0;
+          //   events = events.slice(startIndex, startIndex + (query.limit || (events.length - startIndex)));
+          // }
+          response = query.count ? events.length : Array.from(events);
           break;
         }
         case 'eventCount': { // quick count of the total, no overhead
-          response = state.events.length;
+          response = database.events().length;
           break;
         }
         case 'lastStartupTime': {
-          response = lastStartupTime(state.events);
+          response = lastStartupTime(database.events());
           break;
         }
         case 'options': {
@@ -261,9 +262,7 @@ const sagas = {
 
   clearStorage: function* () {
     try {
-      const keys = yield call(AsyncStorage.getAllKeys);
-      yield call(log.info, `clearStorage: clearing ${keys.length} keys from AsyncStorage`);
-      yield call(AsyncStorage.clear);
+      yield call(database.reset);
     } catch (err) {
       yield call(log.error, 'saga clearStorage', err);
     }
@@ -475,13 +474,13 @@ const sagas = {
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
     yield call(log.debug, 'saga modeChange', modeChangeEvent);
-    yield put(newAction(AppAction.addEvents, { events: [ modeChangeEvent ]}));
+    yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
   },
 
   motionChange: function* (action: Action) {
     const motionEvent = action.params as MotionEvent;
     yield call(log.debug, 'saga motionChange', motionEvent);
-    yield put(newAction(AppAction.addEvents, { events: [ motionEvent ] }));
+    yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
   },
 
   panTimeline: function* (action: Action) {
@@ -597,7 +596,7 @@ const sagas = {
     // which looks for bookending MarkType.START and MarkType.END events.
     if (action.params.refTime) {
       const timelineNow = yield select(state => state.flags.timelineNow);
-      const events = yield select(state => state.events);
+      const events = yield call(database.events);
       const currentActivity = yield select(state => state.options.currentActivity);
       if (timelineNow) {
         yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
@@ -611,6 +610,8 @@ const sagas = {
           }
         } else {
           yield put(newAction(AppAction.setAppOption, { selectedActivity: activity })); // recursive
+          // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
+          // it's because something other than the currentActivity is selected.
         }
       }
     }

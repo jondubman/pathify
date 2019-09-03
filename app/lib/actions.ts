@@ -12,7 +12,6 @@
 // There seems to be no way to avoid the repetition on each line given the syntax for TypeScript string enums.
 
 export enum ReducerAction {
-  'ADD_EVENTS' = 'ADD_EVENTS',
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'TICK_EVENT' = 'TICK_EVENT', // corresponds to AppAction.tickEvent
@@ -113,7 +112,6 @@ export enum AbsoluteRelativeOption {
 
 export interface AddEventsParams {
   events: GenericEvents;
-  saveToStorage?: boolean; // if explicitly set to false, client-side storage will not be affected
 }
 
 export interface AppStateChangeParams {

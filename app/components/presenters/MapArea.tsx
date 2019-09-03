@@ -170,7 +170,7 @@ class MapArea extends Component<MapAreaProps> {
     return [0, 0]; // TODO should never happen
   }
 
-  // coordinates is [ lon, lat ]
+  // coordinates is [lon, lat]
   async getPointInView(coordinates) {
     if (this._map) {
       const mapView = this._map;

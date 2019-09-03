@@ -281,6 +281,7 @@ export const Geo = {
         }
         const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
         locationEvent.extra = `onLocation ${utils.now()} ${eventIsOld?'old':'new'}`; // TODO
+        store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         if (eventIsOld) {
           eventQueue.push(locationEvent);
         } else {
@@ -415,7 +416,7 @@ export const Geo = {
           interval: 1000, // msec TODO move to constants
           persist: true, // to native SQLite database
         }
-        if (reason === 'tracking') { // TODO
+        if (reason === 'tracking') { // TODO is everything here necessary?
           BackgroundGeolocation.watchPosition(receieveLocation, err => {
             log.error('BackgroundGeolocation.watchPosition', err);
             reject(err);

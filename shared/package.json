@@ -5,6 +5,7 @@
   "dependencies": {
     "@turf/distance": "^6.0.1",
     "@turf/helpers": "^6.1.4",
+    "realm": "^2.29.2",
     "util": "^0.12.0"
   },
   "scripts": {
