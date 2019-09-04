@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import React, {
   Fragment,
 } from 'react';
@@ -31,22 +33,28 @@ import {
   PopupMenusProps
 } from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
-import utils from 'lib/utils';
 import log from 'shared/log';
+
+import { MenuItem } from 'containers/PopupMenusContainer'; // TODO temporarily hard-coding item.name in callbacks
 
 const initialState = {
 }
 type State = Readonly<typeof initialState>
 
+
 class PopupMenus extends React.Component<PopupMenusProps> {
 
   public readonly state: State = initialState;
-  private latestSliderValue: number = 0;
-  private sliderTimeout: any = null;
-  private slidingStart: number = 0;
+  public onValueChanged;
 
   constructor(props: any) {
     super(props);
+    this.onValueChange = _.throttle(this.onValueChange.bind(this), 1000);
+    this.onValueChanged = this.onValueChange.bind(this);
+  }
+
+  public onValueChange(value: number) {
+      this.props.sliderMoved(MenuItem.TIMELINE_ZOOM, value);
   }
 
   public render() {
@@ -62,7 +70,6 @@ class PopupMenus extends React.Component<PopupMenusProps> {
       } as ViewStyle;
 
       const contentsStyle = menuConfig.contentsStyle || {};
-      const { sliderMaxUpdateFrequency } = constants;
 
       return (
         <View style={popupStyle} key={menuName}>
@@ -115,36 +122,10 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                       maximumTrackTintColor={constants.colors.byName.black}
                       minimumValue={0}
                       maximumValue={1}
-                      onSlidingComplete={(value: number) => {
-                        this.props.sliderMoved(item.name, value);
-                        this.sliderTimeout = null;
-                      }}
-                      onSlidingStart={(value: number) => {
-                        this.latestSliderValue = value;
-                        this.slidingStart = utils.now();
-                      }}
-                      onValueChange={(value: number) => {
-                        this.latestSliderValue = value;
-                        if (utils.now() - this.slidingStart > sliderMaxUpdateFrequency) {
-                          if (this.sliderTimeout) {
-                            clearTimeout(this.sliderTimeout);
-                            this.sliderTimeout = null;
-                          }
-                          this.slidingStart = utils.now();
-                          this.props.sliderMoved(item.name, value);
-                          // })
-                        } else {
-                          if (this.sliderTimeout) {
-                            clearTimeout(this.sliderTimeout);
-                          }
-                          this.sliderTimeout = setTimeout(() => {
-                            this.slidingStart = utils.now();
-                            this.props.sliderMoved(item.name, this.latestSliderValue);
-                          }, sliderMaxUpdateFrequency);
-                        }
-                      }}
+                      onValueChange={this.onValueChange}
+                      onSlidingComplete={this.onValueChanged}
                       style={Styles.slider}
-                      value={this.latestSliderValue || item.props.sliderValue}
+                      value={item.props.sliderValue}
                     />
                   </View>
                 : null }
@@ -156,7 +137,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
     }
     return (
       <View>
-        {[ ...menus ].map(([menuName, menuConfig]) => (
+        {[...menus].map(([menuName, menuConfig]) => (
           menuConfig.open ? renderMenu(menuName, menuConfig) : null
         ))}
       </View>

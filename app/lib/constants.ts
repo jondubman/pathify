@@ -367,7 +367,6 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
-  sliderMaxUpdateFrequency: 1000, // msec
   timeline: {
     barHeight: 40, // big enough to be touchable
     bottomPaddingForAxis,

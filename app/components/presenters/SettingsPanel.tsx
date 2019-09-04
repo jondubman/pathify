@@ -1,5 +1,7 @@
 // SettingsPanel supports setting map style and opacity (with a slider).
-import _ from 'lodash'
+
+import _ from 'lodash';
+
 import React, {
 } from 'react';
 
@@ -13,9 +15,11 @@ import {
 
 import Slider from '@react-native-community/slider';
 
-import constants, { MapStyle } from 'lib/constants';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
+import constants, { MapStyle } from 'lib/constants';
+import log from 'shared/log';
+
 const colors = constants.colors.settingsPanel;
 const { height, leftOffset, topOffset } = constants.settingsPanel;
 
@@ -106,9 +110,16 @@ type State = Readonly<typeof initialState>
 class SettingsPanel extends React.Component<SettingsPanelProps> {
 
   public readonly state: State = initialState;
+  public onValueChanged;
 
   constructor(props: any) {
     super(props);
+    this.onValueChange = _.throttle(this.onValueChange.bind(this), 250)
+    this.onValueChanged = this.onValueChange.bind(this);
+}
+
+  public onValueChange(value: number) {
+    this.props.onSetMapOpacity(value);
   }
 
   public render() {
@@ -153,20 +164,10 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                       <Slider
                         maximumTrackTintColor={constants.colors.byName.azure}
                         minimumTrackTintColor={constants.colors.byName.black}
-                        onSlidingComplete={(value: number) => {
-                          this.setState({ initialSliderValue: null });
-                          props.onSetMapOpacity(value);
-                        }}
-                        onSlidingStart={(value: number) => {
-                          this.setState({ initialSliderValue: value });
-                        }}
-                        onValueChange={
-                          _.debounce((value: number) => {
-                            props.onSetMapOpacity(value);
-                          }, constants.sliderDebounce.wait, constants.sliderDebounce.options)
-                        }
+                        onValueChange={this.onValueChange}
+                        onSlidingComplete={this.onValueChanged}
                         style={Styles.opacitySlider}
-                        value={this.state.initialSliderValue || props.mapOpacity}
+                        value={props.mapOpacity}
                       />
                     </View>
                   </View>
