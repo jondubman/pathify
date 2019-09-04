@@ -13,19 +13,19 @@ import log from 'shared/log';
 import { activityMetrics, ActivityMetrics, ActivityMetricName } from 'shared/metrics';
 import { msecToString } from 'shared/units';
 
-export const activitySummary = (state: AppState, activitySummary: PopupMenuConfig): PopupMenuConfig => {
-  const popup = { ...activitySummary };
-  const { activitySummaryExpanded, timelineNow } = state.flags;
-  const { itemsWhenCollapsed, itemsWhenExpanded } = constants.activitySummary;
+export const activityDetails = (state: AppState, activityDetails: PopupMenuConfig): PopupMenuConfig => {
+  const popup = { ...activityDetails };
+  const { activityDetailsExpanded, timelineNow } = state.flags;
+  const { itemsWhenCollapsed, itemsWhenExpanded } = constants.activityDetails;
   try {
-    const height = activitySummaryExpanded ?
-      constants.activitySummary.heightExpanded + dynamicAreaTop(state)
+    const height = activityDetailsExpanded ?
+      constants.activityDetails.heightExpanded + dynamicAreaTop(state)
       :
-      constants.activitySummary.heightCollapsed + dynamicAreaTop(state);
+      constants.activityDetails.heightCollapsed + dynamicAreaTop(state);
 
     popup.contentsStyle = {
       ...popup.contentsStyle,
-      top: dynamicAreaTop(state) - constants.activitySummary.itemMargin,
+      top: dynamicAreaTop(state) - constants.activityDetails.itemMargin,
       // TODO subtracting itemMargin here is sort of a trick to tuck the top row's marginTop above the content area.
     },
     popup.style = {
@@ -75,15 +75,15 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
       // Other metrics
       const eventCountMetric = metrics.get(ActivityMetricName.eventCount);
       const itemContainerStyle = {
-        height: constants.activitySummary.itemHeight,
-        padding: constants.activitySummary.itemMargin,
+        height: constants.activityDetails.itemHeight,
+        padding: constants.activityDetails.itemMargin,
         width: '50%',
       }
-      const itemBackground = selectedActivity ? constants.colors.activitySummary.itemBackground_selected :
-        constants.colors.activitySummary.itemBackground_current;
+      const itemBackground = selectedActivity ? constants.colors.activityDetails.itemBackground_selected :
+        constants.colors.activityDetails.itemBackground_current;
       const itemStyle = {
         backgroundColor: itemBackground,
-        borderRadius: constants.activitySummary.itemBorderRadius,
+        borderRadius: constants.activityDetails.itemBorderRadius,
         height: '100%',
         width: '100%',
       }
@@ -132,10 +132,10 @@ export const activitySummary = (state: AppState, activitySummary: PopupMenuConfi
           label: (eventCountMetric && eventCountMetric.label) ? eventCountMetric.label : ' ',
           name: MenuItem.EVENT_COUNT
         }
-      ].slice(0, activitySummaryExpanded ? itemsWhenExpanded : itemsWhenCollapsed);
+      ].slice(0, activityDetailsExpanded ? itemsWhenExpanded : itemsWhenCollapsed);
     }
   } catch (err) {
-    log.error('activitySummary', err);
+    log.error('activityDetails', err);
   }
   return popup;
 }

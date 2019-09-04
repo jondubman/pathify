@@ -13,7 +13,7 @@ const now = utils.now();
 
 export const initialAppState = {
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
-    activitySummaryExpanded: true, // true: activitySummary is expanded, with greater height (false: collapsed)
+    activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.

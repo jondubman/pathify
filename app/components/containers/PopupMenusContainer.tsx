@@ -12,11 +12,11 @@ import {
   dynamicTimelineHeight,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import { activitySummary } from 'lib/activitySummary';
+import { activityDetails } from 'lib/activityDetails';
 import utils from 'lib/utils';
 
 export enum MenuItem {
-  // activitySummary
+  // activityDetails
   'DISTANCE' = 'DISTANCE',
   'ELEVATION' = 'ELEVATION',
   'EVENT_COUNT' = 'EVENT_COUNT',
@@ -61,7 +61,7 @@ export type PopupMenuConfig = {
   style: ViewStyle;
 }
 export enum PopupMenuName {
-  'activitySummary' = 'activitySummary',
+  'activityDetails' = 'activityDetails',
   'clockMenu' = 'clockMenu',
 }
 
@@ -72,7 +72,7 @@ const itemContainerStyle = {
 }
 const itemStyle = {
   backgroundColor: constants.colors.byName.azure_dark,
-  borderRadius: constants.activitySummary.itemBorderRadius,
+  borderRadius: constants.activityDetails.itemBorderRadius,
   height: 60,
   width: 60,
 }
@@ -81,7 +81,7 @@ const itemStyle = {
 // new PopupMenusConfig gives an error, saying it refers to a type but it's being used as a value (?)
 export type PopupMenusConfig = Map<PopupMenuName, PopupMenuConfig>;
 export const initialMenus = new Map<PopupMenuName, PopupMenuConfig>([
-  [PopupMenuName.activitySummary, {
+  [PopupMenuName.activityDetails, {
     contentsStyle: {
       alignItems: 'flex-start',
       flexDirection: 'row',
@@ -225,11 +225,11 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
       }
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }
-    if (menuName === PopupMenuName.activitySummary) {
+    if (menuName === PopupMenuName.activityDetails) {
       if (state.options.currentActivity || state.options.selectedActivity) {
-        const activitySummaryPopup: PopupMenuConfig = menus.get(PopupMenuName.activitySummary)!;
-        activitySummaryPopup.open = true;
-        menus.set(PopupMenuName.activitySummary, activitySummary(state, activitySummaryPopup));
+        const activityDetailsPopup: PopupMenuConfig = menus.get(PopupMenuName.activityDetails)!;
+        activityDetailsPopup.open = true;
+        menus.set(PopupMenuName.activityDetails, activityDetails(state, activityDetailsPopup));
       }
     }
   }
