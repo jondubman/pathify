@@ -127,6 +127,10 @@ class Timeline extends Component<TimelinePanelProps> {
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
     // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
+
+    // TODO
+    // animate={{ duration: 0, onExit: { duration: 0 }, onEnter: { duration: 0 }, onLoad: { duration: 0 }}}
+
     return (
       <View style={TimelineStyles.timeline}>
         <VictoryChart

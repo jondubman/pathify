@@ -41,15 +41,9 @@ export interface GenericEvent {
   temp?: boolean; // true means do not persist anywhere
 }
 
-// Functions of GenericEvents that return a single event can return an EventResult that contains both the index into
-// GenericEvents as well as the actual event, for convenience.
-// export interface EventResult {
-//   event: GenericEvent;
-//   index: number;
-// }
 export type EventFilter = (event: GenericEvent) => Boolean; // true: event passes filter // TODO-Realm postpone
 export type EventsFilter = (events: GenericEvents, filter: EventFilter) => GenericEvents; // TODO-Realm postpone
-export type GenericEvents = GenericEvent[];
+export type GenericEvents = GenericEvent[]; // An array, possibly temporary, not necessarily backed by Realm
 
 export const interval = {
   second: 1000,
@@ -107,7 +101,7 @@ const timeseries = {
     return newEvents;
   },
 
-  // Determine the number of events whose t is within the given TimeRange, with optional type filter
+  // Determine the number of events whose t is within the given TimeRange (inclusive!), with optional type filter
   countEvents: (events: Events, tr: TimeRange = [0, Infinity], type: string = ''): number => {
     if (type == '') {
       return events.filtered('t >= $0 AND t <= $1', tr[0], tr[1]).length;

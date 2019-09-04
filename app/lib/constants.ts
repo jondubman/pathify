@@ -367,13 +367,7 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
-  sliderDebounce: { // https://lodash.com/docs/4.17.15#debounce
-    wait: 250,
-    options: {
-      leading: true,
-      trailing: true,
-    },
-  },
+  sliderMaxUpdateFrequency: 1000, // msec
   timeline: {
     barHeight: 40, // big enough to be touchable
     bottomPaddingForAxis,

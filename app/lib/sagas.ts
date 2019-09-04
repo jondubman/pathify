@@ -32,6 +32,8 @@ import {
   select,
   // spawn,
   takeEvery,
+  takeLatest,
+  throttle,
 } from 'redux-saga/effects';
 
 import * as uuid from 'uuid/v4';
@@ -65,7 +67,7 @@ import {
 import constants from 'lib/constants';
 import database from 'lib/database';
 import { Geo } from 'lib/geo';
-// import { timelineVisibleTime } from 'lib/selectors';
+import { timelineVisibleTime } from 'lib/selectors';
 import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
@@ -104,7 +106,15 @@ const sagas = {
     for (let action in AppAction) {
       if (AppAction[action]) {
         yield call(log.debug, 'configuring saga for AppAction', action);
-        yield takeEvery(AppAction[action], sagas[AppAction[action]]);
+        if (action === AppAction.sliderMoved) {
+          // TODO Special case
+          yield takeLatest(AppAction[action], sagas[AppAction[action]]);
+          // yield throttle(1000, AppAction[action], sagas[AppAction[action]]);
+          // yield takeEvery(AppAction[action], sagas[AppAction[action]]);
+        } else {
+          // General case
+          yield takeEvery(AppAction[action], sagas[AppAction[action]]);
+        }
       } else {
         yield call(log.warn, 'unknown action in AppAction enum', action); // TODO why does this happen?
       }
@@ -566,20 +576,6 @@ const sagas = {
     }
   },
 
-  // Note sleep only works as expected if enclosed in a sequence action; sequence is where sleep is really implemented.
-  // Behavior is odd when nesting sequences involving sleep and repeated actions if not enclosed in a sequence.
-  // Mostly, more things will happen in parallel than you might anticipate, due to the somewhat subtle semantics of
-  // these redux-saga generators, which cannot use async/await.
-  sleep: function* () {
-  },
-
-  sliderMoved: function* (action: Action) {
-    const params = action.params as SliderMovedParams;
-    const { value } = params; // between 0 and 1
-    // yield call(log.trace, 'saga sliderMoved', value, timelineVisibleTime(value));
-    yield put(newAction(AppAction.setAppOption, { timelineZoomValue: value }));
-  },
-
   setPanelVisibility: function* () {
   },
 
@@ -615,6 +611,20 @@ const sagas = {
         }
       }
     }
+  },
+
+  // Note sleep only works as expected if enclosed in a sequence action; sequence is where sleep is really implemented.
+  // Behavior is odd when nesting sequences involving sleep and repeated actions if not enclosed in a sequence.
+  // Mostly, more things will happen in parallel than you might anticipate, due to the somewhat subtle semantics of
+  // these redux-saga generators, which cannot use async/await.
+  sleep: function* () {
+  },
+
+  sliderMoved: function* (action: Action) {
+    const params = action.params as SliderMovedParams;
+    const { value } = params; // between 0 and 1
+    // yield call(log.trace, 'saga sliderMoved', value, timelineVisibleTime(value));
+    yield put(newAction(AppAction.setAppOption, { timelineZoomValue: value }));
   },
 
   // Follow the user, recentering map right away, kicking off background geolocation if needed.

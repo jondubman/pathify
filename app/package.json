@@ -35,9 +35,9 @@
     "react-native-restart": "^0.0.12",
     "react-native-safe-area-view-with-get-inset": "^0.10.0",
     "react-native-status-bar-height": "^2.4.0",
-    "react-native-svg": "^9.6.4",
+    "react-native-svg": "9.8.4",
     "react-native-vector-icons": "^6.4.2",
-    "react-redux": "^7.0.3",
+    "react-redux": "^7.1.1",
     "realm": "^2.29.2",
     "redux": "^4.0.4",
     "redux-saga": "^1.0.2",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.18",
     "@types/react": "^16.9.2",
-    "@types/react-native": "^0.60.8",
+    "@types/react-native": "^0.60.11",
     "@types/react-test-renderer": "^16.9.0",
     "babel-jest": "24.9.0",
     "jest": "24.9.0",
@@ -56,7 +56,7 @@
     "react-native-typescript-transformer": "^1.2.13",
     "react-test-renderer": "^16.9.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.4.5"
+    "typescript": "^3.6.2"
   },
   "jest": {
     "preset": "react-native",

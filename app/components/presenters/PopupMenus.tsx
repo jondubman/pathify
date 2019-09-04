@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, {
   Fragment,
 } from 'react';
@@ -32,16 +31,19 @@ import {
   PopupMenusProps
 } from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
+import utils from 'lib/utils';
 import log from 'shared/log';
 
 const initialState = {
-  initialSliderValue: null as number | null,
 }
 type State = Readonly<typeof initialState>
 
 class PopupMenus extends React.Component<PopupMenusProps> {
 
   public readonly state: State = initialState;
+  private latestSliderValue: number = 0;
+  private sliderTimeout: any = null;
+  private slidingStart: number = 0;
 
   constructor(props: any) {
     super(props);
@@ -60,6 +62,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
       } as ViewStyle;
 
       const contentsStyle = menuConfig.contentsStyle || {};
+      const { sliderMaxUpdateFrequency } = constants;
 
       return (
         <View style={popupStyle} key={menuName}>
@@ -113,19 +116,35 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                       minimumValue={0}
                       maximumValue={1}
                       onSlidingComplete={(value: number) => {
-                        this.setState({ initialSliderValue: null});
                         this.props.sliderMoved(item.name, value);
+                        this.sliderTimeout = null;
                       }}
                       onSlidingStart={(value: number) => {
-                        this.setState({ initialSliderValue: value });
+                        this.latestSliderValue = value;
+                        this.slidingStart = utils.now();
                       }}
-                      onValueChange={
-                        _.debounce((value: number) => {
+                      onValueChange={(value: number) => {
+                        this.latestSliderValue = value;
+                        if (utils.now() - this.slidingStart > sliderMaxUpdateFrequency) {
+                          if (this.sliderTimeout) {
+                            clearTimeout(this.sliderTimeout);
+                            this.sliderTimeout = null;
+                          }
+                          this.slidingStart = utils.now();
                           this.props.sliderMoved(item.name, value);
-                        }, constants.sliderDebounce.wait, constants.sliderDebounce.options)
-                      }
+                          // })
+                        } else {
+                          if (this.sliderTimeout) {
+                            clearTimeout(this.sliderTimeout);
+                          }
+                          this.sliderTimeout = setTimeout(() => {
+                            this.slidingStart = utils.now();
+                            this.props.sliderMoved(item.name, this.latestSliderValue);
+                          }, sliderMaxUpdateFrequency);
+                        }
+                      }}
                       style={Styles.slider}
-                      value={this.state.initialSliderValue || item.props.sliderValue}
+                      value={this.latestSliderValue || item.props.sliderValue}
                     />
                   </View>
                 : null }
