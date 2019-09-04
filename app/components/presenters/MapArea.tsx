@@ -126,7 +126,6 @@ class MapArea extends Component<MapAreaProps> {
             zoomEnabled={true}
           >
             <Mapbox.Camera
-
               followUserLocation={false}
               heading={0}
               ref={camera => { this._camera = camera }}
@@ -217,7 +216,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onRegionDidChange(...args) {
-    // log.trace('onRegionDidChange', args);
+    log.trace('onRegionDidChange');
     this.props.mapRegionChanged(args[0]);
   }
 

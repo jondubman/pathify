@@ -1,7 +1,7 @@
 // Redux reducer for the app
 // TODO reorganize using combineReducers or something better
 
-// import { Polygon } from "@turf/helpers";
+import { Polygon } from "@turf/helpers";
 
 import {
   Action,
@@ -13,7 +13,8 @@ import {
   AppState,
 } from 'lib/state';
 import { LocationEvent, LocationEvents } from 'shared/locations';
-import timeseries, { EventType } from "shared/timeseries";
+import log from 'shared/log';
+import { EventType } from "shared/timeseries";
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.
 // Expressions like { ...state, modifiedProp: newValue } help to form newState, which is returned at the end.
@@ -41,6 +42,13 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
             }
           }
         }
+      }
+      break;
+
+    case ReducerAction.MAP_REGION:
+      {
+        const mapRegion = params as Polygon;
+        newState.mapRegion = mapRegion;
       }
       break;
 
