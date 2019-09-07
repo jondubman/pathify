@@ -18,7 +18,6 @@ export enum MarkType {
 
 export interface MarkEvent extends GenericEvent {
   // type: EventType.MARK;
-  id?: string; // use matching id for corresponding START and END marks
   subtype: MarkType;
   synthetic?: boolean;
 }
@@ -50,7 +49,7 @@ export const containingActivities = (events: Events, t: Timepoint): Activites | 
     const markEvents = events.filtered('type == "MARK"');
     for (let e of markEvents) {
       const markEvent = e as any as MarkEvent;
-      if (!markEvent.id) {
+      if (!markEvent.activityId) {
         continue;
       }
       if (markEvent.t <= t) { // note <= to handle edge case of START marker right at t
@@ -60,17 +59,17 @@ export const containingActivities = (events: Events, t: Timepoint): Activites | 
       }
       if (markEvent.t < t) { // note strict <
         if (markEvent.subtype === MarkType.END) {
-          if (markEvent.id) {
-            startMarks = startMarks.filter((e: MarkEvent) => e.id !== markEvent.id);
+          if (markEvent.activityId) {
+            startMarks = startMarks.filter((e: MarkEvent) => e.activityId !== markEvent.activityId);
           }
         }
       } else { // By timepoint t we no longer care about START marks, or END marks with unfamiliar ids.
         if (markEvent.subtype === MarkType.END) {
-          const startMark = startMarks.find((e: MarkEvent) => e.id === markEvent.id);
+          const startMark = startMarks.find((e: MarkEvent) => e.activityId === markEvent.activityId);
           if (startMark) {
-            // This is an END mark with an id previously seen.
+            // This is an END mark with an activityId previously seen.
             const activity: Activity = {
-              id: startMark.id,
+              id: startMark.activityId,
               tr: [startMark.t, markEvent.t],
             }
             activities.push(activity);
@@ -105,7 +104,6 @@ export const containingActivity = (events: Events, t: Timepoint): Activity | nul
 
 export const insertMissingStopMarks = (events: GenericEvents): GenericEvents => { // TODO-Realm postpone
   log.trace('insertMissingStopMarks');
-  // const startEventIds: string[] = [];
   try {
     // first pass: collect all the END marks
     const endEventIds: string[] = [];
@@ -114,12 +112,12 @@ export const insertMissingStopMarks = (events: GenericEvents): GenericEvents => 
       const event = events[i];
       if (event.type === EventType.MARK) {
         const markEvent = event as MarkEvent;
-        if (markEvent.id) {
+        if (markEvent.activityId) {
           if (markEvent.subtype === MarkType.START) {
-            startEventIds.push(markEvent.id);
+            startEventIds.push(markEvent.activityId);
           }
           if (markEvent.subtype === MarkType.END) {
-            endEventIds.push(markEvent.id);
+            endEventIds.push(markEvent.activityId);
           }
         }
       }
@@ -134,9 +132,9 @@ export const insertMissingStopMarks = (events: GenericEvents): GenericEvents => 
       if (event.type === EventType.MARK) {
         const markEvent = event as MarkEvent;
         if (markEvent.subtype === MarkType.START) {
-          if (markEvent.id && endEventIds.indexOf(markEvent.id) < 0) {
+          if (markEvent.activityId && endEventIds.indexOf(markEvent.activityId) < 0) {
             let priorLocationEventTime = event.t;
-            const startId = markEvent.id;
+            const startId = markEvent.activityId;
             const threshold = sharedConstants.containingActivityTimeThreshold;
             for (let k = j + 1; k < events.length; k++) {
               const e = events[k];
@@ -151,8 +149,8 @@ export const insertMissingStopMarks = (events: GenericEvents): GenericEvents => 
             }
             const endMark: MarkEvent = {
               ...timeseries.newSyncedEvent(priorLocationEventTime),
+              activityId: startId,
               type: EventType.MARK,
-              id: startId,
               subtype: MarkType.END,
               synthetic: true,
             }

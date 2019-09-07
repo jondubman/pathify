@@ -10,6 +10,7 @@ const EventSchema: Realm.ObjectSchema = {
   name: 'EventSchema',
   properties: {
     // GenericEvent
+    activityId: 'string?',
     source: 'string?', // optional
     t: { type: 'int', indexed: true }, // required
     // type is required. Based on this, there may be additional properties. All are said to be optional here for
@@ -24,15 +25,17 @@ const EventSchema: Realm.ObjectSchema = {
 
     // LocationEvent
     accuracy: 'int?',
+    battery: 'float?',
+    charging: 'bool?',
     ele: 'int?',
     extra: 'string?',
     heading: 'float?',
-    loc: 'double?[]', // https://academy.realm.io/posts/realm-list-new-superpowers-array-primitives/
+    lat: 'double?',
+    lon: 'double?',
     odo: 'float?',
     speed: 'float?',
 
     // MarkEvent
-    id: 'string?',
     subtype: 'string?',
     synthetic: 'bool?',
 
@@ -45,8 +48,22 @@ const EventSchema: Realm.ObjectSchema = {
   }
 }
 
+const SettingsSchema: Realm.ObjectSchema = { // singleton for stuff we want to persist across app sessions
+  name: 'SettingsSchema',
+  primaryKey: 'id',
+  properties: {
+    id: 'int', // singleton, always 1
+    currentActivityId: 'string?',
+    currentActivityStartTime: 'int?',
+  }
+}
+
+const schema = [
+  EventSchema,
+  SettingsSchema,
+]
 // TODO use deleteRealmIfMigrationNeeded: false for production - see https://realm.io/docs/javascript/latest/
-const config = { schema: [EventSchema], deleteRealmIfMigrationNeeded: true } as Realm.Configuration;
+const config = { schema, deleteRealmIfMigrationNeeded: true } as Realm.Configuration;
 const realm = new Realm(config);
 
 const database = {
@@ -63,6 +80,34 @@ const database = {
   // filtered, sorted, etc. using the Realm-JS API: https://realm.io/docs/javascript/latest/
   events: (): Events => {
     return realm.objects('EventSchema').sorted('t'); // always sort by time (which is indexed) first
+  },
+
+  changeSettings: (changes: any): void => {
+    try {
+      const currentState = realm.objects('SettingsSchema');
+      let newState = { id: 1 };
+      if (currentState.length) {
+        newState = { ...currentState[0], ...changes };
+      }
+      log.info('changeSettings', newState);
+      realm.write(() => {
+        realm.create('SettingsSchema', newState, true); // true: update
+      })
+    } catch (err) {
+      log.error('changeSettings error', err);
+    }
+  },
+
+  settings: (): any => {
+    try {
+      const currentState = realm.objects('SettingsSchema');
+      if (currentState.length) {
+        return currentState[0]; // return all the settings
+      }
+      return {};
+    } catch (err) {
+      return {};
+    }
   },
 
   reset: () => {

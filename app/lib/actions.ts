@@ -36,6 +36,7 @@ export enum AppAction {
   'centerMapOnUser' = 'centerMapOnUser',
   'clearStorage' = 'clearStorage',
   'clockPress' = 'clockPress',
+  'continueActivity' = 'continueActivity',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
   'flagDisable' = 'flagDisable',
   'flagEnable' = 'flagEnable',
@@ -62,7 +63,9 @@ export enum AppAction {
   'sliderMoved' = 'sliderMoved',
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',
-  'startStopActivity' = 'startStopActivity',
+  'startActivity' = 'startActivity',
+  'startOrStopActivity' = 'startOrStopActivity',
+  'stopActivity' = 'stopActivity',
   'timelineZoomed' = 'timelineZoomed',
   'timerTick' = 'timerTick',
   'userMovedMap' = 'userMovedMap',
@@ -102,6 +105,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 import { LocationEvents, LonLat } from 'shared/locations';
 import { AppStateChange } from 'shared/appEvents';
 import { GenericEvents, TimeReference } from 'shared/timeseries';
+import { Activity } from 'shared/marks';
 
 // TODO complete this list
 
@@ -122,6 +126,10 @@ export interface CenterMapParams {
   center: LonLat;
   option: AbsoluteRelativeOption;
   zoom?: number;
+}
+
+export interface ContinueActivityParams {
+  activity: Activity,
 }
 
 export interface DelayedActionParams {
@@ -168,4 +176,8 @@ export interface SleepParams {
 export interface SliderMovedParams {
   name: string;
   value: number;
+}
+
+export interface StartActivityParams {
+  continueActivity?: Activity;
 }

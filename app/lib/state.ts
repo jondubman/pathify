@@ -26,9 +26,13 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     settingsOpen: false, // settings panel visible state
+    showActivityDetails: false, // TODO
+    showPathsOnMap: true, // TODO
     tickEvents: false, // whether to store pulse events when timer ticks (helpful for debugging)
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
+    timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
+    trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
   menus: initialMenus,
   options: { // non-boolean

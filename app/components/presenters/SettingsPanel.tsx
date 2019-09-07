@@ -103,7 +103,6 @@ const Styles = StyleSheet.create({
 })
 
 const initialState = {
-  initialSliderValue: null as number | null,
 }
 type State = Readonly<typeof initialState>
 

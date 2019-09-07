@@ -1,6 +1,9 @@
 // Geo: Configuration and support code related to react-native-background-geolocation.
 // Includes LocationEvent interface.
 
+import * as turf from '@turf/helpers';
+import distance from '@turf/distance';
+
 import BackgroundGeolocation, {
   // State,
   Config,
@@ -19,9 +22,10 @@ import BackgroundGeolocation, {
 
 import { AppAction, GeolocationParams, newAction } from 'lib/actions';
 import constants from 'lib/constants';
+import { currentActivityId } from 'lib/selectors';
 import { Store } from 'lib/store';
 import utils from 'lib/utils';
-import {
+import locations, {
   LocationEvent,
   LocationEvents,
   ModeChangeEvent,
@@ -204,31 +208,36 @@ const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolo
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
 // const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
-const newLocationEvent = (info: Location): LocationEvent => {
+const newLocationEvent = (info: Location, activityId: string | undefined): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
   return {
     ...timeseries.newSyncedEvent(t),
+    activityId,
     type: EventType.LOC,
     accuracy: info.coords.accuracy,
+    battery: info.battery.level,
+    charging: info.battery.is_charging,
     ele: info.coords.altitude,
     heading: info.coords.heading,
-    loc: [info.coords.longitude, info.coords.latitude],
+    lat: info.coords.latitude,
+    lon: info.coords.longitude,
     odo: info.odometer,
     speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
         : undefined,
   }
 }
 
-const newMotionEvent = (info: Location, isMoving: boolean): MotionEvent => {
+const newMotionEvent = (info: Location, isMoving: boolean, activityId: string | undefined): MotionEvent => {
   const t = new Date(info.timestamp).getTime();
   return {
     ...timeseries.newSyncedEvent(t),
+    activityId,
     type: EventType.MOTION,
     isMoving,
   }
 }
 
-const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEvent => {
+const newModeChangeEvent = (activity: string, confidence: number, activityId: string | undefined): ModeChangeEvent => {
   const t = utils.now(); // TODO
   const mapActivityToMode = {
       in_vehicle: ModeType.VEHICLE,
@@ -241,13 +250,14 @@ const newModeChangeEvent = (activity: string, confidence: number): ModeChangeEve
   log.trace('newModeChangeEvent', activity, mode);
   return {
     ...timeseries.newSyncedEvent(t),
+    activityId,
     type: EventType.MODE,
     mode,
     confidence,
   }
 }
 
-let reduxStore: Store | null = null;
+let reduxStore: Store | null = null; // TODO
 let eventQueue: LocationEvents = [];
 
 export const Geo = {
@@ -260,7 +270,10 @@ export const Geo = {
     BackgroundGeolocation.ready(geolocationOptions_default, pluginState => {
 
       const onActivityChange = (event: MotionActivityEvent) => {
-        store.dispatch(newAction(AppAction.modeChange, newModeChangeEvent(event.activity, event.confidence)));
+        const state = store.getState();
+        const activityId = currentActivityId(state);
+        store.dispatch(newAction(AppAction.modeChange,
+                       newModeChangeEvent(event.activity, event.confidence, activityId)));
       }
       const onEnabledChange = (isEnabled: boolean) => {
       }
@@ -271,31 +284,40 @@ export const Geo = {
       const onHeartbeat = (event: HeartbeatEvent) => {
       }
       const onLocation = (location: Location) => {
-        const locationEvent = newLocationEvent(location);
-        if (!store.getState().userLocation) {
+        const state = store.getState();
+        const { userLocation } = state;
+        const activityId = currentActivityId(state);
+        const locationEvent = newLocationEvent(location, activityId);
+        if (!userLocation /* && locationEvent.accuracy TODO */) {
           // This is the first userLocation to arrive.
           store.dispatch(newAction(AppAction.centerMap, {
-            center: locationEvent.loc,
+            center: locations.lonLat(locationEvent),
             option: 'absolute',
           }))
         }
+        // Events are 'old' if they are timestamped as little as like five seconds ago. The app may have run for a while
+        // in the background, collecting data into the plugin's local SQLite DB that we are receiving only now.
         const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
-        locationEvent.extra = `onLocation ${utils.now()} ${eventIsOld?'old':'new'}`; // TODO
-        store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
-        if (eventIsOld) {
+        let eventIsFar = false;
+        if (userLocation) {
+          const dist = distance(turf.point([locationEvent.lon, locationEvent.lat]),
+                                turf.point([userLocation.lon, userLocation.lat]),
+                                { units: 'meters' });
+          eventIsFar = dist > 100; // TODO constant (meters)
+        }
+        const extraLabel = eventIsFar ? '(far)' : (eventIsOld ? '(old)' : '(new)');
+        locationEvent.extra = `onLocation ${utils.now()} ${extraLabel}`; // TODO only for debugging
+        // Important: Do not blindly addEvents immediately or JS thread gets overwhelmed and frame rate plummets.
+        // Instead, queue up old or distant events and add them as a batch.
+        if (eventIsFar || eventIsOld) {
           eventQueue.push(locationEvent);
         } else {
           let geolocationParams: GeolocationParams;
-          // First, process everything in eventQueue as one batch, without rechecking map bounds yet.
+          store.dispatch(newAction(AppAction.addEvents, { events: [...eventQueue, locationEvent] }));
           if (eventQueue.length) {
-            geolocationParams = {
-              locationEvents: eventQueue,
-              recheckMapBounds: false,
-            }
-            store.dispatch(newAction(AppAction.geolocation, geolocationParams));
             eventQueue = []; // reset
           }
-          // Now, handle the latest geolocation, with exactly one map bounds check, now that everything is added.
+          // Handle only the latest geolocation, with exactly one map bounds check, now that everything is added.
           geolocationParams = {
             locationEvents: [locationEvent],
             recheckMapBounds: true,
@@ -307,7 +329,9 @@ export const Geo = {
         log.warn('LocationError', error);
       }
       const onMotionChange = (event: MotionChangeEvent) => {
-        store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving)));
+        const state = store.getState();
+        const activityId = currentActivityId(state);
+        store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving, activityId)));
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);
@@ -330,14 +354,14 @@ export const Geo = {
     BackgroundGeolocation.changePace(isMoving, done);
   },
 
-  enableBackgroundGeolocation: (enable: boolean): void => {
+  enableBackgroundGeolocation: async (enable: boolean) => {
     log.debug('enableBackgroundGeolocation', enable);
     if (enable) {
-      Geo.startBackgroundGeolocation('tracking');
+      await Geo.startBackgroundGeolocation('tracking');
       BackgroundGeolocation.setConfig(geolocationOptions_highPower);
       log.debug('using geolocationOptions_highPower');
     } else {
-      Geo.stopBackgroundGeolocation('tracking');
+      await Geo.stopBackgroundGeolocation('tracking');
       BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
       log.debug('using geolocationOptions_lowPower');
     }
@@ -378,7 +402,7 @@ export const Geo = {
   },
 
   // Geolocation may be needed for multiple reasons.
-  // Client who starts geolocation should specify a reason string, e.g. 'tracking' or 'following'.
+  // Client who starts geolocation should specify a reason string, e.g. 'tracking' or 'navigating'.
   // Client should then pass the same reason when requesting to stopBackgroundGeolocation.
   // If any reasons still apply on stopBackgroundGeolocation, we leave geolocation on.
   // Resolves to true if background geolocation was started as a result of this request.
@@ -399,13 +423,17 @@ export const Geo = {
       const started = () => {
         const receieveLocation = (location: Location) => {
           if (reduxStore) {
-            if (reduxStore.getState().flags.appActive === false) {
+            const state = reduxStore.getState();
+            if (state.flags.appActive === false) { // TODO does code ever execute?
               log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-              const locationEvent = newLocationEvent(location);
+              const locationEvent = newLocationEvent(location, currentActivityId(state));
               locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
               reduxStore.dispatch(newAction(AppAction.geolocation, {
-                locationEvent: [locationEvent],
+                locationEvents: [locationEvent],
                 recheckMapBounds: false,
+              }))
+              reduxStore.dispatch(newAction(AppAction.addEvents, {
+                events: [locationEvent],
               }))
             }
           } else {
@@ -414,7 +442,7 @@ export const Geo = {
         }
         const options = {
           interval: 1000, // msec TODO move to constants
-          persist: true, // to native SQLite database
+          persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
         }
         if (reason === 'tracking') { // TODO is everything here necessary?
           BackgroundGeolocation.watchPosition(receieveLocation, err => {

@@ -20,13 +20,15 @@ import timeseries, {
 
 export interface LocationEvent extends GenericEvent {
   accuracy?: number; // meters
+  battery?: number; // 0 to 1
+  charging?: boolean; // is device plugged in
   ele?: number; // meters
   extra?: string; // for debugging
   heading?: number; // 0 <= degrees < 360
-  loc: LonLat;
+  lat: number;
+  lon: number;
   odo?: number; // meters
   speed?: number; // mph (converted from meters per second)
-  // TODO battery level?
 }
 
 export type LocationEvents = LocationEvent[];
@@ -95,7 +97,8 @@ const locations = {
             ...timeseries.newEvent(epoch),
             type: EventType.LOC,
             ele,
-            loc: [lon, lat],
+            lat,
+            lon,
             source: 'import', // TODO placeholder
           }
           events.push(event);
@@ -117,8 +120,7 @@ const locations = {
     }
   },
 
-  // TODO this function shouldn't need to exist, but Realm is returning { '0': lon, '1': lat } rather than [lon, lat]
-  lonLat: (loc: any): LonLat => [loc['0'], loc['1']],
+  lonLat: (locationEvent: LocationEvent): LonLat => [locationEvent.lon, locationEvent.lat],
 
   pathFromEvents: (sourceEvents: Events, tr: TimeRange): Path => {
     let segments: PathSegment[] = [];
@@ -128,13 +130,11 @@ const locations = {
     for (let e of events) {
       const event = e as any as GenericEvent;
       if (event.type === EventType.LOC) {
-        const locEvent = event as LocationEvent;
-        const loc = locations.lonLat(locEvent.loc);
+        const loc: LonLat = locations.lonLat(event as LocationEvent);
         if (previousLoc) {
           const lineSegmentLength = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
-          if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) { // gap exceeds limit
-            log.debug('pathFromEvents lineSegmentLength', lineSegmentLength);
-            // new discontiguous path segment
+          if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) { // gap exceeds threshold
+            // so create a new, discontiguous path segment
             segments.push({ coordinates });
             coordinates = []; // reset
             previousLoc = null; // reset

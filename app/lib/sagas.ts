@@ -52,6 +52,7 @@ import {
   AddEventsParams,
   AppStateChangeParams,
   CenterMapParams,
+  ContinueActivityParams,
   DelayedActionParams,
   GeolocationParams,
   ImportEventsParams,
@@ -62,6 +63,7 @@ import {
   SequenceParams,
   SleepParams,
   SliderMovedParams,
+  StartActivityParams,
 } from 'lib/actions'
 
 import constants from 'lib/constants';
@@ -109,8 +111,6 @@ const sagas = {
         if (action === AppAction.sliderMoved) {
           // TODO Special case
           yield takeLatest(AppAction[action], sagas[AppAction[action]]);
-          // yield throttle(1000, AppAction[action], sagas[AppAction[action]]);
-          // yield takeEvery(AppAction[action], sagas[AppAction[action]]);
         } else {
           // General case
           yield takeEvery(AppAction[action], sagas[AppAction[action]]);
@@ -201,6 +201,10 @@ const sagas = {
           response = 'pong';
           break;
         }
+        case 'settings': {
+          response = yield call(database.settings);
+          break;
+        }
         case 'userLocation': {
           response = state.userLocation;
           break;
@@ -260,9 +264,9 @@ const sagas = {
     try {
       const map = MapUtils();
       if (map && map.flyTo) {
-        const loc = yield select((state: AppState) => state.userLocation);
-        if (loc && loc.loc) {
-          yield call(map.flyTo as any, loc.loc);
+        const userLocation = yield select((state: AppState) => state.userLocation);
+        if (userLocation && userLocation.lon && userLocation.lat) {
+          yield call(map.flyTo as any, locations.lonLat(userLocation));
         }
       }
     } catch (err) {
@@ -288,6 +292,16 @@ const sagas = {
     }
   },
 
+  continueActivity: function* (action: Action) {
+    try {
+      const params = action.params as ContinueActivityParams;
+      const { activity } = params;
+      yield put(newAction(AppAction.startActivity, { continueActivity: activity }));
+    } catch (err) {
+      yield call(log.error, 'saga continueActivity', err);
+    }
+  },
+
   delayedAction: function* (action: Action) {
     try {
       const params = action.params as DelayedActionParams;
@@ -303,33 +317,8 @@ const sagas = {
 
     if (flagName === 'backgroundGeolocation') {
       const flags = yield select((state: AppState) => state.flags);
-      const options = yield select((state: AppState) => state.options);
       const enabledNow = flags[flagName];
-      const now = utils.now();
-      const startOrStopEvent: AppUserActionEvent = {
-        ...timeseries.newSyncedEvent(now),
-        type: EventType.USER_ACTION,
-        userAction: enabledNow ? AppUserAction.START : AppUserAction.STOP,
-      }
-      const newActivityId = enabledNow ? uuid.default() : options.currentActivity.id;
-      const startOrEndMarkEvent: MarkEvent = {
-        ...timeseries.newSyncedEvent(now),
-        type: EventType.MARK,
-        id: newActivityId,
-        subtype: enabledNow ? MarkType.START : MarkType.END,
-      }
-      yield put(newAction(AppAction.addEvents, { events: [startOrStopEvent, startOrEndMarkEvent ] }));
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
-
-      const newCurrentActivity: Activity | null = enabledNow ? {
-        id: newActivityId,
-        tr: [now, Infinity],
-      } : null;
-      yield put(newAction(AppAction.setAppOption, {
-        currentActivity: newCurrentActivity,
-        selectedActivity: null,
-      }))
-
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         yield call(Geo.changePace, true, () => {
@@ -363,11 +352,14 @@ const sagas = {
     yield sagas.flag_sideEffects(flagName);
   },
 
+  // Update state.userLocation as appropriate in response to geolocation events.
+  // TODO If these events are old, do we still want to do that?
+  // Note it is not the responsibility of this saga to add events when locations comes in. See addEvents.
   geolocation: function* (action: Action) {
     try {
       const { locationEvents, recheckMapBounds } = action.params as GeolocationParams;
       const priorLocation = yield select(state => state.userLocation);
-      yield put(newAction(ReducerAction.GEOLOCATION, locationEvents));
+      yield put(newAction(ReducerAction.GEOLOCATION, locationEvents)); // this sets state.userLocation
       if (recheckMapBounds) {
         const appActive = yield select(state => state.flags.appActive);
         if (appActive) {
@@ -377,7 +369,7 @@ const sagas = {
             const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
               followingUser: state.flags.followingUser,
               keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
-              loc: state.userLocation!.loc,
+              loc: locations.lonLat(state.userLocation!),
             }))
             const bounds = yield call(map.getVisibleBounds as any);
             if (followingUser) {
@@ -413,19 +405,19 @@ const sagas = {
       const gpx = (params.include as any).gpx; // GPX as JSON (already converted from XML)
       const gpxEvents = locations.eventsFromGPX(gpx);
       const source = gpxEvents[0].source || 'import';
-      const id = uuid.default();
+      const activityId = uuid.default();
       const startEvent: MarkEvent = {
         ...timeseries.newSyncedEvent(gpxEvents[0].t),
         source,
         type: EventType.MARK,
-        id,
+        activityId,
         subtype: MarkType.START,
       }
       const endEvent: MarkEvent = {
         ...timeseries.newSyncedEvent(gpxEvents[gpxEvents.length - 1].t + 1),
+        activityId,
         source,
         type: EventType.MARK,
-        id,
         subtype: MarkType.END,
       }
       const events = [
@@ -461,6 +453,7 @@ const sagas = {
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
+    yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
     yield put(newAction(AppAction.flagEnable, 'mapMoving'));
   },
 
@@ -580,14 +573,20 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-    // if (!action.params.refTime) {
-    //   yield call(log.trace, 'saga setAppOption', action);
-    // }
     // First set the option itself:
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
     // Then, handle side effects:
 
+    if (action.params.currentActivity) {
+      const { currentActivity } = action.params;
+      database.changeSettings({ currentActivityId: currentActivity.id,
+                                currentActivityStartTime: currentActivity.tr[0] });
+    }
+    if (action.params.currentActivity === null) { // Explicit check for null
+      database.changeSettings({ currentActivityId: null,
+                                currentActivityStartTime: null });
+    }
     // Whenever refTime is set, update selectedActivity automatically based on marks.containingActivity,
     // which looks for bookending MarkType.START and MarkType.END events.
     if (action.params.refTime) {
@@ -620,12 +619,95 @@ const sagas = {
   sleep: function* () {
   },
 
+  // TODO right now this is hard-coded to the timeline zoom slider but should be generalized
   sliderMoved: function* (action: Action) {
     const params = action.params as SliderMovedParams;
     const { value } = params; // between 0 and 1
     // yield call(log.trace, 'saga sliderMoved', value, timelineVisibleTime(value));
     yield put(newAction(AppAction.setAppOption, { timelineZoomValue: value }));
   },
+
+  startActivity: function* (action: Action) {
+    try {
+      const params = action.params as StartActivityParams || {};
+      const continueActivity = params.continueActivity || undefined;
+      const trackingActivity = yield select(state => state.flags.trackingActivity);
+      if (!trackingActivity) {
+        yield put(newAction(AppAction.flagEnable, 'backgroundGeolocation'));
+        yield put(newAction(AppAction.flagEnable, 'followingUser'));
+        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+        yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
+        yield put(newAction(AppAction.centerMap, {
+          center: [0, 0],
+          option: 'relative',
+          zoom: constants.map.default.zoomStartActivity,
+        } as CenterMapParams));
+
+        const now = utils.now();
+        const startTime = continueActivity ? continueActivity.tr[0] : now;
+        const activityId = continueActivity ? continueActivity.id : uuid.default();
+        if (!continueActivity) {
+          const startEvent: AppUserActionEvent = {
+            ...timeseries.newSyncedEvent(now, activityId),
+            type: EventType.USER_ACTION,
+            userAction: AppUserAction.START,
+          }
+          const startMark: MarkEvent = {
+            ...timeseries.newSyncedEvent(now, activityId),
+            activityId,
+            type: EventType.MARK,
+            subtype: MarkType.START,
+          }
+          yield put(newAction(AppAction.addEvents, { events: [startEvent, startMark] }));
+        }
+        yield put(newAction(AppAction.setAppOption, { currentActivity: { id: activityId, tr: [startTime, Infinity] } }));
+      }
+    } catch (err) {
+      yield call(log.error, 'saga startActivity', err);
+    }
+  },
+
+  // Toggle
+  startOrStopActivity: function* () {
+    try {
+      const trackingActivity = yield select(state => state.flags.trackingActivity);
+      if (trackingActivity) {
+        yield put(newAction(AppAction.stopActivity));
+      } else {
+        yield put(newAction(AppAction.startActivity));
+      }
+    } catch (err) {
+      yield call(log.error, 'saga startOrStopActivity', err);
+    }
+  },
+
+  stopActivity: function* () {
+    try {
+      const trackingActivity = yield select(state => state.flags.trackingActivity);
+      if (trackingActivity) {
+        yield put(newAction(AppAction.flagDisable, 'backgroundGeolocation'));
+        yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
+
+        const activityId = yield select(state => state.options.currentActivity.id);
+        const now = utils.now();
+        const stopEvent: AppUserActionEvent = {
+          ...timeseries.newSyncedEvent(now, activityId),
+          type: EventType.USER_ACTION,
+          userAction: AppUserAction.STOP,
+        }
+        const endMark: MarkEvent = {
+          ...timeseries.newSyncedEvent(now, activityId),
+          activityId,
+          type: EventType.MARK,
+          subtype: MarkType.END,
+        }
+        yield put(newAction(AppAction.addEvents, { events: [stopEvent, endMark] }));
+        yield put(newAction(AppAction.setAppOption, { currentActivity: null }));
+      }
+    } catch (err) {
+      yield call(log.error, 'saga stopActivity', err);
+    }
+},
 
   // Follow the user, recentering map right away, kicking off background geolocation if needed.
   startFollowingUser: function* () {
@@ -636,28 +718,9 @@ const sagas = {
       if (map) {
         yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
       }
-      yield call(Geo.startBackgroundGeolocation, 'following');
+      yield call(Geo.startBackgroundGeolocation, 'navigating');
     } catch (err) {
       yield call(log.error, 'saga startFollowingUser', err);
-    }
-  },
-
-  startStopActivity: function* () {
-    try {
-      const alreadyEnabled = yield select(state => state.flags.backgroundGeolocation);
-      yield put(newAction(AppAction.flagToggle, 'backgroundGeolocation'));
-      if (!alreadyEnabled) {
-        // yield put(newAction(AppAction.startFollowingUser));
-        yield put(newAction(AppAction.flagEnable, 'followingUser')); // handle map recentering ourselves
-        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-        yield put(newAction(AppAction.centerMap, {
-          center: [0, 0],
-          option: 'relative',
-          zoom: constants.map.default.zoomStartActivity,
-        } as CenterMapParams));
-      }
-    } catch (err) {
-      yield call(log.error, 'saga startStopActivity', err);
     }
   },
 
@@ -665,7 +728,8 @@ const sagas = {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(AppAction.flagDisable, 'followingUser'));
-      yield call(Geo.stopBackgroundGeolocation, 'following');
+      // TODO leave background geolocation running in 'navigating' mode
+      // yield call(Geo.stopBackgroundGeolocation, 'navigating');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
     }
@@ -677,7 +741,7 @@ const sagas = {
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
 
     const refTime = (x[0] + x[1]) / 2;
-    yield call(log.trace, 'saga timelineZoomed', refTime);
+    // yield call(log.trace, 'saga timelineZoomed', refTime);
 
     // TODO do not disable timelineNow unless refTime is changing
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));

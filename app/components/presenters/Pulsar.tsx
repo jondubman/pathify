@@ -63,7 +63,7 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
     const { id, loc } = this.props;
     const circleShape: turf.Point = { // Point is a type of GeoJSON geometry object having only coordinates.
       type: 'Point',
-      coordinates: locations.lonLat(loc),
+      coordinates: loc,
     }
     const { pulse } = this.state;
     // pulse directly affects the circleStrokeWidth, which gets drawn outside the circle's canonical radius.

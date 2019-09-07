@@ -216,7 +216,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onRegionDidChange(...args) {
-    log.trace('onRegionDidChange');
+    // log.trace('onRegionDidChange');
     this.props.mapRegionChanged(args[0]);
   }
 

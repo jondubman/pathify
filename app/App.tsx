@@ -11,12 +11,14 @@ import { Provider } from 'react-redux';
 
 import { AppAction, newAction, ReducerAction } from 'lib/actions';
 import constants from 'lib/constants';
+import database from 'lib/database';
 import { Geo } from 'lib/geo';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { AppStateChange } from 'shared/appEvents';
 import log from 'shared/log';
+import { Activity } from 'shared/marks';
 
 import AppUIContainer from 'containers/AppUIContainer';
 
@@ -47,6 +49,15 @@ export default class App extends Component {
       store.dispatch(newAction(AppAction.clearStorage));
     }
     this.handleAppStateChange('startup'); // initialize
+    const settings = database.settings() as any; // TODO typings
+    log.info('Persisted App settings', settings);
+
+    const { currentActivityId, currentActivityStartTime } = settings;
+    if (currentActivityId && currentActivityStartTime) {
+      log.info('Continuing previous activity...');
+      const activity: Activity = { id: currentActivityId, tr: [currentActivityStartTime, Infinity] };
+      store.dispatch(newAction(AppAction.continueActivity, { activity }));
+    }
 
     const interval = setInterval(() => {
       store.dispatch(newAction(AppAction.timerTick, utils.now()));

@@ -21,7 +21,7 @@ import {
   markList
 } from 'shared/marks';
 import timeseries, { Events, TimeRange } from 'shared/timeseries';
-import { Track } from 'shared/tracks';
+import { Track, Tracks } from 'shared/tracks';
 
 export interface Timespan {
   kind: TimespanKind;
@@ -56,7 +56,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const { currentActivity, refTime } = state.options;
   const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
-  const tracks = continuousTrackList(state);
+  const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
   const timespans: Timespans = tracks.map((track: Track): Timespan => ({
     kind: TimespanKind.LOCATIONS,
     tr: track.tr,
@@ -81,7 +81,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
 const mapDispatchToProps = (dispatch: Function): TimelineDispatchProps => {
   const zoomDomainChanged = (domain: DomainPropType) => {
     // This responds to user interaction, adjusting the refTime. Not needed to programmatically zoom Timeline.
-    log.trace('zoomDomainChanged', domain);
+    // log.trace('zoomDomainChanged', domain);
     dispatch(newAction(AppAction.timelineZoomed, domain));
   }
   const dispatchers = {

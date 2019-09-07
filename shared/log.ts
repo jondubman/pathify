@@ -9,6 +9,9 @@ const log = {
   // Note this is the only place in the app where console.log is used directly.
   // This is the lower-level function. Normally, use one of log.trace, log.debug, log.info, log.warn, log.error.
   inner: (level = 'info', ...args) => {
+    if (!__DEV__) {
+      return; // skip all logging for production
+    }
     if (!log.levels.includes(level)) {
       log.log('warn', 'app', `....pathify: Invalid log level ${level}`); // recurse one level deep
       level = 'warn'; // assume warn level if level unknown

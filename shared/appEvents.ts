@@ -14,7 +14,7 @@ export interface AppStateChangeEvent extends GenericEvent {
 }
 
 export const lastStartupTime = (events: Events): (Timepoint | null) => {
-  const reversedEvents = events.sorted('t', true);
+  const reversedEvents = events.filtered('type == "APP"');
   for (let e of reversedEvents) {
     const event = e as any as GenericEvent;
     if (event.type === EventType.APP) {

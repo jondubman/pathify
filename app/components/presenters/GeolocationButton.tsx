@@ -10,7 +10,7 @@ import {
 import constants from 'lib/constants';
 const colors = constants.colors.geolocationButton;
 const {
-  bottomOffset,
+  bottomOffset, // TODO used?
   leftOffset,
   opacity,
   size,

@@ -185,13 +185,16 @@ interface PopupMenusStateProps {
 interface PopupMenusDispatchProps {
   menuItemSelected: (name: string) => void;
   sliderMoved: (name: string, value: number) => void;
+  slidingComplete: (name: string, value: number) => void;
+  slidingStart: (name: string, value: number) => void;
 }
 
 export type PopupMenusProps = PopupMenusStateProps & PopupMenusDispatchProps;
+const initialSliderValue = {};
 
 const mapStateToProps = (state: AppState): PopupMenusStateProps => {
-
   const menus: PopupMenusConfig = new Map(state.menus);
+
   for (let [menuName, menu] of menus) {
     // Set the open flag as needed based on state.flags.
     // If open is not set already, inherit it from the corresponding AppState flag with a name ending in 'Open'.
@@ -220,13 +223,14 @@ const mapStateToProps = (state: AppState): PopupMenusStateProps => {
         }
         timelineZoomItem.props = {
           ...timelineZoomItem.props,
-          sliderValue: state.options.timelineZoomValue,
+          sliderValue: initialSliderValue[menuName] || state.options.timelineZoomValue,
         }
       }
       menus.set(PopupMenuName.clockMenu, clockMenu);
     }
     if (menuName === PopupMenuName.activityDetails) {
-      if (state.options.currentActivity || state.options.selectedActivity) {
+      if ((state.options.currentActivity || state.options.selectedActivity) &&
+           state.flags.showActivityDetails && !state.flags.mapFullScreen) {
         const activityDetailsPopup: PopupMenuConfig = menus.get(PopupMenuName.activityDetails)!;
         activityDetailsPopup.open = true;
         menus.set(PopupMenuName.activityDetails, activityDetails(state, activityDetailsPopup));
@@ -242,8 +246,16 @@ const mapDispatchToProps = (dispatch: Function): PopupMenusDispatchProps => {
       dispatch(newAction(AppAction.menuItemSelected, name));
     },
     sliderMoved: (name: string, value: number) => {
+      // initialSliderValue[name] = value; // TODO
       dispatch(newAction(AppAction.sliderMoved, { name, value } as SliderMovedParams));
     },
+    slidingComplete: (name: string, value: number) => {
+      // delete initialSliderValue[name];
+    },
+    slidingStart: (name: string, value: number) => {
+      // initialSliderValue[name] = value;
+    },
+
   }
   return dispatchers;
 }

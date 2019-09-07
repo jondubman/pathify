@@ -23,14 +23,14 @@ export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationBu
 const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
   return {
     bottomOffset: dynamicLowerButtonBase(state),
-    enabled: state.flags.backgroundGeolocation,
+    enabled: state.flags.trackingActivity,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
   const onPress = () => {
     log.debug('GeolocationButton press');
-    dispatch(newAction(AppAction.startStopActivity));
+    dispatch(newAction(AppAction.startOrStopActivity));
   }
   const dispatchers = {
     onPress,

@@ -16,7 +16,7 @@ import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
 export const activityIncludesMark = (activity: Activity | null, mark: MarkEvent): boolean => (
-  !!(mark.id && activity && mark.id === activity.id)
+  !!(mark.activityId && activity && mark.activityId === activity.id)
 )
 
 export const continuousTrackList = (state: AppState): Tracks => {
@@ -36,29 +36,28 @@ const colorForAppState = {
 const activityTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
   let startTime: Timepoint = 0;
-  for (let e of database.events()) {
-    const event = e as any as GenericEvent;
-    if (event.type === EventType.MARK) {
-      const { t } = event;
-      const { subtype } = (event as MarkEvent);
-      if (subtype === MarkType.START) {
-        startTime = t;
+  const markEvents = database.events().filtered('type == "MARK"');
+  for (let e of markEvents) {
+    const event = e as any as MarkEvent;
+    const { t } = event;
+    const { subtype } = event;
+    if (subtype === MarkType.START) {
+      startTime = t;
+    }
+    if (subtype === MarkType.END) {
+      const tr: TimeRange = [startTime, t];
+      const timespan = {
+        kind: TimespanKind.ACTIVITY,
+        tr,
+      } as Timespan;
+      if (state.options.selectedActivity && timeseries.timeRangesEqual(state.options.selectedActivity.tr, tr)) {
+        timespan.color = constants.colors.timeline.selectedActivity;
       }
-      if (subtype === MarkType.END) {
-        const tr: TimeRange = [startTime, t];
-        const timespan = {
-          kind: TimespanKind.ACTIVITY,
-          tr,
-        } as Timespan;
-        if (state.options.selectedActivity && timeseries.timeRangesEqual(state.options.selectedActivity.tr, tr)) {
-          timespan.color = constants.colors.timeline.selectedActivity;
-        }
-        if (state.options.currentActivity && state.options.currentActivity.tr[0] == tr[0]) {
-          timespan.color = constants.colors.timeline.selectedActivity;
-        }
-        timespans.push(timespan);
-        startTime = 0;
+      if (state.options.currentActivity && state.options.currentActivity.tr[0] == tr[0]) {
+        timespan.color = constants.colors.timeline.selectedActivity;
       }
+      timespans.push(timespan);
+      startTime = 0;
     }
   }
   // Finally, add a timepsan representing the current state, if started.
@@ -78,21 +77,19 @@ const appStateTimespans = (state: AppState): Timespans => {
   let previousState = AppStateChange.NONE;
   let previousTimepoint: Timepoint = 0;
 
-  for (let e of database.events()) {
-    const event = e as any as GenericEvent;
-    if (event.type === EventType.APP) {
-      const { t } = event;
-      const { newState } = (event as AppStateChangeEvent);
-      if (previousState !== AppStateChange.NONE) {
-        timespans.push({
-          kind: TimespanKind.APP_STATE,
-          tr: [ previousTimepoint, t ],
-          color: colorForAppState[previousState],
-        })
-      }
-      previousState = newState;
-      previousTimepoint = t;
+  const appEvents = database.events().filtered('type == "APP"');
+  for (let e of appEvents) {
+    const event = e as any as AppStateChangeEvent;
+    const { newState, t } = event;
+    if (previousState !== AppStateChange.NONE) {
+      timespans.push({
+        kind: TimespanKind.APP_STATE,
+        tr: [ previousTimepoint, t ],
+        color: colorForAppState[previousState],
+      })
     }
+    previousState = newState;
+    previousTimepoint = t;
   }
   // Add a timepsan representing the current state.
   timespans.push({
@@ -108,6 +105,13 @@ export const customTimespans = (state: AppState): Timespans => {
   timespans.push(...activityTimespans(state));
   timespans.push(...appStateTimespans(state));
   return timespans;
+}
+
+export const currentActivityId = (state: AppState): string | undefined => {
+  if (state.options.currentActivity) {
+    return state.options.currentActivity.id;
+  }
+  return undefined;
 }
 
 // NOTE: selection here means TimeRange selections, not related to selectedActivity
@@ -158,18 +162,22 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars };
   if (state.userLocation) {
     pulsars.userLocation = {
-      loc: state.userLocation.loc,
+      loc: locations.lonLat(state.userLocation),
       color: constants.colors.user,
       visible: true,
     }
   }
   if (!state.flags.timelineNow) {
-    const loc = locations.locEventNearestTimepoint(database.events(),
-                                                   state.options.refTime,
-                                                   constants.timeline.nearTimeThreshold);
-    if (loc) {
+    const { nearTimeThreshold } = constants.timeline;
+    const { refTime } = state.options;
+    const tMin = refTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
+    const tMax = refTime + nearTimeThreshold;
+    const locEvent = locations.locEventNearestTimepoint(database.events().filtered('t >= $0 AND t <= $1', tMin, tMax),
+                                                        refTime,
+                                                        nearTimeThreshold);
+    if (locEvent) {
       pulsars.priorLocation = {
-        loc: loc.loc,
+        loc: locations.lonLat(locEvent),
         color: constants.colors.byName.red,
         visible: true,
       }

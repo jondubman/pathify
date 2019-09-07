@@ -13,7 +13,6 @@ import {
   AppState,
 } from 'lib/state';
 import { LocationEvent, LocationEvents } from 'shared/locations';
-import log from 'shared/log';
 import { EventType } from "shared/timeseries";
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.
@@ -29,16 +28,17 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         // Ignore a redundant locationEvent, one with the same timepoint as userLocation.
         const locationEvents = params as LocationEvents;
-        for (let i = locationEvents.length - 1; i >= 0; i--) {
-          const event = locationEvents[i];
-          if (event.type === EventType.LOC) { // TODO if not, input is invalid
-             const locationEvent = event as LocationEvent;
-             if (locationEvent &&
-                 locationEvent.loc &&
+        if (locationEvents) {
+          for (let i = locationEvents.length - 1; i >= 0; i--) {
+            const event = locationEvents[i];
+            if (event.type === EventType.LOC) { // TODO if not, input is invalid
+              const locationEvent = event as LocationEvent;
+              // Ignore redundant locationEvent with same timepoint as what we already have
+              if (locationEvent && locationEvent.lon && locationEvent.lat &&
                  (!state.userLocation || locationEvent.t > state.userLocation.t)) {
-                                      // Ignore redundant locationEvent with same timepoint as what we already have
-              newState.userLocation = { ...locationEvent };
-              break;
+                newState.userLocation = { ...locationEvent };
+                break;
+              }
             }
           }
         }

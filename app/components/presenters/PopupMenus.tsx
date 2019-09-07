@@ -37,20 +37,28 @@ import log from 'shared/log';
 
 import { MenuItem } from 'containers/PopupMenusContainer'; // TODO temporarily hard-coding item.name in callbacks
 
-const initialState = {
+interface State {
+  initialValue?: number;
 }
-type State = Readonly<typeof initialState>
-
 
 class PopupMenus extends React.Component<PopupMenusProps> {
 
-  public readonly state: State = initialState;
+  public readonly state: State = {
+  }
   public onValueChanged;
 
   constructor(props: any) {
     super(props);
-    this.onValueChange = _.throttle(this.onValueChange.bind(this), 1000);
-    this.onValueChanged = this.onValueChange.bind(this);
+    this.onSlidingStart = this.onSlidingStart.bind(this);
+    this.onValueChange = _.throttle(this.onValueChange.bind(this), 100); // 100 msec: not much!
+    this.onValueChanged = ((value: number) => {
+      this.onValueChange(value); // final value change
+      this.props.slidingComplete(MenuItem.TIMELINE_ZOOM, value);
+    }).bind(this);
+  }
+
+  public onSlidingStart(value: number) {
+    this.props.slidingStart(MenuItem.TIMELINE_ZOOM, value);
   }
 
   public onValueChange(value: number) {
@@ -122,8 +130,9 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                       maximumTrackTintColor={constants.colors.byName.black}
                       minimumValue={0}
                       maximumValue={1}
-                      onValueChange={this.onValueChange}
                       onSlidingComplete={this.onValueChanged}
+                      onSlidingStart={this.onSlidingStart}
+                      onValueChange={this.onValueChange}
                       style={Styles.slider}
                       value={item.props.sliderValue}
                     />

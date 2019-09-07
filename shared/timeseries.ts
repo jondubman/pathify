@@ -2,8 +2,6 @@
 
 import Realm from 'realm';
 
-import log from './log';
-
 export type Events = Realm.Results<Realm.Object>;
 
 // TimeRange tuple is always inclusive of its endpoints.
@@ -32,13 +30,10 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
 }
 
 export interface GenericEvent {
+  activityId?: string; // use matching activityId for corresponding START and END marks and events collected between
   t: Timepoint;
   type: EventType;
   source?: string; // generally either our own client ID, or something else if from server (like 'server')
-  // undefined for private/local events which do not get uploaded
-
-  // used locally only (not committed to server):
-  temp?: boolean; // true means do not persist anywhere
 }
 
 export type EventFilter = (event: GenericEvent) => Boolean; // true: event passes filter // TODO-Realm postpone
@@ -160,9 +155,10 @@ const timeseries = {
 
   // local/private by default (i.e. not synced with the server)
   // timestamped now unless a timestamp is provided.
-  newEvent: (t: Timepoint): GenericEvent => {
+  newEvent: (t: Timepoint, activityId: string = null): GenericEvent => {
     const timestamp = t || Date.now(); // TODO maybe require t
     return {
+      activityId,
       t: Math.round(timestamp), // TODO for now, avoid creating events with sub-millisecond precision timestamps
       // The following are placeholders, to be overridden:
       type: EventType.NONE,
@@ -171,11 +167,10 @@ const timeseries = {
 
   // A synced event will be synchronized with the server (i.e. not private)
   // timestamped now, unless a timestamp is provided.
-  // TODO meaning of synced vs non-synced will change with Realm
-  newSyncedEvent: (t: Timepoint): GenericEvent => {
+  newSyncedEvent: (t: Timepoint, activityId: string = null): GenericEvent => {
     const timestamp = t || Date.now(); // TODO maybe require t
     return {
-      ...timeseries.newEvent(timestamp),
+      ...timeseries.newEvent(timestamp, activityId),
       source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
     }
   },
@@ -218,15 +213,6 @@ const timeseries = {
   timeRangesEqual: (tr1: TimeRange, tr2: TimeRange): boolean => (
     tr1[0] === tr2[0] && tr1[1] === tr2[1]
   ),
-
-  // Make an integer timestamp (msec precision) 'unique' by adding a random number between 0 and 1 to it.
-  // 'uniqified' timepoints make it easier to precisely filter discrete events from the global event list.
-  // (Otherwise there might be multiple matches for a given timepoint.)
-  // This approach is used to facilitate syncing of changed events, without messing with the canonical timepoint t.
-  // TODO Think through implications in the unlikely event two random numbers ever match.
-  uniqify: (t: Timepoint) => {
-    return t + Math.random();
-  },
 }
 
 export default timeseries;
