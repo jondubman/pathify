@@ -13,6 +13,7 @@ import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitt
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 import { MapAreaProps } from 'containers/MapContainer';
+import MapDimmerContainer from 'containers/MapDimmerContainer';
 import PathsContainer from 'components/containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
 import { AppAction, newAction } from 'lib/actions';
@@ -70,13 +71,11 @@ class MapArea extends Component<MapAreaProps> {
       height,
       mapHidden,
       mapStyleURL,
-      opacity,
       width,
     } = this.props;
 
     const hiddenStyle = {
       height,
-      opacity,
     } as any; // as any: https://github.com/Microsoft/TypeScript/issues/18744
 
     const mapStyle = {
@@ -86,7 +85,6 @@ class MapArea extends Component<MapAreaProps> {
     }
     const viewStyle = {
       height,
-      opacity,
     }
     if (mapHidden) {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
@@ -131,6 +129,7 @@ class MapArea extends Component<MapAreaProps> {
               ref={camera => { this._camera = camera }}
               zoomLevel={constants.map.default.zoom}
             />
+            <MapDimmerContainer />
             <PathsContainer />
             <PulsarsContainer />
           </Mapbox.MapView>

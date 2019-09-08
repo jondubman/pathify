@@ -10,7 +10,7 @@ const EventSchema: Realm.ObjectSchema = {
   name: 'EventSchema',
   properties: {
     // GenericEvent
-    activityId: 'string?',
+    activityId: 'string?', // TODO add index
     source: 'string?', // optional
     t: { type: 'int', indexed: true }, // required
     // type is required. Based on this, there may be additional properties. All are said to be optional here for
@@ -30,8 +30,8 @@ const EventSchema: Realm.ObjectSchema = {
     ele: 'int?',
     extra: 'string?',
     heading: 'float?',
-    lat: 'double?',
-    lon: 'double?',
+    lat: 'double?', // TODO add index
+    lon: 'double?', // TODO add index
     odo: 'float?',
     speed: 'float?',
 

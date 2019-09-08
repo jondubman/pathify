@@ -12,7 +12,6 @@ interface MapAreaStateProps {
   height: number;
   mapHidden: boolean;
   mapStyleURL: string;
-  opacity: number;
   width: number;
   userLocation?: LocationEvent;
 }
@@ -34,7 +33,6 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
     height: dynamicMapHeight(state),
     mapHidden: mapHidden(state),
     mapStyleURL: mapStyle.url,
-    opacity: state.options.mapOpacity,
     width,
     userLocation: state.userLocation,
   }

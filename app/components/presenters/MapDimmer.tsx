@@ -1,0 +1,62 @@
+// MapDimmer component
+// Intended to be contained within a MapArea.
+
+import * as turf from '@turf/helpers';
+
+import React, {
+  Component,
+} from 'react';
+
+import Mapbox from '@react-native-mapbox-gl/maps';
+
+import { MapDimmerProps } from 'containers/MapDimmerContainer';
+import constants from 'lib/constants';
+import log from 'shared/log';
+
+class MapDimmer extends Component<MapDimmerProps> {
+
+  public dimmerShape = turf.polygon([[ // Entire globe!
+    [
+      -180,
+      -90
+    ],
+    [
+      180,
+      -90
+    ],
+    [
+      180,
+      90
+    ],
+    [
+      -180,
+      90
+    ],
+    [
+      -180,
+      -90
+    ]
+  ]])
+
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+  }
+
+  render() {
+    const dimmerStyle = {
+      fillColor: constants.colors.map.dimmer,
+      fillOpacity: 1 - this.props.mapOpacity,
+    }
+    return (
+      <Mapbox.ShapeSource id={'dimmerShape'} key='dimmerShape' shape={this.dimmerShape}>
+        <Mapbox.FillLayer id={'dimmerLayer'} key='dimmerFill' style={dimmerStyle} />
+      </Mapbox.ShapeSource>
+    )
+  }
+}
+
+export default MapDimmer;

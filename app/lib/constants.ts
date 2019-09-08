@@ -119,6 +119,9 @@ const colors = {
     icon: 'black',
     underlay: namedColors.yellow,
   },
+  map: {
+    dimmer: namedColors.black,
+  },
   marks: {
     default: namedColors.gray,
     start: withOpacity(namedColors.darkGreen, 0.75),

@@ -126,7 +126,7 @@ const locations = {
     let segments: PathSegment[] = [];
     let coordinates: LonLat[] = [];
     let previousLoc: LonLat | null = null;
-    const events = timeseries.filterByTime(sourceEvents, tr);
+    const events = timeseries.filterByTime(sourceEvents, tr); // TODO filter by activity in the caller instead
     for (let e of events) {
       const event = e as any as GenericEvent;
       if (event.type === EventType.LOC) {

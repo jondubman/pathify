@@ -23,19 +23,23 @@ export enum ActivityMetricName {
   'elevationGain' = 'elevationGain',
   'elevationLoss' = 'elevationLoss',
   'eventCount' = 'eventCount',
-  'minPace' = 'minPace',
   'mode' = 'mode',
-  'movingTime' = 'movingTime',
   'pace' = 'pace',
+  'paceMin' = 'paceMin',
   'paceLastTenSeconds' = 'paceLastTenSeconds',
   'paceLastMinute' = 'paceLastMinute',
   'paceLastMile' = 'paceLastMile',
-  'stoppedTime' = 'stoppedTime',
+  'timeMoving' = 'timeMoving',
+  'timeStopped' = 'timeStopped',
   'speed' = 'speed',
+  'speedMax' = 'speedMax',
+  'speedMin' = 'speedMin',
   'time' = 'time',
 }
 
-export type ActivityMetric = { // example:
+// bounds: TODO use separate latMin, latMax, lonMin, lonMax. With these, could easily do bounding box queries
+
+export type ActivityMetric = {
   average?: number;            // over entire activity
   label?: string;              // 'mi'
   max?: number;                // over entire activity
