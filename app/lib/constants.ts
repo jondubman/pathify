@@ -370,6 +370,13 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
+  timing: { // msec
+    opacitySliderThrottle: 250,
+    pulsarPulse: 1000,
+    timelineZoomThrottle: 100,
+    timerTickInterval: 1000, // important: for updating refTime
+    watchPositionInterval: 1000,
+  },
   timeline: {
     barHeight: 40, // big enough to be touchable
     bottomPaddingForAxis,

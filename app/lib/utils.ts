@@ -36,7 +36,7 @@ const utils = {
     const lonRange = NE[0] - SW[0]; // longitude range of bounds
     const latRange = NE[1] - SW[1]; // latitude range of bounds
     const center = [SW[0] + lonRange / 2,  // lon of center point within bounds
-    SW[1] + latRange / 2]; // lat of center point within bounds
+                    SW[1] + latRange / 2]; // lat of center point within bounds
 
     const allowance = Math.min(lonRange / 4, latRange / 4); // allow for a substantial margin around square
     const squareBounds = [[center[0] + allowance, center[1] + allowance],  // NE

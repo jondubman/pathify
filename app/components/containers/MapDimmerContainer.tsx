@@ -14,7 +14,7 @@ export type MapDimmerProps = MapDimmerStateProps & MapDimmerDispatchProps;
 
 const mapStateToProps = (state: AppState): MapDimmerStateProps => {
   return {
-    mapOpacity: state.options.mapOpacity,
+    mapOpacity: state.options.mapOpacityPreview || state.options.mapOpacity,
   }
 }
 

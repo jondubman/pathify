@@ -18,6 +18,7 @@ interface SettingsPanelStateProps {
 interface SettingsPanelDispatchProps {
   onSelectMapStyle: (name: string) => void;
   onSetMapOpacity: (opacity: number) => void;
+  onSetMapOpacityPreview: (opacity: number) => void;
 }
 
 export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatchProps;
@@ -25,7 +26,7 @@ export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatch
 const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
   return {
     open: state.flags.settingsOpen,
-    mapOpacity: state.options.mapOpacity,
+    mapOpacity: state.options.mapOpacity, // note: not using state.options.mapOpacityPreview, to avoid stuttering slider
     mapStyle: dynamicMapStyle(state),
   }
 }
@@ -38,9 +39,13 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   const onSetMapOpacity = (mapOpacity: number) => {
     dispatch(newAction(AppAction.setAppOption, { mapOpacity }));
   }
+  const onSetMapOpacityPreview = (mapOpacityPreview: number) => {
+    dispatch(newAction(AppAction.setAppOption, { mapOpacityPreview }));
+  }
   const dispatchers = {
     onSelectMapStyle,
     onSetMapOpacity,
+    onSetMapOpacityPreview,
   }
   return dispatchers;
 }

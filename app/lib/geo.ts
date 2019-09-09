@@ -441,7 +441,7 @@ export const Geo = {
           }
         }
         const options = {
-          interval: 1000, // msec TODO move to constants
+          interval: constants.timing.watchPositionInterval,
           persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
         }
         if (reason === 'tracking') { // TODO is everything here necessary?

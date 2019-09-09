@@ -18,7 +18,7 @@ import { LonLat } from 'shared/locations';
 
 const pulseMin = 1;
 const pulseMax = 3;
-const pulseMsec = 1000;
+const pulseMsec = constants.timing.pulsarPulse;
 const desiredRadius = 8;
 const defaultCircleColor = constants.colors.user;
 

@@ -109,15 +109,18 @@ type State = Readonly<typeof initialState>
 class SettingsPanel extends React.Component<SettingsPanelProps> {
 
   public readonly state: State = initialState;
-  public onValueChanged;
 
   constructor(props: any) {
     super(props);
-    this.onValueChange = _.throttle(this.onValueChange.bind(this), 250)
-    this.onValueChanged = this.onValueChange.bind(this);
-}
+    this.onValueChange = _.throttle(this.onValueChange.bind(this), constants.timing.opacitySliderThrottle);
+    this.onValueChanged = this.onValueChanged.bind(this);
+  }
 
   public onValueChange(value: number) {
+    this.props.onSetMapOpacityPreview(value);
+  }
+
+  public onValueChanged(value: number) {
     this.props.onSetMapOpacity(value);
   }
 

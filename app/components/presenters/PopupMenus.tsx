@@ -50,7 +50,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
   constructor(props: any) {
     super(props);
     this.onSlidingStart = this.onSlidingStart.bind(this);
-    this.onValueChange = _.throttle(this.onValueChange.bind(this), 100); // 100 msec: not much!
+    this.onValueChange = _.throttle(this.onValueChange.bind(this), constants.timing.timelineZoomThrottle);
     this.onValueChanged = ((value: number) => {
       this.onValueChange(value); // final value change
       this.props.slidingComplete(MenuItem.TIMELINE_ZOOM, value);

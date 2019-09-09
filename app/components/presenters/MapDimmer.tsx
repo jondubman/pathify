@@ -11,7 +11,6 @@ import Mapbox from '@react-native-mapbox-gl/maps';
 
 import { MapDimmerProps } from 'containers/MapDimmerContainer';
 import constants from 'lib/constants';
-import log from 'shared/log';
 
 class MapDimmer extends Component<MapDimmerProps> {
 
@@ -50,6 +49,10 @@ class MapDimmer extends Component<MapDimmerProps> {
     const dimmerStyle = {
       fillColor: constants.colors.map.dimmer,
       fillOpacity: 1 - this.props.mapOpacity,
+      fillOpacityTransition: { // TODO this seems to have no effect.
+        duration: 0,
+        delay: 0,
+      }
     }
     return (
       <Mapbox.ShapeSource id={'dimmerShape'} key='dimmerShape' shape={this.dimmerShape}>

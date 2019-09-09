@@ -39,11 +39,12 @@ export const initialAppState = {
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivity: null as Activity | null,
     mapOpacity: constants.map.default.opacity,
+    mapOpacityPreview: null as number | null, // while adjusting
     mapStyle: constants.map.default.style,
     pulsars: {} as OptionalPulsars,
     refTime: now,
     startupTime: now,
-    timerTickIntervalMsec: 1000, // once per second, for updating the analog clock, timeline refTime, etc.
+    timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline refTime, etc.
     selectedActivity: null as Activity | null, // for now, no more than one Activity is 'selected' at a time
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (see constants.timeline for meaning)
   },
