@@ -19,9 +19,8 @@ import HelpButtonContainer from 'containers/HelpButtonContainer';
 import MapContainer from 'containers/MapContainer';
 import PopupMenusContainer from 'containers/PopupMenusContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
-import TimelineContainer from 'containers/TimelineContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
-
+import TimelineScrollContainer from 'containers/TimelineScrollContainer';
 
 const AppStyles = StyleSheet.create({
   containingAppView: {
@@ -49,7 +48,7 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.safeAreaView}>
           <MapContainer />
-          {showTimeline ? <TimelineContainer /> : null}
+          {showTimeline ? <TimelineScrollContainer /> : null}
           <PopupMenusContainer />
           <TimelineControlsContainer />
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>

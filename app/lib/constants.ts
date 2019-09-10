@@ -374,7 +374,7 @@ const constants = {
     opacitySliderThrottle: 250,
     pulsarPulse: 1000,
     timelineZoomThrottle: 100,
-    timerTickInterval: 1000, // important: for updating refTime
+    timerTickInterval: 1000,
     watchPositionInterval: 1000,
   },
   timeline: {
@@ -384,13 +384,13 @@ const constants = {
     centerLineWidth: 3,
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
-      zoomLevel: 7, // see zoomLevels
-      zoomValue: 0.7, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below
+      zoomValue: 0.6, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below TODO2 was 0.7
     },
     miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
+    widthMultiplier: 5, // TODO2
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.
     zoomLevels: [ // read as: "time intervals up to the visibleTime threshold yield this tickInterval and tickFormat"
       {

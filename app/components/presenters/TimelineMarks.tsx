@@ -118,25 +118,6 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
             stroke={colorFor(mark)}
             strokeWidth={constants.marks.centerlineWidthDefault}
           />
-          {/* <Rect
-            key={`Mark${index}`}
-            style={{ fill: colorFor(mark) }}
-            x={Math.round(Math.round(scale.x(mark.t)) - marks.rectWidth / 2)}
-            y={yTop}
-            width={marks.rectWidth}
-            height={marks.rectHeight}
-          />
-          <Polygon
-            key={`MarkTriangle${index}`}
-            fill={colorFor(mark)}
-            points={triangle(mark.t)}
-          /> */}
-          {/* <Polyline
-            key={`MarkHollow${index}`}
-            fill='transparent'
-            stroke={constants.colors.byName.white}
-            points={hollow(mark.t)}
-          /> */}
         </G>
     ))
     return shapes;

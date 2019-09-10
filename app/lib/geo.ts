@@ -313,9 +313,11 @@ export const Geo = {
           eventQueue.push(locationEvent);
         } else {
           let geolocationParams: GeolocationParams;
-          store.dispatch(newAction(AppAction.addEvents, { events: [...eventQueue, locationEvent] }));
-          if (eventQueue.length) {
-            eventQueue = []; // reset
+          if (state.flags.receiveLocations) {
+            store.dispatch(newAction(AppAction.addEvents, { events: [...eventQueue, locationEvent] }));
+            if (eventQueue.length) {
+              eventQueue = []; // reset
+            }
           }
           // Handle only the latest geolocation, with exactly one map bounds check, now that everything is added.
           geolocationParams = {
@@ -424,17 +426,24 @@ export const Geo = {
         const receieveLocation = (location: Location) => {
           if (reduxStore) {
             const state = reduxStore.getState();
-            if (state.flags.appActive === false) { // TODO does code ever execute?
-              log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-              const locationEvent = newLocationEvent(location, currentActivityId(state));
-              locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
-              reduxStore.dispatch(newAction(AppAction.geolocation, {
-                locationEvents: [locationEvent],
-                recheckMapBounds: false,
-              }))
-              reduxStore.dispatch(newAction(AppAction.addEvents, {
-                events: [locationEvent],
-              }))
+            const { flags } = state;
+            if (flags.flag1) { // TODO2
+              if (flags.appActive === false) { // TODO does this code ever execute?
+                log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
+                const locationEvent = newLocationEvent(location, currentActivityId(state));
+                locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
+                if (flags.flag2) {
+                  reduxStore.dispatch(newAction(AppAction.geolocation, {
+                    locationEvents: [locationEvent],
+                    recheckMapBounds: false,
+                  }))
+                }
+                if (flags.flag3) {
+                  reduxStore.dispatch(newAction(AppAction.addEvents, {
+                    events: [locationEvent],
+                  }))
+                }
+              }
             }
           } else {
             log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');

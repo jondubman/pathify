@@ -477,13 +477,15 @@ const sagas = {
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
     yield call(log.debug, 'saga modeChange', modeChangeEvent);
-    yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
+    // TODO2
+    // yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
   },
 
   motionChange: function* (action: Action) {
     const motionEvent = action.params as MotionEvent;
     yield call(log.debug, 'saga motionChange', motionEvent);
-    yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
+    // TODO2
+    // yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
   },
 
   panTimeline: function* (action: Action) {
@@ -495,7 +497,7 @@ const sagas = {
       newRefTime = refTime + t;
     }
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    yield put(newAction(AppAction.setAppOption, { refTime: newRefTime }));
+    yield put(newAction(AppAction.setAppOption, { refTime: newRefTime, timelineRefTime: newRefTime }));
   },
 
   tickEvent: function* (action: Action) {
@@ -735,17 +737,25 @@ const sagas = {
     }
   },
 
-  // Respond to timeline pan/zoom.
+  // Respond to timeline pan/zoom. x is in the time domain.
+  // timelineRefTime changes here only after panning, whereas refTime changes during panning too.
   timelineZoomed: function* (action: Action) {
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
-
     const refTime = (x[0] + x[1]) / 2;
     // yield call(log.trace, 'saga timelineZoomed', refTime);
 
     // TODO do not disable timelineNow unless refTime is changing
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    yield put(newAction(AppAction.setAppOption, { refTime }));
+    yield put(newAction(AppAction.setAppOption, { refTime, timelineRefTime: refTime }));
+  },
+
+  timelineZooming: function* (action: Action) {
+    const newZoom = action.params as DomainPropType;
+    const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
+    const refTime = (x[0] + x[1]) / 2;
+    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+    yield put(newAction(AppAction.setAppOption, { refTime })); // note: not changing timelineRefTime! see timelineZoomed
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -755,10 +765,9 @@ const sagas = {
     const appActive = yield select((state: AppState) => state.flags.appActive);
     if (appActive) {
       const now = action.params as number;
-      // yield call(log.trace, 'timerTick', now);
       const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
       if (timelineNow) {
-        yield put(newAction(AppAction.setAppOption, { refTime: now }));
+        yield put(newAction(AppAction.setAppOption, { refTime: now, timelineRefTime: now }));
       }
       const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
       if (tickEvents) {

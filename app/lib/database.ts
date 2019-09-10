@@ -68,11 +68,14 @@ const realm = new Realm(config);
 
 const database = {
   createEvents: (events: GenericEvents): void => {
-    realm.write(() => {
-      events.forEach((event: GenericEvent) => {
-        realm.create('EventSchema', event);
+    const save = () => {
+      realm.write(() => {
+        events.forEach((event: GenericEvent) => {
+          realm.create('EventSchema', event);
+        })
       })
-    })
+    }
+    setTimeout(save, 0);
   },
 
   // This is the essentially the "read" function for Realm.

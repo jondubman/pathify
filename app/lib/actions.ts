@@ -67,6 +67,7 @@ export enum AppAction {
   'startOrStopActivity' = 'startOrStopActivity',
   'stopActivity' = 'stopActivity',
   'timelineZoomed' = 'timelineZoomed',
+  'timelineZooming' = 'timelineZooming',
   'timerTick' = 'timerTick',
   'userMovedMap' = 'userMovedMap',
 }

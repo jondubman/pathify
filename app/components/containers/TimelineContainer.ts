@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
-import { DomainPropType } from 'victory-native';
 
-import { AppAction, newAction } from 'lib/actions';
 import database from 'lib/database';
 import { TimespanKind } from 'lib/constants';
 import {
   continuousTrackList,
   customTimespans,
+  dynamicTimelineScrollWidth,
+  dynamicTimelineWidth,
   selectionTimespans,
   timelineVisibleTime,
   timelineZoomLevel,
@@ -14,13 +14,12 @@ import {
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
-import log from 'shared/log';
 import {
   Activity,
   MarkEvents,
   markList
 } from 'shared/marks';
-import timeseries, { Events, TimeRange } from 'shared/timeseries';
+import timeseries, { TimeRange } from 'shared/timeseries';
 import { Track, Tracks } from 'shared/tracks';
 
 export interface Timespan {
@@ -37,55 +36,61 @@ export interface TimelineStateProps {
   marks: MarkEvents;
   nowTime: number;
   refTime: number;
+  scrollToX: number;
   selectedActivity: Activity | null;
+  showMarks: boolean;
+  showSpans: boolean;
   startupTime: number;
   timelineNow: boolean;
+  timelineWidth: number;
   timeRange: TimeRange;
   timespans: Timespans;
   visibleTime: number;
+  visibleWidth: number;
   zoomLevel: number;
 }
 
 export interface TimelineDispatchProps {
-  zoomDomainChanged: (domain: DomainPropType) => void; // used only in response to user actions
 }
 
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const { currentActivity, refTime } = state.options;
+  const { currentActivity, timelineRefTime } = state.options;
   const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
   const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
+  const showMarks = state.flags.showTimelineMarks;
+  const showSpans = state.flags.showTimelineSpans;
   const timespans: Timespans = tracks.map((track: Track): Timespan => ({
     kind: TimespanKind.LOCATIONS,
     tr: track.tr,
-  })).concat(customTimespans(state)).concat(selectionTimespans(state));
-  const marks: MarkEvents = markList(database.events());
+  })).concat(showSpans ? customTimespans(state) : []).concat(showSpans ? selectionTimespans(state) : []);
+  const marks: MarkEvents = showMarks ? markList(database.events()) : [];
+
   return {
     allowZoom,
     currentActivity,
     marks,
     nowTime,
-    refTime,
+    refTime: timelineRefTime,
+    scrollToX: dynamicTimelineScrollWidth(state) / 2 - dynamicTimelineWidth(state) / 2,
     selectedActivity: state.options.selectedActivity,
+    showMarks,
+    showSpans,
     startupTime: state.options.startupTime,
     timelineNow: state.flags.timelineNow,
+    timelineWidth: dynamicTimelineScrollWidth(state), // scrollable width
     timeRange: timeseries.timeRangeOfEvents(database.events()),
     timespans,
     visibleTime: timelineVisibleTime(state.options.timelineZoomValue),
+    visibleWidth: dynamicTimelineWidth(state),
     zoomLevel: timelineZoomLevel(state.options.timelineZoomValue),
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): TimelineDispatchProps => {
-  const zoomDomainChanged = (domain: DomainPropType) => {
-    // This responds to user interaction, adjusting the refTime. Not needed to programmatically zoom Timeline.
-    // log.trace('zoomDomainChanged', domain);
-    dispatch(newAction(AppAction.timelineZoomed, domain));
-  }
   const dispatchers = {
-    zoomDomainChanged,
   }
   return dispatchers;
 }

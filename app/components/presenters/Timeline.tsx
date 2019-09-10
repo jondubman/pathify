@@ -1,5 +1,4 @@
 // This is the core of the Timeline, which is based on VictoryChart.
-
 import * as d3 from 'd3';
 
 import React, {
@@ -23,6 +22,7 @@ import constants from 'lib/constants';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import TimelineMarks from 'presenters/TimelineMarks';
 import TimelineSpans from 'presenters/TimelineSpans';
+import log from 'shared/log';
 import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
@@ -50,9 +50,9 @@ class Timeline extends Component<TimelinePanelProps> {
 
   // This responds to user zoom interaction (which won't be happening if allowZoom is false)
   public handleZoom(domain: DomainPropType, props: any) {
-    this.setState({ zoomDomain: domain }, () => {
-      this.props.zoomDomainChanged(domain);
-    })
+    // this.setState({ zoomDomain: domain }, () => {
+    //   this.props.zoomDomainChanged(domain);
+    // })
   }
 
   public render() {
@@ -63,12 +63,16 @@ class Timeline extends Component<TimelinePanelProps> {
       nowTime,
       refTime,
       selectedActivity,
+      showMarks,
+      showSpans,
       startupTime,
       timeRange,
       timespans,
+      timelineWidth,
       visibleTime,
-      zoomLevel
+      zoomLevel,
     } = this.props;
+
     const { yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat } = zoomInfo;
@@ -78,12 +82,13 @@ class Timeline extends Component<TimelinePanelProps> {
       // TODO could customize string here to highlight special times/dates, e.g. 'noon'
       return d3.timeFormat(tickFormat)(t);
     }
+    const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
     const dataDomain: DomainPropType = { // the entire navigable domain of the Timeline
-      x: [Math.min(timeRange[0], someTimeAgo), Math.max(timeRange[1], nowTime + visibleTime / 2)],
+      x: [Math.min(timeRange[0], someTimeAgo), Math.max(timeRange[1], nowTime + scrollableAreaTime / 2)],
       y: yDomain,
     }
     const zoomDomain: DomainPropType = { // the visible domain of the Timeline
-      x: [refTime - visibleTime / 2, refTime + visibleTime / 2], // half the visible time goes on either side of refTime
+      x: [refTime - scrollableAreaTime / 2, refTime + scrollableAreaTime / 2], // half goes on either side of refTime
       y: yDomain,
     }
     let timeRoundDown: number;
@@ -94,18 +99,12 @@ class Timeline extends Component<TimelinePanelProps> {
     } else {
       timeRoundDown = timeseries.timeRoundDown(refTime, tickInterval);
     }
-    const tickValues = [ // Any outside the visible range will be clipped. count is 10.
-      timeRoundDown - tickInterval * 4,
-      timeRoundDown - tickInterval * 3,
-      timeRoundDown - tickInterval * 2,
-      timeRoundDown - tickInterval,
-      timeRoundDown,
-      timeRoundDown + tickInterval,
-      timeRoundDown + tickInterval * 2,
-      timeRoundDown + tickInterval * 3,
-      timeRoundDown + tickInterval * 4,
-      timeRoundDown + tickInterval * 5,
-    ]
+    const tickValues: number[] = [];
+    const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // approx
+    for (let i = -maxTicksPerScreenWidth / 2; i < maxTicksPerScreenWidth / 2; i++) {
+       // Any outside the visible range will be clipped.
+      tickValues.push(timeRoundDown + tickInterval * i);
+    }
     const axisStyle = {
       axis: { stroke: constants.colors.timeline.axis },
       grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
@@ -136,10 +135,11 @@ class Timeline extends Component<TimelinePanelProps> {
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
-              allowPan={true}
+              allowPan={false /* TODO was true */}
               allowZoom={allowZoom}
               minimumZoom={{ x: 1000, y: 1 }}
-              responsive={true}
+              responsive={false}
+              width={timelineWidth}
               zoomDimension="x"
               zoomDomain={zoomDomain}
               onZoomDomainChange={this.handleZoom}
@@ -147,6 +147,7 @@ class Timeline extends Component<TimelinePanelProps> {
           }
           domain={dataDomain}
           height={constants.timeline.default.height}
+          width={timelineWidth}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
           <VictoryAxis
@@ -155,8 +156,12 @@ class Timeline extends Component<TimelinePanelProps> {
             tickFormat={tickFormatFn}
             tickValues={tickValues}
           />
-          <TimelineSpans data={timespans} />
-          <TimelineMarks data={marks} currentActivity={currentActivity} selectedActivity={selectedActivity} />
+          {showSpans ?
+            <TimelineSpans data={timespans} />
+            : null}
+          {showMarks ?
+            <TimelineMarks data={marks} currentActivity={currentActivity} selectedActivity={selectedActivity} />
+            : null }
         </VictoryChart>
       </View>
     )

@@ -11,7 +11,7 @@ import { Timespan, Timespans } from 'containers/TimelineContainer';
 
 import locations from 'shared/locations';
 import { Activity, MarkEvent, MarkType } from 'shared/marks';
-import timeseries, { Events, GenericEvent, interval, Timepoint, TimeRange, EventType } from 'shared/timeseries';
+import timeseries, { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
@@ -61,13 +61,14 @@ const activityTimespans = (state: AppState): Timespans => {
     }
   }
   // Finally, add a timepsan representing the current state, if started.
-  if (state.options.currentActivity) {
-    timespans.push({
-      color: constants.colors.timeline.currentActivity,
-      kind: TimespanKind.ACTIVITY,
-      tr: [state.options.currentActivity.tr[0], utils.now()],
-    })
-  }
+  // TODO2
+  // if (state.options.currentActivity) {
+  //   timespans.push({
+  //     color: constants.colors.timeline.currentActivity,
+  //     kind: TimespanKind.ACTIVITY,
+  //     tr: [state.options.currentActivity.tr[0], utils.now()],
+  //   })
+  // }
   return timespans;
 }
 
@@ -143,12 +144,26 @@ export const dynamicMapHeight = (state: AppState): number => {
   return utils.windowSize().height - dynamicTimelineHeight(state);
 }
 
-export const dynamicTimelineHeight = (state: AppState): number => {
-  return state.flags.mapFullScreen ?
+export const dynamicTimelineHeight = (state: AppState): number => (
+  state.flags.mapFullScreen ?
     0
     :
     constants.timeline.default.height
-}
+)
+
+export const dynamicTimelineScrollWidth = (state: AppState): number => (
+  state.flags.mapFullScreen ?
+    0
+    :
+    utils.windowSize().width * constants.timeline.widthMultiplier
+)
+
+export const dynamicTimelineWidth = (state: AppState): number => (
+  state.flags.mapFullScreen ?
+    0
+    :
+    utils.windowSize().width
+)
 
 export const dynamicMapStyle = (state: AppState): MapStyle => (
   constants.mapStyles.find((mapStyle: MapStyle) => (mapStyle.name === state.options.mapStyle)) as MapStyle
