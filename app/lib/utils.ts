@@ -47,7 +47,8 @@ const utils = {
 
   mapArea: null, // reference to the singleton MapArea component
 
-  now: () => ( Date.now() ), // TODO allow the app's concept of the current time to be simulated, or real (this is real)
+  now: () => (Date.now()), // TODO allow the app's concept of the current time to be simulated, or real (this is real)
+  // now: () => (1568239200000), // TODO 9/11/2019 3PM
 
   objectWithoutKey: (object: any, key: string) => {
     const { [key]: deletedKey, ...otherKeys } = object;

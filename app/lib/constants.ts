@@ -289,7 +289,7 @@ const constants = {
     // TODO fitBounds can be used instead
     default: {
       opacity: 1,
-      style: 'Default', // e.g. None, Default, Topo, Satellite. See mapStyles name
+      style: 'Default', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO2
       zoom: 14,
       zoomStartActivity: 16,
     },
@@ -373,6 +373,8 @@ const constants = {
   timing: { // msec
     opacitySliderThrottle: 250,
     pulsarPulse: 1000,
+    scrollViewWaitForMomentumScroll: 100, // TODO2
+    timelineCloseToNow: 5000, // TODO2
     timelineZoomThrottle: 100,
     timerTickInterval: 1000,
     watchPositionInterval: 1000,
@@ -384,13 +386,13 @@ const constants = {
     centerLineWidth: 3,
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
-      zoomValue: 0.6, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below TODO2 was 0.7
+      zoomValue: 0.7, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below
     },
     miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
-    widthMultiplier: 5, // TODO2
+    widthMultiplier: 10, // TODO2
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.
     zoomLevels: [ // read as: "time intervals up to the visibleTime threshold yield this tickInterval and tickFormat"
       {

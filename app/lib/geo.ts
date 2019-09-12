@@ -139,7 +139,7 @@ const geolocationOptions: Config = {
   // applied with each launch of your application, making it behave like the traditional #configure method.
   // https://github.com/transistorsoft/react-native-background-geolocation/blob/master/docs/README.md#resetconfig-successfn-failurefn
   // https://transistorsoft.github.io/react-native-background-geolocation/classes/_react_native_background_geolocation_.backgroundgeolocation.html#ready
-  reset: true, // TODO
+  reset: false, // TODO
 }
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
@@ -186,8 +186,8 @@ const geolocationOptions_highPower: Config = {
 
   distanceFilter: 1, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: true, // default false (note true has major battery impact!) TODO
-
+  preventSuspend: true, // default false (note true has major battery impact!) TODO2
+  forceReloadOnBoot: true, // TODO
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
@@ -258,7 +258,7 @@ const newModeChangeEvent = (activity: string, confidence: number, activityId: st
 }
 
 let reduxStore: Store | null = null; // TODO
-let eventQueue: LocationEvents = [];
+// let eventQueue: LocationEvents = [];
 
 export const Geo = {
 
@@ -282,53 +282,88 @@ export const Geo = {
       const onGeofencesChange = (event: GeofencesChangeEvent) => {
       }
       const onHeartbeat = (event: HeartbeatEvent) => {
+        // Executed for each heartbeatInterval while the device is in stationary state
+        // (iOS requires preventSuspend: true as well).
       }
       const onLocation = (location: Location) => {
         const state = store.getState();
-        const { userLocation } = state;
         const activityId = currentActivityId(state);
-        const locationEvent = newLocationEvent(location, activityId);
-        if (!userLocation /* && locationEvent.accuracy TODO */) {
-          // This is the first userLocation to arrive.
-          store.dispatch(newAction(AppAction.centerMap, {
-            center: locations.lonLat(locationEvent),
-            option: 'absolute',
-          }))
+
+        // const { userLocation } = state;
+        // if (!userLocation /* && locationEvent.accuracy, sample TODO */) {
+        //   // This is the first userLocation to arrive.
+        //   store.dispatch(newAction(AppAction.centerMap, {
+        //     center: locations.lonLat(locationEvent),
+        //     option: 'absolute',
+        //   }))
+        // }
+
+        if (location.sample) {
+          return;
         }
-        // Events are 'old' if they are timestamped as little as like five seconds ago. The app may have run for a while
-        // in the background, collecting data into the plugin's local SQLite DB that we are receiving only now.
-        const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
-        let eventIsFar = false;
-        if (userLocation) {
-          const dist = distance(turf.point([locationEvent.lon, locationEvent.lat]),
-                                turf.point([userLocation.lon, userLocation.lat]),
-                                { units: 'meters' });
-          eventIsFar = dist > 100; // TODO constant (meters)
-        }
-        const extraLabel = eventIsFar ? '(far)' : (eventIsOld ? '(old)' : '(new)');
-        locationEvent.extra = `onLocation ${utils.now()} ${extraLabel}`; // TODO only for debugging
-        // Important: Do not blindly addEvents immediately or JS thread gets overwhelmed and frame rate plummets.
-        // Instead, queue up old or distant events and add them as a batch.
-        if (eventIsFar || eventIsOld) {
-          eventQueue.push(locationEvent);
-        } else {
-          let geolocationParams: GeolocationParams;
-          if (state.flags.receiveLocations) {
-            store.dispatch(newAction(AppAction.addEvents, { events: [...eventQueue, locationEvent] }));
-            if (eventQueue.length) {
-              eventQueue = []; // reset
-            }
+        const saveLocation = async (location: Location) => {
+          log.debug('saveLocation', location.timestamp);
+          if (!state.flags.receiveLocations) {
+            return;
           }
-          // Handle only the latest geolocation, with exactly one map bounds check, now that everything is added.
-          geolocationParams = {
+          const locationEvent = newLocationEvent(location, activityId);
+          store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
+
+          const geolocationParams: GeolocationParams = {
             locationEvents: [locationEvent],
             recheckMapBounds: true,
           }
           store.dispatch(newAction(AppAction.geolocation, geolocationParams));
         }
+
+        BackgroundGeolocation.startBackgroundTask().then(async (taskId) => {
+          saveLocation(location).then(() => {
+            // When long-running task is complete, signal completion of taskId.
+            BackgroundGeolocation.stopBackgroundTask(taskId);
+          }).catch(() => {
+            BackgroundGeolocation.stopBackgroundTask(taskId);
+          })
+        })
+
+        // // Events are 'old' if they are timestamped as little as like five seconds ago. The app may have run for a while
+        // // in the background, collecting data into the plugin's local SQLite DB that we are receiving only now.
+        // const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
+        // let eventIsFar = false;
+        // if (userLocation) {
+        //   const dist = distance(turf.point([locationEvent.lon, locationEvent.lat]),
+        //                         turf.point([userLocation.lon, userLocation.lat]),
+        //                         { units: 'meters' });
+        //   eventIsFar = dist > 100; // TODO constant (meters)
+        // }
+        // const extraLabel = eventIsFar ? '(far)' : (eventIsOld ? '(old)' : '(new)');
+        // locationEvent.extra = `onLocation ${utils.now()} ${extraLabel}`; // TODO only for debugging
+        // // Important: Do not blindly addEvents immediately or JS thread gets overwhelmed and frame rate plummets.
+        // // Instead, queue up old or distant events and add them as a batch.
+        // if (eventIsFar || eventIsOld) {
+        //   eventQueue.push(locationEvent);
+        // } else {
+        //   let geolocationParams: GeolocationParams;
+        //   if (state.flags.receiveLocations) {
+        //     store.dispatch(newAction(AppAction.addEvents, { events: [...eventQueue, locationEvent] }));
+        //     if (eventQueue.length) {
+        //       eventQueue = []; // reset
+        //     }
+        //   }
+        //   // Handle only the latest geolocation, with exactly one map bounds check, now that everything is added.
+        //   geolocationParams = {
+        //     locationEvents: [locationEvent],
+        //     recheckMapBounds: true,
+        //   }
+        //   store.dispatch(newAction(AppAction.geolocation, geolocationParams));
+        // }
       }
       const onLocationError = (error: LocationError) => {
-        log.warn('LocationError', error);
+        let errorMessage;
+        if (error === 0) errorMessage = 'Location unknown';
+        if (error === 1) errorMessage = 'Location permission denied';
+        if (error === 2) errorMessage = 'Location network error';
+        if (error === 408) errorMessage = 'Location timeout';
+        log.warn('LocationError', errorMessage || error);
       }
       const onMotionChange = (event: MotionChangeEvent) => {
         const state = store.getState();
@@ -424,30 +459,30 @@ export const Geo = {
     return new Promise((resolve, reject) => {
       const started = () => {
         const receieveLocation = (location: Location) => {
-          if (reduxStore) {
-            const state = reduxStore.getState();
-            const { flags } = state;
-            if (flags.flag1) { // TODO2
-              if (flags.appActive === false) { // TODO does this code ever execute?
-                log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-                const locationEvent = newLocationEvent(location, currentActivityId(state));
-                locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
-                if (flags.flag2) {
-                  reduxStore.dispatch(newAction(AppAction.geolocation, {
-                    locationEvents: [locationEvent],
-                    recheckMapBounds: false,
-                  }))
-                }
-                if (flags.flag3) {
-                  reduxStore.dispatch(newAction(AppAction.addEvents, {
-                    events: [locationEvent],
-                  }))
-                }
-              }
-            }
-          } else {
-            log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
-          }
+          // if (reduxStore) {
+          //   const state = reduxStore.getState();
+          //   const { flags } = state;
+          //   if (flags.flag1) { // TODO2
+          //     if (flags.appActive === false) { // TODO does this code ever execute?
+          //       log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
+          //       const locationEvent = newLocationEvent(location, currentActivityId(state));
+          //       locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
+          //       if (flags.flag2) {
+          //         reduxStore.dispatch(newAction(AppAction.geolocation, {
+          //           locationEvents: [locationEvent],
+          //           recheckMapBounds: false,
+          //         }))
+          //       }
+          //       if (flags.flag3) {
+          //         reduxStore.dispatch(newAction(AppAction.addEvents, {
+          //           events: [locationEvent],
+          //         }))
+          //       }
+          //     }
+          //   }
+          // } else {
+          //   log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
+          // }
         }
         const options = {
           interval: constants.timing.watchPositionInterval,

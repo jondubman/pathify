@@ -52,7 +52,7 @@ class MapDimmer extends Component<MapDimmerProps> {
       fillOpacityTransition: { // TODO this seems to have no effect.
         duration: 0,
         delay: 0,
-      }
+      },
     }
     return (
       <Mapbox.ShapeSource id={'dimmerShape'} key='dimmerShape' shape={this.dimmerShape}>

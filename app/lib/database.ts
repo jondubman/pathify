@@ -30,8 +30,10 @@ const EventSchema: Realm.ObjectSchema = {
     ele: 'int?',
     extra: 'string?',
     heading: 'float?',
-    lat: 'double?', // TODO add index
-    lon: 'double?', // TODO add index
+    // lat: { type: 'double?', indexed: true }, // TODO2 adding index to existing DB crashes Realm
+    // lon: { type: 'double?', indexed: true },
+    lat: 'double?',
+    lon: 'double?',
     odo: 'float?',
     speed: 'float?',
 

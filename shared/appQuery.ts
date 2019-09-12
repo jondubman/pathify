@@ -10,6 +10,7 @@ export interface AppQueryDescriptor {
   filterTypes?: string[];
   group?: boolean;
   limit?: number;
+  since: number; // timestamp
   sinceLastStartup?: boolean;
   startIndex?: number;
   timeRange?: TimeRange;

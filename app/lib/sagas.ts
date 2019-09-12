@@ -28,12 +28,9 @@ import {
   call,
   delay,
   put,
-  // putResolve,
   select,
-  // spawn,
   takeEvery,
   takeLatest,
-  throttle,
 } from 'redux-saga/effects';
 
 import * as uuid from 'uuid/v4';
@@ -69,7 +66,6 @@ import {
 import constants from 'lib/constants';
 import database from 'lib/database';
 import { Geo } from 'lib/geo';
-import { timelineVisibleTime } from 'lib/selectors';
 import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
@@ -90,7 +86,6 @@ import locations, {
 } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
 import {
-  Activity,
   containingActivity,
   insertMissingStopMarks, // TODO call insertMissingStopMarks when the app loads
   MarkEvent,
@@ -160,25 +155,25 @@ const sagas = {
       switch (queryType) {
         case 'events': {
           let events = database.events();
-          // TODO reimplement this filtering using Realm-JS API
-
-          // let timeRange = query.timeRange || [0, Infinity];
-          // if (query.sinceLastStartup) {
-          //   timeRange = [lastStartupTime(events) || timeRange[0], Math.min(timeRange[1], Infinity)];
-          // }
-          // let events = timeRange ? timeseries.filterByTime(events, timeRange) : [...events];
+          let timeRange = query.timeRange || [0, Infinity];
+          if (query.sinceLastStartup) {
+            timeRange = [lastStartupTime(events) || timeRange[0], Math.min(timeRange[1], Infinity)];
+          } else if (query.since) {
+            timeRange[0] = query.since;
+          }
+          let eventsFiltered = timeRange ? timeseries.filterByTime(events, timeRange) : events;
           // if (query.filterTypes) {
           //   if (query.exclude) {
-          //     events = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
+          //     eventsFiltered = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
           //   } else {
-          //     events = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
+          //     eventsFiltered = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
           //   }
           // }
           // if (query.startIndex || query.limit) {
           //   const startIndex = query.startIndex || 0;
           //   events = events.slice(startIndex, startIndex + (query.limit || (events.length - startIndex)));
           // }
-          response = query.count ? events.length : Array.from(events);
+          response = query.count ? eventsFiltered.length : Array.from(eventsFiltered);
           break;
         }
         case 'eventCount': { // quick count of the total, no overhead
@@ -489,25 +484,17 @@ const sagas = {
   },
 
   panTimeline: function* (action: Action) {
-    const params = action.params as PanTimelineParams;
-    const { t, option } = params;
-    let newRefTime = t;
-    if (option === AbsoluteRelativeOption.relative) {
-      const refTime = yield select(state => state.options.refTime);
-      newRefTime = refTime + t;
-    }
-    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    yield put(newAction(AppAction.setAppOption, { refTime: newRefTime, timelineRefTime: newRefTime }));
-  },
+    // TODO this was for programmatic panning via script
 
-  tickEvent: function* (action: Action) {
-    try {
-      const tickEvent = action.params as TickEvent;
-      yield call(log.trace, 'saga tickEvent', tickEvent);
-      yield put(newAction(ReducerAction.TICK_EVENT, tickEvent));
-    } catch (err) {
-      yield call(log.error, 'tickEvent', err);
-    }
+    // const params = action.params as PanTimelineParams;
+    // const { t, option } = params;
+    // let newRefTime = t;
+    // if (option === AbsoluteRelativeOption.relative) {
+    //   const refTime = yield select(state => state.options.refTime);
+    //   newRefTime = refTime + t;
+    // }
+    // yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+    // yield put(newAction(AppAction.setAppOption, { refTime: newRefTime, timelineRefTime: newRefTime }));
   },
 
   // Set map bearing to 0 (true north) typically in response to user action (button).
@@ -625,7 +612,6 @@ const sagas = {
   sliderMoved: function* (action: Action) {
     const params = action.params as SliderMovedParams;
     const { value } = params; // between 0 and 1
-    // yield call(log.trace, 'saga sliderMoved', value, timelineVisibleTime(value));
     yield put(newAction(AppAction.setAppOption, { timelineZoomValue: value }));
   },
 
@@ -737,16 +723,16 @@ const sagas = {
     }
   },
 
+  tickEvent: function* (action: Action) {
+  },
+
   // Respond to timeline pan/zoom. x is in the time domain.
-  // timelineRefTime changes here only after panning, whereas refTime changes during panning too.
+  // timelineRefTime changes here only after scrolling, whereas refTime changes during scrolling too.
   timelineZoomed: function* (action: Action) {
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
-    // yield call(log.trace, 'saga timelineZoomed', refTime);
-
-    // TODO do not disable timelineNow unless refTime is changing
-    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+    yield put(newAction(AppAction.flagDisable, 'timelineScrolling'));
     yield put(newAction(AppAction.setAppOption, { refTime, timelineRefTime: refTime }));
   },
 
@@ -754,8 +740,8 @@ const sagas = {
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const refTime = (x[0] + x[1]) / 2;
-    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
     yield put(newAction(AppAction.setAppOption, { refTime })); // note: not changing timelineRefTime! see timelineZoomed
+    yield call(log.trace, 'timelineZooming', refTime);
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -763,11 +749,16 @@ const sagas = {
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
     const appActive = yield select((state: AppState) => state.flags.appActive);
-    if (appActive) {
+    const timelineScrolling = yield select((state: AppState) => state.flags.timelineScrolling);
+    if (appActive && !timelineScrolling) { // TODO2 let's not tick the timer while we are trying to scroll
       const now = action.params as number;
-      const timelineNow = yield select((state: AppState) => state.flags.timelineNow);
+      const { timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
       if (timelineNow) {
-        yield put(newAction(AppAction.setAppOption, { refTime: now, timelineRefTime: now }));
+        const options = { refTime: now } as any;
+        if (!timelineScrolling) { // otherwise leave this alone until scrolling is complete TODO2
+          options.timelineRefTime = now;
+        }
+        yield put(newAction(AppAction.setAppOption, options));
       }
       const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
       if (tickEvents) {

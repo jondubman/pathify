@@ -60,7 +60,10 @@ export default class App extends Component {
     }
 
     const interval = setInterval(() => {
-      store.dispatch(newAction(AppAction.timerTick, utils.now()));
+      const { flags } = store.getState();
+      if (flags.appActive && flags.enableTicks) {
+        store.dispatch(newAction(AppAction.timerTick, utils.now()));
+      }
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 

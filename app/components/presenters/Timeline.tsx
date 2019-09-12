@@ -68,6 +68,7 @@ class Timeline extends Component<TimelinePanelProps> {
       startupTime,
       timeRange,
       timespans,
+      timelineRefTime,
       timelineWidth,
       visibleTime,
       zoomLevel,
@@ -88,16 +89,16 @@ class Timeline extends Component<TimelinePanelProps> {
       y: yDomain,
     }
     const zoomDomain: DomainPropType = { // the visible domain of the Timeline
-      x: [refTime - scrollableAreaTime / 2, refTime + scrollableAreaTime / 2], // half goes on either side of refTime
+      x: [timelineRefTime - scrollableAreaTime / 2, timelineRefTime + scrollableAreaTime / 2], // half on either side
       y: yDomain,
     }
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
-      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(refTime), interval.hours(1))
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(timelineRefTime), interval.hours(1))
     } else if (tickInterval >= interval.hours(12)) {
-      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(refTime), interval.hours(1))
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(timelineRefTime), interval.hours(1))
     } else {
-      timeRoundDown = timeseries.timeRoundDown(refTime, tickInterval);
+      timeRoundDown = timeseries.timeRoundDown(timelineRefTime, tickInterval);
     }
     const tickValues: number[] = [];
     const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // approx

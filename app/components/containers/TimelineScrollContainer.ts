@@ -8,9 +8,12 @@ import {
   timelineVisibleTime,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import utils from 'lib/utils';
 import TimelineScroll from 'presenters/TimelineScroll';
 
 export interface TimelineScrollStateProps {
+  now: number;
+  refTime: number;
   scrollableWidth: number;
   scrollToX: number;
   timelineRefTime: number;
@@ -18,6 +21,8 @@ export interface TimelineScrollStateProps {
 }
 
 export interface TimelineScrollDispatchProps {
+  setTimelineNow: (enabled: boolean) => void;
+  setTimelineScrolling: (enabled: boolean) => void;
   zoomDomainChanged: (domain: DomainPropType) => void; // used only in response to user actions
   zoomDomainChanging: (domain: DomainPropType) => void; // used only in response to user actions
 }
@@ -25,25 +30,34 @@ export interface TimelineScrollDispatchProps {
 export type TimelineScrollProps = TimelineScrollStateProps & TimelineScrollDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
-  const { timelineRefTime } = state.options;
+  const { refTime, timelineRefTime } = state.options;
   return {
+    now: utils.now(),
+    refTime,
     scrollableWidth: dynamicTimelineScrollWidth(state), // scrollable width
-    scrollToX: dynamicTimelineScrollWidth(state) / 2 - dynamicTimelineWidth(state) / 2,
+    // to calc scrollToX: start at the center of the scrollable area, then back up half the width of the visible area.
+    scrollToX: (dynamicTimelineScrollWidth(state) / 2) - (dynamicTimelineWidth(state) / 2),
     timelineRefTime,
     visibleTime: timelineVisibleTime(state.options.timelineZoomValue),
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): TimelineScrollDispatchProps => {
+  const setTimelineNow = (enabled: boolean) => {
+    dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'timelineNow'));
+  }
+  const setTimelineScrolling = (enabled: boolean) => {
+    dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'timelineScrolling'));
+  }
   const zoomDomainChanged = (domain: DomainPropType) => {
-    // This responds to user interaction, adjusting the refTime. Not needed to programmatically zoom Timeline.
-    // log.trace('zoomDomainChanged', domain);
     dispatch(newAction(AppAction.timelineZoomed, domain));
   }
   const zoomDomainChanging = (domain: DomainPropType) => {
     dispatch(newAction(AppAction.timelineZooming, domain));
   }
   const dispatchers = {
+    setTimelineNow,
+    setTimelineScrolling,
     zoomDomainChanged,
     zoomDomainChanging,
   }

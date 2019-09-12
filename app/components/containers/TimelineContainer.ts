@@ -42,6 +42,7 @@ export interface TimelineStateProps {
   showSpans: boolean;
   startupTime: number;
   timelineNow: boolean;
+  timelineRefTime: number;
   timelineWidth: number;
   timeRange: TimeRange;
   timespans: Timespans;
@@ -56,7 +57,7 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const { currentActivity, timelineRefTime } = state.options;
+  const { currentActivity, refTime, timelineRefTime } = state.options;
   const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
   const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
@@ -73,13 +74,14 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     currentActivity,
     marks,
     nowTime,
-    refTime: timelineRefTime,
+    refTime,
     scrollToX: dynamicTimelineScrollWidth(state) / 2 - dynamicTimelineWidth(state) / 2,
     selectedActivity: state.options.selectedActivity,
     showMarks,
     showSpans,
     startupTime: state.options.startupTime,
     timelineNow: state.flags.timelineNow,
+    timelineRefTime: timelineRefTime,
     timelineWidth: dynamicTimelineScrollWidth(state), // scrollable width
     timeRange: timeseries.timeRangeOfEvents(database.events()),
     timespans,

@@ -3,6 +3,9 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import {
+  clockNowMode
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import log from 'shared/log';
 
@@ -27,7 +30,7 @@ const mapStateToProps = (state: AppState): ClockStateProps => {
     hours: d.getHours(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),
-    timelineNow: state.flags.timelineNow,
+    timelineNow: clockNowMode(state),
   }
 }
 

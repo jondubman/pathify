@@ -32,6 +32,12 @@ const colorForAppState = {
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.1),
 }
 
+// TODO cache all of these timespans
+// activityTimespans
+// appStateTimespans
+// customTimespans
+// selectionTimespans
+
 // Each activityTimespan shows one Activity
 const activityTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
@@ -61,14 +67,13 @@ const activityTimespans = (state: AppState): Timespans => {
     }
   }
   // Finally, add a timepsan representing the current state, if started.
-  // TODO2
-  // if (state.options.currentActivity) {
-  //   timespans.push({
-  //     color: constants.colors.timeline.currentActivity,
-  //     kind: TimespanKind.ACTIVITY,
-  //     tr: [state.options.currentActivity.tr[0], utils.now()],
-  //   })
-  // }
+  if (state.options.currentActivity) {
+    timespans.push({
+      color: constants.colors.timeline.currentActivity,
+      kind: TimespanKind.ACTIVITY,
+      tr: [state.options.currentActivity.tr[0], utils.now()],
+    })
+  }
   return timespans;
 }
 
@@ -131,6 +136,18 @@ export const selectionTimespans = (state: AppState): Timespans => {
   }
 }
 
+export const clockNowMode = (state: AppState): boolean => {
+  if (state.flags.timelineNow) {
+    return true;
+  }
+  if (state.flags.timelineScrolling &&
+      state.options.refTime >= state.options.timelineRefTime - constants.timing.timelineCloseToNow &&
+      state.options.refTime >= utils.now() - constants.timing.timelineCloseToNow) {
+    return true; // a way to re-enable NOW mode while sliding timeline
+  }
+  return false;
+}
+
 // This is not technically a selector as it doesn't refer to state
 export const dynamicAreaTop = (state: AppState): number => (
   constants.safeAreaTop || getStatusBarHeight()
@@ -170,9 +187,10 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
 )
 
 export const mapHidden = (state: AppState): boolean => (
-  (dynamicMapStyle(state).url === '')
+  (dynamicMapStyle(state).url === '' || state.flags.mapDisable)
 )
 
+// TODO cache
 export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars };
   if (state.userLocation) {
