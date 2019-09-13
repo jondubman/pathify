@@ -283,8 +283,10 @@ const sagas = {
     const { long } = params;
     if (mapFullScreen) { // enabled
       if (long) {
-        yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+        yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
+        yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
       } else {
+        yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
         yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
       }
     } else { // disabled (Timeline shown)
@@ -292,14 +294,12 @@ const sagas = {
         if (clockMenuOpen) {
           yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
         } else {
-          yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
-          yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+          yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
         }
       } else {
         if (clockMenuOpen) {
           yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
         } else {
-          yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
           yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
         }
       }
@@ -338,12 +338,6 @@ const sagas = {
         yield call(Geo.changePace, true, () => {
           log.debug('BackgroundGeolocation pace manually set to moving');
         })
-      }
-    }
-    if (flagName === 'clockMenuOpen') {
-      const flags = yield select((state: AppState) => state.flags);
-      if (flags.clockMenuOpen) {
-        yield put(newAction(AppAction.flagDisable, 'mapFullScreen')); // show timeline when clockMenu is open
       }
     }
   },
