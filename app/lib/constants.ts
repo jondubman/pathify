@@ -58,7 +58,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 
 const colorThemes = {
   background: namedColors.black,
-  settings: namedColors.red,
+  settings: namedColors.darkerGray,
 }
 
 const buttonOffset = 6;

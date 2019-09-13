@@ -49,6 +49,7 @@ import {
   AddEventsParams,
   AppStateChangeParams,
   CenterMapParams,
+  ClockPressParams,
   ContinueActivityParams,
   DelayedActionParams,
   GeolocationParams,
@@ -277,12 +278,21 @@ const sagas = {
   },
 
   clockPress: function* (action: Action) {
-    const timelineShowing = yield select((state: AppState) => (!state.flags.mapFullScreen))
-    if (timelineShowing) {
-      yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+    const mapFullScreen = yield select((state: AppState) => state.flags.mapFullScreen);
+    const params = action.params as ClockPressParams;
+    const { long } = params;
+    if (mapFullScreen) {
+      if (long) {
+        yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+      } else {
+        yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
+      }
     } else {
-      yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
-      yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
+      if (long) {
+        // no additional action
+      } else {
+        yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+      }
     }
   },
 
@@ -456,8 +466,6 @@ const sagas = {
     const settingsOpen = yield select((state: AppState) => state.flags.settingsOpen);
     if (settingsOpen) {
       yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
-    } else {
-      yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
     }
   },
 

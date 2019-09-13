@@ -164,8 +164,8 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                     </View>
                     <View style={Styles.opacitySliderView}>
                       <Slider
-                        maximumTrackTintColor={constants.colors.byName.azure}
-                        minimumTrackTintColor={constants.colors.byName.black}
+                        maximumTrackTintColor={constants.colors.byName.black}
+                        minimumTrackTintColor={constants.colors.byName.white}
                         onValueChange={this.onValueChange}
                         onSlidingComplete={this.onValueChanged}
                         style={Styles.opacitySlider}

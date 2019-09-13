@@ -171,6 +171,7 @@ const clockBackgroundStyle = (props: ClockProps): Object => (
 const Clock = (props: ClockProps) => (
   <TouchableHighlight
     style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
+    onLongPress={props.onLongPress}
     onPressIn={props.onPress}
     underlayColor={colors.underlay}
   >

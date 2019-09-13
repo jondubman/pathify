@@ -128,6 +128,10 @@ export interface CenterMapParams {
   zoom?: number;
 }
 
+export interface ClockPressParams {
+  long: boolean;
+}
+
 export interface ContinueActivityParams {
   activity: Activity,
 }

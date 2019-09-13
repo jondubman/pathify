@@ -20,6 +20,7 @@ interface ClockStateProps {
 }
 
 interface ClockDispatchProps {
+  onLongPress: () => void;
   onPress: () => void;
 }
 
@@ -37,11 +38,16 @@ const mapStateToProps = (state: AppState): ClockStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): ClockDispatchProps => {
+  const onLongPress = () => {
+    log.debug('clock long press');
+    dispatch(newAction(AppAction.clockPress, { long: true }));
+  }
   const onPress = () => {
     log.debug('clock press');
-    dispatch(newAction(AppAction.clockPress));
+    dispatch(newAction(AppAction.clockPress, { long: false }));
   }
   const dispatchers = {
+    onLongPress,
     onPress,
   }
   return dispatchers;
