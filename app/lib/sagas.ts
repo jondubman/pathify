@@ -87,7 +87,6 @@ import locations, {
 import log, { messageToLog } from 'shared/log';
 import {
   containingActivity,
-  insertMissingStopMarks, // TODO call insertMissingStopMarks when the app loads
   MarkEvent,
   MarkType
 } from 'shared/marks';
