@@ -186,7 +186,7 @@ const geolocationOptions_highPower: Config = {
 
   distanceFilter: 1, // meters device must move to generate update event, default 10
   heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
-  preventSuspend: true, // default false (note true has major battery impact!) TODO2
+  preventSuspend: true, // default false (note true has major battery impact!)
   forceReloadOnBoot: true, // TODO
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
 

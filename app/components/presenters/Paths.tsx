@@ -1,7 +1,7 @@
 // This renders a number of Path components at once, to be contained within a MapArea.
 
 import React, {
-  Component,
+  PureComponent,
   Fragment,
 } from 'react';
 
@@ -29,7 +29,7 @@ const lineLayerStyleCurrent = {
   lineColor: constants.colors.paths.current,
 }
 
-class Paths extends Component<PathsProps> {
+class Paths extends PureComponent<PathsProps> {
   public render() {
     const { paths } = this.props;
     if (!paths.length) {

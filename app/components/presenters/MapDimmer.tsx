@@ -4,7 +4,7 @@
 import * as turf from '@turf/helpers';
 
 import React, {
-  Component,
+  PureComponent,
 } from 'react';
 
 import Mapbox from '@react-native-mapbox-gl/maps';
@@ -12,7 +12,7 @@ import Mapbox from '@react-native-mapbox-gl/maps';
 import { MapDimmerProps } from 'containers/MapDimmerContainer';
 import constants from 'lib/constants';
 
-class MapDimmer extends Component<MapDimmerProps> {
+class MapDimmer extends PureComponent<MapDimmerProps> {
 
   public dimmerShape = turf.polygon([[ // Entire globe!
     [
@@ -37,12 +37,8 @@ class MapDimmer extends Component<MapDimmerProps> {
     ]
   ]])
 
-
   constructor(props) {
     super(props);
-  }
-
-  componentDidMount() {
   }
 
   render() {

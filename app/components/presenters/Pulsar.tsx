@@ -4,7 +4,7 @@
 import * as turf from '@turf/helpers';
 
 import React, {
-  Component,
+  PureComponent,
 } from 'react';
 
 import {
@@ -32,7 +32,7 @@ interface PulsarState {
   pulse: Animated.Value;
 }
 
-class Pulsar extends Component<PulsarProps, PulsarState> {
+class Pulsar extends PureComponent<PulsarProps, PulsarState> {
 
   public readonly state: PulsarState = {
     pulse: new Animated.Value(pulseMin),

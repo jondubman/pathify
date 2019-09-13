@@ -22,7 +22,6 @@ import constants from 'lib/constants';
 import { TimelinePanelProps } from 'containers/TimelineContainer';
 import TimelineMarks from 'presenters/TimelineMarks';
 import TimelineSpans from 'presenters/TimelineSpans';
-import log from 'shared/log';
 import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
@@ -61,7 +60,6 @@ class Timeline extends Component<TimelinePanelProps> {
       currentActivity,
       marks,
       nowTime,
-      refTime,
       selectedActivity,
       showMarks,
       showSpans,
@@ -144,7 +142,7 @@ class Timeline extends Component<TimelinePanelProps> {
               zoomDimension="x"
               zoomDomain={zoomDomain}
               onZoomDomainChange={this.handleZoom}
-            /> as any
+            />
           }
           domain={dataDomain}
           height={constants.timeline.default.height}

@@ -104,8 +104,14 @@ const Styles = StyleSheet.create({
   now: {
     backgroundColor: colors.backgroundNow,
   },
-  paused: {
-    backgroundColor: colors.backgroundPaused,
+  past: {
+    backgroundColor: colors.backgroundPast,
+  },
+  stoppedNow: {
+    backgroundColor: colors.backgroundStopped,
+  },
+  stoppedPast: {
+    backgroundColor: colors.backgroundStoppedPast,
   },
 })
 
@@ -157,13 +163,14 @@ const ClockTicks = () => {
   )
 }
 
-const timelineNowStyle = (props: ClockProps): Object => (
-  props.timelineNow ? Styles.now : Styles.paused
+const clockBackgroundStyle = (props: ClockProps): Object => (
+  props.timelineNow ? (props.stopped ? Styles.stoppedNow : Styles.now)
+                    : (props.stopped ? Styles.stoppedPast : Styles.past)
 )
 
 const Clock = (props: ClockProps) => (
   <TouchableHighlight
-    style={{ ...Styles.clock, ...timelineNowStyle(props)}}
+    style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
     onPressIn={props.onPress}
     underlayColor={colors.underlay}
   >

@@ -91,7 +91,9 @@ const colors = {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.9),
     backgroundNow: withOpacity(namedColors.darkerGreen, 0.65),
-    backgroundPaused: withOpacity(namedColors.azure_dark, 0.75),
+    backgroundPast: withOpacity(namedColors.azure_dark, 0.75),
+    backgroundStopped: withOpacity(namedColors.black, 0.7),
+    backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.7),
     underlay: withOpacity(namedColors.black, 0.5),
   },
   compassButton: {

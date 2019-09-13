@@ -1,14 +1,14 @@
 // This renders a number of Pulsar components at once.
 
 import React, {
-  Component,
+  PureComponent,
   Fragment,
 } from 'react';
 
 import Pulsar from 'presenters/Pulsar'; // singular
 import { PulsarsProps } from 'containers/PulsarsContainer';
 
-class Pulsars extends Component<PulsarsProps> {
+class Pulsars extends PureComponent<PulsarsProps> {
   public render() {
     const { keySuffix, pulsars } = this.props;
     return (

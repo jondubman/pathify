@@ -19,10 +19,10 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.
-    enableTicks: true, // TODO2
-    flag1: false, // TODO2
-    flag2: false, // TODO2
-    flag3: false, // TODO2
+    ticksEnabled: true, // TODO2
+    flag1: false, // for experimentation
+    flag2: false, // for experimentation
+    flag3: false, // for experimentation
     followingUser: true, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false, // Help mode in the app
@@ -32,12 +32,13 @@ export const initialAppState = {
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    receiveLocations: true, // TODO2
+    receiveLocations: true,
     settingsOpen: false, // settings panel visible state
     showActivityDetails: true, // TODO2
-    showPathsOnMap: true, // TODO
-    showTimelineMarks: false, // TODO2
-    showTimelineSpans: false, // TODO2
+    showPathsOnMap: true, // TODO2
+    showTimeline: false,
+    showTimelineMarks: true, // TODO2
+    showTimelineSpans: true, // TODO2
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)

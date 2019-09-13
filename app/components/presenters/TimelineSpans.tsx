@@ -10,7 +10,7 @@ interface TimelineSpansProps extends Victory.VictoryCommonProps, Victory.Victory
   data: Timespans;
 }
 
-class TimelineSpans extends React.Component<TimelineSpansProps> {
+class TimelineSpans extends React.PureComponent<TimelineSpansProps> {
 
   constructor(props: any) {
     super(props);

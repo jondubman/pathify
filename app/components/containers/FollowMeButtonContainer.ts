@@ -25,7 +25,7 @@ interface FollowMeButtonDispatchProps {
 
 export type FollowMeButtonProps = FollowMeButtonStateProps & FollowMeButtonDispatchProps;
 
-const mapStateToProps = (state: AppState /* , ownProps: OwnProps */): FollowMeButtonStateProps => {
+const mapStateToProps = (state: AppState): FollowMeButtonStateProps => {
   return {
     active: state.flags.followingUser,
     bottomOffset: dynamicLowerButtonBase(state),

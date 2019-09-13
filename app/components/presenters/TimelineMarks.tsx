@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { G, Line, Polygon, Polyline } from 'react-native-svg';
+import { G, Line, Polygon } from 'react-native-svg';
 import * as Victory from 'victory-native';
 const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
@@ -19,7 +19,7 @@ interface TimelineMarksProps extends Victory.VictoryCommonProps, Victory.Victory
   selectedActivity: Activity | null;
 }
 
-class TimelineMarks extends React.Component<TimelineMarksProps> {
+class TimelineMarks extends React.PureComponent<TimelineMarksProps> {
 
   constructor(props: any) {
     super(props);
