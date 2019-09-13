@@ -278,20 +278,30 @@ const sagas = {
   },
 
   clockPress: function* (action: Action) {
-    const mapFullScreen = yield select((state: AppState) => state.flags.mapFullScreen);
+    const { clockMenuOpen, mapFullScreen } = yield select((state: AppState) => state.flags);
     const params = action.params as ClockPressParams;
     const { long } = params;
-    if (mapFullScreen) {
+    if (mapFullScreen) { // enabled
       if (long) {
         yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
       } else {
         yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
       }
-    } else {
+    } else { // disabled (Timeline shown)
       if (long) {
-        // no additional action
+        if (clockMenuOpen) {
+          yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+        } else {
+          yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+          yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+        }
       } else {
-        yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+        if (clockMenuOpen) {
+          yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+        } else {
+          yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+          yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+        }
       }
     }
   },

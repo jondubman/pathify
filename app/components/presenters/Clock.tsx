@@ -172,7 +172,7 @@ const Clock = (props: ClockProps) => (
   <TouchableHighlight
     style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
     onLongPress={props.onLongPress}
-    onPressIn={props.onPress}
+    onPress={props.onPress}
     underlayColor={colors.underlay}
   >
     <View>
