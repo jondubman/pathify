@@ -19,7 +19,6 @@ export enum TimespanKind {
   'MODE' = 'MODE',
   'MOTION' = 'MOTION',
   'OTHER' = 'OTHER',
-  'TICKS' = 'TICKS',
   'SELECTION' = 'SELECTION',
 }
 
@@ -174,7 +173,6 @@ const colors = {
       [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25), // TODO
       [TimespanKind.MOTION]: withOpacity(namedColors.yellow, 0.25), // TODO
       [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25), // spans the whole timeline vertically
-      [TimespanKind.TICKS]: withOpacity(namedColors.purple, 0.25),
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),

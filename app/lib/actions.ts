@@ -14,7 +14,6 @@
 export enum ReducerAction {
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
-  'TICK_EVENT' = 'TICK_EVENT', // corresponds to AppAction.tickEvent
   'SET_APP_OPTION' = 'SET_APP_OPTION',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
   'FLAG_DISABLE' = 'FLAG_DISABLE',

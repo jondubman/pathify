@@ -760,11 +760,6 @@ const sagas = {
         }
         yield put(newAction(AppAction.setAppOption, options));
       }
-      const tickEvents = yield select((state: AppState) => state.flags.tickEvents);
-      if (tickEvents) {
-        const tickEvent = { ...timeseries.newEvent(now), type: EventType.TICK };
-        yield put(newAction(AppAction.tickEvent, tickEvent));
-      }
     }
   },
 

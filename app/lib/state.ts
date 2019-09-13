@@ -36,9 +36,8 @@ export const initialAppState = {
     settingsOpen: false, // settings panel visible state
     showActivityDetails: true, // TODO2
     showPathsOnMap: true, // TODO
-    showTimelineMarks: true, // TODO2
-    showTimelineSpans: true, // TODO2
-    tickEvents: false, // whether to store pulse events when timer ticks (helpful for debugging)
+    showTimelineMarks: false, // TODO2
+    showTimelineSpans: false, // TODO2
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)

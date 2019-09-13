@@ -52,9 +52,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       }
       break;
 
-    case ReducerAction.TICK_EVENT: // TODO
-      break;
-
     case ReducerAction.SET_APP_OPTION: // no need for equivalent getters; just inspect state
       {
         newState.options = {

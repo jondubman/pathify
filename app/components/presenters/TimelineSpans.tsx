@@ -43,8 +43,6 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
           return yTop(TimespanKind.LOCATIONS) - height(kind); // OTHER above LOCATIONS
         case TimespanKind.SELECTION:
           return yBase - height(kind); // top to bottom
-        case TimespanKind.TICKS:
-          break
         default:
           break;
       }
@@ -67,8 +65,6 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
           return constants.timeline.barHeight;
         case TimespanKind.SELECTION:
           return timeline.default.height;
-        case TimespanKind.TICKS:
-          break;
         default:
           break;
       }
