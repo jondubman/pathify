@@ -49,4 +49,4 @@ const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
   </TouchableHighlight>
 ))
 
-export default FollowMeButton;
+export default React.memo(FollowMeButton);

@@ -53,4 +53,4 @@ const CompassButton = (props: CompassButtonProps) => (props.hidden ? null : (
     ) : null
 ))
 
-export default CompassButton;
+export default React.memo(CompassButton);

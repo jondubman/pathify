@@ -185,4 +185,4 @@ const Clock = (props: ClockProps) => (
   </TouchableHighlight>
 )
 
-export default Clock;
+export default React.memo(Clock);

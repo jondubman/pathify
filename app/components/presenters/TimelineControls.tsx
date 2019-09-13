@@ -52,4 +52,5 @@ const TimelineControls = (props: TimelineControlsProps) => (
   </View>
 )
 
-export default TimelineControls;
+export default React.memo(TimelineControls); // Note use of memo (optimization based on shallow comparison of props)
+

@@ -45,4 +45,4 @@ const HelpButton = (props: HelpButtonProps) => (
   </TouchableHighlight>
 )
 
-export default HelpButton;
+export default React.memo(HelpButton);

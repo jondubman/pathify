@@ -51,4 +51,4 @@ const SettingsButton = (props: SettingsButtonProps) => (
   </TouchableHighlight>
 )
 
-export default SettingsButton;
+export default React.memo(SettingsButton);
