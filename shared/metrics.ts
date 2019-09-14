@@ -1,4 +1,4 @@
-import timeseries, {
+import {
   Events,
   GenericEvent,
   Timepoint,
@@ -144,7 +144,7 @@ export const activityMetrics = (events: Events,
             default:
               break;
           }
-        // Special case: STILL mode change implies speed should now be zero, regardless of the last report from the GPS.
+          // Special case: STILL mode change implies speed should now be zero, regardless of the last report from the GPS.
           if (mode === ModeType.STILL) {
             speedMetric.text = '0'; // hard-coded zero
           }

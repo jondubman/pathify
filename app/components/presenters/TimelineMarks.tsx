@@ -19,10 +19,14 @@ interface TimelineMarksProps extends Victory.VictoryCommonProps, Victory.Victory
   selectedActivity: Activity | null;
 }
 
-class TimelineMarks extends React.PureComponent<TimelineMarksProps> {
+class TimelineMarks extends React.Component<TimelineMarksProps> {
 
   constructor(props: any) {
     super(props);
+  }
+
+  public shouldComponentUpdate(nextProps: TimelineMarksProps, nextState: any) {
+    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
   }
 
   public render() {

@@ -56,7 +56,7 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const { currentActivity, refTime, timelineRefTime } = state.options;
+  const { currentActivity, timelineRefTime } = state.options;
   const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
   const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];

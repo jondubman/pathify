@@ -36,7 +36,7 @@ export const initialAppState = {
     settingsOpen: true, // settings panel visible state
     showActivityDetails: true, // TODO2
     showPathsOnMap: true, // TODO2
-    showTimeline: true,
+    showTimeline: false, // TODO2
     showTimelineMarks: false, // TODO2
     showTimelineSpans: false, // TODO2
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
@@ -52,9 +52,9 @@ export const initialAppState = {
     mapOpacity: constants.map.default.opacity,
     mapOpacityPreview: null as number | null, // while adjusting
     mapStyle: constants.map.default.style,
-    // now: // TODO really want a single source of truth for this. Only same as refTime in NOW mode.
     pulsars: {} as OptionalPulsars,
     refTime: now,
+    renderCounts: {} as object, // TODO2
     startupTime: now,
     timelineRefTime: now, // Note this lags refTime when user is scrolling the timeline, by design.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline refTime, etc.

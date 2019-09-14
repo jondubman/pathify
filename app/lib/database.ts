@@ -1,5 +1,7 @@
 import Realm from 'realm';
 
+import constants from 'lib/constants';
+import utils from 'lib/utils';
 import { Events, GenericEvent, GenericEvents } from 'shared/timeseries';
 import log from 'shared/log';
 
@@ -84,7 +86,9 @@ const database = {
   // As this is a thin wrapper around Realm.objects, result has methods that resemble those of an array, but should be
   // filtered, sorted, etc. using the Realm-JS API: https://realm.io/docs/javascript/latest/
   events: (): Events => {
-    return realm.objects('EventSchema').sorted('t'); // always sort by time (which is indexed) first
+    return realm.objects('EventSchema')
+      .filtered('t >= $0', utils.now() - constants.timing.maxAgeEvents)
+      .sorted('t'); // always sort by time (which is indexed) first
   },
 
   changeSettings: (changes: any): void => {

@@ -371,6 +371,7 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
+    maxAgeEvents: Infinity, // TODO2 max age used for events filter in database module
     opacitySliderThrottle: 250,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 100, // TODO2
