@@ -5,8 +5,11 @@ import utils from 'lib/utils';
 import { Events, GenericEvent, GenericEvents } from 'shared/timeseries';
 import log from 'shared/log';
 
-// NOTE: There are corresponding TypeScript types that need to be kept in sync with this, and Schema migrations must be
-// provided if the schema should change. The TypeScript types are
+// const ActivitySchema: Realm.ObjectSchema = {
+// }
+
+// NOTE: There are corresponding TypeScript types that need to be kept in sync with EventSchema,
+// and Schema migrations must be provided if the schema should change. See GenericEvent and related types.
 
 const EventSchema: Realm.ObjectSchema = {
   name: 'EventSchema',
@@ -86,6 +89,10 @@ const database = {
   // As this is a thin wrapper around Realm.objects, result has methods that resemble those of an array, but should be
   // filtered, sorted, etc. using the Realm-JS API: https://realm.io/docs/javascript/latest/
   events: (): Events => {
+    if (!constants.timing.maxAgeEvents || constants.timing.maxAgeEvents === Infinity) {
+      return realm.objects('EventSchema')
+        .sorted('t'); // always sort by time (which is indexed) first
+    }
     return realm.objects('EventSchema')
       .filtered('t >= $0', utils.now() - constants.timing.maxAgeEvents)
       .sorted('t'); // always sort by time (which is indexed) first

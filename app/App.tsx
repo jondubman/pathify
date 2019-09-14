@@ -18,7 +18,6 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import { AppStateChange } from 'shared/appEvents';
 import log from 'shared/log';
-import { Activity } from 'shared/marks';
 
 import AppUIContainer from 'containers/AppUIContainer';
 
@@ -42,23 +41,6 @@ export default class App extends Component {
 
     RNAppState.addEventListener('change', this.handleAppStateChange);
 
-    Geo.initializeGeolocation(store);
-
-    const { startupAction_clearStorage } = store.getState().flags;
-    if (startupAction_clearStorage) {
-      store.dispatch(newAction(AppAction.clearStorage));
-    }
-    this.handleAppStateChange('startup'); // initialize
-    const settings = database.settings() as any; // TODO typings
-    log.info('Persisted App settings', settings);
-
-    const { currentActivityId, currentActivityStartTime } = settings;
-    if (currentActivityId && currentActivityStartTime) {
-      log.info('Continuing previous activity...');
-      const activity: Activity = { id: currentActivityId, tr: [currentActivityStartTime, Infinity] };
-      store.dispatch(newAction(AppAction.continueActivity, { activity }));
-    }
-
     const interval = setInterval(() => {
       const { flags } = store.getState();
       if (flags.appActive && flags.ticksEnabled) {
@@ -67,7 +49,11 @@ export default class App extends Component {
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
-    pollServer();
+    this.handleAppStateChange('startup'); // initialize
+
+    store.dispatch(newAction(AppAction.startupActions));
+
+    pollServer(); // attempt to stay in contact with server
   }
 
   componentWillUnmount() {

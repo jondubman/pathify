@@ -87,6 +87,7 @@ import locations, {
 } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
 import {
+  Activity,
   containingActivity,
   MarkEvent,
   MarkType
@@ -677,6 +678,23 @@ const sagas = {
       }
     } catch (err) {
       yield call(log.error, 'saga startOrStopActivity', err);
+    }
+  },
+
+  startupActions: function* () {
+    yield call(Geo.initializeGeolocation, store);
+    const { startupAction_clearStorage } = yield select(state => state.flags);
+    if (startupAction_clearStorage) {
+      yield put(newAction(AppAction.clearStorage));
+    }
+    const settings = yield call(database.settings) as any; // TODO typings
+    yield call(log.info, 'Persisted App settings', settings);
+
+    const { currentActivityId, currentActivityStartTime } = settings;
+    if (currentActivityId && currentActivityStartTime) {
+      yield call(log.info, 'Continuing previous activity...');
+      const activity: Activity = { id: currentActivityId, tr: [currentActivityStartTime, Infinity] };
+      yield put(newAction(AppAction.continueActivity, { activity }));
     }
   },
 

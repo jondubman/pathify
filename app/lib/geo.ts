@@ -257,14 +257,10 @@ const newModeChangeEvent = (activity: string, confidence: number, activityId: st
   }
 }
 
-let reduxStore: Store | null = null; // TODO
-// let eventQueue: LocationEvents = [];
-
 export const Geo = {
 
   initializeGeolocation: (store: Store) => {
     log.debug('initializeGeolocation');
-    reduxStore = store;
 
     // Now, configure the plugin, using those options.
     BackgroundGeolocation.ready(geolocationOptions_default, pluginState => {
