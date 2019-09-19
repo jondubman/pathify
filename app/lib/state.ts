@@ -5,7 +5,7 @@ import { Polygon } from "@turf/helpers";
 import { initialMenus } from 'containers/PopupMenusContainer';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
-import utils from "lib/utils";
+import utils from 'lib/utils';
 import { LocationEvent } from 'shared/locations';
 
 const now = utils.now();
@@ -34,11 +34,11 @@ export const initialAppState = {
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     settingsOpen: false, // settings panel visible state
     showActivityDetails: false, // TODO2
-    showDebugInfo: true, // TODO2
+    showDebugInfo: false, // TODO2
     showPathsOnMap: true, // TODO2
     showTimeline: true, // TODO2
-    showTimelineMarks: false, // TODO2
-    showTimelineSpans: false, // TODO2
+    showTimelineMarks: true, // TODO2
+    showTimelineSpans: true, // TODO2
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)

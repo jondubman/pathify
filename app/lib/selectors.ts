@@ -15,9 +15,10 @@ import timeseries, { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
-export const activityIncludesMark = (activity: Activity | null, mark: MarkEvent): boolean => (
-  !!(mark.activityId && activity && mark.activityId === activity.id)
-)
+export const activityIncludesMark = (activityId: string, mark: MarkEvent): boolean => {
+  const activity = database.activityById(activityId);
+  return !!(mark.activityId && activity && mark.activityId === activity.id)
+}
 
 export const continuousTrackList = (state: AppState): Tracks => {
   const tr: TimeRange = [0, utils.now()];
@@ -32,49 +33,22 @@ const colorForAppState = {
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.1),
 }
 
-// TODO2 cache all of these timespans
-// activityTimespans
-// appStateTimespans
-// customTimespans
-// selectionTimespans
-
 // Each activityTimespan shows one Activity
 const activityTimespans = (state: AppState): Timespans => {
-  const timespans: Timespans = [];
-  let startTime: Timepoint = 0;
-  const markEvents = database.events().filtered('type == "MARK"');
-  for (let e of markEvents) {
-    const event = e as any as MarkEvent;
-    const { t } = event;
-    const { subtype } = event;
-    if (subtype === MarkType.START) {
-      startTime = t;
-    }
-    if (subtype === MarkType.END) {
-      const tr: TimeRange = [startTime, t];
-      const timespan = {
-        kind: TimespanKind.ACTIVITY,
-        tr,
-      } as Timespan;
-      if (state.options.selectedActivity && timeseries.timeRangesEqual(state.options.selectedActivity.tr, tr)) {
-        timespan.color = constants.colors.timeline.selectedActivity;
-      }
-      if (state.options.currentActivity && state.options.currentActivity.tr[0] == tr[0]) {
-        timespan.color = constants.colors.timeline.selectedActivity;
-      }
-      timespans.push(timespan);
-      startTime = 0;
-    }
-  }
-  // Finally, add a timepsan representing the current state, if started.
-  if (state.options.currentActivity) {
-    timespans.push({
-      color: constants.colors.timeline.currentActivity,
+  const activities = database.activities();
+  return activities.map((activity: Activity): Timespan => {
+    const timespan = {
       kind: TimespanKind.ACTIVITY,
-      tr: [state.options.currentActivity.tr[0], utils.now()],
-    })
-  }
-  return timespans;
+      tr: [activity.tStart, Math.min(activity.tEnd || Infinity, utils.now())],
+    } as Timespan;
+    if (activity.id === state.options.selectedActivityId) {
+      timespan.color = constants.colors.timeline.selectedActivity;
+    }
+    if (activity.id === state.options.currentActivityId) {
+      timespan.color = constants.colors.timeline.currentActivity;
+    }
+    return timespan;
+  })
 }
 
 // For debugging, appStateTimespans show appState over time.
@@ -106,28 +80,17 @@ const appStateTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-export const customTimespans = (state: AppState): Timespans => {
-  const timespans: Timespans = [];
-  timespans.push(...activityTimespans(state));
-  timespans.push(...appStateTimespans(state));
-  return timespans;
-}
-
 // NOTE: selection here means TimeRange selections, not related to selectedActivity
-export const selectionTimespans = (state: AppState): Timespans => {
-  const experiment = false; // TODO
-  if (experiment) {
-    const { startupTime } = state.options;
-    const timespan: Timespan = {
-      kind: TimespanKind.SELECTION,
-      // TODO replace hard-coded selection with real one
-      tr: [ startupTime - interval.seconds(20), startupTime - interval.seconds(10) ],
-    }
-    return [timespan];
-  } else {
-    return [];
-  }
-}
+// export const selectionTimespans = (state: AppState): Timespans => {
+  // TODO experiment
+  // const { startupTime } = state.options;
+  // const timespan: Timespan = {
+  //   kind: TimespanKind.SELECTION,
+  //   // TODO replace hard-coded selection with real one
+  //   tr: [ startupTime - interval.seconds(20), startupTime - interval.seconds(10) ],
+  // }
+  // return [timespan];
+
 
 export const clockNowMode = (state: AppState): boolean => {
   if (state.flags.timelineNow) {
@@ -136,7 +99,7 @@ export const clockNowMode = (state: AppState): boolean => {
   if (state.flags.timelineScrolling &&
       state.options.refTime >= state.options.timelineRefTime - constants.timing.timelineCloseToNow &&
       state.options.refTime >= utils.now() - constants.timing.timelineCloseToNow) {
-    return true; // a way to re-enable NOW mode while sliding timeline TODO2
+    return true;
   }
   return false;
 }
@@ -224,6 +187,13 @@ export const selectedActivity = (state: AppState): Activity | undefined => {
     return database.activityById(state.options.selectedActivityId);
   }
   return undefined;
+}
+
+export const timelineTimespans = (state: AppState): Timespans => {
+  const timespans: Timespans = [];
+  timespans.push(...activityTimespans(state));
+  timespans.push(...appStateTimespans(state));
+  return timespans;
 }
 
 // value (from logarithmic timeline zoom slider) is between 0 and 1.

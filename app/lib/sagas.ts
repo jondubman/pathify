@@ -66,7 +66,6 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import {
-  activityForTimepoint,
   Activity,
   ActivityUpdate,
 } from 'shared/activities';
@@ -653,16 +652,14 @@ const sagas = {
       } else {
         const t = action.params.refTime;
         const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
-        if (activity && activity.id) { // refTime is within an Activity
-          if (activity.id === currentActivityId) {
-            // Clear selectedActivity if it would be redundant to currentActivity.
-            yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
-          } else {
-            yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id })); // recursive
-            // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
-            // it's because something other than the currentActivity is selected. That way, a selectedActivity is always
-            // a completed activity.
-          }
+        if (!activity || !activity.id || activity.id === currentActivityId) {
+          // Clear selectedActivity if it would be redundant to currentActivity.
+          yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
+        } else {
+          yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id })); // recursive
+          // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
+          // it's because something other than the currentActivity is selected. That way, a selectedActivity is always
+          // a completed activity.
         }
       }
     }
@@ -784,14 +781,14 @@ const sagas = {
             tLastUpdate: now,
             tEnd: now,
           })
-          yield call(log.debug, 'updatedActivity', updatedActivity);
+          // yield call(log.trace, 'updatedActivity', updatedActivity);
         }
         yield put(newAction(AppAction.setAppOption, { currentActivityId: null }));
       }
     } catch (err) {
       yield call(log.error, 'saga stopActivity', err);
     }
-},
+  },
 
   // Follow the user, recentering map right away, kicking off background geolocation if needed.
   startFollowingUser: function* () {

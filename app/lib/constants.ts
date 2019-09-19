@@ -386,7 +386,7 @@ const constants = {
   timing: { // msec
     opacitySliderThrottle: 250,
     pulsarPulse: 1000,
-    scrollViewWaitForMomentumScroll: 100, // TODO2
+    scrollViewWaitForMomentumScroll: 20, // TODO2
     timelineCloseToNow: 5000, // TODO2
     timelineZoomThrottle: 100,
     timerTickInterval: 1000,
@@ -399,7 +399,7 @@ const constants = {
     centerLineWidth: 3,
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
-      zoomValue: 0.7, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below
+      zoomValue: 0.5, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below (0.7 is a good default)
     },
     miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO

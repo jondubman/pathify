@@ -37,6 +37,7 @@ const AppStyles = StyleSheet.create({
 class AppUI extends Component<AppUIProps> {
   public render() {
     const {
+      showDebugInfo,
       showTimeline,
       timelineHeight
     } = this.props;
@@ -51,7 +52,7 @@ class AppUI extends Component<AppUIProps> {
           <MapContainer />
           {showTimeline ? <TimelineScrollContainer /> : null}
           <PopupMenusContainer />
-          <DebugInfoContainer />
+          {showDebugInfo ? <DebugInfoContainer /> : null}
           <TimelineControlsContainer />
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
             <CompassButtonContainer />

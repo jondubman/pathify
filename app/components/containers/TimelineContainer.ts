@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import { TimespanKind } from 'lib/constants';
 import {
   continuousTrackList,
-  customTimespans,
+  timelineTimespans,
   dynamicTimelineScrollWidth,
   dynamicTimelineWidth,
-  selectionTimespans,
   timelineVisibleTime,
   timelineZoomLevel,
 } from 'lib/selectors';
@@ -19,7 +18,7 @@ import {
   markList
 } from 'shared/marks';
 import timeseries, { TimeRange } from 'shared/timeseries';
-import { Track, Tracks } from 'shared/tracks';
+// import { Track, Tracks } from 'shared/tracks'; // TODO3 remove
 
 export interface Timespan {
   kind: TimespanKind;
@@ -58,13 +57,14 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const { currentActivityId, selectedActivityId, timelineRefTime } = state.options;
   const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
-  const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
+  // const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
   const showMarks = state.flags.showTimelineMarks;
   const showSpans = state.flags.showTimelineSpans;
-  const timespans: Timespans = tracks.map((track: Track): Timespan => ({
-    kind: TimespanKind.LOCATIONS,
-    tr: track.tr,
-  })).concat(showSpans ? customTimespans(state) : []).concat(showSpans ? selectionTimespans(state) : []);
+  // const timespans: Timespans = tracks.map((track: Track): Timespan => ({
+  //   kind: TimespanKind.LOCATIONS,
+  //   tr: track.tr,
+  // }))
+  const timespans: Timespans = showSpans ? timelineTimespans(state) : [];
   const marks: MarkEvents = showMarks ? markList(database.events()) : [];
 
   return {

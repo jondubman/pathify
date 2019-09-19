@@ -166,7 +166,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
           Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
       }
       const newTime = Math.min(timelineRefTime + timeDelta, now);
-      setTimelineNow(newTime >= utils.now() - constants.timing.timelineCloseToNow);
+      setTimelineNow(newTime >= utils.now() - constants.timing.timelineCloseToNow); // TODO3
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -177,6 +177,10 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
 
     const onScrollStart = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (this._timer) {
+        clearTimeout(this._timer);
+        this._timer = undefined;
+      }
       this._scrolling = true;
       this._refTime = this.props.refTime;
       logScrollEvents && log.trace('onScrollStart');
@@ -192,7 +196,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       logScrollEvents && log.trace('onFinishScrolling', domain);
       const x = (domain as any).x as [number, number];
       const newTime = (x[0] + x[1]) / 2;
-      setTimelineNow(newTime >= timelineRefTime - constants.timing.timelineCloseToNow);
+      setTimelineNow(newTime >= utils.now() - constants.timing.timelineCloseToNow); // TODO3
       setTimelineScrolling(false);
       zoomDomainChanged(domain);
     }

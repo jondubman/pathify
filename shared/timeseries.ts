@@ -28,6 +28,54 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
   'USER_ACTION' = 'USER_ACTION', // user action
 }
 
+export const EventSchema: Realm.ObjectSchema = {
+  name: 'Event',
+  properties: {
+    // GenericEvent
+    activityId: { type: 'string?', indexed: true },
+    index: 'int?',
+    source: 'string?',
+    t: { type: 'int', indexed: true }, // required
+    // type is required. Based on this, there may be additional properties. All are said to be optional here for
+    // the Realm scehema, but the corresponding TypeScript types clarify what is truly optional.
+    type: { type: 'string', indexed: true },
+
+    // AppStateChangeEvent
+    newState: 'string?',
+
+    // AppUserActionEvent
+    userAction: 'string?',
+
+    // LocationEvent - first the raw properties from geolocation:
+    accuracy: 'int?',
+    battery: 'float?',
+    charging: 'bool?',
+    ele: 'int?',
+    extra: 'string?',
+    heading: 'float?',
+    lat: 'double?', // note: also indexing integer versions of these same coordinates
+    lon: 'double?', // because you cannot index a float/double in Realm.
+    latIndexed: { type: 'int?', indexed: true }, // lat times 1M, and rounded to an int
+    lonIndexed: { type: 'int?', indexed: true }, // lon times 1M, and rounded to an int
+    odo: 'float?',
+    speed: 'float?',
+    // + derived properties:
+    gain: 'float?', // cumulative elevation gain within activity TODO2
+    loss: 'float?', // cumulative elevation gain within activity TODO2
+
+    // MarkEvent
+    subtype: 'string?',
+    synthetic: 'bool?',
+
+    // MotionEvent
+    isMoving: 'bool?',
+
+    // ModeChangeEvent
+    mode: 'string?', // note: Also used in LocationEvent (TODO2)
+    confidence: 'int?',
+  }
+}
+
 export interface GenericEvent {
   activityId?: string; // use matching activityId for corresponding START and END marks and events collected between
   index?: number; // count of events starting from 1 recorded within an activity

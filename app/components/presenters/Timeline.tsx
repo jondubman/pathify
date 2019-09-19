@@ -57,10 +57,10 @@ class Timeline extends Component<TimelinePanelProps> {
   public render() {
     const {
       allowZoom,
-      currentActivity,
+      currentActivityId,
       marks,
       nowTime,
-      selectedActivity,
+      selectedActivityId,
       showMarks,
       showSpans,
       startupTime,
@@ -159,7 +159,7 @@ class Timeline extends Component<TimelinePanelProps> {
             <TimelineSpans data={timespans} />
             : null}
           {showMarks ?
-            <TimelineMarks data={marks} currentActivity={currentActivity} selectedActivity={selectedActivity} />
+            <TimelineMarks data={marks} currentActivityId={currentActivityId} selectedActivityId={selectedActivityId} />
             : null }
         </VictoryChart>
       </View>

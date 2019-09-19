@@ -5,7 +5,6 @@ const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript ty
 
 import constants from 'lib/constants';
 import {
-  Activity,
   MarkEvent,
   MarkEvents,
   MarkType
@@ -14,9 +13,9 @@ import { activityIncludesMark } from 'lib/selectors';
 import { Timepoint } from 'shared/timeseries';
 
 interface TimelineMarksProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
-  currentActivity: Activity | null;
+  currentActivityId: string;
   data: MarkEvents;
-  selectedActivity: Activity | null;
+  selectedActivityId: string;
 }
 
 class TimelineMarks extends React.Component<TimelineMarksProps> {
@@ -31,9 +30,9 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
 
   public render() {
     const {
-      currentActivity,
+      currentActivityId,
       data,
-      selectedActivity
+      selectedActivityId,
     } = this.props;
     const {
       scale, // as in d3 scale
@@ -50,7 +49,7 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     const colorFor = (mark: MarkEvent): string => {
       const { subtype, synthetic } = mark;
       const colors = constants.colors.marks;
-      const selected: boolean = activityIncludesMark(selectedActivity, mark);
+      const selected: boolean = activityIncludesMark(selectedActivityId, mark);
       switch (subtype) {
         case MarkType.NONE:
           return colors.default;
@@ -86,7 +85,7 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     }
 
     const shapes = data.map((mark: MarkEvent, index: number) => (
-      activityIncludesMark(selectedActivity, mark) || activityIncludesMark(currentActivity, mark) ?
+      activityIncludesMark(selectedActivityId, mark) || activityIncludesMark(currentActivityId, mark) ?
         <G key={`G${index}`}>
           <Line
             key={`MarkLine${index}`}
