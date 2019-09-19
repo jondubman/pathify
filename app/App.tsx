@@ -11,12 +11,12 @@ import { Provider } from 'react-redux';
 
 import { AppAction, newAction, ReducerAction } from 'lib/actions';
 import constants from 'lib/constants';
-import database from 'lib/database';
 import { Geo } from 'lib/geo';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { AppStateChange } from 'shared/appEvents';
+import database from 'shared/database';
 import log from 'shared/log';
 
 import AppUIContainer from 'containers/AppUIContainer';

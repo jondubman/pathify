@@ -32,13 +32,9 @@ import {
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
-
-import * as uuid from 'uuid/v4';
-
 import { DomainPropType } from 'victory-native';
 
 import { MenuItem } from 'containers/PopupMenusContainer';
-
 import {
   AbsoluteRelativeOption,
   Action,
@@ -56,22 +52,24 @@ import {
   ImportEventsParams,
   ImportGPXParams,
   LogActionParams,
-  PanTimelineParams,
   RepeatedActionParams,
   SequenceParams,
   SleepParams,
   SliderMovedParams,
   StartActivityParams,
 } from 'lib/actions'
-
 import constants from 'lib/constants';
-import database from 'lib/database';
 import { Geo } from 'lib/geo';
 import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
+import {
+  activityForTimepoint,
+  Activity,
+  ActivityUpdate,
+} from 'shared/activities';
 import {
   lastStartupTime,
   AppUserActionEvent,
@@ -80,15 +78,15 @@ import {
   AppUserAction,
 } from 'shared/appEvents';
 import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
+import database from 'shared/database';
 import locations, {
+  LocationEvent,
+  LonLat,
   ModeChangeEvent,
   MotionEvent,
-  TickEvent,
 } from 'shared/locations';
 import log, { messageToLog } from 'shared/log';
 import {
-  Activity,
-  containingActivity,
   MarkEvent,
   MarkType
 } from 'shared/marks';
@@ -99,13 +97,14 @@ import timeseries, {
 
 const sagas = {
 
+  // root saga wires things up
   root: function* () {
     // Avoid boilerplate by automatically yielding takeEvery for each AppAction
     for (let action in AppAction) {
       if (AppAction[action]) {
         yield call(log.debug, 'configuring saga for AppAction', action);
         if (action === AppAction.sliderMoved) {
-          // TODO Special case
+          // TODO3 Special case
           yield takeLatest(AppAction[action], sagas[AppAction[action]]);
         } else {
           // General case
@@ -129,6 +128,42 @@ const sagas = {
     const { events } = params;
     if (events && events.length) {
       yield call(database.createEvents, events);
+    }
+    // Now update any Activity/Activities related to the added events:
+    const pathExtension = [] as LonLat[];
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      const id = event.activityId;
+      if (id) {
+        const activity = database.activityById(id); // most likely the same for each event, but it doesn't matter
+        if (activity) {
+          const update: ActivityUpdate = { id: activity.id };
+          update.count = activity.count ? activity.count + 1 : 1;
+          if (event.type === EventType.LOC) {
+            if (activity.tLastLoc && event.t < activity.tLastLoc) {
+              yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
+            } else {
+              // Appending events to an activity
+              update.tLastLoc = event.t;
+              // odo
+              const odo = (event as LocationEvent).odo;
+              if (odo) {
+                if (!activity.odoStart || (update.odo && update.odo < activity.odoStart)) {
+                  update.odoStart = odo; // set odoStart on the activity
+                  update.odo = 0;
+                } else {
+                  update.odo = odo - activity.odoStart;
+                }
+              }
+              // path
+              const { lon, lat } = event as LocationEvent;
+              pathExtension.push([ lon, lat ]);
+            }
+          }
+          update.tLastUpdate = utils.now();
+          database.updateActivity(update, pathExtension);
+        }
+      }
     }
   },
 
@@ -154,6 +189,29 @@ const sagas = {
       const state = store.getState();
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
+
+        case 'activities': {
+          let fullActivities = database.activities();
+          let results = [] as any;
+          let activities = Array.from(fullActivities) as any;
+          for (let i = 0; i < activities.length; i++) {
+            let modified = { ...activities[i] };
+            modified.pathLats = modified.pathLats.length;
+            modified.pathLons = modified.pathLons.length;
+            results.push(modified);
+          }
+          response = { results };
+          break;
+        }
+
+        case 'counts': {
+          response = {
+            activities: (yield call(database.activities)).length,
+            events: (yield call(database.events)).length,
+          }
+          break;
+        }
+
         case 'events': {
           let events = database.events();
           let timeRange = query.timeRange || [0, Infinity];
@@ -310,8 +368,8 @@ const sagas = {
   continueActivity: function* (action: Action) {
     try {
       const params = action.params as ContinueActivityParams;
-      const { activity } = params;
-      yield put(newAction(AppAction.startActivity, { continueActivity: activity }));
+      const { activityId } = params;
+      yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
     } catch (err) {
       yield call(log.error, 'saga continueActivity', err);
     }
@@ -408,42 +466,43 @@ const sagas = {
   // GPX: geolocation data that may have been eported from other apps, already converted from XML to JSON to POJO.
   // TODO process this GPX on the server and turn it into events there.
   importGPX: function* (action: Action) {
-    try {
-      const params = action.params as ImportGPXParams;
-      yield call(log.info, 'importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
-      const gpx = (params.include as any).gpx; // GPX as JSON (already converted from XML)
-      const gpxEvents = locations.eventsFromGPX(gpx);
-      const source = gpxEvents[0].source || 'import';
-      const activityId = uuid.default();
-      const startEvent: MarkEvent = {
-        ...timeseries.newSyncedEvent(gpxEvents[0].t),
-        source,
-        type: EventType.MARK,
-        activityId,
-        subtype: MarkType.START,
-      }
-      const endEvent: MarkEvent = {
-        ...timeseries.newSyncedEvent(gpxEvents[gpxEvents.length - 1].t + 1),
-        activityId,
-        source,
-        type: EventType.MARK,
-        subtype: MarkType.END,
-      }
-      const events = [
-        startEvent,
-        ...gpxEvents,
-        endEvent,
-      ]
-      const relativeTo = utils.now(); // TODO may want more flexibility later
-      const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
-      yield call(log.debug, 'adjustedEvents',
-        relativeTo,
-        adjustedEvents[0].t - relativeTo,
-        adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
-      yield put(newAction(AppAction.addEvents, { events: adjustedEvents }));
-    } catch (err) {
-      yield call(log.error, 'importGPX', err);
-    }
+    // TODO2 - will return to this
+    // try {
+    //   const params = action.params as ImportGPXParams;
+    //   yield call(log.info, 'importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
+    //   const gpx = (params.include as any).gpx; // GPX as JSON (already converted from XML)
+    //   const gpxEvents = locations.eventsFromGPX(gpx);
+    //   const source = gpxEvents[0].source || 'import';
+    //   const activityId = uuid.default();
+    //   const startEvent: MarkEvent = {
+    //     ...timeseries.newSyncedEvent(gpxEvents[0].t),
+    //     source,
+    //     type: EventType.MARK,
+    //     activityId,
+    //     subtype: MarkType.START,
+    //   }
+    //   const endEvent: MarkEvent = {
+    //     ...timeseries.newSyncedEvent(gpxEvents[gpxEvents.length - 1].t + 1),
+    //     activityId,
+    //     source,
+    //     type: EventType.MARK,
+    //     subtype: MarkType.END,
+    //   }
+    //   const events = [
+    //     startEvent,
+    //     ...gpxEvents,
+    //     endEvent,
+    //   ]
+    //   const relativeTo = utils.now(); // TODO may want more flexibility later
+    //   const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
+    //   yield call(log.debug, 'adjustedEvents',
+    //     relativeTo,
+    //     adjustedEvents[0].t - relativeTo,
+    //     adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
+    //   yield put(newAction(AppAction.addEvents, { events: adjustedEvents }));
+    // } catch (err) {
+    //   yield call(log.error, 'importGPX', err);
+    // }
   },
 
   // Generate a client-side log with an Action
@@ -570,44 +629,40 @@ const sagas = {
     }
   },
 
-  setPanelVisibility: function* () {
-  },
-
   setAppOption: function* (action: Action) {
     // First set the option itself:
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
     // Then, handle side effects:
 
-    if (action.params.currentActivity) {
-      const { currentActivity } = action.params;
-      database.changeSettings({ currentActivityId: currentActivity.id,
-                                currentActivityStartTime: currentActivity.tr[0] });
+    if (action.params.currentActivityId) {
+      const { currentActivityId } = action.params;
+      yield call(log.debug, 'Setting currentActivityId', currentActivityId);
+      database.changeSettings({ currentActivityId });
     }
-    if (action.params.currentActivity === null) { // Explicit check for null
-      database.changeSettings({ currentActivityId: null,
-                                currentActivityStartTime: null });
+    if (action.params.currentActivityId === null) { // Explicit check for null
+      database.changeSettings({ currentActivityId: null });
     }
     // Whenever refTime is set, update selectedActivity automatically based on marks.containingActivity,
     // which looks for bookending MarkType.START and MarkType.END events.
     if (action.params.refTime) {
       const timelineNow = yield select(state => state.flags.timelineNow);
-      const events = yield call(database.events);
-      const currentActivity = yield select(state => state.options.currentActivity);
+      const currentActivityId = yield select(state => state.options.currentActivityId);
       if (timelineNow) {
-        yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
+        yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
       } else {
-        const activity = yield call(containingActivity, events, action.params.refTime); // may be null (which is ok)
-        if (activity && currentActivity && currentActivity.tr[0] === activity!.tr[0]) {
-          // Avoid a selectedActivity that would be redundant to currentActivity.
-          const selectedActivity = yield select(state => state.options.selectedActivity);
-          if (selectedActivity) {
-            yield put(newAction(AppAction.setAppOption, { selectedActivity: null })); // recursive
+        const t = action.params.refTime;
+        const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
+        if (activity && activity.id) { // refTime is within an Activity
+          if (activity.id === currentActivityId) {
+            // Clear selectedActivity if it would be redundant to currentActivity.
+            yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
+          } else {
+            yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id })); // recursive
+            // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
+            // it's because something other than the currentActivity is selected. That way, a selectedActivity is always
+            // a completed activity.
           }
-        } else {
-          yield put(newAction(AppAction.setAppOption, { selectedActivity: activity })); // recursive
-          // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
-          // it's because something other than the currentActivity is selected.
         }
       }
     }
@@ -630,7 +685,7 @@ const sagas = {
   startActivity: function* (action: Action) {
     try {
       const params = action.params as StartActivityParams || {};
-      const continueActivity = params.continueActivity || undefined;
+      const continueActivityId = params.continueActivityId || undefined;
       const trackingActivity = yield select(state => state.flags.trackingActivity);
       if (!trackingActivity) {
         yield put(newAction(AppAction.flagEnable, 'backgroundGeolocation'));
@@ -644,9 +699,13 @@ const sagas = {
         } as CenterMapParams));
 
         const now = utils.now();
-        const startTime = continueActivity ? continueActivity.tr[0] : now;
-        const activityId = continueActivity ? continueActivity.id : uuid.default();
-        if (!continueActivity) {
+        let activityId: string;
+        if (continueActivityId) {
+          // should already have the AppUserActionEvent and MarkEvent from before; just set currentActivityId.
+          activityId = continueActivityId;
+        } else {
+          const newActivity = yield call(database.createActivity, now);
+          activityId = newActivity.id;
           const startEvent: AppUserActionEvent = {
             ...timeseries.newSyncedEvent(now, activityId),
             type: EventType.USER_ACTION,
@@ -660,7 +719,7 @@ const sagas = {
           }
           yield put(newAction(AppAction.addEvents, { events: [startEvent, startMark] }));
         }
-        yield put(newAction(AppAction.setAppOption, { currentActivity: { id: activityId, tr: [startTime, Infinity] } }));
+        yield put(newAction(AppAction.setAppOption, { currentActivityId: activityId }));
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);
@@ -690,11 +749,10 @@ const sagas = {
     const settings = yield call(database.settings) as any; // TODO typings
     yield call(log.info, 'Persisted App settings', settings);
 
-    const { currentActivityId, currentActivityStartTime } = settings;
-    if (currentActivityId && currentActivityStartTime) {
+    const { currentActivityId } = settings;
+    if (currentActivityId) {
       yield call(log.info, 'Continuing previous activity...');
-      const activity: Activity = { id: currentActivityId, tr: [currentActivityStartTime, Infinity] };
-      yield put(newAction(AppAction.continueActivity, { activity }));
+      yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
     }
   },
 
@@ -705,7 +763,7 @@ const sagas = {
         yield put(newAction(AppAction.flagDisable, 'backgroundGeolocation'));
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
 
-        const activityId = yield select(state => state.options.currentActivity.id);
+        const activityId = yield select(state => state.options.currentActivityId);
         const now = utils.now();
         const stopEvent: AppUserActionEvent = {
           ...timeseries.newSyncedEvent(now, activityId),
@@ -714,12 +772,21 @@ const sagas = {
         }
         const endMark: MarkEvent = {
           ...timeseries.newSyncedEvent(now, activityId),
-          activityId,
           type: EventType.MARK,
           subtype: MarkType.END,
         }
         yield put(newAction(AppAction.addEvents, { events: [stopEvent, endMark] }));
-        yield put(newAction(AppAction.setAppOption, { currentActivity: null }));
+        const activity = database.activityById(activityId);
+        yield call(log.debug, 'stopActivity', activity);
+        if (activity) { // TODO error if not
+          const updatedActivity = database.updateActivity({
+            id: activityId,
+            tLastUpdate: now,
+            tEnd: now,
+          })
+          yield call(log.debug, 'updatedActivity', updatedActivity);
+        }
+        yield put(newAction(AppAction.setAppOption, { currentActivityId: null }));
       }
     } catch (err) {
       yield call(log.error, 'saga stopActivity', err);
@@ -750,9 +817,6 @@ const sagas = {
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
     }
-  },
-
-  tickEvent: function* (action: Action) {
   },
 
   // Respond to timeline pan/zoom. x is in the time domain.

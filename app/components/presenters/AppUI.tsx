@@ -13,6 +13,7 @@ import utils from 'lib/utils';
 
 import { AppUIProps } from 'containers/AppUIContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
+import DebugInfoContainer from 'containers/DebugInfoContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
@@ -50,6 +51,7 @@ class AppUI extends Component<AppUIProps> {
           <MapContainer />
           {showTimeline ? <TimelineScrollContainer /> : null}
           <PopupMenusContainer />
+          <DebugInfoContainer />
           <TimelineControlsContainer />
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
             <CompassButtonContainer />

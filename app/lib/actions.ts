@@ -51,13 +51,11 @@ export enum AppAction {
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'panTimeline' = 'panTimeline', // see PanTimelineParams
-  'tickEvent' = 'tickEvent',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'restartApp' = 'restartApp',
   'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
-  'setPanelVisibility' = 'setPanelVisibility',
   'sleep' = 'sleep', // see SleepParams
   'sliderMoved' = 'sliderMoved',
   'startFollowingUser' = 'startFollowingUser',
@@ -134,7 +132,7 @@ export interface ClockPressParams {
 }
 
 export interface ContinueActivityParams {
-  activity: Activity,
+  activityId: string,
 }
 
 export interface DelayedActionParams {
@@ -144,7 +142,7 @@ export interface DelayedActionParams {
 
 export interface GeolocationParams {
   locationEvents: LocationEvents;
-  recheckMapBounds: boolean;
+  recheckMapBounds: boolean; // applies only when app is active
 }
 
 export interface ImportEventsParams {
@@ -184,5 +182,5 @@ export interface SliderMovedParams {
 }
 
 export interface StartActivityParams {
-  continueActivity?: Activity;
+  continueActivityId?: string;
 }

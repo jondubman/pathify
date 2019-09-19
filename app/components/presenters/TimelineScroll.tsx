@@ -210,6 +210,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         onScrollBeginDrag={onScrollStart}
         onScrollEndDrag={onScrollEndDrag}
         overScrollMode='never'
+        pinchGestureEnabled={false}
         ref={_scrollView => { this._scrollView = _scrollView }}
         scrollEventThrottle={20 /* msec >= 16 */}
         showsHorizontalScrollIndicator={false}

@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
 
-import database from 'lib/database';
+import { currentActivity, selectedActivity } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
-import locations, { Path, PathType } from 'shared/locations';
+import { Activities, Activity } from 'shared/activities';
 
 interface PathsStateProps {
-  paths: Path[];
+  activities: Activities;
+  currentActivityId?: string;
+  selectedActivityId?: string;
 }
 
 interface PathsDispatchProps {
@@ -17,27 +19,34 @@ export type PathsProps = PathsStateProps & PathsDispatchProps;
 let pathCache = {}; // keys: activityId, values: computed Path TODO move to Redux store
 
 const mapStateToProps = (state: AppState): PathsStateProps => {
-  const paths: Path[] = [];
+  const { currentActivityId, selectedActivityId } = state.options;
+  const activities: Activities = [];
   if (state.flags.showPathsOnMap) {
-    const { currentActivity, selectedActivity } = state.options;
-    if (currentActivity) {
-      paths.push({ ...locations.pathFromEvents(database.events(), currentActivity.tr), type: PathType.CURRENT });
-    }
-    if (selectedActivity) {
-      if (selectedActivity.id && pathCache[selectedActivity.id]) {
-        paths.push(pathCache[selectedActivity.id]);
-      } else {
-        const path: Path = { ...locations.pathFromEvents(database.events(), selectedActivity.tr),
-                             type: PathType.DEFAULT };
-        paths.push(path);
-        if (selectedActivity.id) {
-          pathCache[selectedActivity.id] = path;
-        }
+      const activity = currentActivity(state);
+      if (activity) {
+        activities.push(activity);
       }
+    if (selectedActivityId) {
+      const activity = selectedActivity(state);
+      if (activity) {
+        activities.push(activity);
+      }
+      // if (pathCache[selectedActivityId]) {
+      //   paths.push(pathCache[selectedActivity.id]);
+      // } else {
+      //   const path: Path = { ...locations.pathFromEvents(database.events(), selectedActivity.tr),
+      //                        type: PathType.DEFAULT };
+      //   paths.push(path);
+      //   if (selectedActivity.id) {
+      //     pathCache[selectedActivity.id] = path;
+      //   }
+      // }
     }
   }
   return {
-    paths,
+    activities,
+    currentActivityId,
+    selectedActivityId,
   }
 }
 

@@ -2,15 +2,15 @@
 
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-import database from 'lib/database';
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
 import utils from 'lib/utils';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
-
+import database from 'shared/database';
 import locations from 'shared/locations';
-import { Activity, MarkEvent, MarkType } from 'shared/marks';
+import { Activity } from 'shared/activities';
+import { MarkEvent, MarkType } from 'shared/marks';
 import timeseries, { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
@@ -32,7 +32,7 @@ const colorForAppState = {
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.1),
 }
 
-// TODO cache all of these timespans
+// TODO2 cache all of these timespans
 // activityTimespans
 // appStateTimespans
 // customTimespans
@@ -113,13 +113,6 @@ export const customTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-export const currentActivityId = (state: AppState): string | undefined => {
-  if (state.options.currentActivity) {
-    return state.options.currentActivity.id;
-  }
-  return undefined;
-}
-
 // NOTE: selection here means TimeRange selections, not related to selectedActivity
 export const selectionTimespans = (state: AppState): Timespans => {
   const experiment = false; // TODO
@@ -143,9 +136,16 @@ export const clockNowMode = (state: AppState): boolean => {
   if (state.flags.timelineScrolling &&
       state.options.refTime >= state.options.timelineRefTime - constants.timing.timelineCloseToNow &&
       state.options.refTime >= utils.now() - constants.timing.timelineCloseToNow) {
-    return true; // a way to re-enable NOW mode while sliding timeline
+    return true; // a way to re-enable NOW mode while sliding timeline TODO2
   }
   return false;
+}
+
+export const currentActivity = (state: AppState): Activity | undefined => {
+  if (state.options.currentActivityId) {
+    return database.activityById(state.options.currentActivityId);
+  }
+  return undefined;
 }
 
 // This is not technically a selector as it doesn't refer to state
@@ -217,6 +217,13 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     }
   }
   return pulsars;
+}
+
+export const selectedActivity = (state: AppState): Activity | undefined => {
+  if (state.options.selectedActivityId) {
+    return database.activityById(state.options.selectedActivityId);
+  }
+  return undefined;
 }
 
 // value (from logarithmic timeline zoom slider) is between 0 and 1.

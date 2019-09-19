@@ -22,7 +22,6 @@ import BackgroundGeolocation, {
 
 import { AppAction, GeolocationParams, newAction } from 'lib/actions';
 import constants from 'lib/constants';
-import { currentActivityId } from 'lib/selectors';
 import { Store } from 'lib/store';
 import utils from 'lib/utils';
 import locations, {
@@ -220,7 +219,9 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
     ele: info.coords.altitude,
     heading: info.coords.heading,
     lat: info.coords.latitude,
+    latIndexed: Math.round(info.coords.latitude * 1000000),
     lon: info.coords.longitude,
+    lonIndexed: Math.round(info.coords.longitude * 1000000),
     odo: info.odometer,
     speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
         : undefined,
@@ -267,7 +268,7 @@ export const Geo = {
 
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
-        const activityId = currentActivityId(state);
+        const activityId = state.options.currentActivityId;
         store.dispatch(newAction(AppAction.modeChange,
                        newModeChangeEvent(event.activity, event.confidence, activityId)));
       }
@@ -283,8 +284,7 @@ export const Geo = {
       }
       const onLocation = (location: Location) => {
         const state = store.getState();
-        const activityId = currentActivityId(state);
-
+        const activityId = state.options.currentActivityId;
         // const { userLocation } = state;
         // if (!userLocation /* && locationEvent.accuracy, sample TODO */) {
         //   // This is the first userLocation to arrive.
@@ -293,13 +293,12 @@ export const Geo = {
         //     option: 'absolute',
         //   }))
         // }
-
         if (location.sample) {
           return;
         }
-        const saveLocation = async (location: Location) => {
-          log.debug('saveLocation', location.timestamp);
+        const processLocation = async (location: Location) => {
           if (!state.flags.receiveLocations) {
+            log.trace('processLocation: ignoring location', location.timestamp);
             return;
           }
           const locationEvent = newLocationEvent(location, activityId);
@@ -313,45 +312,13 @@ export const Geo = {
         }
 
         BackgroundGeolocation.startBackgroundTask().then(async (taskId) => {
-          saveLocation(location).then(() => {
+          processLocation(location).then(() => {
             // When long-running task is complete, signal completion of taskId.
             BackgroundGeolocation.stopBackgroundTask(taskId);
           }).catch(() => {
             BackgroundGeolocation.stopBackgroundTask(taskId);
           })
         })
-
-        // // Events are 'old' if they are timestamped as little as like five seconds ago. The app may have run for a while
-        // // in the background, collecting data into the plugin's local SQLite DB that we are receiving only now.
-        // const eventIsOld = locationEvent.t < utils.now() - constants.geolocationAgeThreshold;
-        // let eventIsFar = false;
-        // if (userLocation) {
-        //   const dist = distance(turf.point([locationEvent.lon, locationEvent.lat]),
-        //                         turf.point([userLocation.lon, userLocation.lat]),
-        //                         { units: 'meters' });
-        //   eventIsFar = dist > 100; // TODO constant (meters)
-        // }
-        // const extraLabel = eventIsFar ? '(far)' : (eventIsOld ? '(old)' : '(new)');
-        // locationEvent.extra = `onLocation ${utils.now()} ${extraLabel}`; // TODO only for debugging
-        // // Important: Do not blindly addEvents immediately or JS thread gets overwhelmed and frame rate plummets.
-        // // Instead, queue up old or distant events and add them as a batch.
-        // if (eventIsFar || eventIsOld) {
-        //   eventQueue.push(locationEvent);
-        // } else {
-        //   let geolocationParams: GeolocationParams;
-        //   if (state.flags.receiveLocations) {
-        //     store.dispatch(newAction(AppAction.addEvents, { events: [...eventQueue, locationEvent] }));
-        //     if (eventQueue.length) {
-        //       eventQueue = []; // reset
-        //     }
-        //   }
-        //   // Handle only the latest geolocation, with exactly one map bounds check, now that everything is added.
-        //   geolocationParams = {
-        //     locationEvents: [locationEvent],
-        //     recheckMapBounds: true,
-        //   }
-        //   store.dispatch(newAction(AppAction.geolocation, geolocationParams));
-        // }
       }
       const onLocationError = (error: LocationError) => {
         let errorMessage;
@@ -363,7 +330,7 @@ export const Geo = {
       }
       const onMotionChange = (event: MotionChangeEvent) => {
         const state = store.getState();
-        const activityId = currentActivityId(state);
+        const activityId = state.options.currentActivityId;
         store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving, activityId)));
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
@@ -455,30 +422,6 @@ export const Geo = {
     return new Promise((resolve, reject) => {
       const started = () => {
         const receieveLocation = (location: Location) => {
-          // if (reduxStore) {
-          //   const state = reduxStore.getState();
-          //   const { flags } = state;
-          //   if (flags.flag1) { // TODO2
-          //     if (flags.appActive === false) { // TODO does this code ever execute?
-          //       log.trace('BackgroundGeolocation.watchPosition receieveLocation', location);
-          //       const locationEvent = newLocationEvent(location, currentActivityId(state));
-          //       locationEvent.extra = `watchPosition ${utils.now()}`; // TODO
-          //       if (flags.flag2) {
-          //         reduxStore.dispatch(newAction(AppAction.geolocation, {
-          //           locationEvents: [locationEvent],
-          //           recheckMapBounds: false,
-          //         }))
-          //       }
-          //       if (flags.flag3) {
-          //         reduxStore.dispatch(newAction(AppAction.addEvents, {
-          //           events: [locationEvent],
-          //         }))
-          //       }
-          //     }
-          //   }
-          // } else {
-          //   log.error('BackgroundGeolocation.watchPosition receieveLocation missing reduxStore');
-          // }
         }
         const options = {
           interval: constants.timing.watchPositionInterval,

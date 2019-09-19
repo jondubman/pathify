@@ -1,5 +1,8 @@
+// TODO where does this belong?
+export type Optional<T> = T | null; // TODO This simple construct is very generally useful and belongs in shared code.
+
 const sharedConstants = {
-  containingActivityTimeThreshold: 5000, // msec
+  maxAgeEvents: Infinity, // anything older than this will be ignored (for testing)
   metrics: {
     speed: {
       maxAgeCurrent: 5000, // msec max age of event to be considered the "current" speed

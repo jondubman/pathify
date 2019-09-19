@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 
-import database from 'lib/database';
 import { TimespanKind } from 'lib/constants';
 import {
   continuousTrackList,
@@ -14,8 +13,8 @@ import {
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
+import database from 'shared/database';
 import {
-  Activity,
   MarkEvents,
   markList
 } from 'shared/marks';
@@ -32,11 +31,11 @@ export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
   allowZoom: boolean;
-  currentActivity: Activity | null;
+  currentActivityId: string;
   marks: MarkEvents;
   nowTime: number;
   scrollToX: number;
-  selectedActivity: Activity | null;
+  selectedActivityId: string;
   showMarks: boolean;
   showSpans: boolean;
   startupTime: number;
@@ -56,7 +55,7 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const { currentActivity, timelineRefTime } = state.options;
+  const { currentActivityId, selectedActivityId, timelineRefTime } = state.options;
   const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
   const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
@@ -70,11 +69,11 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
 
   return {
     allowZoom,
-    currentActivity,
+    currentActivityId,
     marks,
     nowTime,
     scrollToX: dynamicTimelineScrollWidth(state) / 2 - dynamicTimelineWidth(state) / 2,
-    selectedActivity: state.options.selectedActivity,
+    selectedActivityId,
     showMarks,
     showSpans,
     startupTime: state.options.startupTime,

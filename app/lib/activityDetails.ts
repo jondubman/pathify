@@ -3,12 +3,12 @@ import {
   PopupMenuConfig
 } from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
-import database from 'lib/database';
 import {
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
+import database from 'shared/database';
 import log from 'shared/log';
 import { activityMetrics, ActivityMetrics, ActivityMetricName } from 'shared/metrics';
 import { msecToString } from 'shared/units';
@@ -41,7 +41,7 @@ export const activityDetails = (state: AppState, activityDetails: PopupMenuConfi
       metrics = activityMetrics(database.events(), selectedActivity.tr, refTime);
     } else if (currentActivity) {
       let tr = { ...currentActivity.tr };
-      if (tr[1] === Infinity) {
+      if (!tr[1]) {
         tr[1] = Math.max(utils.now(), refTime);
       }
       metrics = activityMetrics(database.events(), tr, timelineNow ? tr[1] : refTime);

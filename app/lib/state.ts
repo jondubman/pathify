@@ -7,7 +7,6 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from "lib/utils";
 import { LocationEvent } from 'shared/locations';
-import { Activity } from 'shared/marks';
 
 const now = utils.now();
 
@@ -18,8 +17,8 @@ export const initialAppState = {
     activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
-    clockMenuOpen: false, // clockMenu is among the PopupMenus. See initialMenus.
-    ticksEnabled: true, // TODO2
+    clockMenuOpen: false, // TODO2 clockMenu is among the PopupMenus. See initialMenus.
+    ticksEnabled: true, // TODO2 normally true, set false only for testing to disable actions that occur every second
     flag1: false, // for experimentation
     flag2: false, // for experimentation
     flag3: false, // for experimentation
@@ -28,15 +27,16 @@ export const initialAppState = {
     helpEnabled: false, // Help mode in the app
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
-    mapDisable: false,
+    mapDisable: false, // if true, map will not be shown at all
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    receiveLocations: true,
-    settingsOpen: true, // settings panel visible state
-    showActivityDetails: true, // TODO2
+    receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
+    settingsOpen: false, // settings panel visible state
+    showActivityDetails: false, // TODO2
+    showDebugInfo: true, // TODO2
     showPathsOnMap: true, // TODO2
-    showTimeline: false, // TODO2
+    showTimeline: true, // TODO2
     showTimelineMarks: false, // TODO2
     showTimelineSpans: false, // TODO2
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
@@ -45,20 +45,20 @@ export const initialAppState = {
     timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
+  measurements: {} as object, // TODO2
   menus: initialMenus,
   options: { // non-boolean
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
-    currentActivity: null as Activity | null,
+    currentActivityId: '',
     mapOpacity: constants.map.default.opacity,
     mapOpacityPreview: null as number | null, // while adjusting
     mapStyle: constants.map.default.style,
     pulsars: {} as OptionalPulsars,
     refTime: now,
-    renderCounts: {} as object, // TODO2
+    selectedActivityId: '', // for now, no more than one Activity is 'selected' at a time
     startupTime: now,
-    timelineRefTime: now, // Note this lags refTime when user is scrolling the timeline, by design.
+    timelineRefTime: now, // By design this remains constant, as refTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline refTime, etc.
-    selectedActivity: null as Activity | null, // for now, no more than one Activity is 'selected' at a time
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (see constants.timeline for meaning)
   },
 }

@@ -26,9 +26,16 @@ export interface LocationEvent extends GenericEvent {
   extra?: string; // for debugging
   heading?: number; // 0 <= degrees < 360
   lat: number;
+  latIndexed: number; // int version of lat (times 1M)
   lon: number;
+  lonIndexed: number; // int version of lon (times 1M)
   odo?: number; // meters
   speed?: number; // mph (converted from meters per second)
+
+  // properties derived from other events:
+  gain?: number; // cumulative within activity
+  loss?: number; // cumulative within activity
+  mode?: string; // see ModeChangeEvent
 }
 
 export type LocationEvents = LocationEvent[];
@@ -64,10 +71,6 @@ export interface Path {
   type?: PathType;
 }
 
-export interface TickEvent extends GenericEvent {
-  // nothing more for now
-}
-
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
 
 const locations = {
@@ -98,7 +101,9 @@ const locations = {
             type: EventType.LOC,
             ele,
             lat,
+            latIndexed: lat,
             lon,
+            lonIndexed: lon,
             source: 'import', // TODO placeholder
           }
           events.push(event);

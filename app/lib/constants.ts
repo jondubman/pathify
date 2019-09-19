@@ -101,6 +101,12 @@ const colors = {
     icon: 'black',
     underlay: namedColors.purple,
   },
+  debugInfo: {
+    backgroundColor: withOpacity(namedColors.black, 1),
+    borderColor: withOpacity(namedColors.red, 0.5),
+    borderWidth: 2,
+    text: 'white',
+  },
   followMeButton: {
     background: { active: namedColors.blue, inactive: 'black' },
     icon: { active: 'black', inactive: namedColors.azure },
@@ -147,6 +153,7 @@ const colors = {
     underlay: 'transparent',
   },
   paths: {
+    transparent: 'transparent',
     current: withOpacity(namedColors.green, 0.75),
     default: withOpacity(namedColors.blue, 0.75),
   },
@@ -254,6 +261,12 @@ const constants = {
   days: [
     'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'
   ],
+  debugInfo: {
+    borderWidth: 2,
+    height: 100,
+    padding: 5,
+    width: 280,
+  },
   followMeButton: {
     opacity: defaultOpacity,
     rightOffset: buttonOffset,
@@ -371,7 +384,6 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
-    maxAgeEvents: Infinity, // TODO2 max age used for events filter in database module
     opacitySliderThrottle: 250,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 100, // TODO2

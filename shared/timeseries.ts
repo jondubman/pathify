@@ -5,8 +5,8 @@ import Realm from 'realm';
 export type Events = Realm.Results<Realm.Object>;
 
 // TimeRange tuple is always inclusive of its endpoints.
-// Use 0 as the first number to indicate a range with no start (-Infinity is not needed as time is always positive.)
-// Use Infinity as the second number to indicate a range with no end (open-ended time range).
+// Use 0 as the first number to indicate a range with no start (TODO is this actually valid?)
+// Use 0 as the second number to indicate a range with no end (open-ended time range).
 export type Timepoint = number;
 export type TimeRange = [Timepoint, Timepoint];
 
@@ -30,6 +30,7 @@ export enum EventType { // TODO keep in sync with datamodel.prisma
 
 export interface GenericEvent {
   activityId?: string; // use matching activityId for corresponding START and END marks and events collected between
+  index?: number; // count of events starting from 1 recorded within an activity
   t: Timepoint;
   type: EventType;
   source?: string; // generally either our own client ID, or something else if from server (like 'server')
