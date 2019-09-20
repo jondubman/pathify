@@ -26,7 +26,7 @@ type State = Readonly<typeof initialState>
 
 const TimelineStyles = StyleSheet.create({
   scrollView: {
-    backgroundColor: constants.colors.byName.purple, // TODO you only see this if you manage to reach the edge
+    backgroundColor: 'transparent',
     opacity: 0.75,
     position: 'absolute',
     bottom: 0,
