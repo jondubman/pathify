@@ -1,28 +1,28 @@
 import * as React from 'react';
 
 import * as Victory from 'victory-native';
+const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
 import constants, { TimespanKind } from 'lib/constants';
-import { Timespan, Timespans } from 'containers/TimelineContainer';
-import TimelineSpan from 'presenters/TimelineSpan';
+import { Timespan } from 'containers/TimelineContainer';
 
-interface TimelineSpansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
-  data: Timespans;
+interface TimelineSpanProps {
+  scale: any;
+  ts: Timespan;
 }
 
-class TimelineSpans extends React.Component<TimelineSpansProps> {
+class TimelineSpan extends React.Component<TimelineSpanProps> {
 
   constructor(props: any) {
     super(props);
   }
 
-  public shouldComponentUpdate(nextProps: TimelineSpansProps, nextState: any) {
+  public shouldComponentUpdate(nextProps: TimelineSpanProps, nextState: any) {
     return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
   }
 
   public render() {
-    const data = this.props.data;
-    const { scale } = this.props as any;
+    const { scale, ts } = this.props;
     const { timeline } = constants;
     const yBase = timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars;
 
@@ -71,10 +71,21 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
       return 0;
     }
 
-    return data.map((ts: Timespan, index: number) => (
-      <TimelineSpan key={`${ts.tr[0]}-${ts.tr[1]}`} scale={scale} ts={ts} />
-    ))
+    if (ts) {
+      return (
+        <Rect
+          key={`Rect${ts.tr[0]}-${ts.tr[1]}`}
+          style={{ fill: ts.color ? ts.color : constants.colors.timeline.timespans[ts.kind] }}
+          x={scale.x(ts.tr[0])}
+          y={yTop(ts.kind)}
+          width={scale.x(ts.tr[1]) - scale.x(ts.tr[0])}
+          height={height(ts.kind)}
+        />
+      )
+    } else {
+      return null;
+    }
   }
 }
 
-export default TimelineSpans;
+export default TimelineSpan;

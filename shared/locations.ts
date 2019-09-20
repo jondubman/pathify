@@ -1,21 +1,16 @@
 // Shared code (client + server) having to do specifically with location events and locations themselves.
 
-import * as turf from '@turf/helpers';
-import distance from '@turf/distance';
-
 export type Lon = number;
 export type Lat = number;
 export type LonLat = [Lon, Lat];
 
 import log from './log';
-import sharedConstants from './sharedConstants';
 import timeseries, {
   Events,
   EventFilter,
   EventType,
   GenericEvent,
   Timepoint,
-  TimeRange
 } from './timeseries';
 
 export interface LocationEvent extends GenericEvent {
@@ -126,37 +121,6 @@ const locations = {
   },
 
   lonLat: (locationEvent: LocationEvent): LonLat => [locationEvent.lon, locationEvent.lat],
-
-  pathFromEvents: (sourceEvents: Events, tr: TimeRange): Path => {
-    let segments: PathSegment[] = [];
-    let coordinates: LonLat[] = [];
-    let previousLoc: LonLat | null = null;
-    const events = timeseries.filterByTime(sourceEvents, tr); // TODO filter by activity in the caller instead
-    for (let e of events) {
-      const event = e as any as GenericEvent;
-      if (event.type === EventType.LOC) {
-        const loc: LonLat = locations.lonLat(event as LocationEvent);
-        if (previousLoc) {
-          const lineSegmentLength = distance(turf.point(loc), turf.point(previousLoc), { units: 'miles' });
-          if (lineSegmentLength > sharedConstants.paths.maxLineSegmentInMiles) { // gap exceeds threshold
-            // so create a new, discontiguous path segment
-            segments.push({ coordinates });
-            coordinates = []; // reset
-            previousLoc = null; // reset
-          } else {
-            coordinates.push(loc); // typical case
-          }
-        } else {
-          coordinates.push(loc); // first loc
-        }
-        previousLoc = loc;
-      }
-    }
-    if (coordinates.length) {
-      segments.push({ coordinates });
-    }
-    return { segments };
-  },
 }
 
 export default locations;

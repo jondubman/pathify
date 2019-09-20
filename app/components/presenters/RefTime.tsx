@@ -17,7 +17,7 @@ const { height, leftContentsWidth, width } = constants.refTime;
 
 const Styles = StyleSheet.create({
   leftHalf: {
-    backgroundColor: 'transparent', // nothing left of the centerline, for now
+    backgroundColor: 'transparent', // nothing left of the centerline, for now TODO3
     flexDirection: 'row-reverse',
     width,
   },

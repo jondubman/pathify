@@ -16,8 +16,6 @@ interface PathsDispatchProps {
 
 export type PathsProps = PathsStateProps & PathsDispatchProps;
 
-let pathCache = {}; // keys: activityId, values: computed Path TODO move to Redux store
-
 const mapStateToProps = (state: AppState): PathsStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
   const activities: Activities = [];
@@ -31,16 +29,6 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
       if (activity) {
         activities.push(activity);
       }
-      // if (pathCache[selectedActivityId]) {
-      //   paths.push(pathCache[selectedActivity.id]);
-      // } else {
-      //   const path: Path = { ...locations.pathFromEvents(database.events(), selectedActivity.tr),
-      //                        type: PathType.DEFAULT };
-      //   paths.push(path);
-      //   if (selectedActivity.id) {
-      //     pathCache[selectedActivity.id] = path;
-      //   }
-      // }
     }
   }
   return {

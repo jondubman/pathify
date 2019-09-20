@@ -384,7 +384,7 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
-    opacitySliderThrottle: 250,
+    opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2
     timelineCloseToNow: 5000, // TODO2
@@ -405,7 +405,7 @@ const constants = {
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
-    widthMultiplier: 10, // TODO2
+    widthMultiplier: 20, // >1, important for smooth panning of the timeline. Larger means harder to reach the edge.
     yDomain: [0, 10] as DomainTuple, // The nonzero quantity here is sort of arbitrary; it establishes a scale.
     zoomLevels: [ // read as: "time intervals up to the visibleTime threshold yield this tickInterval and tickFormat"
       {

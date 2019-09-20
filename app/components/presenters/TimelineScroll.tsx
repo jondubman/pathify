@@ -26,7 +26,7 @@ type State = Readonly<typeof initialState>
 
 const TimelineStyles = StyleSheet.create({
   scrollView: {
-    backgroundColor: constants.colors.byName.purple, // TODO
+    backgroundColor: constants.colors.byName.purple, // TODO you only see this if you manage to reach the edge
     opacity: 0.75,
     position: 'absolute',
     bottom: 0,
@@ -58,19 +58,6 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     const x = this.props.scrollToX;
     this._scrollView.scrollTo({ x, y: 0, animated: false });
   }
-
-  // public componentWillReceiveProps(nextProps: TimelineScrollProps) {
-  //   if (nextProps.timelineRefTime !== this.props.timelineRefTime) {
-  //     this._lastDomain = undefined;
-  //     this._refTime = undefined;
-  //     this._scrollView = undefined;
-  //     this._scrolling = false;
-  //     if (this._timer) {
-  //       clearTimeout(this._timer);
-  //       this._timer = undefined;
-  //     }
-  //   }
-  // }
 
   public componentWillUnmount() {
     this.props.setTimelineScrolling(false);

@@ -42,6 +42,9 @@ const database = {
   // activities
 
   activityById: (id: string): Activity | undefined => {
+    if (!id) {
+      return undefined;
+    }
     return realm.objectForPrimaryKey('Activity', id);
   },
 
