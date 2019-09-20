@@ -27,7 +27,7 @@ type State = Readonly<typeof initialState>
 const TimelineStyles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'transparent',
-    opacity: 0.75,
+    opacity: 1,
     position: 'absolute',
     bottom: 0,
   },

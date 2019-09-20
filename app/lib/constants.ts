@@ -171,7 +171,7 @@ const colors = {
   timeline: {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
-    background: /*colorThemes.background,*/withOpacity(namedColors.green, 0.15),
+    background: colorThemes.background,
     currentActivity: withOpacity(namedColors.green, 0.75),
     selectedActivity: withOpacity(namedColors.blue, 1), // special case when timespan is selected
     timespans: {
