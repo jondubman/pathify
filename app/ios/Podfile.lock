@@ -91,7 +91,7 @@ PODS:
   - RNBackgroundGeolocation (3.2.0):
     - CocoaLumberjack (~> 3.5.1)
     - React
-  - RNSVG (9.6.4):
+  - RNSVG (9.8.4):
     - React
   - RNVectorIcons (6.6.0):
     - React
@@ -214,7 +214,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 2105b2e0e2b66a6408fc69a46c8a7fb5b2fdade0
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
   RNBackgroundGeolocation: 8cc02b38a945bd3bb8f0793bfe4ba65f191c86fa
-  RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
+  RNSVG: a78b4c581e33a1bb72968997d167afabf72b05dc
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
