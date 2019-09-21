@@ -94,7 +94,6 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-	purgeBackgroundGeolocationDebugResources(applicationVariants)
 	compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
@@ -144,7 +143,6 @@ dependencies {
     implementation project(':@mapbox_react-native-mapbox-gl')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-svg')
-    implementation project(':react-native-background-geolocation')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules

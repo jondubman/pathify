@@ -114,8 +114,7 @@ const colors = {
   },
   geolocationButton: {
     background: 'white',
-    // icon: 'black',
-    opacity: 0.75,
+    opacity: 0.75, // TODO use withOpacity
     disabledBackground: namedColors.green,
     disabledUnderlay: namedColors.yellow, // in transition
     enabledBackground: namedColors.red,
@@ -143,6 +142,11 @@ const colors = {
     border: withOpacity(namedColors.azure, 0.7),
     buttons: withOpacity(namedColors.azure, 0.5),
     underlayColor: 'transparent',
+  },
+  nowButton: {
+    background: 'transparent',
+    icon: withOpacity(namedColors.darkGreen, 0.75),
+    underlay: namedColors.azure,
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
@@ -244,6 +248,7 @@ const constants = {
         width: 1,
       },
     },
+    width: clockHeight, // Note this is not a typo. Width and height are identical because clock is round.
   },
   clockMenu: {
     height: 240,
@@ -355,6 +360,10 @@ const constants = {
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
   maxTimeGapForContinuousTrack: interval.seconds(5),
+  nowButton: {
+    iconSize: clockHeight - 10,
+    margin: clockMargin,
+  },
   panelWidth,
   paths: {
     width: 8,

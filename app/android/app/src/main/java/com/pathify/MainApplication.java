@@ -9,7 +9,6 @@ import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.horcrux.svg.SvgPackage;
-import com.transistorsoft.rnbackgroundgeolocation.RNBackgroundGeolocation;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -35,8 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativeRestartPackage(),
             new RCTMGLPackage(),
             new VectorIconsPackage(),
-            new SvgPackage(),
-            new RNBackgroundGeolocation()
+            new SvgPackage()
       );
     }
 

@@ -6,7 +6,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import constants from 'lib/constants';
 import { SettingsButtonProps } from 'containers/SettingsButtonContainer';
@@ -43,7 +43,7 @@ const SettingsButton = (props: SettingsButtonProps) => (
     onPress={props.onPress}
     underlayColor={props.open ? colors.background : colors.underlay}
   >
-    <Icon
+    <FontAwesome5
       color={colors.icon}
       name='cogs'
       size={size / 2}

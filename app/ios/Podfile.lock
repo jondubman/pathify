@@ -14,7 +14,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - RCTRestart (0.0.12):
+  - RCTRestart (0.0.13):
     - React
   - React (0.60.5):
     - React-Core (= 0.60.5)
@@ -61,7 +61,7 @@ PODS:
     - React-cxxreact (= 0.60.5)
     - React-jsi (= 0.60.5)
   - React-jsinspector (0.60.5)
-  - react-native-mapbox-gl (7.0.1):
+  - react-native-mapbox-gl (7.0.4):
     - React
   - react-native-slider (2.0.0):
     - React
@@ -88,12 +88,14 @@ PODS:
     - React-Core (= 0.60.5)
   - React-RCTWebSocket (0.60.5):
     - React-Core (= 0.60.5)
-  - RNBackgroundGeolocation (3.2.0):
+  - RNBackgroundFetch (2.7.0):
+    - React
+  - RNBackgroundGeolocation (3.2.2):
     - CocoaLumberjack (~> 3.5.1)
     - React
-  - RNSVG (9.8.4):
+  - RNSVG (9.9.4):
     - React
-  - RNVectorIcons (6.6.0):
+  - RNVectorIcons (6.4.2):
     - React
   - yoga (0.60.5.React)
 
@@ -121,6 +123,7 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
+  - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -178,6 +181,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   React-RCTWebSocket:
     :path: "../node_modules/react-native/Libraries/WebSocket"
+  RNBackgroundFetch:
+    :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
     :path: "../node_modules/react-native-background-geolocation"
   RNSVG:
@@ -193,7 +198,7 @@ SPEC CHECKSUMS:
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  RCTRestart: 3abdd55016c31254b996e0a55cc14cc2544fa3c1
+  RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
   React: 53c53c4d99097af47cf60594b8706b4e3321e722
   React-Core: ba421f6b4f4cbe2fb17c0b6fc675f87622e78a64
   React-cxxreact: 8384287780c4999351ad9b6e7a149d9ed10a2395
@@ -201,7 +206,7 @@ SPEC CHECKSUMS:
   React-jsi: 4d8c9efb6312a9725b18d6fc818ffc103f60fec2
   React-jsiexecutor: 90ad2f9db09513fc763bc757fdc3c4ff8bde2a30
   React-jsinspector: e08662d1bf5b129a3d556eb9ea343a3f40353ae4
-  react-native-mapbox-gl: eda3e4176b31915dde30121e20d442de82701bc5
+  react-native-mapbox-gl: e5e1921140b7e2ae2e4e1d917f4c91ad13da3f25
   react-native-slider: 40bdbfc1af0393922ac331bc1d95a6c5d5174fb6
   React-RCTActionSheet: b0f1ea83f4bf75fb966eae9bfc47b78c8d3efd90
   React-RCTAnimation: 359ba1b5690b1e87cc173558a78e82d35919333e
@@ -213,11 +218,12 @@ SPEC CHECKSUMS:
   React-RCTText: b074d89033583d4f2eb5faf7ea2db3a13c7553a2
   React-RCTVibration: 2105b2e0e2b66a6408fc69a46c8a7fb5b2fdade0
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
-  RNBackgroundGeolocation: 8cc02b38a945bd3bb8f0793bfe4ba65f191c86fa
-  RNSVG: a78b4c581e33a1bb72968997d167afabf72b05dc
-  RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  RNBackgroundFetch: c6dd741d7f86ad981f1f03279415c5151397559a
+  RNBackgroundGeolocation: 82e73b31e00041b271f1fc076696b09d24ce5941
+  RNSVG: 435cda60cd9e1ea6188eb0e21c12fc0f85def8e8
+  RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: 06122ced5d5315a8393997eb011fbe081c4d5c62
+PODFILE CHECKSUM: 78706edf7a2b915902c0821de6f2334ebd40a9b2
 
 COCOAPODS: 1.7.5

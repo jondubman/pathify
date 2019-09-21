@@ -23,9 +23,6 @@ buildscript {
 
 allprojects {
     repositories {
-		maven {
-			url "$rootDir/../node_modules/react-native-background-geolocation/android/libs"
-		}
         mavenLocal()
         google()
         jcenter()

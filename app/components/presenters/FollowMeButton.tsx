@@ -6,7 +6,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { FollowMeButtonProps } from 'containers/FollowMeButtonContainer';
 import constants from 'lib/constants';
@@ -41,7 +41,7 @@ const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
     onPress={props.onPress}
     underlayColor={colors.underlay}
   >
-    <Icon
+    <FontAwesome5
       color={props.active ? colors.icon.active : colors.icon.inactive}
       name='location-arrow'
       size={constants.followMeButton.size / 2}
