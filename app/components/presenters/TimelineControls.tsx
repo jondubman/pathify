@@ -30,7 +30,7 @@ const Styles = StyleSheet.create({
   nowButton: {
     left: utils.windowSize().width / 2 + constants.clock.height / 2,
     height: constants.clock.height,
-    marginLeft: 15,
+    marginLeft: 16,
     position: 'absolute',
   },
   topLine: {

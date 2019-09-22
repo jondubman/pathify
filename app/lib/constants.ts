@@ -146,7 +146,8 @@ const colors = {
   nowButton: {
     background: 'transparent',
     icon: withOpacity(namedColors.darkGreen, 0.75),
-    underlay: namedColors.azure,
+    text: namedColors.black,
+    underlay: namedColors.maroon,
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
@@ -361,7 +362,7 @@ const constants = {
   ],
   maxTimeGapForContinuousTrack: interval.seconds(5),
   nowButton: {
-    iconSize: clockHeight - 10,
+    iconSize: clockHeight - 8,
     margin: clockMargin,
   },
   panelWidth,

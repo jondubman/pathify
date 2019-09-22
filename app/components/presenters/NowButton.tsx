@@ -1,9 +1,13 @@
-import * as React from 'react';
+import React, {
+  Fragment
+} from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {
   StyleSheet,
+  Text,
   TouchableHighlight,
+  View,
 } from 'react-native';
 
 import { NowButtonProps } from 'containers/NowButtonContainer';
@@ -13,9 +17,18 @@ const colors = constants.colors.nowButton;
 
 const Styles = StyleSheet.create({
   button: {
-    alignSelf: 'center',
     backgroundColor: colors.background,
-    justifyContent: 'center',
+    position: 'absolute',
+  },
+  text: {
+    color: colors.text,
+    fontFamily: constants.fonts.family,
+    fontSize: 15,
+    paddingLeft: 2,
+    paddingTop: 20,
+  },
+  view: {
+    position: 'absolute',
   },
 })
 
@@ -27,11 +40,21 @@ const NowButton = (props: NowButtonProps) => (
       onPress={props.onPress}
       underlayColor={colors.underlay}
     >
-      <FontAwesome5
-        color={colors.icon}
-        name='play'
-        size={constants.nowButton.iconSize}
-      />
+      <Fragment>
+        <View style={Styles.view}>
+          <FontAwesome5
+            color={colors.icon}
+            name='play'
+            size={constants.nowButton.iconSize}
+          >
+          </FontAwesome5 >
+        </View>
+        <View style={Styles.view}>
+          <Text style={Styles.text}>
+            {'NOW'}
+          </Text>
+        </View>
+      </Fragment>
     </TouchableHighlight>
   ))
 )
