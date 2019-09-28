@@ -5,17 +5,14 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* PathifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PathifyTests.m */; };
-		06DFCF82A74544EB9EB2FD7C /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F7E8E54493B44DF87CE8966 /* FontAwesome5_Regular.ttf */; };
-		0DB5115700A44D92ABDE4187 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2882E2FBC26E436AB6D1FEE2 /* Foundation.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		235EA1C4F58846619A25CDBC /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86A3068011FB47CB98760715 /* EvilIcons.ttf */; };
-		2AFE74F3AF754BF7B60F264D /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2275B18FF1FF452698DB8BE1 /* Feather.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -29,24 +26,13 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* PathifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PathifyTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
-		433AE8FF4FC0423DB500C688 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EED8A2D740804907988141B8 /* AntDesign.ttf */; };
-		51E6A16CF6854E59A68CF1A2 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0537AED90F5346A98818CF31 /* SimpleLineIcons.ttf */; };
-		5A4C6E61A6054E45A3A5C12B /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D005614692840D181D39E2A /* Entypo.ttf */; };
 		65F1DE888F239299CB491576 /* libPods-Pathify-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AEA417686052418E84EE777E /* libPods-Pathify-tvOS.a */; };
 		78BCDEC34E904ED9917934D8 /* libRealmReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38CE0B7DD5314491A6525F89 /* libRealmReact.a */; };
-		7DE15548EE11471C985F837B /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C6D20BBE2A9F4B37A50FEFDC /* FontAwesome5_Brands.ttf */; };
 		85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC774D0FF4A84A63B4A92DE9 /* libz.tbd */; };
-		9415FAA9227B4E81AAB9CBE7 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 08C0B93169534D02868AAD9A /* Ionicons.ttf */; };
 		9D810970AEA4AA94E5B6560B /* libPods-Pathify-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AEA10D53B93C7554922C5740 /* libPods-Pathify-tvOSTests.a */; };
-		A3F48B3B812440A6B02A905A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 08FEDA315DB74D67AD4D5465 /* FontAwesome.ttf */; };
-		C047C888925A47619C7C8FF0 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B67616DDF3046BFB68E6C97 /* MaterialIcons.ttf */; };
 		C9AF42BEF0B05B047381F9FB /* libPods-PathifyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF3EE0653AE29BC3E5344BD8 /* libPods-PathifyTests.a */; };
-		DD9440D274A847FC8FEE80D9 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6B7E8607EA9A4377AB6B883C /* Zocial.ttf */; };
-		E12AD485F541457D94678F6F /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 131DDE98CCEC480297D6AEE6 /* Octicons.ttf */; };
-		E3992DE5BBBB412FBAAAB19C /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B132A57836494BC2B9EFDD25 /* FontAwesome5_Solid.ttf */; };
 		E3E879DA9458593D1AB2C8AC /* libPods-Pathify.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ACEDBD10882DBC0A1068D521 /* libPods-Pathify.a */; };
 		F789174928D04A6FA7655088 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4C23D5B4554C66A054E423 /* libc++.tbd */; };
-		FE4DC46C9BE54887B72B0F19 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBD155446E2A4F2B9EE99CB9 /* MaterialCommunityIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1165,21 +1151,6 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				433AE8FF4FC0423DB500C688 /* AntDesign.ttf in Resources */,
-				5A4C6E61A6054E45A3A5C12B /* Entypo.ttf in Resources */,
-				235EA1C4F58846619A25CDBC /* EvilIcons.ttf in Resources */,
-				2AFE74F3AF754BF7B60F264D /* Feather.ttf in Resources */,
-				A3F48B3B812440A6B02A905A /* FontAwesome.ttf in Resources */,
-				7DE15548EE11471C985F837B /* FontAwesome5_Brands.ttf in Resources */,
-				06DFCF82A74544EB9EB2FD7C /* FontAwesome5_Regular.ttf in Resources */,
-				E3992DE5BBBB412FBAAAB19C /* FontAwesome5_Solid.ttf in Resources */,
-				0DB5115700A44D92ABDE4187 /* Foundation.ttf in Resources */,
-				9415FAA9227B4E81AAB9CBE7 /* Ionicons.ttf in Resources */,
-				FE4DC46C9BE54887B72B0F19 /* MaterialCommunityIcons.ttf in Resources */,
-				C047C888925A47619C7C8FF0 /* MaterialIcons.ttf in Resources */,
-				E12AD485F541457D94678F6F /* Octicons.ttf in Resources */,
-				51E6A16CF6854E59A68CF1A2 /* SimpleLineIcons.ttf in Resources */,
-				DD9440D274A847FC8FEE80D9 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1467,9 +1438,7 @@
 				INFOPLIST_FILE = PathifyTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1499,9 +1468,7 @@
 				INFOPLIST_FILE = PathifyTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1602,9 +1569,7 @@
 				);
 				INFOPLIST_FILE = "Pathify-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1641,9 +1606,7 @@
 				);
 				INFOPLIST_FILE = "Pathify-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1679,9 +1642,7 @@
 				);
 				INFOPLIST_FILE = "Pathify-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1717,9 +1678,7 @@
 				);
 				INFOPLIST_FILE = "Pathify-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
