@@ -61,7 +61,7 @@ PODS:
     - React-cxxreact (= 0.60.5)
     - React-jsi (= 0.60.5)
   - React-jsinspector (0.60.5)
-  - react-native-mapbox-gl (7.0.4):
+  - react-native-mapbox-gl (7.0.6):
     - React
   - react-native-slider (2.0.0):
     - React
@@ -93,7 +93,7 @@ PODS:
   - RNBackgroundGeolocation (3.2.2):
     - CocoaLumberjack (~> 3.5.1)
     - React
-  - RNSVG (9.9.4):
+  - RNSVG (9.9.9):
     - React
   - RNVectorIcons (6.4.2):
     - React
@@ -206,7 +206,7 @@ SPEC CHECKSUMS:
   React-jsi: 4d8c9efb6312a9725b18d6fc818ffc103f60fec2
   React-jsiexecutor: 90ad2f9db09513fc763bc757fdc3c4ff8bde2a30
   React-jsinspector: e08662d1bf5b129a3d556eb9ea343a3f40353ae4
-  react-native-mapbox-gl: e5e1921140b7e2ae2e4e1d917f4c91ad13da3f25
+  react-native-mapbox-gl: 4988be25f86de3daa43bda9325dca9020a7825e0
   react-native-slider: 40bdbfc1af0393922ac331bc1d95a6c5d5174fb6
   React-RCTActionSheet: b0f1ea83f4bf75fb966eae9bfc47b78c8d3efd90
   React-RCTAnimation: 359ba1b5690b1e87cc173558a78e82d35919333e
@@ -220,7 +220,7 @@ SPEC CHECKSUMS:
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
   RNBackgroundFetch: c6dd741d7f86ad981f1f03279415c5151397559a
   RNBackgroundGeolocation: 82e73b31e00041b271f1fc076696b09d24ce5941
-  RNSVG: 435cda60cd9e1ea6188eb0e21c12fc0f85def8e8
+  RNSVG: b7e8745a87c046386569eecb437b3040cc6a7954
   RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
