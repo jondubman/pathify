@@ -25,9 +25,9 @@ class TimelineMark extends React.Component<TimelineMarkProps> {
     super(props);
   }
 
-  public shouldComponentUpdate(nextProps: TimelineMarkProps, nextState: any) {
-    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
-  }
+  // public shouldComponentUpdate(nextProps: TimelineMarkProps, nextState: any) {
+  //   return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
+  // }
 
   public render() {
     const {

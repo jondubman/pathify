@@ -17,9 +17,9 @@ class TimelineSpan extends React.Component<TimelineSpanProps> {
     super(props);
   }
 
-  public shouldComponentUpdate(nextProps: TimelineSpanProps, nextState: any) {
-    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
-  }
+  // public shouldComponentUpdate(nextProps: TimelineSpanProps, nextState: any) {
+  //   return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
+  // }
 
   public render() {
     const { scale, ts } = this.props;
