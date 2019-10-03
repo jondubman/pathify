@@ -140,7 +140,8 @@ const sagas = {
           update.count = activity.count ? activity.count + 1 : 1;
           if (event.type === EventType.LOC) {
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
+              // TODO3
+              // yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
             } else {
               // Appending events to an activity
               update.tLastLoc = event.t;
@@ -169,14 +170,18 @@ const sagas = {
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { newState } = params;
+    yield call(log.info, 'appStateChange saga:', newState);
     const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
       t: utils.now(),
       type: EventType.APP,
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    yield put(newAction(newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP ? AppAction.flagEnable
-      : AppAction.flagDisable, 'appActive'));
+    const activating = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP);
+    yield put(newAction(activating ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
+    if (activating) {
+      yield call(Geo.processSavedLocations);
+    }
   },
 
   appQuery: function* (action: Action) {
@@ -208,6 +213,11 @@ const sagas = {
             activities: (yield call(database.activities)).length,
             events: (yield call(database.events)).length,
           }
+          break;
+        }
+
+        case 'emailLog': {
+          Geo.emailLog();
           break;
         }
 
@@ -330,6 +340,8 @@ const sagas = {
   clearStorage: function* () {
     try {
       yield call(database.reset);
+      yield call(Geo.destroyLocations);
+      yield call(Geo.destroyLog);
     } catch (err) {
       yield call(log.error, 'saga clearStorage', err);
     }
@@ -750,6 +762,7 @@ const sagas = {
     if (currentActivityId) {
       yield call(log.info, 'Continuing previous activity...');
       yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
+      yield call(Geo.enableBackgroundGeolocation, true);
     }
   },
 

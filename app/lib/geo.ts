@@ -4,6 +4,8 @@
 import * as turf from '@turf/helpers';
 import distance from '@turf/distance';
 
+import { EMAIL_ADDRESS } from 'react-native-dotenv'; // deliberately omitted from repo
+
 import BackgroundGeolocation, {
   // State,
   Config,
@@ -22,7 +24,7 @@ import BackgroundGeolocation, {
 
 import { AppAction, GeolocationParams, newAction } from 'lib/actions';
 import constants from 'lib/constants';
-import { Store } from 'lib/store';
+import store, { Store } from 'lib/store';
 import utils from 'lib/utils';
 import locations, {
   LocationEvent,
@@ -47,9 +49,9 @@ const geolocationOptions: Config = {
   // set true to disable automatic speed-based #distanceFilter elasticity
   // (device moving at highway speeds -> locations returned at ~1/km)
   disableElasticity: true, // default false
-  stopAfterElapsedMinutes: 0, // default 0
+  stopAfterElapsedMinutes: -1, // default 0
 
-  // stopOnStationary: false, // default false
+  stopOnStationary: false, // default false
 
   // ----------------------------
   // Activity Recognition Options
@@ -102,7 +104,7 @@ const geolocationOptions: Config = {
   // -----------------------
 
   // https://github.com/transistorsoft/react-native-background-geolocation/wiki/Debug-Sounds
-  debug: false, // default false
+  debug: true, // default false
   // iOS NOTE: In addition, you must manually enable the Audio and Airplay background mode
   // in Background Capabilities to hear these debugging sounds
 
@@ -138,7 +140,7 @@ const geolocationOptions: Config = {
   // applied with each launch of your application, making it behave like the traditional #configure method.
   // https://github.com/transistorsoft/react-native-background-geolocation/blob/master/docs/README.md#resetconfig-successfn-failurefn
   // https://transistorsoft.github.io/react-native-background-geolocation/classes/_react_native_background_geolocation_.backgroundgeolocation.html#ready
-  reset: false, // TODO
+  reset: true, // TODO
 }
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
@@ -153,7 +155,7 @@ const geolocationOptions_lowPower: Config = {
 
   // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
   // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
-  desiredAccuracy: 10, // 0 is highest
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
 
   desiredOdometerAccuracy: 10, // Location accuracy threshold in meters for odometer calculations.
 
@@ -166,7 +168,6 @@ const geolocationOptions_lowPower: Config = {
   stationaryRadius: 10, // meters
 
   stopDetectionDelay: 1, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  stopOnStationary: false, // default false
   stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
@@ -180,7 +181,7 @@ const geolocationOptions_highPower: Config = {
 
   // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
   // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
-  desiredAccuracy: 0, // 0 is highest
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
   desiredOdometerAccuracy: 10, // Location accuracy threshold in meters for odometer calculations.
 
   distanceFilter: 1, // meters device must move to generate update event, default 10
@@ -194,14 +195,13 @@ const geolocationOptions_highPower: Config = {
   stationaryRadius: 1, // meters
 
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  stopOnStationary: false, // default false
   stopOnTerminate: false,
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
+
+  logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE, // TODO3
 }
 
 const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
-
-// TODO geolocationOptions_maxPower
 
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
@@ -281,44 +281,7 @@ export const Geo = {
       const onHeartbeat = (event: HeartbeatEvent) => {
         // Executed for each heartbeatInterval while the device is in stationary state
         // (iOS requires preventSuspend: true as well).
-      }
-      const onLocation = (location: Location) => {
-        const state = store.getState();
-        const activityId = state.options.currentActivityId;
-        // const { userLocation } = state;
-        // if (!userLocation /* && locationEvent.accuracy, sample TODO */) {
-        //   // This is the first userLocation to arrive.
-        //   store.dispatch(newAction(AppAction.centerMap, {
-        //     center: locations.lonLat(locationEvent),
-        //     option: 'absolute',
-        //   }))
-        // }
-        if (location.sample) {
-          return;
-        }
-        const processLocation = async (location: Location) => {
-          if (!state.flags.receiveLocations) {
-            log.trace('processLocation: ignoring location', location.timestamp);
-            return;
-          }
-          const locationEvent = newLocationEvent(location, activityId);
-          store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
-
-          const geolocationParams: GeolocationParams = {
-            locationEvents: [locationEvent],
-            recheckMapBounds: true,
-          }
-          store.dispatch(newAction(AppAction.geolocation, geolocationParams));
-        }
-
-        BackgroundGeolocation.startBackgroundTask().then(async (taskId) => {
-          processLocation(location).then(() => {
-            // When long-running task is complete, signal completion of taskId.
-            BackgroundGeolocation.stopBackgroundTask(taskId);
-          }).catch(() => {
-            BackgroundGeolocation.stopBackgroundTask(taskId);
-          })
-        })
+        BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
       }
       const onLocationError = (error: LocationError) => {
         let errorMessage;
@@ -338,13 +301,13 @@ export const Geo = {
       BackgroundGeolocation.onGeofence(onGeofence);
       BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
       BackgroundGeolocation.onHeartbeat(onHeartbeat);
-      BackgroundGeolocation.onLocation(onLocation, onLocationError);
+      BackgroundGeolocation.onLocation(Geo.onLocation, onLocationError);
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       if (pluginState.enabled) {
         log.trace('BackgroundGeolocation configured and ready', pluginState);
       }
-      BackgroundGeolocation.getCurrentPosition({}, onLocation); // fetch an initial location
+      BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
     }, err => {
       log.error('BackgroundGeolocation failed to configure', err);
     })
@@ -352,6 +315,20 @@ export const Geo = {
 
   changePace: (isMoving: boolean, done: Function) => {
     BackgroundGeolocation.changePace(isMoving, done);
+  },
+
+  destroyLocations: () => {
+    BackgroundGeolocation.destroyLocations();
+  },
+
+  destroyLog: () => {
+    BackgroundGeolocation.destroyLog();
+  },
+
+  emailLog: () => {
+    if (EMAIL_ADDRESS) {
+      BackgroundGeolocation.emailLog(EMAIL_ADDRESS);
+    }
   },
 
   enableBackgroundGeolocation: async (enable: boolean) => {
@@ -362,8 +339,8 @@ export const Geo = {
       log.debug('using geolocationOptions_highPower');
     } else {
       await Geo.stopBackgroundGeolocation('tracking');
-      BackgroundGeolocation.setConfig(geolocationOptions_lowPower);
-      log.debug('using geolocationOptions_lowPower');
+      BackgroundGeolocation.setConfig(geolocationOptions_default);
+      log.debug('using geolocationOptions_default');
     }
   },
 
@@ -394,6 +371,76 @@ export const Geo = {
   //   "odometer": [Float/meters]
   // }
 
+  onLocation: (location: Location) => {
+    try {
+      if (location.sample) {
+        return;
+      }
+      const processLocation = async (location: Location) => {
+        const state = store.getState();
+        const activityId = state.options.currentActivityId;
+        if (!state.flags.receiveLocations) {
+          log.trace('processLocation: ignoring location', location.timestamp);
+          return;
+        }
+        const locationEvent = newLocationEvent(location, activityId);
+        store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
+
+        const geolocationParams: GeolocationParams = {
+          locationEvents: [locationEvent],
+          recheckMapBounds: true,
+        }
+        store.dispatch(newAction(AppAction.geolocation, geolocationParams));
+      }
+      // processLocation(location); // TODO3
+      const state = store.getState();
+      if (state.flags.appActive) {
+        processLocation(location);
+        return;
+      }
+      BackgroundGeolocation.startBackgroundTask().then(async (taskId) => {
+        processLocation(location).then(() => {
+          // When long-running task is complete, signal completion of taskId.
+          setTimeout(() => {
+            BackgroundGeolocation.stopBackgroundTask(taskId);
+          }, constants.timing.backgroundTaskSlackTime);
+        }).catch(() => {
+          BackgroundGeolocation.stopBackgroundTask(taskId);
+        })
+      })
+    } catch (err) {
+      log.error('onLocation', err);
+    }
+  },
+
+  processSavedLocations: async () => {
+    try {
+      const state = store.getState();
+      if (!state.flags.receiveLocations) {
+        log.trace('processSavedLocations: ignoring locations');
+        return;
+      }
+      const activityId = state.options.currentActivityId;
+      const locations = await BackgroundGeolocation.getLocations() as Location[];
+      log.info('processSavedLocations: count ', locations.length);
+      const locationEvents: LocationEvents = [];
+      for (let location of locations) {
+        if (location.sample) {
+          continue;
+        }
+        const locationEvent = newLocationEvent(location, activityId);
+        locationEvents.push(locationEvent);
+      }
+      if (locationEvents.length) {
+        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
+      }
+      Geo.destroyLocations(); // TODO3
+      // TODO AppAction.geolocation?
+    } catch (err) {
+      log.error('processSavedLocations', err);
+    }
+  },
+
   resetOdometer: async () => {
     const done = () => {
       log.debug('resetOdometer done');
@@ -411,7 +458,7 @@ export const Geo = {
     if (reasons[reason]) {
       log.debug(`BackgroundGeolocation already active for ${reason} in startBackgroundGeolocation`);
       log.trace('BackgroundGeolocation reasons', reasons);
-      return false;
+      return Promise.resolve(false);
     }
     reasons[reason] = true;
     // if (haveReasonBesides(reason)) {
@@ -421,19 +468,16 @@ export const Geo = {
     // }
     return new Promise((resolve, reject) => {
       const started = () => {
-        const receieveLocation = (location: Location) => {
-        }
-        const options = {
-          interval: constants.timing.watchPositionInterval,
-          persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
-        }
-        if (reason === 'tracking') { // TODO is everything here necessary?
-          BackgroundGeolocation.watchPosition(receieveLocation, err => {
-            log.error('BackgroundGeolocation.watchPosition', err);
-            reject(err);
-          }, options)
-        }
-        resolve(true);
+        // TODO3
+        // const options = {
+        //   interval: constants.timing.watchPositionInterval,
+        //   persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
+        // }
+        // BackgroundGeolocation.watchPosition(Geo.onLocation, err => {
+        //   log.error('BackgroundGeolocation.watchPosition', err);
+        //   reject(err);
+        // }, options)
+        // resolve(true);
       }
       BackgroundGeolocation.start(started, err => {
         log.error('BackgroundGeolocation.start', err);
@@ -442,33 +486,35 @@ export const Geo = {
     })
   },
 
-  // Returns true if background geolocation was stopped as a result of this request.
+  // Resolves to true if background geolocation was stopped as a result of this request
+  // (It is left running if any reasons remain.)
   stopBackgroundGeolocation: async (reason: string) => {
     if (!reasons[reason]) {
       log.debug(`BackgroundGeolocation already inactive for ${reason} in stopBackgroundGeolocation`);
       log.trace('BackgroundGeolocation reasons', reasons);
-      return false;
+      return Promise.resolve(false);
     }
-    if (reason === 'tracking') { // TODO
-      const success = () => {
-        log.debug('BackgroundGeolocation.stopWatchPosition success');
-      }
-      BackgroundGeolocation.stopWatchPosition(success, err => {
-        log.error('BackgroundGeolocation.stopWatchPosition', err);
-      })
+    if (reason === 'tracking') {
+      // const success = () => {
+      //   log.debug('BackgroundGeolocation.stopWatchPosition success');
+      // }
+      // BackgroundGeolocation.stopWatchPosition(success, err => {
+      //   log.error('BackgroundGeolocation.stopWatchPosition', err);
+      // })
     }
     reasons[reason] = false;
     if (haveReason()) { // still
       log.debug(`BackgroundGeolocation no longer needed for ${reason}, but still running`);
       log.trace('BackgroundGeolocation reasons', reasons);
-      return false;
+      return Promise.resolve(false);
     }
+    // return Promise.resolve(false); // TODO3 don't ever stop!
     return new Promise((resolve, reject) => {
       const done = () => {
         log.debug(`BackgroundGeolocation stopped, was running for ${reason}`);
         resolve(true);
       }
-      BackgroundGeolocation.stop(done, err => { reject(err); });
+      BackgroundGeolocation.stop(done, err => { reject(err); }); // TODO3 probably don't ever want to stop!
     })
   },
 }

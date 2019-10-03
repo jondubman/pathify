@@ -11,12 +11,10 @@ import { Provider } from 'react-redux';
 
 import { AppAction, newAction, ReducerAction } from 'lib/actions';
 import constants from 'lib/constants';
-import { Geo } from 'lib/geo';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { AppStateChange } from 'shared/appEvents';
-import database from 'shared/database';
 import log from 'shared/log';
 
 import AppUIContainer from 'containers/AppUIContainer';
@@ -40,6 +38,8 @@ export default class App extends Component {
     store.create(); // proactively create Redux store instance
 
     RNAppState.addEventListener('change', this.handleAppStateChange);
+    this.handleAppStateChange('startup'); // initialize
+    store.dispatch(newAction(AppAction.startupActions));
 
     const interval = setInterval(() => {
       const { flags } = store.getState();
@@ -48,10 +48,6 @@ export default class App extends Component {
       }
     }, store.getState().options.timerTickIntervalMsec);
     store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
-
-    this.handleAppStateChange('startup'); // initialize
-
-    store.dispatch(newAction(AppAction.startupActions));
 
     pollServer(); // attempt to stay in contact with server
   }

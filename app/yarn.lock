@@ -928,9 +928,9 @@
     ws "^1.1.0"
 
 "@react-native-community/slider@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.0.tgz#3d68f68db185fb44d812f66d05d2d7842adfd3db"
-  integrity sha512-ORokHwQnwXzas+PYQO+G8IxArRVtw2xZdx2C0wV+oQiKbhDl8DBcM6gGT6dNB3VGxVNesWX/3K0IIfVjp4zH0A==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.1.tgz#2ab0cd52d3ab30ef4f6d838159590e2ccdf7803a"
+  integrity sha512-u1si6+pACAhwr3dyyy+cxM5VxqlWQIZx1qk6je2qP5XkUKUb+33NVnAWZw2+gaw2b2H5bhR/TAZLSlWonAuStQ==
 
 "@react-native-mapbox-gl/maps@^7.0.6":
   version "7.0.6"
@@ -2499,9 +2499,9 @@
   integrity sha512-W0+n1Y+gK/8G2P/piTkBBN38Qc5Q1ZSO6B5H3QmPCUewaiXOo2GCAWZ4ElZCcNhjJuBSUSLGFUJnmlCn5+nxOQ==
 
 "@types/node@^10.12.18":
-  version "10.14.18"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.18.tgz#b7d45fc950e6ffd7edc685e890d13aa7b8535dce"
-  integrity sha512-ryO3Q3++yZC/+b8j8BdKd/dn9JlzlHBPdm80656xwYUdmPkpTGTjkAdt6BByiNupGPE8w0FhBgvYy/fX9hRNGQ==
+  version "10.14.19"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.19.tgz#f52742c7834a815dedf66edfc8a51547e2a67342"
+  integrity sha512-j6Sqt38ssdMKutXBUuAcmWF8QtHW1Fwz/mz4Y+Wd9mzpBiVFirjpNQf363hG5itkG+yGaD+oiLyb50HxJ36l9Q==
 
 "@types/prop-types@*":
   version "15.7.2"
@@ -2515,10 +2515,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-native-vector-icons@^6.4.0":
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.2.tgz#e50eb062ebac4a293b1efe0343b5748f8ff82b51"
-  integrity sha512-UljqnOw2gqbiT6sBWKQYjYWPfx5hgqmQOCSuus9IIF5ykPc15E66jLQ4pYgu3psc2Ik82G/ngpgo55cBa144Jg==
+"@types/react-native-vector-icons@^6.4.4":
+  version "6.4.4"
+  resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.4.tgz#f81dcc371b74a9c408ce12f95b8f494d7543146b"
+  integrity sha512-G1Iry/8i23IPjZzNjydMt/WcjV+T1Xu3cTXDwSsP9lpKu0bA0j+c7AACJ1aIka8HVnWXS41NoZnKkHImO0SMkw==
   dependencies:
     "@types/react" "*"
     "@types/react-native" "*"
@@ -2564,10 +2564,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@types/react@^16.9.3":
-  version "16.9.3"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.3.tgz#6d13251e441a3e67fb60d719d1fc8785b984a2ec"
-  integrity sha512-Ogb2nSn+2qQv5opoCv7Ls5yFxtyrdUYxp5G+SWTrlGk7dmFKw331GiezCgEZj9U7QeXJi1CDtws9pdXU1zUL4g==
+"@types/react@^16.9.4":
+  version "16.9.4"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.4.tgz#de8cf5e5e2838659fb78fa93181078469eeb19fc"
+  integrity sha512-ItGNmJvQ0IvWt8rbk5PLdpdQhvBVxAaXI9hDlx7UMd8Ie1iMIuwMNiKeTfmVN517CdplpyXvA22X4zm4jGGZnw==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -4275,9 +4275,9 @@ electron-download@^4.1.0:
     sumchecker "^2.0.2"
 
 electron@^5.0.0:
-  version "5.0.10"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-5.0.10.tgz#a3819c3ff8d05ee57315bfabe2d61d3529f5659c"
-  integrity sha512-OSyxTlJ+7Yf0B+6pTdHdxY9RvI4U+mVKAbn+CkAOWxlCPMg3K+jt5UHKSPRRLnXQhQ0Tulg4vupbC0k27aukVw==
+  version "5.0.11"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-5.0.11.tgz#764eb460aa84fbfcb3dc30385f5f9509cb724751"
+  integrity sha512-2QVVycTmvMmKC3S9XV7zSvouYBooHRTOBx1r64nBwtMh44gPydR3HzUbyVYjjxsw+4vIuH6AqNuY48KtWRpajg==
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"
@@ -5475,9 +5475,9 @@ is-regex@^1.0.4:
     has "^1.0.1"
 
 is-retry-allowed@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/is-retry-allowed/-/is-retry-allowed-1.1.0.tgz#11a060568b67339444033d0125a61a20d564fb34"
-  integrity sha1-EaBgVotnM5REAz0BJaYaINVk+zQ=
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/is-retry-allowed/-/is-retry-allowed-1.2.0.tgz#d778488bd0a4666a3be8a1482b9f2baafedea8b4"
+  integrity sha512-RUbUeKwvm3XG2VYamhJL1xFktgjvPzL0Hq8C+6yrWIswDy3BIXGqCxhxkc30N9jqK311gVU137K8Ei55/zVJRg==
 
 is-stream@^1.0.0, is-stream@^1.0.1, is-stream@^1.1.0:
   version "1.1.0"
@@ -7583,7 +7583,12 @@ pseudomap@^1.0.2:
   resolved "https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
   integrity sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
 
-psl@^1.1.24, psl@^1.1.28:
+psl@^1.1.24:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/psl/-/psl-1.4.0.tgz#5dd26156cdb69fa1fdb8ab1991667d3f80ced7c2"
+  integrity sha512-HZzqCGPecFLyoRj5HLfuDSKYTJkAfB5thKBIkRHtGjWwY7p1dAyveIbXIq4tO0KYfDF2tHqPUgY9SDnGm00uFw==
+
+psl@^1.1.28:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.3.1.tgz#d5aa3873a35ec450bc7db9012ad5a7246f6fc8bd"
   integrity sha512-2KLd5fKOdAfShtY2d/8XDWVRnmp3zp40Qt6ge2zBPFARLXOGUf2fHD5eg+TV/5oxBtQKVhjUaKFsAaE4HnwfSA==
@@ -7665,10 +7670,10 @@ react-deep-force-update@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.1.2.tgz#3d2ae45c2c9040cbb1772be52f8ea1ade6ca2ee1"
   integrity sha512-WUSQJ4P/wWcusaH+zZmbECOk7H5N2pOIl0vzheeornkIMhu+qrNdGFm0bDZLCb0hSF0jf/kH1SgkNGfBdTc4wA==
 
-react-devtools-core@4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.1.2.tgz#655e9c31049d05d4086c1e783b552ccd5775f5c4"
-  integrity sha512-FADycHmi4ew/cISHTe/rCTQZ8OaAMzd7s2trk7Cfo6sdlDPlm0/+U4L0Ts1yIXnYTnvlrN97Q2MB1INba8WHkw==
+react-devtools-core@4.1.3:
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.1.3.tgz#f0428d00ba3192bb92ffa81fc8b2e46f4b1e3dc1"
+  integrity sha512-V9JoA5NlgAW5t4KxQzJWTkhyBAiYAdIBGX2fxLkbydGqDP56AKs3FIwJxGH3RKl3ucXMEFmlI5e/CvoTBpVwNA==
   dependencies:
     es6-symbol "^3"
     shell-quote "^1.6.1"
@@ -7683,15 +7688,15 @@ react-devtools-core@^3.6.1:
     ws "^3.3.1"
 
 react-devtools@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/react-devtools/-/react-devtools-4.1.2.tgz#740d273040f89fdca8047b9a22776f1d29aae837"
-  integrity sha512-2q1g5fNRXVfw0Hw5/6RyWD4X+0idx5uUkVhBPpSDibFBxiFRAZVesusB+rmkszaYORuTBxvfC1I8m0R3KjVjxQ==
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/react-devtools/-/react-devtools-4.1.3.tgz#b534c3b0607bd5900620fa6cb34989460f0b30da"
+  integrity sha512-4bx8BN2eBsAm/N7pjnH25hWqGuvQwaqEuI/RLK3Ni7TKzuL5lo+i1lapYX9kBm5obeYGPbF1Dfu/C0fMFI4CNQ==
   dependencies:
     cross-spawn "^5.0.1"
     electron "^5.0.0"
     ip "^1.1.4"
     minimist "^1.2.0"
-    react-devtools-core "4.1.2"
+    react-devtools-core "4.1.3"
     update-notifier "^2.1.0"
 
 react-dom@^16.9.0:
@@ -7758,9 +7763,9 @@ react-native-status-bar-height@^2.4.0:
   integrity sha512-pWvZFlyIHiuxLugLioq97vXiaGSovFXEyxt76wQtbq0gxv4dGXMPqYow46UmpwOgeJpBhqL1E0EKxnfJRrFz5w==
 
 react-native-svg@^9.9.9:
-  version "9.9.9"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-9.9.9.tgz#67c83b56d7a292162762a6d389dc78512558c2ca"
-  integrity sha512-a/wxzEaAqWZ3uYwTJKo8sj2gURmEs4xBB83tx5gK9rpoEixzHfsj8+qLacwmQrHab7nf+tWj56INMTSPqm60oA==
+  version "9.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-9.10.0.tgz#8bf19f6b43eba078fcf3f64fe7461ac1d26be10c"
+  integrity sha512-xyLfx46ngCot+bp+3zDnvOqZsGicPWT6CeMe411i0TyWDmz+yVSyN1MilZ+pXNl3KhnZaPY5TUL2+6Zm+IN9lA==
 
 react-native-typescript-transformer@^1.2.13:
   version "1.2.13"
@@ -7944,10 +7949,10 @@ readable-stream@~1.1.9:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-realm@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-3.1.0.tgz#89571ce037c8b7e48e70096e7b76b3fba7bed2cd"
-  integrity sha512-Oa2aAfss/GrG3glWzTqsI1FTvMLzTZb0fLjO7w1zXnoF1rNsBc7sTlBzBBgow2nZZEfNxTFF/7mKS9BH03sllA==
+realm@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-3.2.0.tgz#32aa87c98d9db5f0c289f4d235bd35813620a903"
+  integrity sha512-bAS16v0jVmmH2/o4kEdBETf+ywhIy9Bq4rXKBpGZ9egSBdlYBIOfO/dhDqeMaR+toEGrfMgvobDSiQYUgGiBBw==
   dependencies:
     command-line-args "^4.0.6"
     decompress "^4.2.0"

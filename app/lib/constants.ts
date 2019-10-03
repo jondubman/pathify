@@ -394,6 +394,7 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
+    backgroundTaskSlackTime: 5000,
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2
@@ -409,7 +410,7 @@ const constants = {
     centerLineWidth: 3,
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
-      zoomValue: 0.5, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below (0.7 is a good default)
+      zoomValue: 0.64, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below (0.7 is a good default)
     },
     miniBarHeight: 15,
     nearTimeThreshold: interval.minute, // TODO

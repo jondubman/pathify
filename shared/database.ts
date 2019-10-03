@@ -136,11 +136,15 @@ const database = {
   changeSettings: (changes: any): void => {
     try {
       const currentState = realm.objects('Settings');
-      let newState = { id: 1 }; // always the same (Settings is a singleton)
+      let newState;
       if (currentState.length) {
-        newState = { ...currentState[0], ...changes };
+        log.debug('changeSettings: currentState is', currentState[0]);
+        newState = { ...currentState[0], ...changes }; // merge any changes
+      } else {
+        // note id is always 1 (Settings is a singleton)
+        newState = { id: 1, ...changes }; // merge any changes
       }
-      log.info('changeSettings', newState);
+      log.info('changeSettings', 'changes', changes, 'newState', newState);
       realm.write(() => {
         realm.create('Settings', newState, true); // true: update
       })
