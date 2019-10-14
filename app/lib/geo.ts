@@ -37,6 +37,10 @@ import log from 'shared/log';
 import timeseries, { EventType } from 'shared/timeseries';
 import { metersPerSecondToMilesPerHour } from 'shared/units';
 
+// TODO3
+// disableStopDetection: true,
+// pausesLocationUpdatesAutomatically: true, (sets disableStopDetection: true and prevents preventSuspend from working)
+
 const geolocationOptions: Config = {
   // --------------
   // Common Options
@@ -49,18 +53,13 @@ const geolocationOptions: Config = {
   // set true to disable automatic speed-based #distanceFilter elasticity
   // (device moving at highway speeds -> locations returned at ~1/km)
   disableElasticity: true, // default false
-  stopAfterElapsedMinutes: -1, // default 0
-
+  // stopAfterElapsedMinutes: 30,
+  persistMode: BackgroundGeolocation.PERSIST_MODE_ALL, // PERSIST_MODE_ALL is the default
   stopOnStationary: false, // default false
 
   // ----------------------------
   // Activity Recognition Options
   // ----------------------------
-
-  // desired time between activity detections.
-  // Larger values will result in fewer activity detections while improving battery life.
-  // A value of 0 will result in activity detections at the fastest possible rate.
-  // activityRecognitionInterval: 1000, // msec
 
   // number of minutes to wait before turning off location-services after the
   // ActivityRecognition System (ARS) detects the device is STILL.
@@ -104,7 +103,7 @@ const geolocationOptions: Config = {
   // -----------------------
 
   // https://github.com/transistorsoft/react-native-background-geolocation/wiki/Debug-Sounds
-  debug: true, // default false
+  debug: false, // with debug sounds, default false
   // iOS NOTE: In addition, you must manually enable the Audio and Airplay background mode
   // in Background Capabilities to hear these debugging sounds
 
@@ -135,23 +134,12 @@ const geolocationOptions: Config = {
   // If the device is not currently moving, the stop detection system will still engage.
   // After stopTimeout minutes without movement, the plugin will enter the stationary state, as usual.
   isMoving: true,
-
-  // Optionally, you can specify reset: true to #ready. This will esentially force the supplied {config} to be
-  // applied with each launch of your application, making it behave like the traditional #configure method.
-  // https://github.com/transistorsoft/react-native-background-geolocation/blob/master/docs/README.md#resetconfig-successfn-failurefn
-  // https://transistorsoft.github.io/react-native-background-geolocation/classes/_react_native_background_geolocation_.backgroundgeolocation.html#ready
-  reset: true, // TODO
 }
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
 
 const geolocationOptions_lowPower: Config = {
   ...geolocationOptions,
-
-  // desired time between activity detections.
-  // Larger values will result in fewer activity detections while improving battery life.
-  // A value of 0 will result in activity detections at the fastest possible rate.
-  activityRecognitionInterval: 10000, // msec
 
   // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
   // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
@@ -168,7 +156,7 @@ const geolocationOptions_lowPower: Config = {
   stationaryRadius: 10, // meters
 
   stopDetectionDelay: 1, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
+  // stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
 const geolocationOptions_highPower: Config = {
