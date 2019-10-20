@@ -93,6 +93,8 @@ PODS:
   - RNBackgroundGeolocation (3.2.2):
     - CocoaLumberjack (~> 3.5.1)
     - React
+  - RNDeviceInfo (4.0.1):
+    - React
   - RNSVG (9.10.0):
     - React
   - RNVectorIcons (6.4.2):
@@ -125,6 +127,7 @@ DEPENDENCIES:
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -186,6 +189,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
     :path: "../node_modules/react-native-background-geolocation"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -221,6 +226,7 @@ SPEC CHECKSUMS:
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
   RNBackgroundFetch: c6dd741d7f86ad981f1f03279415c5151397559a
   RNBackgroundGeolocation: 82e73b31e00041b271f1fc076696b09d24ce5941
+  RNDeviceInfo: 687c1b2ab6d86ff1ca1208783320cd144138c7f2
   RNSVG: 4c4f94c23beff55111a158f9be5b542508592348
   RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411

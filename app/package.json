@@ -31,6 +31,7 @@
     "react-native": "0.60.5",
     "react-native-background-fetch": "^2.7.0",
     "react-native-background-geolocation": "^3.2.2",
+    "react-native-device-info": "^4.0.1",
     "react-native-dotenv": "^0.2.0",
     "react-native-restart": "^0.0.13",
     "react-native-safe-area-view-with-get-inset": "^0.10.0",

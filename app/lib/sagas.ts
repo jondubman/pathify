@@ -177,9 +177,9 @@ const sagas = {
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const activating = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP);
-    yield put(newAction(activating ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
-    if (activating) {
+    const activeNow = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP);
+    yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
+    if (newState !== AppStateChange.INACTIVE) {
       yield call(Geo.processSavedLocations);
     }
   },
@@ -750,7 +750,6 @@ const sagas = {
   },
 
   startupActions: function* () {
-    yield call(Geo.initializeGeolocation, store);
     const { startupAction_clearStorage } = yield select(state => state.flags);
     if (startupAction_clearStorage) {
       yield put(newAction(AppAction.clearStorage));
@@ -759,6 +758,7 @@ const sagas = {
     yield call(log.info, 'Persisted App settings', settings);
 
     const { currentActivityId } = settings;
+    yield call(Geo.initializeGeolocation, store, !!currentActivityId);
     if (currentActivityId) {
       yield call(log.info, 'Continuing previous activity...');
       yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));

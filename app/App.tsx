@@ -38,8 +38,8 @@ export default class App extends Component {
     store.create(); // proactively create Redux store instance
 
     RNAppState.addEventListener('change', this.handleAppStateChange);
-    this.handleAppStateChange('startup'); // initialize
     store.dispatch(newAction(AppAction.startupActions));
+    this.handleAppStateChange('startup'); // initialize
 
     const interval = setInterval(() => {
       const { flags } = store.getState();
