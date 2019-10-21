@@ -44,6 +44,7 @@ import { metersPerSecondToMilesPerHour } from 'shared/units';
 // pausesLocationUpdatesAutomatically: true, (sets disableStopDetection: true and prevents preventSuspend from working)
 
 const geolocationOptions: Config = {
+  autoSync: true, // TODO3
   // --------------
   // Common Options
   // --------------
@@ -271,7 +272,7 @@ const newModeChangeEvent = (activity: string, confidence: number, activityId: st
 
 export const Geo = {
 
-  initializeGeolocation: (store: Store, highPower: boolean = false) => {
+  initializeGeolocation: async (store: Store, highPower: boolean = false) => {
     log.debug('initializeGeolocation');
 
     const onActivityChange = (event: MotionActivityEvent) => {
@@ -286,10 +287,10 @@ export const Geo = {
     }
     const onGeofencesChange = (event: GeofencesChangeEvent) => {
     }
-    const onHeartbeat = (event: HeartbeatEvent) => {
+    const onHeartbeat = async (event: HeartbeatEvent) => {
       // Executed for each heartbeatInterval while the device is in stationary state
       // (iOS requires preventSuspend: true as well).
-      BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
+      await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
     }
     const onHttp = (response: HttpEvent) => {
       // log.trace('BackgroundGeolocation onHttp', response);
@@ -328,34 +329,34 @@ export const Geo = {
     })
   },
 
-  changePace: (isMoving: boolean, done: Function) => {
-    BackgroundGeolocation.changePace(isMoving, done);
+  changePace: async (isMoving: boolean, done: Function) => {
+    await BackgroundGeolocation.changePace(isMoving, done);
   },
 
-  destroyLocations: () => {
-    BackgroundGeolocation.destroyLocations();
+  destroyLocations: async () => {
+    await BackgroundGeolocation.destroyLocations();
   },
 
-  destroyLog: () => {
-    BackgroundGeolocation.destroyLog();
+  destroyLog: async () => {
+    await BackgroundGeolocation.destroyLog();
   },
 
-  emailLog: () => {
+  emailLog: async () => {
     if (EMAIL_ADDRESS) {
-      BackgroundGeolocation.emailLog(EMAIL_ADDRESS);
+      await BackgroundGeolocation.emailLog(EMAIL_ADDRESS);
     }
   },
 
   enableBackgroundGeolocation: async (enable: boolean) => {
     log.debug('enableBackgroundGeolocation', enable);
     if (enable) {
+      await BackgroundGeolocation.setConfig(geolocationOptions_highPower);
       await Geo.startBackgroundGeolocation('tracking');
-      BackgroundGeolocation.setConfig(geolocationOptions_highPower);
       log.debug('using geolocationOptions_highPower');
     } else {
       // disable
+      await BackgroundGeolocation.setConfig(geolocationOptions_default);
       await Geo.stopBackgroundGeolocation('tracking');
-      BackgroundGeolocation.setConfig(geolocationOptions_default);
       log.debug('using geolocationOptions_default');
     }
   },
@@ -446,10 +447,13 @@ export const Geo = {
         const locationEvent = newLocationEvent(location, activityId);
         locationEvents.push(locationEvent);
       }
+      log.debug('processSavedLocations: ready to addEvents');
       if (locationEvents.length) {
         store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
       }
-      // Geo.destroyLocations(); // TODO3
+      log.debug('processSavedLocations: ready to destroyLocations');
+      await Geo.destroyLocations(); // TODO3
+      log.debug('processSavedLocations: done');
       // TODO AppAction.geolocation?
     } catch (err) {
       log.error('processSavedLocations', err);
@@ -460,7 +464,7 @@ export const Geo = {
     const done = () => {
       log.debug('resetOdometer done');
     }
-    BackgroundGeolocation.resetOdometer(done, () => { log.info('reset odometer') });
+    await BackgroundGeolocation.resetOdometer(done);
   },
 
   // Geolocation may be needed for multiple reasons.
@@ -485,10 +489,13 @@ export const Geo = {
       const started = () => {
         if (reason === 'tracking') {
           const options = {
+            extras: { source: 'watchPosition' },
             interval: constants.timing.watchPositionInterval,
             persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
           }
-          BackgroundGeolocation.watchPosition(Geo.onLocation, err => {
+          // const watch = Geo.onLocation;
+          const watch = () => {}; // TODO3
+          BackgroundGeolocation.watchPosition(watch, err => {
             log.error('BackgroundGeolocation.watchPosition', err);
             reject(err);
           }, options)

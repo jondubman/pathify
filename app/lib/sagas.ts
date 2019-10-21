@@ -822,7 +822,7 @@ const sagas = {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(AppAction.flagDisable, 'followingUser'));
-      // TODO leave background geolocation running in 'navigating' mode
+      // TODO3 leave background geolocation running in 'navigating' mode
       // yield call(Geo.stopBackgroundGeolocation, 'navigating');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
