@@ -927,15 +927,15 @@
     shell-quote "1.6.1"
     ws "^1.1.0"
 
-"@react-native-community/slider@^2.0.0":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.1.tgz#2ab0cd52d3ab30ef4f6d838159590e2ccdf7803a"
-  integrity sha512-u1si6+pACAhwr3dyyy+cxM5VxqlWQIZx1qk6je2qP5XkUKUb+33NVnAWZw2+gaw2b2H5bhR/TAZLSlWonAuStQ==
+"@react-native-community/slider@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.2.tgz#d7e8d098cbd3434e7dae783777086cbb9875680d"
+  integrity sha512-Hj1hATFe8jiS7b/vvLJ8HCgEq4P9TynWdQL2GrxD4NlUh6xFY2XFDcpmUAxpeUDAN+vbq3/JI+P5Q5nweC1FeQ==
 
 "@react-native-mapbox-gl/maps@^7.0.6":
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/@react-native-mapbox-gl/maps/-/maps-7.0.6.tgz#f96adda0c7ea5a7399c749561151881dd1050dd4"
-  integrity sha512-cI/8FRfwV0qSgukmf1j23DT3BI6at3WtabJ8C1mP/rjOESrab+J3AbmuZq+387k2fgMvFV4tEDeCJc1joGdGXA==
+  version "7.0.7"
+  resolved "https://registry.yarnpkg.com/@react-native-mapbox-gl/maps/-/maps-7.0.7.tgz#d1428dc47de0ec0029d1c547cdc49d6ab804e269"
+  integrity sha512-5XUQi+heNSa9dSYhT8ppKb+ht52yDp9l6LVlA8u6q3t0jUBKEN92XIQYz9jFRboLFEKE7CCofa+7nto6rXi+AA==
   dependencies:
     "@mapbox/geo-viewport" ">= 0.4.0"
     "@turf/along" ">= 4.0.0 <7.0.0"
@@ -2466,9 +2466,9 @@
   integrity sha512-yALhelO3i0hqZwhjtcr6dYyaLoCHbAMshwtj6cGxTvHZAKXHsYGdff6E8EPw3xLKY0ELUTQ69Q1rQiJENnccMA==
 
 "@types/jest@^24.0.18":
-  version "24.0.18"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-24.0.18.tgz#9c7858d450c59e2164a8a9df0905fc5091944498"
-  integrity sha512-jcDDXdjTcrQzdN06+TSVsPPqxvsZA/5QkYfIZlq1JMw7FdP5AZylbOc+6B/cuDurctRe+MziUMtQ3xQdrbjqyQ==
+  version "24.0.19"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-24.0.19.tgz#f7036058d2a5844fe922609187c0ad8be430aff5"
+  integrity sha512-YYiqfSjocv7lk5H/T+v5MjATYjaTMsUkbDnjGqSMoO88jWdtJXJV4ST/7DKZcoMHMBvB2SeSfyOzZfkxXHR5xg==
   dependencies:
     "@types/jest-diff" "*"
 
@@ -2504,9 +2504,9 @@
   integrity sha512-j6Sqt38ssdMKutXBUuAcmWF8QtHW1Fwz/mz4Y+Wd9mzpBiVFirjpNQf363hG5itkG+yGaD+oiLyb50HxJ36l9Q==
 
 "@types/prop-types@*":
-  version "15.7.2"
-  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.2.tgz#0e58ae66773d7fd7c372a493aff740878ec9ceaa"
-  integrity sha512-f8JzJNWVhKtc9dg/dyDNfliTKNOJSLa7Oht/ElZdF/UbMUmAH3rLmAk3ODNjw0mZajDEgatA03tRjB4+Dp/tzA==
+  version "15.7.3"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
+  integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
 "@types/radium@^0.24.2":
   version "0.24.2"
@@ -2532,17 +2532,17 @@
     "@types/react" "*"
 
 "@types/react-native@^0.60.17":
-  version "0.60.17"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.60.17.tgz#3a4c2f3ebe1942fb267bba9374f0533c0ece261c"
-  integrity sha512-dvPdLYxrU74bU14GvGV+f1EMjyD6L2iDenEzDfUBWhxn7KKRgkWb289r2EIN+10XqvRP+H7YBgl+AoEHEfkcTA==
+  version "0.60.21"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.60.21.tgz#81a41cae7b232f52ab3983d854f4a0b0df79531e"
+  integrity sha512-E7F+P/UG4Utu+kh8Hy544i0m4CzpHw1awNX6hVfkhlu4mXSlAn6KLZzKEkPBbHm7g1kspmZTiuP23HAKZpASPw==
   dependencies:
     "@types/prop-types" "*"
     "@types/react" "*"
 
 "@types/react-redux@^7.1.4":
-  version "7.1.4"
-  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.4.tgz#e0d02a073e730b8b58a6341bddca2ea692ff0bce"
-  integrity sha512-SUV/7d+4L7C1Db/D4pqASgN1V1U2HnDEhEol9lYpPSguS76xFboZzf5ha2hTz6v31cUewyC7WksMh1q8JxhebQ==
+  version "7.1.5"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.5.tgz#c7a528d538969250347aa53c52241051cf886bd3"
+  integrity sha512-ZoNGQMDxh5ENY7PzU7MVonxDzS1l/EWiy8nUhDqxFqUZn4ovboCyvk4Djf68x6COb7vhGTKjyjxHxtFdAA5sUA==
   dependencies:
     "@types/hoist-non-react-statics" "^3.3.0"
     "@types/react" "*"
@@ -2550,24 +2550,16 @@
     redux "^4.0.0"
 
 "@types/react-test-renderer@^16.9.0":
-  version "16.9.0"
-  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-16.9.0.tgz#d60f530ecf4c906721511603cca711b4fa830d41"
-  integrity sha512-bN5EyjtuTY35xX7N5j0KP1vg5MpUXHpFTX6tGsqkNOthjNvet4VQOYRxFh+NT5cDSJrATmAFK9NLeYZ4mp/o0Q==
+  version "16.9.1"
+  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-16.9.1.tgz#9d432c46c515ebe50c45fa92c6fb5acdc22e39c4"
+  integrity sha512-nCXQokZN1jp+QkoDNmDZwoWpKY8HDczqevIDO4Uv9/s9rbGPbSpy8Uaxa5ixHKkcm/Wt0Y9C3wCxZivh4Al+rQ==
   dependencies:
     "@types/react" "*"
 
-"@types/react@*":
-  version "16.9.2"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.2.tgz#6d1765431a1ad1877979013906731aae373de268"
-  integrity sha512-jYP2LWwlh+FTqGd9v7ynUKZzjj98T8x7Yclz479QdRhHfuW9yQ+0jjnD31eXSXutmBpppj5PYNLYLRfnZJvcfg==
-  dependencies:
-    "@types/prop-types" "*"
-    csstype "^2.2.0"
-
-"@types/react@^16.9.4":
-  version "16.9.4"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.4.tgz#de8cf5e5e2838659fb78fa93181078469eeb19fc"
-  integrity sha512-ItGNmJvQ0IvWt8rbk5PLdpdQhvBVxAaXI9hDlx7UMd8Ie1iMIuwMNiKeTfmVN517CdplpyXvA22X4zm4jGGZnw==
+"@types/react@*", "@types/react@^16.9.4":
+  version "16.9.9"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.9.tgz#a62c6f40f04bc7681be5e20975503a64fe783c3a"
+  integrity sha512-L+AudFJkDukk+ukInYvpoAPyJK5q1GanFOINOJnM0w6tUgITuWvJ4jyoBPFL7z4/L8hGLd+K/6xR5uUjXu0vVg==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -3115,9 +3107,9 @@ bcrypt-pbkdf@^1.0.0:
     tweetnacl "^0.14.3"
 
 big-integer@^1.6.7:
-  version "1.6.44"
-  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.44.tgz#4ee9ae5f5839fc11ade338fea216b4513454a539"
-  integrity sha512-7MzElZPTyJ2fNvBkPxtFQ2fWIkVmuzw41+BZHSzpEq3ymB2MfeKp1+yXl/tS75xCx+WnyV+yb0kp+K1C3UNwmQ==
+  version "1.6.47"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.47.tgz#e1e9320e26c4cc81f64fbf4b3bb20e025bf18e2d"
+  integrity sha512-9t9f7X3as2XGX8b52GqG6ox0GvIdM86LyIXASJnDCFhYNgt+A+MByQZ3W2PyMRZjEvG5f8TEbSPfEotVuMJnQg==
 
 bl@^1.0.0:
   version "1.2.2"
@@ -3685,9 +3677,9 @@ cssstyle@^1.0.0:
     cssom "0.3.x"
 
 csstype@^2.2.0:
-  version "2.6.6"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.6.tgz#c34f8226a94bbb10c32cc0d714afdf942291fc41"
-  integrity sha512-RpFbQGUE74iyPgvr46U9t1xoQBM8T4BL8SxrN66Le2xYAPSaDJJKeztV3awugusb3g3G9iL8StmkBBXhcbbXhg==
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.7.tgz#20b0024c20b6718f4eda3853a1f5a1cce7f5e4a5"
+  integrity sha512-9Mcn9sFbGBAdmimWb2gLVDtFJzeKtDGIr76TUqmjZrw9LFXBMSU70lcs+C0/7fyCd6iBDqmksUcCOUIkisPHsQ==
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -7714,28 +7706,33 @@ react-fast-compare@^2.0.0:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
-react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.9.0:
+react-is@^16.7.0:
+  version "16.10.2"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.2.tgz#984120fd4d16800e9a738208ab1fba422d23b5ab"
+  integrity sha512-INBT1QEgtcCCgvccr5/86CfD71fw9EPmDxgiJX4I2Ddr6ZsV6iFXsuby+qWJPtmNuMY0zByTsG4468P7nHuNWA==
+
+react-is@^16.8.1, react-is@^16.8.4, react-is@^16.9.0:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
-react-native-background-fetch@^2.7.0, react-native-background-fetch@~2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/react-native-background-fetch/-/react-native-background-fetch-2.7.0.tgz#33748dea9c0c4e1a387fb2d2ac7b48e8f4596ece"
-  integrity sha512-FZIMIsqwng21wQ91ve+iJEMADb6PEnzcmjJyo1DyIot+WhNShyFDE2Tmzg7/coZm28d7YIixCb9vbd0K/wPbNQ==
+react-native-background-fetch@^2.7.0, react-native-background-fetch@~2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-background-fetch/-/react-native-background-fetch-2.7.1.tgz#1467aed0fd2851edfdf10d3d9ac4ffd0cf069a85"
+  integrity sha512-BNWBVL3kewDJL+B+0gF84iF8viws3AGHwxsWPp+MhWvgb/Su6BPWjgi8u0A9fRYhacozmAcNEPT7E3tah1P8lg==
   dependencies:
     fast-plist "^0.1.2"
     plist "^3.0.1"
     xcode "^2.0.0"
 
 react-native-background-geolocation@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-background-geolocation/-/react-native-background-geolocation-3.2.2.tgz#5fd2abc9ef3ac21afde795f60772e80c948f3bde"
-  integrity sha512-KLzIjTgXXNX7/MRcoGRmQJYOBXiRQO+o+f4t2nIxrKsYW/uR/igoLUfjgVXqH5N83gGLERsDsIgJUAKWPjaN8A==
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-background-geolocation/-/react-native-background-geolocation-3.3.0.tgz#7fc1dfc9bf26c147a7d3f20c7b1788566fa8a4e4"
+  integrity sha512-wGpDW0h+kh5+4XmfaUOvFsK268VuwhSpk2BHAQXAXo7p0fIiw12nZeGsKYgdIJeOdNGEsrfOEq6eDnwTmcYhOA==
   dependencies:
     fast-plist "^0.1.2"
     plist "^2.0.1"
-    react-native-background-fetch "~2.7.0"
+    react-native-background-fetch "~2.7.1"
     xcode "^0.9.1"
 
 react-native-device-info@^4.0.1:
@@ -7768,9 +7765,9 @@ react-native-status-bar-height@^2.4.0:
   integrity sha512-pWvZFlyIHiuxLugLioq97vXiaGSovFXEyxt76wQtbq0gxv4dGXMPqYow46UmpwOgeJpBhqL1E0EKxnfJRrFz5w==
 
 react-native-svg@^9.9.9:
-  version "9.10.0"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-9.10.0.tgz#8bf19f6b43eba078fcf3f64fe7461ac1d26be10c"
-  integrity sha512-xyLfx46ngCot+bp+3zDnvOqZsGicPWT6CeMe411i0TyWDmz+yVSyN1MilZ+pXNl3KhnZaPY5TUL2+6Zm+IN9lA==
+  version "9.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-9.12.0.tgz#ddb6302358dfd75af3000f0fed67b26923a92dd8"
+  integrity sha512-NoEiYCmTqgNtjDhTHfB7iARGz4AkTzu191Rr6jrGTchp5/ZdwpmYG/9qXWXTDDNULX5xChljI6IL/gkynfEenw==
 
 react-native-typescript-transformer@^1.2.13:
   version "1.2.13"
@@ -9165,9 +9162,9 @@ typescript-tuple@^2.2.1:
     typescript-compare "^0.0.2"
 
 typescript@^3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
-  integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.4.tgz#b18752bb3792bc1a0281335f7f6ebf1bbfc5b91d"
+  integrity sha512-unoCll1+l+YK4i4F8f22TaNVPRHcD9PA3yCuZ8g5e0qGqlVlJ/8FSateOLLSagn+Yg5+ZwuPkL8LFUc0Jcvksg==
 
 typical@^2.6.0, typical@^2.6.1:
   version "2.6.1"

@@ -292,7 +292,7 @@ export const Geo = {
       BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
     }
     const onHttp = (response: HttpEvent) => {
-      log.debug('BackgroundGeolocation onHttp', response);
+      // log.trace('BackgroundGeolocation onHttp', response);
     }
     const onLocationError = (error: LocationError) => {
       let errorMessage;

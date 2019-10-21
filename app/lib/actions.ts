@@ -104,7 +104,6 @@ export const newAction = (type: ActionType, params: any = null) => ({
 import { LocationEvents, LonLat } from 'shared/locations';
 import { AppStateChange } from 'shared/appEvents';
 import { GenericEvents, TimeReference } from 'shared/timeseries';
-import { Activity } from 'shared/marks';
 
 // TODO complete this list
 
