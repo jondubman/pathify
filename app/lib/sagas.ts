@@ -177,7 +177,7 @@ const sagas = {
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const activeNow = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP);
+    const activeNow = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP); // but not BACKGROUND
     yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     if (newState !== AppStateChange.INACTIVE) {
       yield call(Geo.processSavedLocations);

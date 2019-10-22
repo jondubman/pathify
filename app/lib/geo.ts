@@ -412,18 +412,19 @@ export const Geo = {
       const state = store.getState();
       if (state.flags.appActive) {
         await processLocation(location);
-        return;
+      } else {
+        let taskId;
+        try {
+          taskId = await BackgroundGeolocation.startBackgroundTask();
+          await processLocation(location);
+        } catch (err) {
+          log.error('onLocation error during background execution');
+        } finally {
+          if (taskId) {
+            await BackgroundGeolocation.stopBackgroundTask(taskId);
+          }
+        }
       }
-      BackgroundGeolocation.startBackgroundTask().then(async (taskId) => {
-        processLocation(location).then(() => {
-          // When long-running task is complete, signal completion of taskId.
-          setTimeout(() => {
-            BackgroundGeolocation.stopBackgroundTask(taskId);
-          }, constants.timing.backgroundTaskSlackTime);
-        }).catch(() => {
-          BackgroundGeolocation.stopBackgroundTask(taskId);
-        })
-      })
     } catch (err) {
       log.error('onLocation', err);
     }
@@ -439,20 +440,22 @@ export const Geo = {
       const activityId = state.options.currentActivityId;
       const locations = await BackgroundGeolocation.getLocations() as Location[];
       log.info('processSavedLocations: count ', locations.length);
-      const locationEvents: LocationEvents = [];
-      for (let location of locations) {
-        if (location.sample) {
-          continue;
+      if (locations.length) {
+        const locationEvents: LocationEvents = [];
+        for (let location of locations) {
+          if (location.sample) {
+            continue;
+          }
+          const locationEvent = newLocationEvent(location, activityId);
+          locationEvents.push(locationEvent);
         }
-        const locationEvent = newLocationEvent(location, activityId);
-        locationEvents.push(locationEvent);
+        log.debug('processSavedLocations: ready to addEvents');
+        if (locationEvents.length) {
+          store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
+        }
+        log.debug('processSavedLocations: ready to destroyLocations');
+        await Geo.destroyLocations(); // TODO3
       }
-      log.debug('processSavedLocations: ready to addEvents');
-      if (locationEvents.length) {
-        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
-      }
-      log.debug('processSavedLocations: ready to destroyLocations');
-      await Geo.destroyLocations(); // TODO3
       log.debug('processSavedLocations: done');
       // TODO AppAction.geolocation?
     } catch (err) {
@@ -500,6 +503,8 @@ export const Geo = {
             reject(err);
           }, options)
           resolve(true);
+        } else {
+          resolve(false);
         }
       }
       BackgroundGeolocation.start(started, err => {
