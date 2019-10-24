@@ -6,6 +6,7 @@ import {
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import DebugInfo from 'presenters/DebugInfo';
+import { metersPerSecondToMilesPerHour, metersToMiles, msecToString } from 'shared/units';
 
 export interface DebugInfoStateProps {
   dynamicAreaTop: number;
@@ -21,12 +22,16 @@ const mapStateToProps = (state: AppState): DebugInfoStateProps => {
   const activity = currentActivity(state);
   let text = '';
   if (activity) {
-    text = `${activity.count}`;
+    const activityLength = (activity.tLastUpdate - activity.tStart); // msec
+    text = `Time ${msecToString(activityLength)}\n`;
+    text += `Events ${activity.count}\n`;
     if (activity.odo) {
-      text += `, ${Math.round(activity.odo)}m`;
+      text += `${Math.round(activity.odo)} meters, ${metersToMiles(activity.odo).toFixed(2)} miles`;
     }
-    if (activity.path) {
-      text +=  `, ${activity.path.length} segments`;
+    if (activityLength) {
+      const speed = metersPerSecondToMilesPerHour(activity.odo / (activityLength / 1000));
+      text += '\n';
+      text += `Avg speed ${speed.toFixed(2)} mph`;
     }
   }
   return {

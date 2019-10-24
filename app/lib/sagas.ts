@@ -140,8 +140,8 @@ const sagas = {
           update.count = activity.count ? activity.count + 1 : 1;
           if (event.type === EventType.LOC) {
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              // TODO3
-              // yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
+              // TODO3 Should correct path in this case
+              yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
             } else {
               // Appending events to an activity
               update.tLastLoc = event.t;
@@ -179,7 +179,7 @@ const sagas = {
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
     const activeNow = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP); // but not BACKGROUND
     yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
-    if (newState !== AppStateChange.INACTIVE) {
+    if (activeNow) { // Don't do this in the background... might take too long
       yield call(Geo.processSavedLocations);
     }
   },
@@ -200,8 +200,8 @@ const sagas = {
           let activities = Array.from(fullActivities) as any;
           for (let i = 0; i < activities.length; i++) {
             let modified = { ...activities[i] };
-            modified.pathLats = modified.pathLats.length;
-            modified.pathLons = modified.pathLons.length;
+            modified.pathLats = modified.pathLats.length; // Return just the array length rather than all the
+            modified.pathLons = modified.pathLons.length; // individual points.
             results.push(modified);
           }
           response = { results };
@@ -350,7 +350,7 @@ const sagas = {
   clockPress: function* (action: Action) {
     const { clockMenuOpen, mapFullScreen } = yield select((state: AppState) => state.flags);
     const params = action.params as ClockPressParams;
-    const { long } = params;
+    const long = params && params.long;
     if (mapFullScreen) { // enabled
       if (long) {
         yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));

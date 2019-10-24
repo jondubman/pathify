@@ -196,8 +196,8 @@ const geolocationOptions_highPower: Config = {
   persistMode: BackgroundGeolocation.PERSIST_MODE_ALL, // TODO3
 
   // TODO3 HTTP
-  batchSync: true,
-  params: BackgroundGeolocation.transistorTrackerParams(DeviceInfo),
+  // batchSync: true,
+  // params: BackgroundGeolocation.transistorTrackerParams(DeviceInfo),
   // params: {
   //   // Required for tracker.transistorsoft.com
   //   device: {
@@ -209,7 +209,7 @@ const geolocationOptions_highPower: Config = {
   //     framework: 'ReactNative',
   //   },
   // },
-  url: 'http://tracker.transistorsoft.com/locations/jondubman',
+  // url: 'http://tracker.transistorsoft.com/locations/jondubman',
 }
 
 // const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
@@ -317,7 +317,7 @@ export const Geo = {
     BackgroundGeolocation.onLocation(Geo.onLocation, onLocationError);
     BackgroundGeolocation.onMotionChange(onMotionChange);
 
-    // Now, configure the plugin, using those options. TODO3 AHA
+    // Now, ready the plugin (required, once, at startup, before calling start)
     BackgroundGeolocation.ready(highPower ? geolocationOptions_highPower : geolocationOptions_default,
     pluginState => {
       if (pluginState.enabled) {

@@ -9,14 +9,14 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import constants from 'lib/constants';
 import { DebugInfoProps } from 'containers/DebugInfoContainer';
+import constants from 'lib/constants';
 
 const colors = constants.colors.debugInfo;
 
 const textStyle: TextStyle = {
   color: colors.text,
-  fontSize: 12,
+  fontSize: 16,
 }
 
 class DebugInfo extends PureComponent<DebugInfoProps> {

@@ -34,7 +34,7 @@ export const initialAppState = {
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     settingsOpen: false, // settings panel visible state
     showActivityDetails: false, // TODO2
-    showDebugInfo: false, // TODO2
+    showDebugInfo: true, // TODO2
     showPathsOnMap: true, // TODO2
     showTimeline: true, // TODO2
     showTimelineMarks: true, // TODO2

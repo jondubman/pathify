@@ -102,8 +102,8 @@ const colors = {
     underlay: namedColors.purple,
   },
   debugInfo: {
-    backgroundColor: withOpacity(namedColors.black, 1),
-    borderColor: withOpacity(namedColors.red, 0.5),
+    backgroundColor: withOpacity(namedColors.black, 0.65),
+    borderColor: withOpacity(namedColors.gray, 0.2),
     borderWidth: 2,
     text: 'white',
   },
@@ -271,7 +271,8 @@ const constants = {
     borderWidth: 2,
     height: 100,
     padding: 5,
-    width: 280,
+    // width: 280,
+    width: 200,
   },
   followMeButton: {
     opacity: defaultOpacity,
