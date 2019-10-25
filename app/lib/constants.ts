@@ -309,7 +309,7 @@ const constants = {
     // TODO fitBounds can be used instead
     default: {
       opacity: 1,
-      style: 'Default', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO2
+      style: 'None', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO3
       zoom: 14,
       zoomStartActivity: 16,
     },

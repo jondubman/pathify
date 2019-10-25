@@ -18,7 +18,7 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // TODO2 clockMenu is among the PopupMenus. See initialMenus.
-    ticksEnabled: true, // TODO2 normally true, set false only for testing to disable actions that occur every second
+    ticksEnabled: false, // TODO2 normally true, set false only for testing to disable actions that occur every second
     flag1: false, // for experimentation
     flag2: false, // for experimentation
     flag3: false, // for experimentation
