@@ -40,7 +40,6 @@ const TimelineStyles = StyleSheet.create({
 class Timeline extends Component<TimelinePanelProps> {
 
   public readonly state: State = initialState;
-  // public renderCount: number = 0;
 
   constructor(props: any) {
     super(props);
@@ -49,9 +48,6 @@ class Timeline extends Component<TimelinePanelProps> {
 
   // This responds to user zoom interaction (which won't be happening if allowZoom is false)
   public handleZoom(domain: DomainPropType, props: any) {
-    // this.setState({ zoomDomain: domain }, () => {
-    //   this.props.zoomDomainChanged(domain);
-    // })
   }
 
   public render() {
@@ -72,7 +68,7 @@ class Timeline extends Component<TimelinePanelProps> {
       zoomLevel,
     } = this.props;
 
-    const { yDomain } = constants.timeline;
+    const { minimumZoomMsec, yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat } = zoomInfo;
     // TODO the following # of days is currently arbitrary, belongs in constants if anywhere
@@ -125,18 +121,16 @@ class Timeline extends Component<TimelinePanelProps> {
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
     // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
-
     // TODO
     // animate={{ duration: 0, onExit: { duration: 0 }, onEnter: { duration: 0 }, onLoad: { duration: 0 }}}
-
     return (
       <View style={TimelineStyles.timeline}>
         <VictoryChart
           containerComponent={
             <VictoryZoomContainer
-              allowPan={false /* TODO was true */}
+              allowPan={false}
               allowZoom={allowZoom}
-              minimumZoom={{ x: 1000, y: 1 }}
+              minimumZoom={{ x: minimumZoomMsec, y: 1 }}
               responsive={false}
               width={timelineWidth}
               zoomDimension="x"

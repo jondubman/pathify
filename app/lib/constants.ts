@@ -414,6 +414,7 @@ const constants = {
       zoomValue: 0.64, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below (0.7 is a good default)
     },
     miniBarHeight: 15,
+    minimumZoomMsec: 1000, // 1 second
     nearTimeThreshold: interval.minute, // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,

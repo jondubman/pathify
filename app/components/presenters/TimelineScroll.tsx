@@ -44,6 +44,14 @@ class TimelineScroll extends Component<TimelineScrollProps> {
 
   constructor(props: any) {
     super(props);
+    this.clearTimer = this.clearTimer.bind(this);
+  }
+
+  private clearTimer() {
+    if (this._timer) {
+      clearTimeout(this._timer);
+      this._timer = undefined;
+    }
   }
 
   public shouldComponentUpdate(nextProps: TimelineScrollProps, nextState: any) {
@@ -53,18 +61,15 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     return true;
   }
 
-  // Auto-scroll to the midpoint of the scrollable area when component is updated.
+  // Auto-scroll to the correct spot when component is updated.
   public componentDidUpdate() {
     const x = this.props.scrollToX;
     this._scrollView.scrollTo({ x, y: 0, animated: false });
   }
 
   public componentWillUnmount() {
+    this.clearTimer();
     this.props.setTimelineScrolling(false);
-    if (this._timer) {
-      clearTimeout(this._timer);
-      this._timer = undefined;
-    }
   }
 
   public render() {
@@ -99,10 +104,8 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       this._scrolling = true;
       logScrollEvents && log.trace('onMomentumScrollBegin');
       setTimelineScrolling(true);
-      if (this._timer) { // The timer was only around to finish scrolling in case we are not momentum scrolling.
-        clearTimeout(this._timer);
-        this._timer = undefined;
-      }
+      // The timer was only around to finish scrolling in case we are not momentum scrolling.
+      this.clearTimer();
     }
 
     const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -132,19 +135,21 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       }
       log.debug('domain', domain);
       setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
+      this.clearTimer();
       this._timer = setTimeout(() => {
         if (this._scrolling) {
           onFinishScrolling(domain);
         }
+        this._timer = undefined;
       }, constants.timing.scrollViewWaitForMomentumScroll)
     }
 
-    const onScrolling = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       if (!this._scrolling) {
-        logScrollEvents && log.trace('onScrolling called when not scrolling - ignoring');
+        logScrollEvents && log.trace('onScroll called when not scrolling - ignoring');
         return;
       }
-      logScrollEvents && log.trace('onScrolling', timelineRefTime, refTime, this._refTime);
+      logScrollEvents && log.trace('onScroll', timelineRefTime, refTime, this._refTime);
       const { x } = event.nativeEvent.contentOffset;
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
@@ -163,22 +168,16 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       this._refTime = newTime;
     }
 
-    const onScrollStart = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (this._timer) {
-        clearTimeout(this._timer);
-        this._timer = undefined;
-      }
+    const onScrollBeginDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      this.clearTimer();
       this._scrolling = true;
       this._refTime = this.props.refTime;
-      logScrollEvents && log.trace('onScrollStart');
+      logScrollEvents && log.trace('onScrollBeginDrag');
       setTimelineScrolling(true);
     }
 
     const onFinishScrolling = (domain: DomainPropType) => {
-      if (this._timer) {
-        clearTimeout(this._timer);
-        this._timer = undefined;
-      }
+      this.clearTimer();
       this._scrolling = false;
       logScrollEvents && log.trace('onFinishScrolling', domain);
       const x = (domain as any).x as [number, number];
@@ -188,17 +187,18 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       zoomDomainChanged(domain);
     }
 
+    // decelerationRate = {1.0}
     return (
       <ScrollView
-        centerContent={true}
+        centerContent={false}
         contentOffset={{ x: this.props.scrollToX, y: 0 }}
         horizontal={true}
-        decelerationRate={1.0 /* TODO this has no effect */}
+        decelerationRate={0}
         onContentSizeChange={onContentSizeChange}
         onMomentumScrollBegin={onMomentumScrollBegin}
         onMomentumScrollEnd={onMomentumScrollEnd}
-        onScroll={onScrolling}
-        onScrollBeginDrag={onScrollStart}
+        onScroll={onScroll}
+        onScrollBeginDrag={onScrollBeginDrag}
         onScrollEndDrag={onScrollEndDrag}
         overScrollMode='never'
         pinchGestureEnabled={false}
