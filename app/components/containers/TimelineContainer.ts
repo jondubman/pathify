@@ -32,7 +32,6 @@ export interface TimelineStateProps {
   currentActivityId: string;
   marks: MarkEvents;
   nowTime: number;
-  scrollToX: number;
   selectedActivityId: string;
   showMarks: boolean;
   showSpans: boolean;
@@ -73,7 +72,6 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     currentActivityId,
     marks,
     nowTime,
-    scrollToX: dynamicTimelineScrollWidth(state) / 2 - dynamicTimelineWidth(state) / 2,
     selectedActivityId,
     showMarks,
     showSpans,
