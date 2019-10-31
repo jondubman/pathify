@@ -18,7 +18,7 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false, // TODO2 clockMenu is among the PopupMenus. See initialMenus.
-    ticksEnabled: false, // TODO2 normally true, set false only for testing to disable actions that occur every second
+    ticksEnabled: true, // normally true, set false only for testing to disable actions that occur every second
     flag1: false, // for experimentation
     flag2: false, // for experimentation
     flag3: false, // for experimentation
@@ -28,7 +28,7 @@ export const initialAppState = {
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     mapDisable: false, // if true, map will not be shown at all
-    mapFullScreen: true, // false: timeline is visible. true: map occupies full screen and timeline is hidden
+    mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)

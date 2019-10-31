@@ -25,7 +25,6 @@ import TimelineSpans from 'presenters/TimelineSpans';
 import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
-  zoomDomain: null as any,
 }
 type State = Readonly<typeof initialState>
 
@@ -55,36 +54,21 @@ class Timeline extends Component<TimelinePanelProps> {
       allowZoom,
       currentActivityId,
       marks,
-      nowTime,
       selectedActivityId,
       showMarks,
       showSpans,
-      startupTime,
-      timeRange,
       timespans,
       timelineRefTime,
       timelineWidth,
-      visibleTime,
+      zoomDomain,
       zoomLevel,
     } = this.props;
 
-    const { minimumZoomMsec, yDomain } = constants.timeline;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval, tickFormat } = zoomInfo;
-    // TODO the following # of days is currently arbitrary, belongs in constants if anywhere
-    const someTimeAgo = timeseries.timeRoundDown(startupTime - interval.days(60), interval.days(1));
     const tickFormatFn = (t: Date) => {
       // TODO could customize string here to highlight special times/dates, e.g. 'noon'
       return d3.timeFormat(tickFormat)(t);
-    }
-    const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
-    const dataDomain: DomainPropType = { // the entire navigable domain of the Timeline
-      x: [Math.min(timeRange[0], someTimeAgo), Math.max(timeRange[1], nowTime + scrollableAreaTime / 2)],
-      y: yDomain,
-    }
-    const zoomDomain: DomainPropType = { // the visible domain of the Timeline
-      x: [timelineRefTime - scrollableAreaTime / 2, timelineRefTime + scrollableAreaTime / 2], // half on either side
-      y: yDomain,
     }
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
@@ -121,6 +105,7 @@ class Timeline extends Component<TimelinePanelProps> {
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
     // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
+
     // TODO
     // animate={{ duration: 0, onExit: { duration: 0 }, onEnter: { duration: 0 }, onLoad: { duration: 0 }}}
     return (
@@ -130,7 +115,7 @@ class Timeline extends Component<TimelinePanelProps> {
             <VictoryZoomContainer
               allowPan={false}
               allowZoom={allowZoom}
-              minimumZoom={{ x: minimumZoomMsec, y: 1 }}
+              minimumZoom={{ x: constants.timeline.minimumZoomMsec, y: 1 }}
               responsive={false}
               width={timelineWidth}
               zoomDimension="x"
@@ -138,7 +123,6 @@ class Timeline extends Component<TimelinePanelProps> {
               onZoomDomainChange={this.handleZoom}
             />
           }
-          domain={dataDomain}
           height={constants.timeline.default.height}
           width={timelineWidth}
           padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}

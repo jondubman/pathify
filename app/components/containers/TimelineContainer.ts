@@ -1,6 +1,10 @@
 import { connect } from 'react-redux';
 
-import { TimespanKind } from 'lib/constants';
+import {
+  DomainPropType,
+} from 'victory-native';
+
+import constants, { TimespanKind } from 'lib/constants';
 import {
   continuousTrackList,
   timelineTimespans,
@@ -10,7 +14,6 @@ import {
   timelineZoomLevel,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import utils from 'lib/utils';
 import Timeline from 'presenters/Timeline';
 import database from 'shared/database';
 import {
@@ -31,18 +34,16 @@ export interface TimelineStateProps {
   allowZoom: boolean;
   currentActivityId: string;
   marks: MarkEvents;
-  nowTime: number;
   selectedActivityId: string;
   showMarks: boolean;
   showSpans: boolean;
-  startupTime: number;
-  timelineNow: boolean;
+  timelineNow: boolean; // TODO3 needed?
   timelineRefTime: number;
   timelineWidth: number;
-  timeRange: TimeRange;
   timespans: Timespans;
   visibleTime: number;
   visibleWidth: number;
+  zoomDomain: DomainPropType;
   zoomLevel: number;
 }
 
@@ -52,9 +53,17 @@ export interface TimelineDispatchProps {
 export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
+  const { yDomain } = constants.timeline;
   const { currentActivityId, selectedActivityId, timelineRefTime } = state.options;
-  const nowTime = utils.now();
   const allowZoom = state.flags.timelinePinchToZoom;
+  const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
+  const visibleTime = timelineVisibleTime(state.options.timelineZoomValue);
+  const visibleWidth = dynamicTimelineWidth(state);
+  const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
+  const zoomDomain: DomainPropType = { // the visible domain of the Timeline
+    x: [timelineRefTime - scrollableAreaTime / 2, timelineRefTime + scrollableAreaTime / 2], // half on either side
+    y: yDomain,
+  }
   const showMarks = state.flags.showTimelineMarks;
   const showSpans = state.flags.showTimelineSpans;
   // if (timelineShowContinuousTracks) {
@@ -71,18 +80,16 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     allowZoom,
     currentActivityId,
     marks,
-    nowTime,
     selectedActivityId,
     showMarks,
     showSpans,
-    startupTime: state.options.startupTime,
     timelineNow: state.flags.timelineNow,
-    timelineRefTime: timelineRefTime,
-    timelineWidth: dynamicTimelineScrollWidth(state), // scrollable width
-    timeRange: timeseries.timeRangeOfEvents(database.events()),
+    timelineRefTime,
+    timelineWidth,
     timespans,
-    visibleTime: timelineVisibleTime(state.options.timelineZoomValue),
-    visibleWidth: dynamicTimelineWidth(state),
+    visibleTime,
+    visibleWidth,
+    zoomDomain,
     zoomLevel: timelineZoomLevel(state.options.timelineZoomValue),
   }
 }

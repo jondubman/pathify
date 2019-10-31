@@ -90,9 +90,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
     const logScrollEvents = true;
 
-    // TODO2 consolidate shared code here
-
-    const setZoomDomainWhileScrolling = (domain: any) => { // TODO
+    const setZoomDomainWhileScrolling = (domain: any) => {
       zoomDomainChanging(domain);
     }
 
