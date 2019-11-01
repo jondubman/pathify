@@ -103,7 +103,7 @@ const sagas = {
       if (AppAction[action]) {
         yield call(log.debug, 'configuring saga for AppAction', action);
         if (action === AppAction.sliderMoved) {
-          // TODO3 Special case
+          // Special case: For slider, always use latest position.
           yield takeLatest(AppAction[action], sagas[AppAction[action]]);
         } else {
           // General case
@@ -140,25 +140,23 @@ const sagas = {
           update.count = activity.count ? activity.count + 1 : 1;
           if (event.type === EventType.LOC) {
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              // TODO3 Should still correct path and odo in this case
-              yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
-            } else {
-              // Appending events to an activity
-              update.tLastLoc = event.t;
-              // odo
-              const odo = (event as LocationEvent).odo;
-              if (odo) {
-                if (!activity.odoStart || (update.odo && update.odo < activity.odoStart)) {
-                  update.odoStart = odo; // set odoStart on the activity
-                  update.odo = 0;
-                } else {
-                  update.odo = odo - activity.odoStart;
-                }
-              }
-              // path
-              const { lon, lat } = event as LocationEvent;
-              pathExtension.push([ lon, lat ]);
+              yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order');
             }
+            // Appending events to an activity
+            update.tLastLoc = Math.max(activity.tLastLoc || 0, event.t);
+            // odo
+            const odo = (event as LocationEvent).odo;
+            if (odo) {
+              if (!activity.odoStart || odo < activity.odoStart) {
+                update.odoStart = odo; // set odoStart on the activity
+                update.odo = 0;
+              } else {
+                update.odo = odo - activity.odoStart;
+              }
+            }
+            // TODO3 ensure path is arranged correctly by time regardless of order events were added
+            const { lon, lat } = event as LocationEvent;
+            pathExtension.push([ lon, lat ]);
           }
           update.tLastUpdate = utils.now();
           database.updateActivity(update, pathExtension);

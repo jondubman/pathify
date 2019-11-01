@@ -402,7 +402,7 @@ const constants = {
     timelineCloseToNow: 5000, // TODO2
     timelineZoomThrottle: 100,
     timerTickInterval: 1000,
-    watchPositionInterval: 1000,
+    // watchPositionInterval: 1000,
   },
   timeline: {
     barHeight: 40, // big enough to be touchable

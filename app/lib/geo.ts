@@ -164,38 +164,32 @@ const geolocationOptions_lowPower: Config = {
 
 const geolocationOptions_highPower: Config = {
   ...geolocationOptions,
-
   // desired time between activity detections.
   // Larger values will result in fewer activity detections while improving battery life.
   // A value of 0 will result in activity detections at the fastest possible rate.
   activityRecognitionInterval: 1000, // msec
-
   // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
   // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
   desiredOdometerAccuracy: 10, // Location accuracy threshold in meters for odometer calculations.
-
+  disableStopDetection: false,
   distanceFilter: 1, // meters device must move to generate update event, default 10
   forceReloadOnBoot: true, // TODO
   heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
+  // logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE, // TODO3
+  logLevel: BackgroundGeolocation.LOG_LEVEL_ERROR, // TODO3
   preventSuspend: true, // default false (note true has major battery impact!)
   maxDaysToPersist: 14, // TODO3
-  startOnBoot: true, // set to true to enable background-tracking after the device reboots
-
+  persistMode: BackgroundGeolocation.PERSIST_MODE_ALL, // TODO3
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
-
+  startOnBoot: true, // set to true to enable background-tracking after the device reboots
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   stopOnTerminate: false,
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
 
-  // logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE, // TODO3
-  logLevel: BackgroundGeolocation.LOG_LEVEL_ERROR, // TODO3
-  disableStopDetection: true, // TODO3
-  persistMode: BackgroundGeolocation.PERSIST_MODE_ALL, // TODO3
-
-  // TODO3 HTTP
+  // TODO3 for diagnosis via HTTP POST
   // batchSync: true,
   // params: BackgroundGeolocation.transistorTrackerParams(DeviceInfo),
   // params: {
@@ -492,11 +486,11 @@ export const Geo = {
     return new Promise((resolve, reject) => {
       const started = () => {
         if (reason === 'tracking') {
-          const options = {
-            extras: { source: 'watchPosition' },
-            interval: constants.timing.watchPositionInterval,
-            persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
-          }
+          // const options = {
+          //   extras: { source: 'watchPosition' },
+          //   interval: constants.timing.watchPositionInterval,
+          //   persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
+          // }
           // const watch = Geo.onLocation;
           // const watch = () => {}; // TODO3
           // BackgroundGeolocation.watchPosition(watch, err => {
@@ -523,14 +517,14 @@ export const Geo = {
       log.trace('BackgroundGeolocation reasons', reasons);
       return Promise.resolve(false);
     }
-    if (reason === 'tracking') {
-      const success = () => {
-        log.debug('BackgroundGeolocation.stopWatchPosition success');
-      }
-      BackgroundGeolocation.stopWatchPosition(success, err => {
-        log.error('BackgroundGeolocation.stopWatchPosition', err);
-      })
-    }
+    // if (reason === 'tracking') {
+    //   const success = () => {
+    //     log.debug('BackgroundGeolocation.stopWatchPosition success');
+    //   }
+    //   BackgroundGeolocation.stopWatchPosition(success, err => {
+    //     log.error('BackgroundGeolocation.stopWatchPosition', err);
+    //   })
+    // }
     reasons[reason] = false;
     if (haveReason()) { // still
       log.debug(`BackgroundGeolocation no longer needed for ${reason}, but still running`);

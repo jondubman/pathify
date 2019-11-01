@@ -37,7 +37,7 @@ export interface TimelineStateProps {
   selectedActivityId: string;
   showMarks: boolean;
   showSpans: boolean;
-  timelineNow: boolean; // TODO3 needed?
+  timelineNow: boolean;
   timelineRefTime: number;
   timelineWidth: number;
   timespans: Timespans;
