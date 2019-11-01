@@ -91,6 +91,7 @@ import {
 } from 'shared/marks';
 import timeseries, {
   EventType,
+  GenericEvent,
   TimeRange,
 } from 'shared/timeseries';
 
@@ -128,19 +129,21 @@ const sagas = {
     if (events && events.length) {
       yield call(database.createEvents, events);
     }
-    // Now update any Activity/Activities related to the added events:
-    const pathExtension = [] as LonLat[];
+    // Now update any Activity/Activities related to the added events. TODO shold this be factored out?
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const id = event.activityId;
       if (id) {
-        const activity = database.activityById(id); // most likely the same for each event, but it doesn't matter
+        const pathExtension = [] as LonLat[];
+        const activity = yield call(database.activityById, id); // probably the same for each event, but doesn't matter
         if (activity) {
           const update: ActivityUpdate = { id: activity.id };
           update.count = activity.count ? activity.count + 1 : 1;
           if (event.type === EventType.LOC) {
+            let outOfOrder = false;
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
               yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order');
+              outOfOrder = true;
             }
             // Appending events to an activity
             update.tLastLoc = Math.max(activity.tLastLoc || 0, event.t);
@@ -154,12 +157,26 @@ const sagas = {
                 update.odo = odo - activity.odoStart;
               }
             }
-            // TODO3 ensure path is arranged correctly by time regardless of order events were added
-            const { lon, lat } = event as LocationEvent;
-            pathExtension.push([ lon, lat ]);
+            if (outOfOrder) {
+              const eventsForActivity = yield call(database.eventsForActivity, id); // should include the added events
+              update.pathLats = [];
+              update.pathLons = [];
+              for (let e of eventsForActivity) { // default sorted by time
+                const event = e as any as GenericEvent;
+                if (e.type === EventType.LOC) {
+                  const locEvent = event as LocationEvent;
+                  update.pathLats.push(locEvent.lat);
+                  update.pathLons.push(locEvent.lon);
+                  update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
+                }
+              }
+            } else {
+              const { lon, lat } = event as LocationEvent;
+              pathExtension.push([ lon, lat ]);
+            }
           }
           update.tLastUpdate = utils.now();
-          database.updateActivity(update, pathExtension);
+          yield call(database.updateActivity, update, pathExtension);
         }
       }
     }
@@ -193,7 +210,7 @@ const sagas = {
       switch (queryType) {
 
         case 'activities': {
-          let fullActivities = database.activities();
+          let fullActivities = yield call(database.activities);
           let results = [] as any;
           let activities = Array.from(fullActivities) as any;
           for (let i = 0; i < activities.length; i++) {
@@ -220,7 +237,7 @@ const sagas = {
         }
 
         case 'events': {
-          let events = database.events();
+          let events = yield call(database.events);
           let timeRange = query.timeRange || [0, Infinity];
           if (query.sinceLastStartup) {
             timeRange = [lastStartupTime(events) || timeRange[0], Math.min(timeRange[1], Infinity)];
@@ -243,11 +260,11 @@ const sagas = {
           break;
         }
         case 'eventCount': { // quick count of the total, no overhead
-          response = database.events().length;
+          response = (yield call(database.events)).length;
           break;
         }
         case 'lastStartupTime': {
-          response = lastStartupTime(database.events());
+          response = lastStartupTime(yield call(database.events));
           break;
         }
         case 'options': {
@@ -784,15 +801,14 @@ const sagas = {
           subtype: MarkType.END,
         }
         yield put(newAction(AppAction.addEvents, { events: [stopEvent, endMark] }));
-        const activity = database.activityById(activityId);
+        const activity = yield call(database.activityById, activityId);
         yield call(log.debug, 'stopActivity', activity);
         if (activity) { // TODO error if not
-          const updatedActivity = database.updateActivity({
+          yield call(database.updateActivity, {
             id: activityId,
             tLastUpdate: now,
             tEnd: now,
           })
-          // yield call(log.trace, 'updatedActivity', updatedActivity);
         }
         yield put(newAction(AppAction.setAppOption, { currentActivityId: null }));
       }

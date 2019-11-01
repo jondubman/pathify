@@ -87,8 +87,11 @@ const database = {
     return newActivity;
   },
 
-  // Return updated Activity
-  updateActivity: (activityUpdate: ActivityUpdate, pathExtension: LonLat[] = []): Activity => {
+  eventsForActivity: (id: string): Events => {
+    return database.events().filtered('activityId == $0', id);
+  },
+
+  updateActivity: async (activityUpdate: ActivityUpdate, pathExtension: LonLat[] = []) => {
     let activity: Activity;
     realm.write(() => {
       activity = realm.create('Activity', activityUpdate, true) as Activity; // true: update
@@ -97,7 +100,6 @@ const database = {
       activity.pathLats.push(...lats);
       activity.pathLons.push(...lons);
     })
-    return JSON.parse(JSON.stringify(activity!)) as Activity;
   },
 
   deleteActivity: (activityId: string): void => {
@@ -110,7 +112,7 @@ const database = {
 
   // events
 
-  createEvents: (events: GenericEvents): void => {
+  createEvents: async (events: GenericEvents) => {
     realm.write(() => {
       events.forEach((event: GenericEvent) => {
         realm.create('Event', event);
@@ -133,7 +135,7 @@ const database = {
 
   // settings
 
-  changeSettings: (changes: any): void => {
+  changeSettings: async (changes: any) => {
     try {
       const currentState = realm.objects('Settings');
       let newState;
@@ -165,7 +167,7 @@ const database = {
     }
   },
 
-  reset: () => {
+  reset: async () => {
     log.debug('Resetting Realm database!');
     realm.write(() => {
       realm.deleteAll(); // Boom!
