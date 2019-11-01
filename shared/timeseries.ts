@@ -249,14 +249,14 @@ const timeseries = {
   },
 
   // As events are sorted by time, determining the total time range is trivial.
-  timeRangeOfEvents: (events: Events): TimeRange => {
-    if (events.length < 1) {
-      return [0, 0]; // no events passed in
-    }
-    const firstEvent = events[0] as any as GenericEvent;
-    const lastEvent = events[events.length - 1] as any as GenericEvent;
-    return [firstEvent.t, lastEvent.t];
-  },
+  // timeRangeOfEvents: (events: Events): TimeRange => {
+  //   if (events.length < 1) {
+  //     return [0, 0]; // no events passed in
+  //   }
+  //   const firstEvent = events[0] as any as GenericEvent;
+  //   const lastEvent = events[events.length - 1] as any as GenericEvent;
+  //   return [firstEvent.t, lastEvent.t];
+  // },
 
   timeRangesEqual: (tr1: TimeRange, tr2: TimeRange): boolean => (
     tr1[0] === tr2[0] && tr1[1] === tr2[1]

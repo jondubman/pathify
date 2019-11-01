@@ -140,7 +140,7 @@ const sagas = {
           update.count = activity.count ? activity.count + 1 : 1;
           if (event.type === EventType.LOC) {
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              // TODO3 Should correct path in this case
+              // TODO3 Should still correct path and odo in this case
               yield call(log.warn, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order: TODO');
             } else {
               // Appending events to an activity

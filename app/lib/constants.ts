@@ -308,8 +308,8 @@ const constants = {
     centerMapDuration: 500, // TODO not honored on iOS https://github.com/nitaliano/react-native-mapbox-gl/issues/1411
     // TODO fitBounds can be used instead
     default: {
-      opacity: 1,
-      style: 'None', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO3
+      opacity: 0.5,
+      style: 'Satellite', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO3
       zoom: 14,
       zoomStartActivity: 16,
     },

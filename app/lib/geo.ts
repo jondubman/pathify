@@ -290,6 +290,7 @@ export const Geo = {
     const onHeartbeat = async (event: HeartbeatEvent) => {
       // Executed for each heartbeatInterval while the device is in stationary state
       // (iOS requires preventSuspend: true as well).
+      log.debug('onHeartbeat', event.location.timestamp);
       await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
     }
     const onHttp = (response: HttpEvent) => {
@@ -497,11 +498,11 @@ export const Geo = {
             persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
           }
           // const watch = Geo.onLocation;
-          const watch = () => {}; // TODO3
-          BackgroundGeolocation.watchPosition(watch, err => {
-            log.error('BackgroundGeolocation.watchPosition', err);
-            reject(err);
-          }, options)
+          // const watch = () => {}; // TODO3
+          // BackgroundGeolocation.watchPosition(watch, err => {
+          //   log.error('BackgroundGeolocation.watchPosition', err);
+          //   reject(err);
+          // }, options)
           resolve(true);
         } else {
           resolve(false);
