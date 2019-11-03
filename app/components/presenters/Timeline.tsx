@@ -19,9 +19,9 @@ import {
 } from 'victory-native';
 
 import constants from 'lib/constants';
-import { TimelinePanelProps } from 'containers/TimelineContainer';
+import { TimelineProps } from 'containers/TimelineContainer';
+import TimelineSpansContainer from 'containers/TimelineSpansContainer';
 import TimelineMarks from 'presenters/TimelineMarks';
-import TimelineSpans from 'presenters/TimelineSpans';
 import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
@@ -36,7 +36,7 @@ const TimelineStyles = StyleSheet.create({
   },
 })
 
-class Timeline extends Component<TimelinePanelProps> {
+class Timeline extends Component<TimelineProps> {
 
   public readonly state: State = initialState;
 
@@ -57,7 +57,6 @@ class Timeline extends Component<TimelinePanelProps> {
       selectedActivityId,
       showMarks,
       showSpans,
-      timespans,
       timelineRefTime,
       timelineWidth,
       zoomDomain,
@@ -134,7 +133,7 @@ class Timeline extends Component<TimelinePanelProps> {
             tickValues={tickValues}
           />
           {showSpans ?
-            <TimelineSpans data={timespans} />
+            <TimelineSpansContainer  />
             : null}
           {showMarks ?
             <TimelineMarks data={marks} currentActivityId={currentActivityId} selectedActivityId={selectedActivityId} />

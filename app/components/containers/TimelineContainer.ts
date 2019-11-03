@@ -50,7 +50,7 @@ export interface TimelineStateProps {
 export interface TimelineDispatchProps {
 }
 
-export type TimelinePanelProps = TimelineStateProps & TimelineDispatchProps;
+export type TimelineProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   const { yDomain } = constants.timeline;

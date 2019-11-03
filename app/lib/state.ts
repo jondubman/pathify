@@ -38,7 +38,7 @@ export const initialAppState = {
     showPathsOnMap: true, // TODO2
     showTimeline: true, // TODO2
     showTimelineMarks: false, // TODO2
-    showTimelineSpans: false, // TODO2
+    showTimelineSpans: true, // TODO2
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
