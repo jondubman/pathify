@@ -1,9 +1,7 @@
 import { connect } from 'react-redux';
 
-import { Timespan, Timespans } from 'containers/TimelineContainer';
-import constants, { TimespanKind } from 'lib/constants';
+import { Timespans } from 'containers/TimelineContainer';
 import {
-  continuousTrackList,
   timelineTimespans,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';

@@ -21,7 +21,7 @@ import {
 import constants from 'lib/constants';
 import { TimelineProps } from 'containers/TimelineContainer';
 import TimelineSpansContainer from 'containers/TimelineSpansContainer';
-import TimelineMarks from 'presenters/TimelineMarks';
+import TimelineMarksContainer from 'containers/TimelineMarksContainer';
 import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
@@ -53,7 +53,6 @@ class Timeline extends Component<TimelineProps> {
     const {
       allowZoom,
       currentActivityId,
-      marks,
       selectedActivityId,
       showMarks,
       showSpans,
@@ -136,7 +135,7 @@ class Timeline extends Component<TimelineProps> {
             <TimelineSpansContainer  />
             : null}
           {showMarks ?
-            <TimelineMarks data={marks} currentActivityId={currentActivityId} selectedActivityId={selectedActivityId} />
+            <TimelineMarksContainer />
             : null }
         </VictoryChart>
       </View>

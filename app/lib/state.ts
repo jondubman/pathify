@@ -28,17 +28,17 @@ export const initialAppState = {
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     mapDisable: false, // if true, map will not be shown at all
-    mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
+    mapFullScreen: true, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     settingsOpen: false, // settings panel visible state
     showActivityDetails: false, // TODO2
-    showDebugInfo: true, // TODO2
-    showPathsOnMap: true, // TODO2
-    showTimeline: true, // TODO2
-    showTimelineMarks: false, // TODO2
-    showTimelineSpans: true, // TODO2
+    showDebugInfo: true,
+    showPathsOnMap: true,
+    showTimeline: true,
+    showTimelineMarks: false,
+    showTimelineSpans: true,
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)

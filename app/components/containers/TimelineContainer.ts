@@ -6,8 +6,6 @@ import {
 
 import constants, { TimespanKind } from 'lib/constants';
 import {
-  continuousTrackList,
-  timelineTimespans,
   dynamicTimelineScrollWidth,
   dynamicTimelineWidth,
   timelineVisibleTime,
@@ -15,12 +13,7 @@ import {
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
-import database from 'shared/database';
-import {
-  MarkEvents,
-  markList
-} from 'shared/marks';
-import timeseries, { TimeRange } from 'shared/timeseries';
+import { TimeRange } from 'shared/timeseries';
 
 export interface Timespan {
   kind: TimespanKind;
@@ -33,14 +26,12 @@ export type Timespans = Timespan[];
 export interface TimelineStateProps {
   allowZoom: boolean;
   currentActivityId: string;
-  marks: MarkEvents;
   selectedActivityId: string;
   showMarks: boolean;
   showSpans: boolean;
   timelineNow: boolean;
   timelineRefTime: number;
   timelineWidth: number;
-  timespans: Timespans;
   visibleTime: number;
   visibleWidth: number;
   zoomDomain: DomainPropType;
@@ -66,27 +57,15 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   }
   const showMarks = state.flags.showTimelineMarks;
   const showSpans = state.flags.showTimelineSpans;
-  // if (timelineShowContinuousTracks) {
-  //   const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
-  //   const timespans: Timespans = tracks.map((track: Track): Timespan => ({
-  //     kind: TimespanKind.LOCATIONS,
-  //     tr: track.tr,
-  //   }))
-  // }
-  const timespans: Timespans = showSpans ? timelineTimespans(state) : [];
-  const marks: MarkEvents = showMarks ? markList(database.events()) : [];
-
   return {
     allowZoom,
     currentActivityId,
-    marks,
     selectedActivityId,
     showMarks,
     showSpans,
     timelineNow: state.flags.timelineNow,
     timelineRefTime,
     timelineWidth,
-    timespans,
     visibleTime,
     visibleWidth,
     zoomDomain,

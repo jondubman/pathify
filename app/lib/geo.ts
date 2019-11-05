@@ -408,6 +408,7 @@ export const Geo = {
       if (state.flags.appActive) {
         await processLocation(location);
       } else {
+        // TODO4 do we want to do this when appActive is false?
         let taskId;
         try {
           taskId = await BackgroundGeolocation.startBackgroundTask();

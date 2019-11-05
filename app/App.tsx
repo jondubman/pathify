@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  AppState as RNAppState, // would rather use AppState to refer to the Redux application state
+  AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
 } from 'react-native';
 import { Provider } from 'react-redux';
 
@@ -29,6 +29,7 @@ const mapNewStateToAppStateChange = {
 export default class App extends Component {
   constructor(props: any) {
     super(props);
+    this.handleAppStateChange = this.handleAppStateChange.bind(this);
   }
 
   componentDidMount() {

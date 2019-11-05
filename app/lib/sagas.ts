@@ -192,7 +192,7 @@ const sagas = {
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const activeNow = (newState === AppStateChange.ACTIVE || newState === AppStateChange.STARTUP); // but not BACKGROUND
+    const activeNow = (newState === AppStateChange.ACTIVE);
     yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     if (activeNow) { // Don't do this in the background... might take too long
       yield call(Geo.processSavedLocations);
@@ -706,6 +706,7 @@ const sagas = {
     yield put(newAction(AppAction.setAppOption, { timelineZoomValue: value }));
   },
 
+  // Start (or continue!) an Activity:
   startActivity: function* (action: Action) {
     try {
       const params = action.params as StartActivityParams || {};
@@ -777,7 +778,6 @@ const sagas = {
     if (currentActivityId) {
       yield call(log.info, 'Continuing previous activity...');
       yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
-      yield call(Geo.enableBackgroundGeolocation, true);
     }
   },
 

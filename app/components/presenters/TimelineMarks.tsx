@@ -1,17 +1,10 @@
 import * as React from 'react';
-import * as Victory from 'victory-native';
 
+import { TimelineMarksProps } from 'containers/TimelineMarksContainer';
 import TimelineMark from 'presenters/TimelineMark';
 import {
   MarkEvent,
-  MarkEvents,
 } from 'shared/marks';
-
-interface TimelineMarksProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
-  currentActivityId: string;
-  data: MarkEvents;
-  selectedActivityId: string;
-}
 
 class TimelineMarks extends React.Component<TimelineMarksProps> {
 
@@ -19,9 +12,9 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     super(props);
   }
 
-  // public shouldComponentUpdate(nextProps: TimelineMarksProps, nextState: any) {
-  //   return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
-  // }
+  public shouldComponentUpdate(nextProps: TimelineMarksProps, nextState: any) {
+    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
+  }
 
   public render() {
     const {

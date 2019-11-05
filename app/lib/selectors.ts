@@ -10,8 +10,8 @@ import { Timespan, Timespans } from 'containers/TimelineContainer';
 import database from 'shared/database';
 import locations from 'shared/locations';
 import { Activity } from 'shared/activities';
-import { MarkEvent, MarkType } from 'shared/marks';
-import timeseries, { interval, Timepoint, TimeRange } from 'shared/timeseries';
+import { MarkEvent } from 'shared/marks';
+import { Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
@@ -27,10 +27,10 @@ export const continuousTrackList = (state: AppState): Tracks => {
 
 const colorForAppState = {
   [AppStateChange.NONE]: 'transparent',
-  [AppStateChange.STARTUP]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.35), // == ACTIVE
-  [AppStateChange.ACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.35),
-  [AppStateChange.INACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.25),
-  [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.1),
+  [AppStateChange.STARTUP]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.75), // == ACTIVE
+  [AppStateChange.ACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.5),
+  [AppStateChange.INACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0),
+  [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.3),
 }
 
 // Each activityTimespan shows one Activity
