@@ -68,6 +68,7 @@ import { MapUtils } from 'presenters/MapArea';
 import {
   Activity,
   ActivityUpdate,
+  loggableActivity,
 } from 'shared/activities';
 import {
   lastStartupTime,
@@ -180,23 +181,6 @@ const sagas = {
     }
   },
 
-  appStateChange: function* (action: Action) {
-    const params = action.params as AppStateChangeParams;
-    const { newState } = params;
-    yield call(log.info, 'appStateChange saga:', newState);
-    const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
-      t: utils.now(),
-      type: EventType.APP,
-      newState,
-    })
-    yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const activeNow = (newState === AppStateChange.ACTIVE);
-    yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
-    if (activeNow) { // Don't do this in the background... might take too long
-      yield call(Geo.processSavedLocations);
-    }
-  },
-
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
@@ -212,9 +196,7 @@ const sagas = {
           let results = [] as any;
           let activities = Array.from(fullActivities) as any;
           for (let i = 0; i < activities.length; i++) {
-            let modified = { ...activities[i] };
-            modified.pathLats = modified.pathLats.length; // Return just the array length rather than all the
-            modified.pathLons = modified.pathLons.length; // individual points.
+            let modified = loggableActivity(activities[i]);
             results.push(modified);
           }
           response = { results };
@@ -290,6 +272,24 @@ const sagas = {
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
     } catch(err) {
       yield call(log.error, 'appQuery', err);
+    }
+  },
+
+
+  appStateChange: function* (action: Action) {
+    const params = action.params as AppStateChangeParams;
+    const { newState } = params;
+    yield call(log.info, 'appStateChange saga:', newState);
+    const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
+      t: utils.now(),
+      type: EventType.APP,
+      newState,
+    })
+    yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
+    const activeNow = (newState === AppStateChange.ACTIVE);
+    yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
+    if (activeNow) { // Don't do this in the background... might take too long
+      yield call(Geo.processSavedLocations);
     }
   },
 
@@ -465,6 +465,7 @@ const sagas = {
             const bounds = yield call(map.getVisibleBounds as any);
             if (followingUser) {
               const outOfBounds = keepMapCenteredWhenFollowing || (loc && bounds && !utils.locWellBounded(loc, bounds));
+              // log.trace('geolocation: followingUser', loc, bounds, outOfBounds);
               if (!priorLocation || outOfBounds) {
                   yield put(newAction(AppAction.centerMapOnUser));
               }
@@ -800,7 +801,7 @@ const sagas = {
         }
         yield put(newAction(AppAction.addEvents, { events: [stopEvent, endMark] }));
         const activity = yield call(database.activityById, activityId);
-        yield call(log.debug, 'stopActivity', activity);
+        yield call(log.debug, 'stopActivity', loggableActivity(activity));
         if (activity) { // TODO error if not
           yield call(database.updateActivity, {
             id: activityId,

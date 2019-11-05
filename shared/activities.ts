@@ -1,8 +1,6 @@
 // Shared code (client + server) to support activities that collect events that occur between START and STOP actions.
-
 import Realm from 'realm';
 
-import { Activity } from './activities';
 import { Timepoint } from './timeseries';
 
 export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityUpdate in sync, below!
@@ -63,4 +61,11 @@ export interface ActivityUpdate { // also used to create. Note this does not ext
   odo?: number; // total distance
   gain?: number; // total elevation gain
   loss?: number; // total elevation loss
+}
+
+export const loggableActivity = (activity: Activity) => {
+  let modified = { ...activity } as any;
+  modified.pathLats = modified.pathLats.length; // Return just the array length rather than all the
+  modified.pathLons = modified.pathLons.length; // individual points.
+  return modified;
 }
