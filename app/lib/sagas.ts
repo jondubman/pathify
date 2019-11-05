@@ -150,11 +150,9 @@ const sagas = {
             // odo
             const odo = (event as LocationEvent).odo;
             if (odo) {
+              update.odo = odo;
               if (!activity.odoStart || odo < activity.odoStart) {
-                update.odoStart = odo; // set odoStart on the activity
-                update.odo = 0;
-              } else {
-                update.odo = odo - activity.odoStart;
+                update.odoStart = odo; // set odoStart on the activity if not set already
               }
             }
             if (outOfOrder) {

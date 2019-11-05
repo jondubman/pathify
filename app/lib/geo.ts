@@ -26,10 +26,9 @@ import BackgroundGeolocation, {
 } from 'react-native-background-geolocation';
 
 import { AppAction, GeolocationParams, newAction } from 'lib/actions';
-import constants from 'lib/constants';
 import store, { Store } from 'lib/store';
 import utils from 'lib/utils';
-import locations, {
+import {
   LocationEvent,
   LocationEvents,
   ModeChangeEvent,
@@ -317,6 +316,10 @@ export const Geo = {
     pluginState => {
       if (pluginState.enabled) {
         log.trace('BackgroundGeolocation configured and ready', pluginState);
+      }
+      if (pluginState.didLaunchInBackground) {
+        // TODO4
+        // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
       }
       BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
     }, err => {

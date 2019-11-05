@@ -26,12 +26,13 @@ const mapStateToProps = (state: AppState): DebugInfoStateProps => {
     text = `Time ${msecToString(activityLength)}\n`;
     text += `Events ${activity.count}\n`;
     if (activity.odo) {
-      text += `${Math.round(activity.odo)} meters, ${metersToMiles(activity.odo).toFixed(2)} miles`;
-    }
-    if (activityLength) {
-      const speed = metersPerSecondToMilesPerHour(activity.odo / (activityLength / 1000));
-      text += '\n';
-      text += `Avg speed ${speed.toFixed(2)} mph`;
+      const odo = activity.odo - activity.odoStart;
+      text += `${Math.round(odo)}m, ${metersToMiles(odo).toFixed(2)} miles`;
+      if (activityLength) {
+        const speed = metersPerSecondToMilesPerHour(odo / (activityLength / 1000));
+        text += '\n';
+        text += `Avg speed ${speed.toFixed(2)} mph`;
+      }
     }
   }
   return {

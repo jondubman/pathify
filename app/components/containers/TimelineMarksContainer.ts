@@ -1,11 +1,13 @@
 import { connect } from 'react-redux';
 import * as Victory from 'victory-native';
 
-import {
-  MarkEvents,
-} from 'shared/marks';
 import TimelineMarks from 'presenters/TimelineMarks';
 import { AppState } from 'lib/state';
+import {
+  MarkEvents,
+  markList,
+} from 'shared/marks';
+import database from 'shared/database';
 
 export interface TimelineMarksStateProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
   currentActivityId: string;
@@ -19,9 +21,9 @@ export interface TimelineMarksDispatchProps {
 export type TimelineMarksProps = TimelineMarksStateProps & TimelineMarksDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineMarksStateProps => {
-  // const marks: MarkEvents = markList(database.events());
   const { currentActivityId, selectedActivityId } = state.options;
-  const marks: MarkEvents = [];
+  const marks: MarkEvents = markList(database.events()); // TODO4 remove this dependency
+  // const marks: MarkEvents = [];
   return {
     currentActivityId,
     data: marks,
