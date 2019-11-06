@@ -143,19 +143,11 @@ const sagas = {
           if (event.type === EventType.LOC) {
             let outOfOrder = false;
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: adding LOC events out of order');
+              yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: LOC events out of order');
               outOfOrder = true;
             }
             // Appending events to an activity
             update.tLastLoc = Math.max(activity.tLastLoc || 0, event.t);
-            // odo
-            const odo = (event as LocationEvent).odo;
-            if (odo) {
-              update.odo = odo;
-              if (!activity.odoStart || odo < activity.odoStart) {
-                update.odoStart = odo; // set odoStart on the activity if not set already
-              }
-            }
             if (outOfOrder) {
               const eventsForActivity = yield call(database.eventsForActivity, id); // should include the added events
               update.pathLats = [];
@@ -169,7 +161,16 @@ const sagas = {
                   update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
                 }
               }
-            } else {
+            } else { // simple case: appending a single LOC event
+              // odo
+              const odo = (event as LocationEvent).odo;
+              if (odo) {
+                update.odo = odo;
+                if (!activity.odoStart || odo < activity.odoStart) {
+                  update.odoStart = odo; // set odoStart on the activity if not set already
+                }
+              }
+              // pathExtension
               const { lon, lat } = event as LocationEvent;
               pathExtension.push([ lon, lat ]);
             }
@@ -275,19 +276,18 @@ const sagas = {
     }
   },
 
-
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { newState } = params;
     yield call(log.info, 'appStateChange saga:', newState);
+    const activeNow = (newState === AppStateChange.ACTIVE);
+    yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
       t: utils.now(),
       type: EventType.APP,
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const activeNow = (newState === AppStateChange.ACTIVE);
-    yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     if (activeNow) { // Don't do this in the background... might take too long
       yield call(Geo.processSavedLocations);
     }
@@ -302,6 +302,7 @@ const sagas = {
   // Note this has the side effect of disabling following on the map if the center is moved.
   centerMap: function* (action: Action) {
     try {
+      yield call(log.trace, 'saga centerMap');
       const haveUserLocation = yield select(state => !!state.userLocation);
       const map = MapUtils();
       if (map && map.flyTo) {
@@ -312,6 +313,7 @@ const sagas = {
           let newCenter = center;
           if (option === AbsoluteRelativeOption.relative) {
             const currentCenter = yield call(map.getCenter as any);
+            yield call(log.trace, 'saga centerMap: currentCenter', currentCenter);
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
           if ((center[0] || center[1]) && haveUserLocation) {
@@ -328,6 +330,8 @@ const sagas = {
             yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
           }
         }
+      } else {
+        yield call(log.warn, 'centerMap saga called with missing map');
       }
     } catch (err) {
       yield call(log.error, 'saga centerMap', err);
@@ -343,7 +347,11 @@ const sagas = {
         const userLocation = yield select((state: AppState) => state.userLocation);
         if (userLocation && userLocation.lon && userLocation.lat) {
           yield call(map.flyTo as any, locations.lonLat(userLocation));
+        } else {
+          yield call(log.warn, 'saga centerMapOnUser: missing userLocation');
         }
+      } else {
+        yield call(log.warn, 'saga centerMapOnUser: missing map');
       }
     } catch (err) {
       yield call(log.error, 'saga centerMapOnUser', err);
@@ -465,7 +473,6 @@ const sagas = {
             const bounds = yield call(map.getVisibleBounds as any);
             if (followingUser) {
               const outOfBounds = keepMapCenteredWhenFollowing || (loc && bounds && !utils.locWellBounded(loc, bounds));
-              // log.trace('geolocation: followingUser', loc, bounds, outOfBounds);
               if (!priorLocation || outOfBounds) {
                   yield put(newAction(AppAction.centerMapOnUser));
               }
@@ -713,9 +720,9 @@ const sagas = {
       const trackingActivity = yield select(state => state.flags.trackingActivity);
       if (!trackingActivity) {
         yield put(newAction(AppAction.flagEnable, 'backgroundGeolocation'));
-        yield put(newAction(AppAction.flagEnable, 'followingUser'));
-        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
+        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+        yield put(newAction(AppAction.startFollowingUser));
         yield put(newAction(AppAction.centerMap, {
           center: [0, 0],
           option: 'relative',
@@ -777,6 +784,8 @@ const sagas = {
     if (currentActivityId) {
       yield call(log.info, 'Continuing previous activity...');
       yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
+    } else {
+      yield put(newAction(AppAction.startFollowingUser));
     }
   },
 
@@ -821,11 +830,13 @@ const sagas = {
     try {
       yield call(log.debug, 'saga startFollowingUser');
       yield put(newAction(AppAction.flagEnable, 'followingUser'));
+      yield call(Geo.startBackgroundGeolocation, 'navigating');
       const map = MapUtils();
       if (map) {
         yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
+      } else {
+        yield call(log.warn, 'saga startFollowingUser: missing map');
       }
-      yield call(Geo.startBackgroundGeolocation, 'navigating');
     } catch (err) {
       yield call(log.error, 'saga startFollowingUser', err);
     }

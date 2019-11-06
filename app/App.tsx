@@ -33,33 +33,44 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    log.info('----- App starting up! (device log)');
-    log.info('windowSize', utils.windowSize());
-    log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
-    store.create(); // proactively create Redux store instance
+    try {
+      log.info('----- App starting up! (device log)');
+      log.info('windowSize', utils.windowSize());
+      log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
+      store.create(); // proactively create Redux store instance
 
-    RNAppState.addEventListener('change', this.handleAppStateChange);
-    store.dispatch(newAction(AppAction.startupActions));
-    this.handleAppStateChange('startup'); // initialize
 
-    const interval = setInterval(() => {
-      const { flags } = store.getState();
-      if (flags.appActive && flags.ticksEnabled) {
-        store.dispatch(newAction(AppAction.timerTick, utils.now()));
+      store.dispatch(newAction(AppAction.startupActions));
+
+      this.handleAppStateChange('startup'); // initialize
+      RNAppState.addEventListener('change', this.handleAppStateChange);
+      if (RNAppState.currentState === 'active') {
+        this.handleAppStateChange('active');
       }
-    }, store.getState().options.timerTickIntervalMsec);
-    store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
+      const interval = setInterval(() => {
+        const { flags } = store.getState();
+        if (flags.appActive && flags.ticksEnabled) {
+          store.dispatch(newAction(AppAction.timerTick, utils.now()));
+        }
+      }, store.getState().options.timerTickIntervalMsec);
+      store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
-    pollServer(); // attempt to stay in contact with server
+      pollServer(); // attempt to stay in contact with server
+    } catch (err) {
+      log.warn('App componentDidMount err', err);
+    }
   }
 
   componentWillUnmount() {
+    log.info('removing event listener for handleAppStateChange');
     RNAppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   handleAppStateChange(newState: string) {
     log.debug('app state change:', newState);
-    store.dispatch(newAction(AppAction.appStateChange, { newState: mapNewStateToAppStateChange[newState] } ));
+    store.dispatch(newAction(AppAction.appStateChange,
+      { newState: mapNewStateToAppStateChange[newState] }
+    ))
   }
 
   render() {

@@ -283,8 +283,12 @@ export const Geo = {
     const onHeartbeat = async (event: HeartbeatEvent) => {
       // Executed for each heartbeatInterval while the device is in stationary state
       // (iOS requires preventSuspend: true as well).
-      log.debug('onHeartbeat', event.location.timestamp);
-      await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
+      try {
+        log.debug('onHeartbeat', event.location.timestamp);
+        await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
+      } catch(err) {
+        log.warn('onHeartbeat error', err);
+      }
     }
     const onHttp = (response: HttpEvent) => {
       // log.trace('BackgroundGeolocation onHttp', response);
@@ -321,7 +325,7 @@ export const Geo = {
         // TODO4
         // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
       }
-      BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
+      BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location TODO4
     }, err => {
       log.error('BackgroundGeolocation failed to configure', err);
     })
@@ -438,7 +442,7 @@ export const Geo = {
       }
       const activityId = state.options.currentActivityId;
       const locations = await BackgroundGeolocation.getLocations() as Location[];
-      log.info('processSavedLocations: count ', locations.length);
+      log.info('processSavedLocations: count', locations.length);
       if (locations.length) {
         const locationEvents: LocationEvents = [];
         for (let location of locations) {
@@ -455,7 +459,7 @@ export const Geo = {
         log.debug('processSavedLocations: ready to destroyLocations');
         await Geo.destroyLocations(); // TODO3
       }
-      log.debug('processSavedLocations: done');
+      log.debug('processSavedLocations: done, count:', locations.length);
       // TODO AppAction.geolocation?
     } catch (err) {
       log.error('processSavedLocations', err);

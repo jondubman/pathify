@@ -22,7 +22,7 @@ export const initialAppState = {
     flag1: false, // for experimentation
     flag2: false, // for experimentation
     flag3: false, // for experimentation
-    followingUser: true, // is map following user?
+    followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpEnabled: false, // Help mode in the app
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation

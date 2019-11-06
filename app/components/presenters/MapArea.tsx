@@ -154,40 +154,57 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   async getCenter(): Promise<LonLat> {
-    if (this._map) {
-      const mapView = this._map;
-      const center = await mapView.getCenter();
-      return center as LonLat;
+    try {
+      if (this._map) {
+        const mapView = this._map;
+        const center = await mapView.getCenter();
+        return center as LonLat;
+      }
+      return [0, 0]; // TODO should never happen
+    } catch (err) {
+      return [0, 0]; // TODO should never happen
     }
-    return [0, 0]; // TODO should never happen
   }
 
   // coordinates is [lon, lat]
-  async getPointInView(coordinates) {
-    if (this._map) {
-      const mapView = this._map;
-      return await mapView.getPointInView(coordinates);
+  async getPointInView(coordinates): Promise<number[]> {
+    try {
+      if (this._map) {
+        const mapView = this._map;
+        return await mapView.getPointInView(coordinates);
+      }
+      return [0, 0]; // TODO should never happen
+    } catch (err) {
+      return [0, 0]; // TODO should never happen
     }
   }
 
   // return the coordinate bounds [NE [lon, lat], SW [lon, lat]] visible in the users’s viewport.
   async getVisibleBounds(): Promise<Bounds> {
-    if (this._map) {
-      const mapView = this._map;
-      // TODO casting types until index.d.ts TypeScript declaration is fixed
-      const bounds = await mapView.getVisibleBounds() as unknown as Bounds;
-      return bounds;
+    try {
+      if (this._map) {
+        const mapView = this._map;
+        // TODO casting types until index.d.ts TypeScript declaration is fixed
+        const bounds = await mapView.getVisibleBounds() as unknown as Bounds;
+        return bounds;
+      }
+      return null;
+    } catch (err) {
+      return null;
     }
-    return null;
   }
 
   async getZoom(): Promise<number> {
-    if (this._map) {
-      const mapView = this._map;
-      const zoom = await mapView.getZoom();
-      return zoom;
+    try {
+      if (this._map) {
+        const mapView = this._map;
+        const zoom = await mapView.getZoom();
+        return zoom;
+      }
+      return 0; // TODO should never happen
+    } catch (err) {
+      return 0; // TODO should never happen
     }
-    return 0; // TODO should never happen
   }
 
   // duration is optional
