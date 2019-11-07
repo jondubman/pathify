@@ -25,8 +25,9 @@ const utils = {
       (lat > SW[1] + latInset && lat < NE[1] - latInset)
   },
 
-  // "well bounded" means not just within the bounds, but inside a smaller square contained within the bounds.
-  // loc has lon and lat.
+  // locWellBounded helps ensure content is shown on the map.
+  // "well bounded" means not just within the given bounds, but inside a smaller square enclosed within those bounds.
+  // The idea is to include some margin around the area of concern to provide context. loc has lon and lat.
   // bounds is like what we get from mapArea.getVisibleBounds: [NE [lon, lat], SW [lon, lat]]
   // Note: NE and SW must be in that order, [NE, SW]
   // Hint: read [0] as 'lon' and [1] as 'lat'
@@ -38,10 +39,12 @@ const utils = {
     const center = [SW[0] + lonRange / 2,  // lon of center point within bounds
                     SW[1] + latRange / 2]; // lat of center point within bounds
 
+    // TODO dividing the ranges by 4 means total horizontal and vertical allowances are 1/2 that of the square.
+    // (top, bottom, left, right). This could be adjusted up or down, or there could be separately controllable margins.
+    // If allowance is 0, the center may end up on the edge of the bounds, with zero context on one side.
     const allowance = Math.min(lonRange / 4, latRange / 4); // allow for a substantial margin around square
     const squareBounds = [[center[0] + allowance, center[1] + allowance],  // NE
-    [center[0] - allowance, center[1] - allowance]]; // SW
-
+                          [center[0] - allowance, center[1] - allowance]]; // SW
     return utils.locInsideBounds(loc, squareBounds);
   },
 

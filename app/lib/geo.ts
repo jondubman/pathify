@@ -332,34 +332,54 @@ export const Geo = {
   },
 
   changePace: async (isMoving: boolean, done: Function) => {
-    await BackgroundGeolocation.changePace(isMoving, done);
+    try {
+      await BackgroundGeolocation.changePace(isMoving, done);
+    } catch (err) {
+      log.error('geo changePace', err);
+    }
   },
 
   destroyLocations: async () => {
-    await BackgroundGeolocation.destroyLocations();
+    try {
+      await BackgroundGeolocation.destroyLocations();
+    } catch (err) {
+      log.error('geo destroyLocations', err);
+    }
   },
 
   destroyLog: async () => {
-    await BackgroundGeolocation.destroyLog();
+    try {
+      await BackgroundGeolocation.destroyLog();
+    } catch (err) {
+      log.error('geo destroyLog', err);
+    }
   },
 
   emailLog: async () => {
-    if (EMAIL_ADDRESS) {
-      await BackgroundGeolocation.emailLog(EMAIL_ADDRESS);
+    try {
+      if (EMAIL_ADDRESS) {
+        await BackgroundGeolocation.emailLog(EMAIL_ADDRESS);
+      }
+    } catch (err) {
+      log.error('geo emailLog', err);
     }
   },
 
   enableBackgroundGeolocation: async (enable: boolean) => {
-    log.debug('enableBackgroundGeolocation', enable);
-    if (enable) {
-      await BackgroundGeolocation.setConfig(geolocationOptions_highPower);
-      await Geo.startBackgroundGeolocation('tracking');
-      log.debug('using geolocationOptions_highPower');
-    } else {
-      // disable
-      await BackgroundGeolocation.setConfig(geolocationOptions_default);
-      await Geo.stopBackgroundGeolocation('tracking');
-      log.debug('using geolocationOptions_default');
+    try {
+      log.debug('enableBackgroundGeolocation', enable);
+      if (enable) {
+        await BackgroundGeolocation.setConfig(geolocationOptions_highPower);
+        await Geo.startBackgroundGeolocation('tracking');
+        log.debug('using geolocationOptions_highPower');
+      } else {
+        // disable
+        await BackgroundGeolocation.setConfig(geolocationOptions_default);
+        await Geo.stopBackgroundGeolocation('tracking');
+        log.debug('using geolocationOptions_default');
+      }
+    } catch (err) {
+      log.error('geo enableBackgroundGeolocation', err);
     }
   },
 
@@ -467,10 +487,14 @@ export const Geo = {
   },
 
   resetOdometer: async () => {
-    const done = () => {
-      log.debug('resetOdometer done');
+    try {
+      const done = () => {
+        log.debug('resetOdometer done');
+      }
+      await BackgroundGeolocation.resetOdometer(done);
+    } catch (err) {
+      log.error('resetOdometer', err);
     }
-    await BackgroundGeolocation.resetOdometer(done);
   },
 
   // Geolocation may be needed for multiple reasons.

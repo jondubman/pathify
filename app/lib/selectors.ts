@@ -150,7 +150,7 @@ export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '' || state.flags.mapDisable)
 )
 
-// TODO cache
+// TODO4 cache for performance
 export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars };
   if (state.userLocation) {
