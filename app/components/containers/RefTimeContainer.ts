@@ -10,6 +10,7 @@ import utils from 'lib/utils';
 interface RefTimeStateProps {
   bottom: number;
   refTime: number;
+  timelineRefTime: number;
   hours: string;
   minutes: string;
   seconds: string;
@@ -28,7 +29,7 @@ interface RefTimeDispatchProps {
 export type RefTimeProps = RefTimeStateProps & RefTimeDispatchProps;
 
 const mapStateToProps = (state: AppState): RefTimeStateProps => {
-  const { refTime } = state.options;
+  const { refTime, timelineRefTime } = state.options;
   const d = new Date(refTime);
   const { twoDigitString } = utils;
   const hours24 = d.getHours(); // TODO 24-hour clock
@@ -45,6 +46,7 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   return {
     bottom: dynamicTimelineHeight(state),
     refTime,
+    timelineRefTime,
     hours,
     minutes,
     seconds,

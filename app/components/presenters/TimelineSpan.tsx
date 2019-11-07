@@ -33,6 +33,8 @@ class TimelineSpan extends React.Component<TimelineSpanProps> {
           return Math.round(yBase / 2) - height(kind) / 2;
         case TimespanKind.APP_STATE:
           return 0; // APP_STATE at the top
+        case TimespanKind.FUTURE:
+          return yBase - height(kind); // top to bottom
         case TimespanKind.LOCATIONS:
           return yBase - height(kind); // LOCATIONS at the bottom
         case TimespanKind.MODE:
@@ -55,6 +57,8 @@ class TimelineSpan extends React.Component<TimelineSpanProps> {
           return constants.timeline.barHeight;
         case TimespanKind.APP_STATE:
           return constants.timeline.miniBarHeight;
+        case TimespanKind.FUTURE:
+          return timeline.default.height;
         case TimespanKind.LOCATIONS:
           return constants.timeline.miniBarHeight;
         case TimespanKind.MODE:

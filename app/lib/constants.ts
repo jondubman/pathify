@@ -15,6 +15,7 @@ import { interval } from 'shared/timeseries';
 export enum TimespanKind {
   'ACTIVITY' = 'ACTIVITY',
   'APP_STATE' = 'APP_STATE',
+  'FUTURE' = 'FUTURE',
   'LOCATIONS' = 'LOCATIONS',
   'MODE' = 'MODE',
   'MOTION' = 'MOTION',
@@ -182,6 +183,7 @@ const colors = {
     timespans: {
       [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65), // unselected state (selectedActivity color above)
       [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
+      [TimespanKind.FUTURE]: withOpacity(namedColors.silver, 0.15),
       [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),
       [TimespanKind.OTHER]: withOpacity(namedColors.darkRed, 0.35),
       [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25), // TODO

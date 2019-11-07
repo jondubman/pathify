@@ -34,6 +34,7 @@ export const initialAppState = {
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     settingsOpen: false, // settings panel visible state
     showActivityDetails: false, // TODO2
+    showAppStateTimespans: false,
     showDebugInfo: true,
     showPathsOnMap: true,
     showTimeline: true,
@@ -53,6 +54,7 @@ export const initialAppState = {
     mapOpacity: constants.map.default.opacity,
     mapOpacityPreview: null as number | null, // while adjusting
     mapStyle: constants.map.default.style,
+    nowTime: now,
     pulsars: {} as OptionalPulsars,
     refTime: now,
     selectedActivityId: '', // for now, no more than one Activity is 'selected' at a time

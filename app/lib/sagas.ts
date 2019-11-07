@@ -876,17 +876,17 @@ const sagas = {
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
     const appActive = yield select((state: AppState) => state.flags.appActive);
-    const timelineScrolling = yield select((state: AppState) => state.flags.timelineScrolling);
-    if (appActive && !timelineScrolling) { // TODO2 let's not tick the timer while we are trying to scroll
+    if (appActive) { // TODO2 avoid ticking the timer in background
       const now = action.params as number;
       const { timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
-      if (timelineNow) {
-        const options = { refTime: now } as any;
+      const options = { nowTime: now } as any;
+      if (timelineNow && !timelineScrolling) {
+        options.refTime = now;
         if (!timelineScrolling) { // otherwise leave this alone until scrolling is complete TODO2
           options.timelineRefTime = now;
         }
-        yield put(newAction(AppAction.setAppOption, options));
       }
+      yield put(newAction(AppAction.setAppOption, options));
     }
   },
 

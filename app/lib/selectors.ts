@@ -11,7 +11,7 @@ import database from 'shared/database';
 import locations from 'shared/locations';
 import { Activity } from 'shared/activities';
 import { MarkEvent } from 'shared/marks';
-import { Timepoint, TimeRange } from 'shared/timeseries';
+import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
@@ -80,17 +80,14 @@ const appStateTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-// NOTE: selection here means TimeRange selections, not related to selectedActivity
-// export const selectionTimespans = (state: AppState): Timespans => {
-  // TODO experiment
-  // const { startupTime } = state.options;
-  // const timespan: Timespan = {
-  //   kind: TimespanKind.SELECTION,
-  //   // TODO replace hard-coded selection with real one
-  //   tr: [ startupTime - interval.seconds(20), startupTime - interval.seconds(10) ],
-  // }
-  // return [timespan];
-
+export const futureTimespan = (state: AppState): Timespans => {
+  const { nowTime } = state.options;
+  const timespan: Timespan = {
+    kind: TimespanKind.FUTURE,
+    tr: [nowTime, nowTime + interval.days(30) ],
+  }
+  return [timespan];
+}
 
 export const clockNowMode = (state: AppState): boolean => {
   if (state.flags.timelineNow) {
@@ -192,7 +189,10 @@ export const selectedActivity = (state: AppState): Activity | undefined => {
 export const timelineTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
   timespans.push(...activityTimespans(state));
-  timespans.push(...appStateTimespans(state));
+  if (state.flags.showAppStateTimespans) {
+    timespans.push(...appStateTimespans(state));
+  }
+  timespans.push(...futureTimespan(state));
   return timespans;
 }
 
