@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { currentActivity, selectedActivity } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
-import { Activities, Activity } from 'shared/activities';
+import { Activities } from 'shared/activities';
 
 interface PathsStateProps {
   activities: Activities;

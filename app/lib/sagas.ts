@@ -60,6 +60,7 @@ import {
 } from 'lib/actions'
 import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
+import { currentActivity, selectedActivity } from 'lib/selectors';
 import { postToServer } from 'lib/server';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
@@ -85,7 +86,7 @@ import locations, {
   ModeChangeEvent,
   MotionEvent,
 } from 'shared/locations';
-import log, { messageToLog } from 'shared/log';
+import log from 'shared/log';
 import {
   MarkEvent,
   MarkType
@@ -143,7 +144,7 @@ const sagas = {
           if (event.type === EventType.LOC) {
             let outOfOrder = false;
             if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: LOC events out of order');
+              // yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: LOC events out of order');
               outOfOrder = true;
             }
             // Appending events to an activity
@@ -191,7 +192,6 @@ const sagas = {
       const state = store.getState();
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
-
         case 'activities': {
           let fullActivities = yield call(database.activities);
           let results = [] as any;
@@ -203,7 +203,17 @@ const sagas = {
           response = { results };
           break;
         }
-
+        case 'activity': { // default to current
+          const state = yield select(state => state);
+          let activity = currentActivity(state);
+          let results = [] as any;
+          if (activity) {
+            let modified = loggableActivity(activity);
+            results.push(modified);
+            response = { results };
+          }
+          break;
+        }
         case 'counts': {
           response = {
             activities: (yield call(database.activities)).length,
@@ -211,12 +221,10 @@ const sagas = {
           }
           break;
         }
-
         case 'emailLog': {
           Geo.emailLog();
           break;
         }
-
         case 'events': {
           let events = yield call(database.events);
           let timeRange = query.timeRange || [0, Infinity];
@@ -260,6 +268,18 @@ const sagas = {
           response = 'pong';
           break;
         }
+        case 'selectedActivity': {
+          const state = yield select(state => state);
+          let activity = selectedActivity(state);
+          let results = [] as any;
+          if (activity) {
+            let modified = loggableActivity(activity);
+            results.push(modified);
+            response = { results };
+          }
+          break;
+        }
+
         case 'settings': {
           response = yield call(database.settings);
           break;

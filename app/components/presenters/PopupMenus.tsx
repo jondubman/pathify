@@ -45,13 +45,13 @@ class PopupMenus extends React.Component<PopupMenusProps> {
 
   public readonly state: State = {
   }
-  public onValueChanged;
+  public onSlidingComplete;
 
   constructor(props: any) {
     super(props);
     this.onSlidingStart = this.onSlidingStart.bind(this);
     this.onValueChange = _.throttle(this.onValueChange.bind(this), constants.timing.timelineZoomThrottle);
-    this.onValueChanged = ((value: number) => {
+    this.onSlidingComplete = ((value: number) => {
       this.onValueChange(value); // final value change
       this.props.slidingComplete(MenuItem.TIMELINE_ZOOM, value);
     }).bind(this);
@@ -130,7 +130,7 @@ class PopupMenus extends React.Component<PopupMenusProps> {
                       maximumTrackTintColor={constants.colors.byName.black}
                       minimumValue={0}
                       maximumValue={1}
-                      onSlidingComplete={this.onValueChanged}
+                      onSlidingComplete={this.onSlidingComplete}
                       onSlidingStart={this.onSlidingStart}
                       onValueChange={this.onValueChange}
                       style={Styles.slider}

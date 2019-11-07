@@ -201,7 +201,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         overScrollMode='never'
         pinchGestureEnabled={false}
         ref={_scrollView => { this._scrollView = _scrollView }}
-        scrollEventThrottle={20 /* msec >= 16 */}
+        scrollEventThrottle={0 /* msec >= 16. default 0 means scroll even sent only once each time view is scrolled. */}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         style={TimelineStyles.scrollView}

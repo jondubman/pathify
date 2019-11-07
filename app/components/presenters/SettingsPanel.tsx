@@ -18,7 +18,6 @@ import Slider from '@react-native-community/slider';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
 import constants, { MapStyle } from 'lib/constants';
-import log from 'shared/log';
 
 const colors = constants.colors.settingsPanel;
 const { height, leftOffset, topOffset } = constants.settingsPanel;
@@ -113,14 +112,14 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
   constructor(props: any) {
     super(props);
     this.onValueChange = _.throttle(this.onValueChange.bind(this), constants.timing.opacitySliderThrottle);
-    this.onValueChanged = this.onValueChanged.bind(this);
+    this.onSlidingComplete = this.onSlidingComplete.bind(this);
   }
 
   public onValueChange(value: number) {
     this.props.onSetMapOpacityPreview(value);
   }
 
-  public onValueChanged(value: number) {
+  public onSlidingComplete(value: number) {
     this.props.onSetMapOpacity(value);
   }
 
@@ -167,7 +166,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                         maximumTrackTintColor={constants.colors.byName.black}
                         minimumTrackTintColor={constants.colors.byName.white}
                         onValueChange={this.onValueChange}
-                        onSlidingComplete={this.onValueChanged}
+                        onSlidingComplete={this.onSlidingComplete}
                         style={Styles.opacitySlider}
                         value={props.mapOpacity}
                       />
