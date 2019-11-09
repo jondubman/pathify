@@ -173,7 +173,7 @@ const sagas = {
               }
               // pathExtension
               const { lon, lat } = event as LocationEvent;
-              pathExtension.push([ lon, lat ]);
+              pathExtension.push([lon, lat]);
             }
           }
           update.tLastUpdate = utils.now();
@@ -595,15 +595,13 @@ const sagas = {
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
     yield call(log.debug, 'saga modeChange', modeChangeEvent);
-    // TODO2
-    // yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
+    yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
   },
 
   motionChange: function* (action: Action) {
     const motionEvent = action.params as MotionEvent;
     yield call(log.debug, 'saga motionChange', motionEvent);
-    // TODO2
-    // yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
+    yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
   },
 
   panTimeline: function* (action: Action) {

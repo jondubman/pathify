@@ -64,7 +64,7 @@ const appStateTimespans = (state: AppState): Timespans => {
     if (previousState !== AppStateChange.NONE) {
       timespans.push({
         kind: TimespanKind.APP_STATE,
-        tr: [ previousTimepoint, t ],
+        tr: [previousTimepoint, t],
         color: colorForAppState[previousState],
       })
     }
@@ -74,7 +74,7 @@ const appStateTimespans = (state: AppState): Timespans => {
   // Add a timepsan representing the current state.
   timespans.push({
     kind: TimespanKind.APP_STATE,
-    tr: [ previousTimepoint, utils.now() ],
+    tr: [previousTimepoint, utils.now()],
     color: colorForAppState[previousState],
   })
   return timespans;
@@ -84,7 +84,7 @@ export const futureTimespan = (state: AppState): Timespans => {
   const { nowTime } = state.options;
   const timespan: Timespan = {
     kind: TimespanKind.FUTURE,
-    tr: [nowTime, nowTime + interval.days(30) ],
+    tr: [nowTime, nowTime + interval.days(30)],
   }
   return [timespan];
 }
@@ -94,8 +94,8 @@ export const clockNowMode = (state: AppState): boolean => {
     return true;
   }
   if (state.flags.timelineScrolling &&
-      state.options.refTime >= state.options.timelineRefTime - constants.timing.timelineCloseToNow &&
-      state.options.refTime >= utils.now() - constants.timing.timelineCloseToNow) {
+    state.options.refTime >= state.options.timelineRefTime - constants.timing.timelineCloseToNow &&
+    state.options.refTime >= utils.now() - constants.timing.timelineCloseToNow) {
     return true;
   }
   return false;
@@ -160,7 +160,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       visible: true,
     }
   }
-  if (!state.flags.timelineNow) {
+  if (!state.flags.timelineNow && state.flags.showPriorLocation) {
     const { nearTimeThreshold } = constants.timeline;
     const { refTime } = state.options;
     const tMin = refTime - nearTimeThreshold; // TODO this filtering should happen at the lower level

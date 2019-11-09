@@ -10,7 +10,6 @@ import {
 import constants from 'lib/constants';
 const colors = constants.colors.geolocationButton;
 const {
-  bottomOffset, // TODO used?
   leftOffset,
   opacity,
   size,
@@ -40,7 +39,7 @@ const Styles = StyleSheet.create({
 })
 
 // import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-// const modeIcons = [ 'ghost', 'bullseye', 'running', 'bolt' ];
+// const modeIcons = ['ghost', 'bullseye', 'running', 'bolt'];
 /*
 <FontAwesome5
   color={constants.colors.byName.black}
@@ -60,7 +59,7 @@ const GeolocationButton = (props: GeolocationButtonProps) => (
     onPress={props.onPress}
     underlayColor={props.enabled ? colors.enabledUnderlay : colors.disabledUnderlay}
   >
-    <Text style={[ Styles.label, props.enabled ? Styles.stop : Styles.start ]}>
+    <Text style={[Styles.label, props.enabled ? Styles.stop : Styles.start]}>
       {props.enabled ? 'STOP' : 'START'}
     </Text>
   </TouchableHighlight>

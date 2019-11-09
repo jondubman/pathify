@@ -37,6 +37,7 @@ export const initialAppState = {
     showAppStateTimespans: false,
     showDebugInfo: true,
     showPathsOnMap: true,
+    showPriorLocation: false, // TODO4
     showTimeline: true,
     showTimelineMarks: false,
     showTimelineSpans: true,
@@ -46,7 +47,6 @@ export const initialAppState = {
     timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
-  measurements: {} as object, // TODO2
   menus: initialMenus,
   options: { // non-boolean
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified

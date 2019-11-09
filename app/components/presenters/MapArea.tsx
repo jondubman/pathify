@@ -101,7 +101,7 @@ class MapArea extends Component<MapAreaProps> {
           <Mapbox.MapView
             attributionEnabled={true}
             compassEnabled={false}
-            contentInset={[ 0, 0, 0, 0 ]}
+            contentInset={[0, 0, 0, 0]}
             logoEnabled={true}
             onPress={this.onPress}
             onRegionDidChange={this.onRegionDidChange}

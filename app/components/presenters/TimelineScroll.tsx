@@ -91,6 +91,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     const logScrollEvents = true;
 
     const setZoomDomainWhileScrolling = (domain: DomainPropType) => {
+      log.trace('setZoomDomainWhileScrolling', domain);
       zoomDomainChanging(domain);
     }
 
@@ -155,8 +156,9 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         log.debug('movedX', movedX, 'scrollableAreaTime', Math.round(scrollableAreaTime) / 60000, 'scrollableWidth',
           Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
       }
-      const newTime = Math.min(utils.now(), timelineRefTime + timeDelta);
-      setTimelineNow(newTime >= utils.now() - constants.timing.timelineCloseToNow); // TODO3
+      const now = utils.now();
+      const newTime = Math.min(now, timelineRefTime + timeDelta);
+      setTimelineNow(newTime >= now - constants.timing.timelineCloseToNow); // TODO3
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -201,7 +203,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         overScrollMode='never'
         pinchGestureEnabled={false}
         ref={_scrollView => { this._scrollView = _scrollView }}
-        scrollEventThrottle={0 /* msec >= 16. default 0 means scroll even sent only once each time view is scrolled. */}
+        scrollEventThrottle={16 /* msec >= 16. default 0 means event sent only once each time view is scrolled. */}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         style={TimelineStyles.scrollView}

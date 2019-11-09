@@ -9,7 +9,7 @@ import locations, { LocationEvents } from 'shared/locations';
 import log from 'shared/log';
 import { EventType, interval, Timepoint } from 'shared/timeseries';
 
-const startLoc = [ -122.422943, 37.827293 ]; // Alcatraz
+const startLoc = [-122.422943, 37.827293]; // Alcatraz
 const locEventCount = 100;
 const tBase = 1000;
 const tIncrement = interval.second;
