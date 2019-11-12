@@ -137,7 +137,7 @@ const sagas = {
       const id = event.activityId;
       if (id) {
         const pathExtension = [] as LonLat[];
-        const activity = yield call(database.activityById, id); // probably the same for each event, but doesn't matter
+        const activity: Activity = yield call(database.activityById, id); // probably the same for each event TODO4
         if (activity) {
           const update: ActivityUpdate = { id: activity.id };
           update.count = activity.count ? activity.count + 1 : 1;
@@ -192,24 +192,29 @@ const sagas = {
       const state = store.getState();
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
+
         case 'activities': {
           let fullActivities = yield call(database.activities);
           let results = [] as any;
           let activities = Array.from(fullActivities) as any;
           for (let i = 0; i < activities.length; i++) {
-            let modified = loggableActivity(activities[i]);
-            results.push(modified);
+            let modifiedActivity = loggableActivity(activities[i]);
+            results.push(modifiedActivity);
           }
           response = { results };
           break;
         }
         case 'activity': { // default to current
           const state = yield select(state => state);
-          let activity = currentActivity(state);
+          const activity = query.activityId ? database.activityById(query.activityId) : currentActivity(state);
           let results = [] as any;
           if (activity) {
-            let modified = loggableActivity(activity);
-            results.push(modified);
+            let modifiedActivity = loggableActivity(activity);
+            results.push({ activity: modifiedActivity });
+            if (query.events) {
+              const events = (yield call(database.events)).filtered(`activityId == "${query.activityId}"`);
+              results.push({ events: query.count ? events.length : Array.from(events) })
+            }
             response = { results };
           }
           break;
@@ -226,7 +231,7 @@ const sagas = {
           break;
         }
         case 'events': {
-          let events = yield call(database.events);
+          const events = yield call(database.events);
           let timeRange = query.timeRange || [0, Infinity];
           if (query.sinceLastStartup) {
             timeRange = [lastStartupTime(events) || timeRange[0], Math.min(timeRange[1], Infinity)];

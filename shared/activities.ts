@@ -18,9 +18,9 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
 
     // metrics
     count: 'int', // of events
-    odo: 'float?', // total distance
-    gain: 'float?', // total elevation gain
-    loss: 'float?', // total elevation loss
+    odo: 'int?', // total distance
+    gain: 'int?', // total elevation gain
+    loss: 'int?', // total elevation loss
   },
 }
 
@@ -67,5 +67,6 @@ export const loggableActivity = (activity: Activity) => {
   let modified = { ...activity } as any;
   modified.pathLats = modified.pathLats.length; // Return just the array length rather than all the
   modified.pathLons = modified.pathLons.length; // individual points.
+  // TODO4 longest gaps
   return modified;
 }

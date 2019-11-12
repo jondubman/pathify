@@ -139,7 +139,7 @@ const geolocationOptions: Config = {
 }
 
 // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
-
+// TODO4 restore this
 const geolocationOptions_lowPower: Config = {
   ...geolocationOptions,
 
@@ -147,7 +147,7 @@ const geolocationOptions_lowPower: Config = {
   // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
 
-  desiredOdometerAccuracy: 10, // Location accuracy threshold in meters for odometer calculations.
+  desiredOdometerAccuracy: 30, // Location accuracy threshold in meters for odometer calculations.
 
   distanceFilter: 10, // meters device must move to generate update event, default 10
   heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
@@ -170,7 +170,7 @@ const geolocationOptions_highPower: Config = {
   // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
   // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
-  desiredOdometerAccuracy: 10, // Location accuracy threshold in meters for odometer calculations.
+  desiredOdometerAccuracy: 30, // Location accuracy threshold in meters for odometer calculations.
   disableStopDetection: false,
   distanceFilter: 1, // meters device must move to generate update event, default 10
   forceReloadOnBoot: true, // TODO
@@ -227,7 +227,7 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
     latIndexed: Math.round(info.coords.latitude * 1000000),
     lon: info.coords.longitude,
     lonIndexed: Math.round(info.coords.longitude * 1000000),
-    odo: info.odometer,
+    odo: Math.round(info.odometer), // It's meters and accuracy is not <1m. Half a meter on the odo is just confusing.
     speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
         : undefined,
   }
@@ -486,6 +486,7 @@ export const Geo = {
     }
   },
 
+  // TODO4 Do not do in production; would confuse the odometer for activities.
   resetOdometer: async () => {
     try {
       const done = () => {

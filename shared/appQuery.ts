@@ -3,17 +3,18 @@
 import { TimeRange } from './timeseries';
 
 export interface AppQueryDescriptor {
-  type: string;
+  type: string; // activities, activity, events, eventCount, options, etc. - see appQuery saga.
 
-  count?: boolean;
+  activityId: string; // applies to activity, events
+  count?: boolean; // applies to events
   exclude?: boolean;
-  filterTypes?: string[];
-  group?: boolean;
-  limit?: number;
-  since: number; // timestamp
-  sinceLastStartup?: boolean;
-  startIndex?: number;
-  timeRange?: TimeRange;
+  events: boolean; // applies to activity (true: include events)
+  filterTypes?: string[]; // applies to events
+  limit?: number; // applies to events
+  since: number; // timestamp, applies to events
+  sinceLastStartup?: boolean; // applies to events
+  startIndex?: number; // applies to events
+  timeRange?: TimeRange; // applies to events
 }
 
 export interface AppQueryParams {
