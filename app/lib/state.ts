@@ -41,6 +41,7 @@ export const initialAppState = {
     showTimeline: true,
     showTimelineMarks: false,
     showTimelineSpans: true,
+    storeAllLocationEvents: false, // should the app store location events outside of activity tracking?
     timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
@@ -56,9 +57,9 @@ export const initialAppState = {
     mapStyle: constants.map.default.style,
     nowTime: now,
     pulsars: {} as OptionalPulsars,
-    refTime: now,
+    refTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: '', // for now, no more than one Activity is 'selected' at a time
-    startupTime: now,
+    startupTime: now, // not persisted, never changed once set
     timelineRefTime: now, // By design this remains constant, as refTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline refTime, etc.
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (see constants.timeline for meaning)

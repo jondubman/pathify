@@ -422,8 +422,9 @@ export const Geo = {
           return;
         }
         const locationEvent = newLocationEvent(location, activityId);
-        store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
-
+        if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
+          store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
+        }
         const geolocationParams: GeolocationParams = {
           locationEvents: [locationEvent],
           recheckMapBounds: true,
