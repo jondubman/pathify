@@ -131,7 +131,7 @@ const sagas = {
     if (events && events.length) {
       yield call(database.createEvents, events);
     }
-    // Now update any Activity/Activities related to the added events. TODO shold this be factored out?
+    // Now update any Activity/Activities related to the added events. TODO Move all this to a saga in activities module
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const id = event.activityId;
@@ -142,29 +142,48 @@ const sagas = {
           const update: ActivityUpdate = { id: activity.id };
           update.count = activity.count ? activity.count + 1 : 1;
           if (event.type === EventType.LOC) {
-            let outOfOrder = false;
-            if (activity.tLastLoc && event.t < activity.tLastLoc) {
-              // yield call(log.trace, activity.tLastLoc, event.t, 'addEvents saga: LOC events out of order');
-              outOfOrder = true;
-            }
-            // Appending events to an activity
-            update.tLastLoc = Math.max(activity.tLastLoc || 0, event.t);
+            const locEvent = event as LocationEvent;
+            const outOfOrder = (activity.tLastLoc && event.t < activity.tLastLoc);
             if (outOfOrder) {
+              // Added an outOfOrder LOC event. Need to correct the path etc.
               const eventsForActivity = yield call(database.eventsForActivity, id); // should include the added events
               update.pathLats = [];
               update.pathLons = [];
-              for (let e of eventsForActivity) { // default sorted by time
-                const event = e as any as GenericEvent;
+              let prevInnerLocEvent: LocationEvent | null = null;
+              for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+                const innerEvent = e as any as GenericEvent;
                 if (e.type === EventType.LOC) {
-                  const locEvent = event as LocationEvent;
-                  update.pathLats.push(locEvent.lat);
-                  update.pathLons.push(locEvent.lon);
-                  update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
+                  const innerLocEvent = innerEvent as LocationEvent;
+                  update.pathLats.push(innerLocEvent.lat);
+                  update.pathLons.push(innerLocEvent.lon);
+                  update.tLastLoc = Math.max(activity.tLastLoc || 0, innerLocEvent.t);
+
+                  // maxGaps
+                  if (prevInnerLocEvent !== null) {
+                    const gapTime = innerLocEvent.t - prevInnerLocEvent.t;
+                    if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
+                      if (!update.maxGapTime || gapTime > update.maxGapTime) {
+                        update.maxGapTime = gapTime;
+                        update.tMaxGapTime = prevInnerLocEvent.t;
+                      }
+                    }
+                    if (innerLocEvent.odo && prevInnerLocEvent.odo) {
+                      const gapDistance = innerLocEvent.odo - prevInnerLocEvent.odo;
+                      if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
+                        if (!update.maxGapDistance || gapDistance > update.maxGapDistance) {
+                          update.maxGapDistance = gapDistance;
+                          update.tMaxGapDistance = prevInnerLocEvent.t;
+                        }
+                      }
+                    }
+                  }
+                  prevInnerLocEvent = { ...innerLocEvent };
                 }
               }
             } else { // simple case: appending a single LOC event
+              update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
               // odo
-              const odo = (event as LocationEvent).odo;
+              const odo = locEvent.odo;
               if (odo) {
                 update.odo = odo;
                 if (!activity.odoStart || odo < activity.odoStart) {
@@ -172,8 +191,23 @@ const sagas = {
                 }
               }
               // pathExtension
-              const { lon, lat } = event as LocationEvent;
+              const { lon, lat } = locEvent;
               pathExtension.push([lon, lat]);
+              // maxGaps
+              if (activity.tLastLoc) {
+                const gapTime = locEvent.t - activity.tLastLoc;
+                if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
+                  update.maxGapTime = gapTime;
+                  update.tMaxGapTime = activity.tLastLoc;
+                }
+                if (locEvent.odo && activity.odo) {
+                  const gapDistance = locEvent.odo - activity.odo;
+                  if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
+                    update.maxGapDistance = gapDistance;
+                    update.tMaxGapDistance = activity.tLastLoc;
+                  }
+                }
+              }
             }
           }
           update.tLastUpdate = utils.now();
@@ -193,7 +227,7 @@ const sagas = {
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
 
-        case 'activities': {
+        case 'activities': { // all
           let fullActivities = yield call(database.activities);
           let results = [] as any;
           let activities = Array.from(fullActivities) as any;
@@ -204,9 +238,10 @@ const sagas = {
           response = { results };
           break;
         }
-        case 'activity': { // default to current
+        case 'activity': { // default to current or selected if activityId not specified
           const state = yield select(state => state);
-          const activity = query.activityId ? database.activityById(query.activityId) : currentActivity(state);
+          const activity = query.activityId ? database.activityById(query.activityId)
+                                            : currentActivity(state) || selectedActivity(state);
           let results = [] as any;
           if (activity) {
             let modifiedActivity = loggableActivity(activity);
@@ -239,6 +274,8 @@ const sagas = {
             timeRange[0] = query.since;
           }
           let eventsFiltered = timeRange ? timeseries.filterByTime(events, timeRange) : events;
+          // TODO these query options need to be updated for Realm.
+          //
           // if (query.filterTypes) {
           //   if (query.exclude) {
           //     eventsFiltered = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
@@ -262,7 +299,7 @@ const sagas = {
           break;
         }
         case 'options': {
-          response = {
+          response = { // include this slice of state
             flags: state.flags,
             options: state.options,
             userLocation: state.userLocation,

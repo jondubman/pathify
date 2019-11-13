@@ -37,7 +37,7 @@ export const initialAppState = {
     showAppStateTimespans: false,
     showDebugInfo: true,
     showPathsOnMap: true,
-    showPriorLocation: false, // TODO4
+    showPriorLocation: true,
     showTimeline: true,
     showTimelineMarks: false,
     showTimelineSpans: true,
@@ -50,7 +50,7 @@ export const initialAppState = {
   menus: initialMenus,
   options: { // non-boolean
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
-    currentActivityId: '',
+    currentActivityId: '', // while tracking Activity
     mapOpacity: constants.map.default.opacity,
     mapOpacityPreview: null as number | null, // while adjusting
     mapStyle: constants.map.default.style,

@@ -228,8 +228,7 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
     lon: info.coords.longitude,
     lonIndexed: Math.round(info.coords.longitude * 1000000),
     odo: Math.round(info.odometer), // It's meters and accuracy is not <1m. Half a meter on the odo is just confusing.
-    speed: (info.coords.speed && info.coords.speed >= 0) ? metersPerSecondToMilesPerHour(info.coords.speed!)
-        : undefined,
+    speed: info.coords.speed, // meters per second
   }
 }
 

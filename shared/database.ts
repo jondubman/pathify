@@ -33,7 +33,7 @@ const schema = [
   SettingsSchema,
 ]
 // TODO use deleteRealmIfMigrationNeeded: false for production - see https://realm.io/docs/javascript/latest/
-const config = { schema, deleteRealmIfMigrationNeeded: false } as Realm.Configuration;
+const config = { schema, deleteRealmIfMigrationNeeded: true } as Realm.Configuration;
 const realm = new Realm(config);
 
 // TODO which errors to handle?
