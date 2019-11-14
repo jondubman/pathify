@@ -401,7 +401,7 @@ const constants = {
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2
-    timelineCloseToNow: 2500, // TODO2
+    timelineCloseToNow: 1000, // TODO2
     timelineZoomThrottle: 100,
     timerTickInterval: 1000,
     // watchPositionInterval: 1000,

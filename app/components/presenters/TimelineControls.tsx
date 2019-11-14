@@ -10,10 +10,15 @@ import {
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 
-import ClockContainer from 'containers/ClockContainer';
-import NowButtonContainer from 'containers/NowButtonContainer';
+import PausedClockContainer from 'containers/PausedClockContainer';
+import NowClockContainer from 'containers/NowClockContainer';
 import RefTimeContainer from 'containers/RefTimeContainer';
 import { TimelineControlsProps } from 'containers/TimelineControlsContainer';
+
+// TODO this fiddly magic number, determined empirically, positions well across all devices, but is nonintuitive.
+// This succeeds at positioning the nowClock between the center clock and the follow button.
+const clockLeftFactor = 0.714;
+const clockRightFactor = 0.728;
 
 const Styles = StyleSheet.create({
   centerLine: {
@@ -23,14 +28,16 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     width: constants.timeline.centerLineWidth,
   },
-  clock: {
+  clockCenter: {
     left: utils.windowSize().width / 2 - constants.clock.height / 2,
     position: 'absolute',
   },
-  nowButton: {
-    left: utils.windowSize().width / 2 + constants.clock.height / 2,
-    height: constants.clock.height,
-    marginLeft: 16,
+  clockLeft: {
+    right: (utils.windowSize().width * clockLeftFactor) - constants.clock.height / 2,
+    position: 'absolute',
+  },
+  clockRight: {
+    left: (utils.windowSize().width * clockRightFactor) - constants.clock.height / 2,
     position: 'absolute',
   },
   topLine: {
@@ -43,11 +50,11 @@ const Styles = StyleSheet.create({
 
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
-    <View style={[Styles.clock, { bottom: props.timelineHeight + constants.refTime.height + 1 }]}>
-      <ClockContainer  />
+    <View style={[props.nowMode ? Styles.clockLeft : Styles.clockCenter, { bottom: props.timelineHeight + constants.refTime.height + 1 }]}>
+      <PausedClockContainer  />
     </View>
-    <View style={[Styles.nowButton, { bottom: props.timelineHeight + constants.refTime.height + 1 }]}>
-      <NowButtonContainer />
+    <View style={[props.nowMode ? Styles.clockCenter : Styles.clockRight, { bottom: props.timelineHeight + constants.refTime.height + 1 }]}>
+      <NowClockContainer />
     </View>
     <RefTimeContainer />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />

@@ -1,3 +1,5 @@
+// Note this presenter component is used by two container components (NowClockContainer, PausedClockContainer)
+
 import React, {
 } from 'react';
 
@@ -20,7 +22,20 @@ const {
   ticks,
 } = constants.clock;
 
-import { ClockProps } from 'containers/ClockContainer';
+export interface ClockStateProps {
+  hours: number,
+  minutes: number,
+  seconds: number,
+  stopped: boolean;
+  nowMode: boolean;
+}
+
+export interface ClockDispatchProps {
+  onLongPress: () => void;
+  onPress: () => void;
+}
+
+export type ClockProps = ClockStateProps & ClockDispatchProps;
 
 const degreesPerHour = 360 / 12;
 const degreesPerMinuteOrSecond = 360 / 60;
@@ -164,8 +179,8 @@ const ClockTicks = () => {
 }
 
 const clockBackgroundStyle = (props: ClockProps): Object => (
-  props.timelineNow ? (props.stopped ? Styles.stoppedNow : Styles.now)
-                    : (props.stopped ? Styles.stoppedPast : Styles.past)
+  props.nowMode ? (props.stopped ? Styles.stoppedNow : Styles.now)
+                : (props.stopped ? Styles.stoppedPast : Styles.past)
 )
 
 const Clock = (props: ClockProps) => (

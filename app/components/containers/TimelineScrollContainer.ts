@@ -12,7 +12,6 @@ import utils from 'lib/utils';
 import TimelineScroll from 'presenters/TimelineScroll';
 
 export interface TimelineScrollStateProps {
-  now: number;
   refTime: number;
   scrollableWidth: number;
   scrollToX: number;
@@ -32,7 +31,6 @@ export type TimelineScrollProps = TimelineScrollStateProps & TimelineScrollDispa
 const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
   const { refTime, timelineRefTime } = state.options;
   return {
-    now: utils.now(),
     refTime,
     scrollableWidth: dynamicTimelineScrollWidth(state), // scrollable width
     // to calc scrollToX: start at the center of the scrollable area, then back up half the width of the visible area.

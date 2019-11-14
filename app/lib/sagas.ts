@@ -431,32 +431,50 @@ const sagas = {
   },
 
   clockPress: function* (action: Action) {
-    const { clockMenuOpen, mapFullScreen } = yield select((state: AppState) => state.flags);
     const params = action.params as ClockPressParams;
     const long = params && params.long;
-    if (mapFullScreen) { // enabled
-      if (long) {
-        yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
-        yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
-      } else {
-        yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-        yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
-      }
-    } else { // disabled (Timeline shown)
-      if (long) {
-        if (clockMenuOpen) {
-          yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-        } else {
-          yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
+    const nowClock = params && params.nowClock;
+    yield call(log.trace, `clockPress, now: ${nowClock} long: ${long}`);
+    if (long) {
+      yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+    } else {
+      const timelineNow = yield select(state => state.flags.timelineNow);
+      if (nowClock) {
+        if (!timelineNow) {
+          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         }
       } else {
-        if (clockMenuOpen) {
-          yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-        } else {
-          yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+        if (timelineNow) {
+          yield put(newAction(AppAction.flagDisable, 'timelineNow'));
         }
       }
     }
+    // TODO4 clean this up:
+
+    // const { clockMenuOpen, mapFullScreen } = yield select((state: AppState) => state.flags);
+    // if (mapFullScreen) { // enabled
+    //   if (long) {
+    //     yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
+    //     yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
+    //   } else {
+    //     yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+    //     yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
+    //   }
+    // } else { // disabled (Timeline shown)
+    //   if (long) {
+    //     if (clockMenuOpen) {
+    //       yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+    //     } else {
+    //       yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
+    //     }
+    //   } else {
+    //     if (clockMenuOpen) {
+    //       yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+    //     } else {
+    //       yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+    //     }
+    //   }
+    // }
   },
 
   continueActivity: function* (action: Action) {
@@ -481,16 +499,31 @@ const sagas = {
 
   //  After-effects (i.e. downstream side effects) of modifying app flags are handled here.
   flag_sideEffects: function* (flagName: string) {
-
+    const flags = yield select((state: AppState) => state.flags);
+    const enabledNow = flags[flagName];
     if (flagName === 'backgroundGeolocation') {
-      const flags = yield select((state: AppState) => state.flags);
-      const enabledNow = flags[flagName];
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
       if (flags.setPaceAfterStart && enabledNow) {
         // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
         yield call(Geo.changePace, true, () => {
           log.debug('BackgroundGeolocation pace manually set to moving');
         })
+      }
+    }
+    if (flagName === 'timelineNow') {
+      if (enabledNow) {
+        const pausedTime = yield select((state: AppState) => state.options.timelineRefTime); // current pos of timeline
+        yield put(newAction(AppAction.setAppOption, { pausedTime })); // remember prior position of timeline
+        yield put(newAction(AppAction.timerTick, utils.now()));
+      } else {
+        const pausedTime = yield select((state: AppState) => state.options.pausedTime); // apply prior pos of timeline
+        const { timelineScrolling } = flags;
+        if (timelineScrolling) {
+          // TODO is this right? Can this ever happen?
+          yield put(newAction(AppAction.setAppOption, { refTime: pausedTime }));
+        } else {
+          yield put(newAction(AppAction.setAppOption, { refTime: pausedTime, timelineRefTime: pausedTime }));
+        }
       }
     }
   },
@@ -691,7 +724,7 @@ const sagas = {
       const runSequenceActions = async (sequenceActions: Action[]) => {
         for (let sequenceAction of sequenceActions) {
           log.debug('sequenceAction', sequenceAction);
-          if (sequenceAction.type === AppAction.sleep) { // TODO sleep gets special treatment to ensure blocking execution
+          if (sequenceAction.type === AppAction.sleep) { // sleep gets special treatment to ensure blocking execution
             const sleepTime = (sequenceAction.params as SleepParams).for;
             await new Promise(resolve => setTimeout(resolve, sleepTime));
           }
@@ -737,8 +770,12 @@ const sagas = {
     }
     // Whenever refTime is set, update selectedActivity automatically based on marks.containingActivity,
     // which looks for bookending MarkType.START and MarkType.END events.
+    // Also update pausedTime, if timelineNow is false.
     if (action.params.refTime) {
       const timelineNow = yield select(state => state.flags.timelineNow);
+      if (!timelineNow) {
+        yield put(newAction(AppAction.setAppOption, { pausedTime: action.params.refTime }));
+      }
       const currentActivityId = yield select(state => state.options.currentActivityId);
       if (timelineNow) {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
@@ -936,13 +973,13 @@ const sagas = {
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
     const appActive = yield select((state: AppState) => state.flags.appActive);
-    if (appActive) { // TODO2 avoid ticking the timer in background
+    if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number;
       const { timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
-      const options = { nowTime: now } as any;
-      if (timelineNow && !timelineScrolling) {
+      const options = { nowTime: now } as any; // always update nowTime
+      if (timelineNow) {
         options.refTime = now;
-        if (!timelineScrolling) { // otherwise leave this alone until scrolling is complete TODO2
+        if (!timelineScrolling) {
           options.timelineRefTime = now;
         }
       }
