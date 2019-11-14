@@ -5,6 +5,7 @@ import TimelineControls from 'presenters/TimelineControls';
 import { dynamicTimelineHeight } from 'lib/selectors';
 
 interface TimelineControlsStateProps {
+  mapFullScreen: boolean;
   nowMode: boolean;
   timelineHeight: number;
 }
@@ -16,6 +17,7 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
+    mapFullScreen: state.flags.mapFullScreen,
     nowMode: state.flags.timelineNow,
     timelineHeight: dynamicTimelineHeight(state),
   }

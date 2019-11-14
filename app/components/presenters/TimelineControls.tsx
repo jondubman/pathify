@@ -50,10 +50,18 @@ const Styles = StyleSheet.create({
 
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
-    <View style={[props.nowMode ? Styles.clockLeft : Styles.clockCenter, { bottom: props.timelineHeight + constants.refTime.height + 1 }]}>
-      <PausedClockContainer  />
-    </View>
-    <View style={[props.nowMode ? Styles.clockCenter : Styles.clockRight, { bottom: props.timelineHeight + constants.refTime.height + 1 }]}>
+    {props.mapFullScreen ? // hide PausedClock in mapFullScreen mode
+      null
+      :
+      <View style={[props.nowMode ? Styles.clockLeft : Styles.clockCenter,
+                  { bottom: props.timelineHeight + constants.refTime.height + 1 }]}
+      >
+        <PausedClockContainer />
+      </View>
+    }
+    <View style={[props.nowMode ? Styles.clockCenter : Styles.clockRight,
+                { bottom: props.timelineHeight + constants.refTime.height + 1 }]}
+    >
       <NowClockContainer />
     </View>
     <RefTimeContainer />

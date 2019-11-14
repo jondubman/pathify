@@ -440,12 +440,17 @@ const sagas = {
     } else {
       const timelineNow = yield select(state => state.flags.timelineNow);
       if (nowClock) {
-        if (!timelineNow) {
+        if (timelineNow) {
+          yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
+        } else {
           yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         }
-      } else {
+      } else { // pausedClock
         if (timelineNow) {
           yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+        } else {
+          yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
+          yield put(newAction(AppAction.flagEnable, 'timelineNow')); // avoid pausedClock if timeline not visible
         }
       }
     }

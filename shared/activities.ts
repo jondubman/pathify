@@ -87,13 +87,14 @@ export interface ActivityUpdate { // also used to create. Note this is same as a
 }
 
 export const loggableActivity = (activity: Activity) => {
-  let a = { ...activity } as any;
+  let a = { ...activity } as any; // Adorn the provided activity with additional fields
   a.pathLats = a.pathLats.length; // Return just the array length rather than all the
   a.pathLons = a.pathLons.length; // individual points.
   if (a.odo && a.odoStart) {
     a.distance = a.odo - a.odoStart;
     a.distanceMiles = metersToMiles(a.distance);
   }
+  a.tStartText = new Date(a.tStart).toLocaleString()
   const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
   if (tEnd) {
     a.tTotal = tEnd - a.tStart;
