@@ -46,6 +46,9 @@ const mapDispatchToProps = (dispatch: Function): TimelineScrollDispatchProps => 
   }
   const setTimelineScrolling = (enabled: boolean) => {
     dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'timelineScrolling'));
+    if (enabled) {
+      setTimelineNow(false);
+    }
   }
   const zoomDomainChanged = (domain: DomainPropType) => {
     dispatch(newAction(AppAction.timelineZoomed, domain));
