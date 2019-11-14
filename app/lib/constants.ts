@@ -271,7 +271,7 @@ const constants = {
   ],
   debugInfo: {
     borderWidth: 2,
-    height: 100,
+    height: 150,
     padding: 5,
     // width: 280,
     width: 200,

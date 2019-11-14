@@ -27,12 +27,20 @@ const mapStateToProps = (state: AppState): DebugInfoStateProps => {
     text += `Events ${activity.count}\n`;
     if (activity.odo) {
       const odo = activity.odo - activity.odoStart;
-      text += `${Math.round(odo)}m, ${metersToMiles(odo).toFixed(2)} miles`;
-      if (activityLength) {
-        const speed = metersPerSecondToMilesPerHour(odo / (activityLength / 1000));
-        text += '\n';
-        text += `Avg speed ${speed.toFixed(2)} mph`;
-      }
+      text += `${Math.round(odo)} meters, ${metersToMiles(odo).toFixed(2)} mi`;
+      // if (activityLength) {
+      //   const speed = metersPerSecondToMilesPerHour(odo / (activityLength / 1000));
+      //   text += '\n';
+      //   text += `Avg speed ${speed.toFixed(2)} mph`;
+      // }
+    }
+    if (activity.maxGapTime) {
+      text += '\n';
+      text += `maxGapTime ${Math.round(activity.maxGapTime/1000)} sec`;
+    }
+    if (activity.maxGapDistance) {
+      text += '\n';
+      text += `maxGap ${Math.round(activity.maxGapDistance)} meters`;
     }
   }
   return {
