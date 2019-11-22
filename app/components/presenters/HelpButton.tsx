@@ -12,7 +12,11 @@ import constants from 'lib/constants';
 import { HelpButtonProps } from 'containers/HelpButtonContainer';
 
 const colors = constants.colors.helpButton;
-const { opacity, rightOffset, size } = constants.helpButton;
+const {
+  opacity,
+  rightOffset,
+  size
+} = constants.helpButton;
 
 const Styles = StyleSheet.create({
   button: {

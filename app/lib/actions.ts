@@ -35,6 +35,7 @@ export enum AppAction {
   'centerMapOnUser' = 'centerMapOnUser',
   'clearStorage' = 'clearStorage',
   'clockPress' = 'clockPress',
+  'closePanels' = 'closePanels',
   'continueActivity' = 'continueActivity',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
   'flagDisable' = 'flagDisable',
@@ -129,6 +130,10 @@ export interface CenterMapParams {
 export interface ClockPressParams {
   long: boolean;
   nowClock: boolean;
+}
+
+export interface ClosePanelsParams {
+  option: string;
 }
 
 export interface ContinueActivityParams {

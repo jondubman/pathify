@@ -22,7 +22,7 @@ export type HelpButtonProps = HelpButtonStateProps & HelpButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpButtonStateProps => {
   return {
-    enabled: state.flags.helpEnabled,
+    enabled: state.flags.helpOpen,
     topOffset: dynamicAreaTop(state),
   }
 }
@@ -30,7 +30,8 @@ const mapStateToProps = (state: AppState): HelpButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): HelpButtonDispatchProps => {
   const onPress = () => {
     log.debug('HelpButton press');
-    dispatch(newAction(AppAction.flagToggle, 'helpEnabled'));
+    dispatch(newAction(AppAction.closePanels, { option: 'otherThanHelp' }));
+    dispatch(newAction(AppAction.flagToggle, 'helpOpen'));
   }
   const dispatchers = {
     onPress,

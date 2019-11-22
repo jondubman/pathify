@@ -27,6 +27,7 @@ const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): SettingsButtonDispatchProps => {
   const onPress = () => {
     log.debug('SettingsButton press');
+    dispatch(newAction(AppAction.closePanels, { option: 'otherThanSettings' }));
     dispatch(newAction(AppAction.flagToggle, 'settingsOpen'));
   }
   const dispatchers = {

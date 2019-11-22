@@ -8,7 +8,6 @@ import {
   timelineVisibleTime,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import utils from 'lib/utils';
 import TimelineScroll from 'presenters/TimelineScroll';
 
 export interface TimelineScrollStateProps {

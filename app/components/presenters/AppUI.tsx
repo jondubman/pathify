@@ -11,12 +11,13 @@ import {
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 
+import ActivityInfoContainer from 'containers/ActivityInfoContainer';
 import { AppUIProps } from 'containers/AppUIContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import DebugInfoContainer from 'containers/DebugInfoContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
-import HelpButtonContainer from 'containers/HelpButtonContainer';
+import HelpPanelContainer from 'containers/HelpPanelContainer';
 import MapContainer from 'containers/MapContainer';
 import PopupMenusContainer from 'containers/PopupMenusContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
@@ -37,6 +38,7 @@ const AppStyles = StyleSheet.create({
 class AppUI extends Component<AppUIProps> {
   public render() {
     const {
+      showActivityInfo,
       showDebugInfo,
       showTimeline,
       timelineHeight
@@ -52,6 +54,7 @@ class AppUI extends Component<AppUIProps> {
           <MapContainer />
           {showTimeline ? <TimelineScrollContainer /> : null}
           <PopupMenusContainer />
+          {showActivityInfo ? <ActivityInfoContainer /> : null}
           {showDebugInfo ? <DebugInfoContainer /> : null}
           <TimelineControlsContainer />
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
@@ -59,8 +62,10 @@ class AppUI extends Component<AppUIProps> {
             <FollowMeButtonContainer />
             <GeolocationButtonContainer />
           </View>
-          <HelpButtonContainer />
-          <SettingsPanelContainer />
+          <View style={{ position: 'absolute', width }}>
+            <HelpPanelContainer />
+            <SettingsPanelContainer />
+          </View>
         </View>
       </View>
     )

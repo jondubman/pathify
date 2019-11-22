@@ -5,6 +5,7 @@ import { dynamicTimelineHeight } from 'lib/selectors';
 import { AppState } from 'lib/state';
 
 interface AppUIStateProps {
+  showActivityInfo: boolean;
   showDebugInfo: boolean;
   showTimeline: boolean;
   timelineHeight: number;
@@ -17,7 +18,8 @@ export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
   return {
-    showDebugInfo: state.flags.showDebugInfo,
+    showActivityInfo: state.flags.showActivityInfo,
+    showDebugInfo: state.flags.showDebugInfo && !!state.options.currentActivityId,
     showTimeline: state.flags.showTimeline && !state.flags.mapFullScreen,
     timelineHeight: dynamicTimelineHeight(state),
   }

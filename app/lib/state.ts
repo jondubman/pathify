@@ -24,7 +24,7 @@ export const initialAppState = {
     flag3: false, // for experimentation
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
-    helpEnabled: false, // Help mode in the app
+    helpOpen: false, // Help panel
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     mapDisable: false, // if true, map will not be shown at all
@@ -35,6 +35,7 @@ export const initialAppState = {
     settingsOpen: false, // settings panel visible state
     showActivityDetails: false, // TODO2
     showAppStateTimespans: false,
+    showActivityInfo: false,
     showDebugInfo: true,
     showPathsOnMap: true,
     showPriorLocation: true,

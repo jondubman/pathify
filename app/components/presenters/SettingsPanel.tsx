@@ -20,7 +20,11 @@ import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
 import constants, { MapStyle } from 'lib/constants';
 
 const colors = constants.colors.settingsPanel;
-const { height, leftOffset, topOffset } = constants.settingsPanel;
+const {
+  height,
+  leftOffset,
+  topOffset,
+} = constants.settingsPanel;
 
 const Styles = StyleSheet.create({
   choice: {
@@ -29,8 +33,6 @@ const Styles = StyleSheet.create({
     justifyContent: 'center',
     paddingBottom: 3,
     paddingTop: 3,
-  },
-  choiceLabel: {
   },
   choiceLabelText: {
     color: constants.colors.byName.gray,
@@ -51,7 +53,6 @@ const Styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: constants.colorThemes.settings,
     borderRadius: 1,
-
     position: 'relative',
     top: 0,
     bottom: 0,
@@ -63,24 +64,23 @@ const Styles = StyleSheet.create({
     width: constants.panelWidth - 16, // bit narrower
   },
   panel: {
+    backgroundColor: colors.background,
     borderRadius: constants.buttonSize / 2,
     borderColor: colors.border,
     borderWidth: 1,
-    position: 'absolute',
-    left: leftOffset,
-    top: topOffset,
-    height,
-
-    backgroundColor: colors.background,
-    flex: 1,
-    flexDirection: 'column',
+    // flex: 1,
+    // flexDirection: 'column',
     justifyContent: 'flex-start',
-    paddingLeft: 6,
+    left: leftOffset,
+    height,
+    paddingLeft: constants.buttonOffset,
+    position: 'absolute',
+    top: topOffset,
     width: constants.panelWidth,
   },
   subpanel: {
-    display: 'flex',
     alignSelf: 'flex-start',
+    display: 'flex',
     flexDirection: 'row',
     marginBottom: 10,
   },
@@ -133,11 +133,9 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
               <View style={Styles.subpanels}>
                 <View style={Styles.subpanel}>
                   <View style={Styles.subpanelContents}>
-                    <View style={Styles.choiceLabel}>
-                      <Text style={Styles.choiceLabelText}>
-                        MAP STYLE
-                      </Text>
-                    </View>
+                    <Text style={Styles.choiceLabelText}>
+                      MAP STYLE
+                    </Text>
                     <View style={Styles.multiSelect}>
                       {constants.mapStyles.map((mapStyle: MapStyle, index: number) => (
                         <TouchableHighlight
@@ -156,11 +154,9 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                 </View>
                 <View style={Styles.subpanel}>
                   <View style={Styles.subpanelContents}>
-                    <View style={Styles.choiceLabel}>
-                      <Text style={Styles.choiceLabelText}>
-                        MAP OPACITY
-                      </Text>
-                    </View>
+                    <Text style={Styles.choiceLabelText}>
+                      MAP OPACITY
+                    </Text>
                     <View style={Styles.opacitySliderView}>
                       <Slider
                         maximumTrackTintColor={constants.colors.byName.black}

@@ -46,6 +46,7 @@ import {
   AppStateChangeParams,
   CenterMapParams,
   ClockPressParams,
+  ClosePanelsParams,
   ContinueActivityParams,
   DelayedActionParams,
   GeolocationParams,
@@ -454,32 +455,19 @@ const sagas = {
         }
       }
     }
-    // TODO4 clean this up:
+  },
 
-    // const { clockMenuOpen, mapFullScreen } = yield select((state: AppState) => state.flags);
-    // if (mapFullScreen) { // enabled
-    //   if (long) {
-    //     yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
-    //     yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
-    //   } else {
-    //     yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-    //     yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
-    //   }
-    // } else { // disabled (Timeline shown)
-    //   if (long) {
-    //     if (clockMenuOpen) {
-    //       yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-    //     } else {
-    //       yield put(newAction(AppAction.flagEnable, 'clockMenuOpen'));
-    //     }
-    //   } else {
-    //     if (clockMenuOpen) {
-    //       yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-    //     } else {
-    //       yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
-    //     }
-    //   }
-    // }
+  closePanels: function* (action: Action) {
+    const params = action.params as ClosePanelsParams;
+    yield call(log.debug, 'saga closePanels', params);
+    const option = (params && params.option) || '';
+    const { helpOpen, settingsOpen } = yield select((state: AppState) => state.flags);
+    if (helpOpen && option !== 'otherThanHelp') {
+      yield put(newAction(AppAction.flagDisable, 'helpOpen'));
+    }
+    if (settingsOpen && option !== 'otherThanSettings') {
+      yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+    }
   },
 
   continueActivity: function* (action: Action) {
@@ -659,10 +647,7 @@ const sagas = {
 
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
-    const settingsOpen = yield select((state: AppState) => state.flags.settingsOpen);
-    if (settingsOpen) {
-      yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
-    }
+    yield put(newAction(AppAction.closePanels));
   },
 
   menuItemSelected: function* (action: Action) {

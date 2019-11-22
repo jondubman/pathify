@@ -59,6 +59,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 
 const colorThemes = {
   background: namedColors.black,
+  help: namedColors.yellow,
   settings: namedColors.darkerGray,
 }
 
@@ -67,8 +68,9 @@ const buttonSize = 50;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
 const mapLogoHeight = 34; // mapbox logo
-const initialTimelineHeight = 90; // maybe max 150
+const initialTimelineHeight = 90;
 const panelWidth = 252; // fits on iPhone SE
+const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
 const clockHeight = 70;
 const clockMargin = 4;
 
@@ -84,6 +86,9 @@ const colors = {
   activityDetails: {
     itemBackground_current: withOpacity(namedColors.green, 0.5),
     itemBackground_selected: withOpacity(namedColors.azure, 0.5),
+  },
+  activityInfo: {
+    background: withOpacity(namedColors.silver, 0.5),
   },
   appBackground: colorThemes.background,
   appText: 'black',
@@ -124,7 +129,11 @@ const colors = {
   helpButton: {
     background: 'white',
     icon: 'black',
-    underlay: namedColors.yellow,
+    underlay: colorThemes.help,
+  },
+  helpPanel: {
+    background: withOpacity(colorThemes.background, defaultOpacity),
+    border: namedColors.darkerGray,
   },
   map: {
     dimmer: namedColors.black,
@@ -208,6 +217,11 @@ const constants = {
     itemsWhenCollapsed: 2,
     itemsWhenExpanded: 6,
   },
+  activityInfo: {
+    height: 200,
+    sideMargin: 5,
+    topOffset: safeAreaTop,
+  },
   appName: 'Pathify',
   buttonOffset,
   buttonSize,
@@ -271,9 +285,8 @@ const constants = {
   ],
   debugInfo: {
     borderWidth: 2,
-    height: 150,
+    height: 200,
     padding: 5,
-    // width: 280,
     width: 200,
   },
   followMeButton: {
@@ -301,6 +314,12 @@ const constants = {
     opacity: defaultOpacity,
     rightOffset: buttonOffset,
     size: buttonSize,
+  },
+  helpPanel: {
+    height: panelHeight,
+    rightOffset: buttonOffset,
+    subpanelTopOffset: buttonSize + buttonOffset,
+    topOffset: safeAreaTop,
   },
   headers: {
     Accept: 'application/json',
@@ -368,6 +387,7 @@ const constants = {
     iconSize: clockHeight - 8,
     margin: clockMargin,
   },
+  panelHeight,
   panelWidth,
   paths: {
     width: 8,
@@ -390,9 +410,8 @@ const constants = {
     topOffset: safeAreaTop,
   },
   settingsPanel: {
-    height: 300, // tallest it can be without covering up Geolocation button on iPhone SE with Timeline showing
+    height: panelHeight,
     leftOffset: buttonOffset,
-    subpanelLeftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
