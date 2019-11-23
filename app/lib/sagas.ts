@@ -126,94 +126,122 @@ const sagas = {
 
   // From here on, functions are alphabetized:
 
+  // Note: To keep this simple is currently required that added events be sorted by t and consistent in activityId.
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
     const { events } = params;
     if (events && events.length) {
       yield call(database.createEvents, events);
     }
-    // Now update any Activity/Activities related to the added events. TODO Move all this to a saga in activities module
+    // Update any Activity/Activities related to the added events: specifically, the paths, maxGaps and odoStart.
+    let activityId: string | undefined;
+    let firstNewLoc: LocationEvent | undefined;
+    let lastNewLoc: LocationEvent | undefined;
+    let previousEventTimestamp = 0;
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const id = event.activityId;
-      if (id) {
+      if (event.t < previousEventTimestamp) {
+        yield call(log.warn, 'addEvents: added events are out of order (not yet supported)');
+      } else {
+        previousEventTimestamp = event.t;
+      }
+      if (activityId && id && id !== activityId) {
+        yield call(log.warn, 'addEvents: multiple activityIds detected (not yet supported)');
+      } else {
+        if (id) {
+          activityId = id;
+        }
+      }
+      if (event.type ==  EventType.LOC) {
+        if (!firstNewLoc) {
+          firstNewLoc = event as LocationEvent;
+        }
+        lastNewLoc = event as LocationEvent;
+      }
+    }
+    if (activityId) {
+      const activity: Activity = yield call(database.activityById, activityId);
+      if (activity) {
+        const update: ActivityUpdate = { id: activity.id };
+        update.count = (activity.count || 0) + events.length;
         const pathExtension = [] as LonLat[];
-        const activity: Activity = yield call(database.activityById, id); // probably the same for each event TODO4
-        if (activity) {
-          const update: ActivityUpdate = { id: activity.id };
-          update.count = activity.count ? activity.count + 1 : 1;
-          if (event.type === EventType.LOC) {
-            const locEvent = event as LocationEvent;
-            const outOfOrder = (activity.tLastLoc && event.t < activity.tLastLoc);
-            if (outOfOrder) {
-              // Added an outOfOrder LOC event. Need to correct the path etc.
-              const eventsForActivity = yield call(database.eventsForActivity, id); // should include the added events
-              update.pathLats = [];
-              update.pathLons = [];
-              let prevInnerLocEvent: LocationEvent | null = null;
-              for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
-                const innerEvent = e as any as GenericEvent;
-                if (e.type === EventType.LOC) {
-                  const innerLocEvent = innerEvent as LocationEvent;
-                  update.pathLats.push(innerLocEvent.lat);
-                  update.pathLons.push(innerLocEvent.lon);
-                  update.tLastLoc = Math.max(activity.tLastLoc || 0, innerLocEvent.t);
-
-                  // maxGaps
-                  if (prevInnerLocEvent !== null) {
-                    const gapTime = innerLocEvent.t - prevInnerLocEvent.t;
-                    if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-                      if (!update.maxGapTime || gapTime > update.maxGapTime) {
-                        update.maxGapTime = gapTime;
-                        update.tMaxGapTime = prevInnerLocEvent.t;
-                      }
-                    }
-                    if (innerLocEvent.odo && prevInnerLocEvent.odo) {
-                      const gapDistance = innerLocEvent.odo - prevInnerLocEvent.odo;
-                      if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                        if (!update.maxGapDistance || gapDistance > update.maxGapDistance) {
-                          update.maxGapDistance = gapDistance;
-                          update.tMaxGapDistance = prevInnerLocEvent.t;
-                        }
-                      }
-                    }
-                  }
-                  prevInnerLocEvent = { ...innerLocEvent };
-                }
-              }
-            } else { // simple case: appending a single LOC event
-              update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
-              // odo
-              const odo = locEvent.odo;
-              if (odo) {
-                update.odo = odo;
-                if (!activity.odoStart || odo < activity.odoStart) {
-                  update.odoStart = odo; // set odoStart on the activity if not set already
-                }
-              }
-              // pathExtension
-              const { lon, lat } = locEvent;
-              pathExtension.push([lon, lat]);
-              // maxGaps
-              if (activity.tLastLoc) {
-                const gapTime = locEvent.t - activity.tLastLoc;
-                if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-                  update.maxGapTime = gapTime;
-                  update.tMaxGapTime = activity.tLastLoc;
-                }
-                if (locEvent.odo && activity.odo) {
-                  const gapDistance = locEvent.odo - activity.odo;
-                  if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                    update.maxGapDistance = gapDistance;
-                    update.tMaxGapDistance = activity.tLastLoc;
-                  }
-                }
+        // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
+        const appending: boolean = !!(firstNewLoc && firstNewLoc.t > activity.tLastUpdate);
+        yield call(log.debug, 'saga addEvents appending', appending, update.count);
+        if (appending) {
+          // odo
+          if (firstNewLoc && firstNewLoc.odo) { // TODO what if firstNewLoc.odo is zero but other added odo are nonzero?
+            if (!activity.odoStart || firstNewLoc.odo < activity.odoStart) {
+              update.odoStart = firstNewLoc.odo; // set odoStart on the activity if not set already
+            }
+          }
+          if (lastNewLoc) {
+            update.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
+            update.odo = lastNewLoc.odo;
+          }
+          // pathExtension
+          for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+            if (event.type == EventType.LOC) {
+              const { lon, lat } = event as LocationEvent;
+              pathExtension.push([lon, lat]); // add a single path segment
+            }
+          }
+          // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
+          if (activity.tLastLoc && firstNewLoc) {
+            const gapTime = firstNewLoc.t - activity.tLastLoc;
+            if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
+              update.maxGapTime = gapTime;
+              update.tMaxGapTime = activity.tLastLoc;
+            }
+            if (firstNewLoc.odo && activity.odo) {
+              const gapDistance = firstNewLoc.odo - activity.odo;
+              if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
+                update.maxGapDistance = gapDistance;
+                update.tMaxGapDistance = activity.tLastLoc;
               }
             }
           }
-          update.tLastUpdate = utils.now();
-          yield call(database.updateActivity, update, pathExtension);
+        } else { // not simply appending events; recalc entire path et al (note new events were already added above)
+          // Fetch all the events for this activity. This is an expensive operation we want to avoid whenever possible:
+          const eventsForActivity = yield call(database.eventsForActivity, activityId);
+          update.pathLats = [];
+          update.pathLons = [];
+          let prevLocEvent: LocationEvent | null = null;
+          for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+            const event = e as any as GenericEvent;
+            if (e.type === EventType.LOC) {
+              const locEvent = event as LocationEvent;
+              update.pathLats.push(locEvent.lat);
+              update.pathLons.push(locEvent.lon);
+              update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
+
+              // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
+              if (prevLocEvent !== null) {
+                const gapTime = locEvent.t - prevLocEvent.t;
+                if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
+                  if (!update.maxGapTime || gapTime > update.maxGapTime) {
+                    update.maxGapTime = gapTime;
+                    update.tMaxGapTime = prevLocEvent.t;
+                  }
+                }
+                if (locEvent.odo && prevLocEvent.odo) {
+                  const gapDistance = locEvent.odo - prevLocEvent.odo;
+                  if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
+                    if (!update.maxGapDistance || gapDistance > update.maxGapDistance) {
+                      update.maxGapDistance = gapDistance;
+                      update.tMaxGapDistance = prevLocEvent.t;
+                    }
+                  }
+                }
+              }
+              prevLocEvent = { ...locEvent };
+            }
+          }
         }
+        update.tLastUpdate = utils.now();
+        yield call(database.updateActivity, update, pathExtension);
       }
     }
   },

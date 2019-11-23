@@ -453,6 +453,10 @@ export const Geo = {
     }
   },
 
+  // This is called in one context only, when the app transitions to the ACTIVE state, for the purpose of processing
+  // all locations saved by react-native-background-geolocation in its internal SQLite DB. The raw locations are
+  // converted to Pathify events with the help of newLocationEvent. The resulting events are added at once via
+  // AppAction.addEvents, which currently assumes the events are sequential and associated with the same activityId.
   processSavedLocations: async () => {
     try {
       const state = store.getState();
@@ -467,7 +471,7 @@ export const Geo = {
         const locationEvents: LocationEvents = [];
         for (let location of locations) {
           if (location.sample) {
-            continue;
+            continue; // ignore sample locations
           }
           const locationEvent = newLocationEvent(location, activityId);
           locationEvents.push(locationEvent);
@@ -477,7 +481,7 @@ export const Geo = {
           store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
         }
         log.debug('processSavedLocations: ready to destroyLocations');
-        await Geo.destroyLocations(); // TODO3
+        await Geo.destroyLocations();
       }
       log.debug('processSavedLocations: done, count:', locations.length);
       // TODO AppAction.geolocation?
@@ -486,17 +490,19 @@ export const Geo = {
     }
   },
 
-  // TODO4 Do not do in production; would confuse the odometer for activities.
-  resetOdometer: async () => {
-    try {
-      const done = () => {
-        log.debug('resetOdometer done');
-      }
-      await BackgroundGeolocation.resetOdometer(done);
-    } catch (err) {
-      log.error('resetOdometer', err);
-    }
-  },
+  // Do not do this in production; it would confuse the odometer for activities. As all the odometer calculation is
+  // relative, it shouldn't matter anyway; this may be useful only for testing.
+  //
+  // resetOdometer: async () => {
+  //   try {
+  //     const done = () => {
+  //       log.debug('resetOdometer done');
+  //     }
+  //     await BackgroundGeolocation.resetOdometer(done);
+  //   } catch (err) {
+  //     log.error('resetOdometer', err);
+  //   }
+  // },
 
   // Geolocation may be needed for multiple reasons.
   // Client who starts geolocation should specify a reason string, e.g. 'tracking' or 'navigating'.
@@ -511,21 +517,17 @@ export const Geo = {
       return Promise.resolve(false);
     }
     reasons[reason] = true;
-    // if (haveReasonBesides(reason)) {
-    //   log.debug(`BackgroundGeolocation requested for ${reason}, already running`);
-    //   log.trace('BackgroundGeolocation reasons', reasons);
-    //   return false;
-    // }
     return new Promise((resolve, reject) => {
       const started = () => {
         if (reason === 'tracking') {
+          // TODO watchPosition is not required. Remove this code:
           // const options = {
           //   extras: { source: 'watchPosition' },
           //   interval: constants.timing.watchPositionInterval,
-          //   persist: true, // to native SQLite database (first stored by plugin, then provided to app and stored in Realm)
+          //   persist: true, // to native SQLite database (stored by plugin, then provided to app and stored in Realm)
           // }
           // const watch = Geo.onLocation;
-          // const watch = () => {}; // TODO3
+          // const watch = () => {};
           // BackgroundGeolocation.watchPosition(watch, err => {
           //   log.error('BackgroundGeolocation.watchPosition', err);
           //   reject(err);
