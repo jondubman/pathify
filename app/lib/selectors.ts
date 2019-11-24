@@ -108,6 +108,10 @@ export const currentActivity = (state: AppState): Activity | undefined => {
   return undefined;
 }
 
+export const currentOrSelectedActivity = (state: AppState): Activity | undefined => {
+  return currentActivity(state) || selectedActivity(state);
+}
+
 // This is not technically a selector as it doesn't refer to state
 export const dynamicAreaTop = (state: AppState): number => (
   constants.safeAreaTop || getStatusBarHeight()
@@ -184,6 +188,10 @@ export const selectedActivity = (state: AppState): Activity | undefined => {
     return database.activityById(state.options.selectedActivityId);
   }
   return undefined;
+}
+
+export const selectedOrCurrentActivity = (state: AppState): Activity | undefined => {
+  return selectedActivity(state) || currentActivity(state);
 }
 
 export const timelineTimespans = (state: AppState): Timespans => {

@@ -1,12 +1,15 @@
 import { connect } from 'react-redux';
 
 import {
-  currentActivity,
+  selectedOrCurrentActivity,
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import DebugInfo from 'presenters/DebugInfo';
-import { metersPerSecondToMilesPerHour, metersToMiles, msecToString } from 'shared/units';
+import {
+  metersToMiles,
+  msecToString,
+} from 'shared/units';
 
 export interface DebugInfoStateProps {
   dynamicAreaTop: number;
@@ -19,7 +22,7 @@ export interface DebugInfoDispatchProps {
 export type DebugInfoProps = DebugInfoStateProps & DebugInfoDispatchProps;
 
 const mapStateToProps = (state: AppState): DebugInfoStateProps => {
-  const activity = currentActivity(state);
+  const activity = selectedOrCurrentActivity(state);
   let text = '';
   if (activity) {
     const activityLength = (activity.tLastUpdate - activity.tStart); // msec

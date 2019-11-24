@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
 
 import AppUI from 'presenters/AppUI';
-import { dynamicTimelineHeight } from 'lib/selectors';
+import {
+  selectedOrCurrentActivity,
+  dynamicTimelineHeight,
+ } from 'lib/selectors';
 import { AppState } from 'lib/state';
 
 interface AppUIStateProps {
@@ -19,7 +22,7 @@ export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 const mapStateToProps = (state: AppState): AppUIStateProps => {
   return {
     showActivityInfo: state.flags.showActivityInfo,
-    showDebugInfo: state.flags.showDebugInfo && !!state.options.currentActivityId,
+    showDebugInfo: state.flags.showDebugInfo && !!selectedOrCurrentActivity(state),
     showTimeline: state.flags.showTimeline && !state.flags.mapFullScreen,
     timelineHeight: dynamicTimelineHeight(state),
   }
