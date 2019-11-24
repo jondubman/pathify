@@ -6,30 +6,30 @@ import { connect } from 'react-redux';
 import { AppAction, newAction } from 'lib/actions';
 import { dynamicLowerButtonBase } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import GeolocationButton from 'presenters/GeolocationButton';
+import GeoButton from 'presenters/GeoButton';
 import log from 'shared/log';
 
-interface GeolocationButtonStateProps {
+interface GeoButtonStateProps {
   bottomOffset: number,
   enabled: boolean,
 }
 
-interface GeolocationButtonDispatchProps {
+interface GeoButtonDispatchProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-export type GeolocationButtonProps = GeolocationButtonStateProps & GeolocationButtonDispatchProps;
+export type GeoButtonProps = GeoButtonStateProps & GeoButtonDispatchProps;
 
-const mapStateToProps = (state: AppState): GeolocationButtonStateProps => {
+const mapStateToProps = (state: AppState): GeoButtonStateProps => {
   return {
     bottomOffset: dynamicLowerButtonBase(state),
     enabled: state.flags.trackingActivity,
   }
 }
 
-const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): GeoButtonDispatchProps => {
   const onPress = () => {
-    log.debug('GeolocationButton press');
+    log.debug('GeoButton press');
     dispatch(newAction(AppAction.startOrStopActivity));
   }
   const dispatchers = {
@@ -38,9 +38,9 @@ const mapDispatchToProps = (dispatch: Function): GeolocationButtonDispatchProps 
   return dispatchers;
 }
 
-const GeolocationButtonContainer = connect<GeolocationButtonStateProps, GeolocationButtonDispatchProps>(
+const GeoButtonContainer = connect<GeoButtonStateProps, GeoButtonDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(GeolocationButton as any);
+)(GeoButton as any);
 
-export default GeolocationButtonContainer;
+export default GeoButtonContainer;

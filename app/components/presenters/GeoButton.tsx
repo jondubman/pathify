@@ -47,9 +47,9 @@ const Styles = StyleSheet.create({
   size={constants.geolocationButton.size / 2}
 />
 */
-import { GeolocationButtonProps } from 'containers/GeolocationButtonContainer';
+import { GeoButtonProps } from 'containers/GeoButtonContainer';
 
-const GeolocationButton = (props: GeolocationButtonProps) => (
+const GeoButton = (props: GeoButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.enabled ? colors.enabledBackground : colors.disabledBackground,
@@ -65,4 +65,4 @@ const GeolocationButton = (props: GeolocationButtonProps) => (
   </TouchableHighlight>
 )
 
-export default GeolocationButton;
+export default GeoButton;

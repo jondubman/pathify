@@ -16,7 +16,7 @@ import { AppUIProps } from 'containers/AppUIContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import DebugInfoContainer from 'containers/DebugInfoContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
-import GeolocationButtonContainer from 'containers/GeolocationButtonContainer';
+import GeoButtonContainer from 'containers/GeoButtonContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
 import MapContainer from 'containers/MapContainer';
 import PopupMenusContainer from 'containers/PopupMenusContainer';
@@ -60,7 +60,7 @@ class AppUI extends Component<AppUIProps> {
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
             <CompassButtonContainer />
             <FollowMeButtonContainer />
-            <GeolocationButtonContainer />
+            <GeoButtonContainer />
           </View>
           <View style={{ position: 'absolute', width }}>
             <HelpPanelContainer />
