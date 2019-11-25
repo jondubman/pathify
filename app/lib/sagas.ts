@@ -489,12 +489,20 @@ const sagas = {
     const params = action.params as ClosePanelsParams;
     yield call(log.debug, 'saga closePanels', params);
     const option = (params && params.option) || '';
-    const { helpOpen, settingsOpen } = yield select((state: AppState) => state.flags);
+    const {
+      helpOpen,
+      settingsOpen,
+      topMenuOpen,
+    } = yield select((state: AppState) => state.flags);
+
     if (helpOpen && option !== 'otherThanHelp') {
       yield put(newAction(AppAction.flagDisable, 'helpOpen'));
     }
     if (settingsOpen && option !== 'otherThanSettings') {
       yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+    }
+    if (topMenuOpen && option !== 'otherThanTopMenu') {
+      yield put(newAction(AppAction.flagDisable, 'topMenuOpen'));
     }
   },
 

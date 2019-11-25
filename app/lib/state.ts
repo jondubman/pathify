@@ -47,6 +47,7 @@ export const initialAppState = {
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
     timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
+    topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
   menus: initialMenus,

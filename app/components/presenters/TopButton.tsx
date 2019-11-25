@@ -9,30 +9,30 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import constants from 'lib/constants';
-import { HelpButtonProps } from 'containers/HelpButtonContainer';
+import { centerline } from 'lib/selectors';
+import { TopButtonProps } from 'containers/TopButtonContainer';
 
-const colors = constants.colors.helpButton;
+const colors = constants.colors.topButton;
 const {
   opacity,
-  rightOffset,
-  size
-} = constants.helpButton;
+  size,
+} = constants.topButton;
 
 const Styles = StyleSheet.create({
   button: {
     borderRadius: size / 2,
-    flexDirection: 'row',
-    height: size,
-    justifyContent: 'center',
-    paddingTop: size / 4,
     position: 'absolute',
-    right: rightOffset,
-    opacity,
+    paddingTop: size / 4,
     width: size,
+    height: size,
+    left: centerline() - constants.buttonSize / 2,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    opacity,
   },
 })
 
-const HelpButton = (props: HelpButtonProps) => (
+const TopButton = (props: TopButtonProps) => (props.visible ? (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.enabled ? colors.underlay : colors.background,
@@ -43,10 +43,10 @@ const HelpButton = (props: HelpButtonProps) => (
   >
     <FontAwesome5
       color={colors.icon}
-      name='lightbulb' // was previously 'question'
+      name='bars'
       size={size / 2}
     />
   </TouchableHighlight>
-)
+) : null)
 
-export default React.memo(HelpButton);
+export default React.memo(TopButton);

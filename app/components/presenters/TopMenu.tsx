@@ -8,16 +8,17 @@ import {
   View,
 } from 'react-native';
 
-import HelpButtonContainer from 'containers/HelpButtonContainer';
-import { HelpPanelProps } from 'containers/HelpPanelContainer';
+import TopButtonContainer from 'containers/TopButtonContainer';
+import { TopMenuProps } from 'containers/TopMenuContainer';
 import constants from 'lib/constants';
+import { centerline } from 'lib/selectors';
 
-const colors = constants.colors.helpPanel;
+const colors = constants.colors.topMenu;
 const {
-  rightOffset,
   subpanelTopOffset,
   topOffset,
-} = constants.helpPanel;
+  width,
+} = constants.topMenu;
 
 const Styles = StyleSheet.create({
   panel: {
@@ -27,11 +28,11 @@ const Styles = StyleSheet.create({
     borderWidth: 1,
     height: constants.panelHeight,
     justifyContent: 'flex-start',
+    left: centerline() - width / 2,
     paddingRight: constants.buttonOffset,
     position: 'absolute',
-    right: rightOffset,
     top: topOffset,
-    width: constants.panelWidth,
+    width,
   },
   subpanel: {
     alignSelf: 'flex-end',
@@ -60,7 +61,7 @@ const initialState = {
 }
 type State = Readonly<typeof initialState>
 
-class HelpPanel extends React.Component<HelpPanelProps> {
+class TopMenu extends React.Component<TopMenuProps> {
 
   public readonly state: State = initialState;
 
@@ -84,10 +85,10 @@ class HelpPanel extends React.Component<HelpPanelProps> {
         :
         null
         }
-        <HelpButtonContainer />
+        <TopButtonContainer />
       </React.Fragment>
     )
   }
 }
 
-export default HelpPanel;
+export default TopMenu;

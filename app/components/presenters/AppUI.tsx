@@ -23,6 +23,7 @@ import PopupMenusContainer from 'containers/PopupMenusContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 import TimelineScrollContainer from 'containers/TimelineScrollContainer';
+import TopMenuContainer from 'containers/TopMenuContainer';
 
 const AppStyles = StyleSheet.create({
   containingAppView: {
@@ -64,6 +65,7 @@ class AppUI extends Component<AppUIProps> {
           </View>
           <View style={{ position: 'absolute', width }}>
             <HelpPanelContainer />
+            <TopMenuContainer />
             <SettingsPanelContainer />
           </View>
         </View>

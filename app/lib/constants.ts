@@ -61,6 +61,7 @@ const colorThemes = {
   background: namedColors.black,
   help: namedColors.yellow,
   settings: namedColors.darkerGray,
+  topMenu: namedColors.darkerGray,
 }
 
 const buttonOffset = 6;
@@ -68,6 +69,7 @@ const buttonSize = 50;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
 const mapLogoHeight = 34; // mapbox logo
+const minDeviceWidth = 320; // iPhone SE
 const initialTimelineHeight = 90;
 const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
@@ -201,6 +203,15 @@ const colors = {
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     topLine: withOpacity(namedColors.gray, 0.5),
+  },
+  topButton: {
+    background: 'white',
+    icon: 'black',
+    underlay: colorThemes.topMenu,
+  },
+  topMenu: {
+    background: withOpacity(colorThemes.background, defaultOpacity),
+    border: namedColors.darkerGray,
   },
   user: namedColors.azure,
 }
@@ -528,6 +539,16 @@ const constants = {
         visibleTime: interval.seconds(5), // lower limit (maximum zoom)
       },
     ],
+  },
+  topButton: {
+    opacity: defaultOpacity,
+    size: buttonSize,
+  },
+  topMenu: {
+    height: panelHeight,
+    subpanelTopOffset: buttonSize + buttonOffset,
+    topOffset: safeAreaTop,
+    width: minDeviceWidth - (buttonSize + buttonOffset) * 2 - buttonOffset,
   },
 }
 

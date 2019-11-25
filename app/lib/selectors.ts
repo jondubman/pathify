@@ -80,6 +80,10 @@ const appStateTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
+export const centerline = () => {
+  return utils.windowSize().width / 2;
+}
+
 export const futureTimespan = (state: AppState): Timespans => {
   const { nowTime } = state.options;
   const timespan: Timespan = {
