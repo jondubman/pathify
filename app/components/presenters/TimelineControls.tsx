@@ -15,11 +15,6 @@ import NowClockContainer from 'containers/NowClockContainer';
 import RefTimeContainer from 'containers/RefTimeContainer';
 import { TimelineControlsProps } from 'containers/TimelineControlsContainer';
 
-// TODO this fiddly magic number, determined empirically, positions well across all devices, but is nonintuitive.
-// This succeeds at positioning the nowClock between the center clock and the follow button.
-const clockLeftFactor = 0.714;
-const clockRightFactor = 0.728;
-
 const Styles = StyleSheet.create({
   centerLine: {
     backgroundColor: constants.colors.timeline.centerLine,
@@ -32,14 +27,6 @@ const Styles = StyleSheet.create({
     left: utils.windowSize().width / 2 - constants.clock.height / 2,
     position: 'absolute',
   },
-  clockLeft: {
-    right: (utils.windowSize().width * clockLeftFactor) - constants.clock.height / 2,
-    position: 'absolute',
-  },
-  clockRight: {
-    left: (utils.windowSize().width * clockRightFactor) - constants.clock.height / 2,
-    position: 'absolute',
-  },
   topLine: {
     backgroundColor: constants.colors.timeline.topLine,
     position: 'absolute',
@@ -50,19 +37,8 @@ const Styles = StyleSheet.create({
 
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
-    {props.mapFullScreen ? // hide PausedClock in mapFullScreen mode
-      null
-      :
-      <View style={[props.nowMode ? Styles.clockLeft : Styles.clockCenter,
-        { bottom: props.bottom }]}
-      >
-        <PausedClockContainer />
-      </View>
-    }
-    <View style={[props.nowMode ? Styles.clockCenter : Styles.clockRight,
-      { bottom: props.bottom }]}
-    >
-      <NowClockContainer />
+    <View style={[Styles.clockCenter, { bottom: props.bottom }]}>
+      {props.nowMode ? <NowClockContainer /> : <PausedClockContainer />}
     </View>
     <RefTimeContainer />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />

@@ -32,7 +32,7 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
-    settingsOpen: false, // settings panel visible state
+    settingsOpen: true, // settings panel visible state
     showActivityDetails: false, // TODO2
     showAppStateTimespans: false,
     showActivityInfo: false,

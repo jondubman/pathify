@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
-import { dynamicClockBottom } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ClockMenu from 'presenters/ClockMenu';
 import log from 'shared/log';
@@ -23,7 +22,7 @@ export type ClockMenuProps = ClockMenuStateProps & ClockMenuDispatchProps;
 
 const mapStateToProps = (state: AppState): ClockMenuStateProps => {
   return {
-    bottom: dynamicClockBottom(state),
+    bottom: constants.refTime.height + 1,
     open: state.flags.clockMenuOpen,
   }
 }

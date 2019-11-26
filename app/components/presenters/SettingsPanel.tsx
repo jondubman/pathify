@@ -8,6 +8,7 @@ import React, {
 import {
   // GestureResponderEvent,
   StyleSheet,
+  Switch,
   Text,
   TouchableHighlight,
   View,
@@ -90,6 +91,11 @@ const Styles = StyleSheet.create({
   subpanels: {
     top: constants.settingsPanel.subpanelTopOffset,
   },
+  switch: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
   text: {
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.choice,
@@ -125,11 +131,21 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
 
   public render() {
     const { props } = this;
+    const colors = constants.colors.switch;
     return (
       <View style={Styles.view}>
         {props.open ?
           <View style={Styles.view}>
             <View style={Styles.panel}>
+              <View style={Styles.switch}>
+                <Switch
+                  ios_backgroundColor={colors.background}
+                  onValueChange={props.onSetMapFullScreen}
+                  thumbColor={colors.thumb}
+                  trackColor={colors.track}
+                  value={props.mapFullScreen}
+                />
+              </View>
               <View style={Styles.subpanels}>
                 <View style={Styles.subpanel}>
                   <View style={Styles.subpanelContents}>

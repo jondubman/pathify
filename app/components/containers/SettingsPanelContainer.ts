@@ -12,6 +12,7 @@ import log from 'shared/log';
 
 interface SettingsPanelStateProps {
   open: boolean;
+  mapFullScreen: boolean;
   mapOpacity: number;
   mapStyle: MapStyle;
   mapStyles: MapStyle[];
@@ -21,6 +22,7 @@ interface SettingsPanelDispatchProps {
   onSelectMapStyle: (name: string) => void;
   onSetMapOpacity: (opacity: number) => void;
   onSetMapOpacityPreview: (opacity: number) => void;
+  onSetMapFullScreen: (value: boolean) => void;
 }
 
 export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatchProps;
@@ -28,6 +30,7 @@ export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatch
 const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
   return {
     open: state.flags.settingsOpen,
+    mapFullScreen: state.flags.mapFullScreen,
     mapOpacity: state.options.mapOpacity, // note: not using state.options.mapOpacityPreview, to avoid stuttering slider
     mapStyle: dynamicMapStyle(state),
     mapStyles: mapStyles(state),
@@ -45,10 +48,15 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   const onSetMapOpacityPreview = (mapOpacityPreview: number) => {
     dispatch(newAction(AppAction.setAppOption, { mapOpacityPreview }));
   }
+  const onSetMapFullScreen = (value: boolean) => {
+    log.debug('SettingsPanel onSetMapFullScreen', value);
+    dispatch(newAction(value ? AppAction.flagEnable : AppAction.flagDisable, 'mapFullScreen'));
+  }
   const dispatchers = {
     onSelectMapStyle,
     onSetMapOpacity,
     onSetMapOpacityPreview,
+    onSetMapFullScreen,
   }
   return dispatchers;
 }

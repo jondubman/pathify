@@ -189,6 +189,14 @@ const colors = {
     choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
     opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
   },
+  switch: {
+    background: withOpacity(namedColors.darkerGray, 0.5),
+    thumb: withOpacity(namedColors.green, 1),
+    track: {
+      // false: withOpacity(namedColors.black, 1),
+      true: withOpacity(namedColors.blue, 0.75),
+    }
+  },
   timeline: {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
