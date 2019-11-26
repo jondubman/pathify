@@ -45,7 +45,7 @@ class DebugInfo extends PureComponent<DebugInfoProps> {
       height,
       padding,
       position: 'absolute',
-      top: this.props.dynamicAreaTop,
+      top: this.props.top,
       width,
     }
     return (

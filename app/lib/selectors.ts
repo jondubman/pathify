@@ -166,6 +166,10 @@ export const mapStyles = (state: AppState): MapStyle[] => (
   constants.mapStyles.filter((mapStyle: MapStyle) => state.flags.allowMapStyleNone || (mapStyle.name !== 'None'))
 )
 
+export const menuOpen = (state: AppState): boolean => (
+  state.flags.clockMenuOpen || state.flags.helpOpen || state.flags.settingsOpen || state.flags.topMenuOpen
+)
+
 // TODO4 cache for performance
 export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars };

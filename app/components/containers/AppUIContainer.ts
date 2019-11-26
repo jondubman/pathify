@@ -4,6 +4,7 @@ import AppUI from 'presenters/AppUI';
 import {
   selectedOrCurrentActivity,
   dynamicTimelineHeight,
+  menuOpen,
  } from 'lib/selectors';
 import { AppState } from 'lib/state';
 
@@ -22,7 +23,7 @@ export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 const mapStateToProps = (state: AppState): AppUIStateProps => {
   return {
     showActivityInfo: state.flags.showActivityInfo,
-    showDebugInfo: state.flags.showDebugInfo && !!selectedOrCurrentActivity(state),
+    showDebugInfo: state.flags.showDebugInfo && !!selectedOrCurrentActivity(state) && !menuOpen(state),
     showTimeline: state.flags.showTimeline && !state.flags.mapFullScreen,
     timelineHeight: dynamicTimelineHeight(state),
   }

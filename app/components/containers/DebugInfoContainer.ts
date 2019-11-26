@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 
+import constants from 'lib/constants';
 import {
   selectedOrCurrentActivity,
   dynamicAreaTop,
@@ -12,8 +13,8 @@ import {
 } from 'shared/units';
 
 export interface DebugInfoStateProps {
-  dynamicAreaTop: number;
   text: string;
+  top: number;
 }
 
 export interface DebugInfoDispatchProps {
@@ -47,8 +48,8 @@ const mapStateToProps = (state: AppState): DebugInfoStateProps => {
     }
   }
   return {
-    dynamicAreaTop: dynamicAreaTop(state),
     text,
+    top: dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset,
   }
 }
 
