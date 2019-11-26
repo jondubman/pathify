@@ -137,7 +137,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                       MAP STYLE
                     </Text>
                     <View style={Styles.multiSelect}>
-                      {constants.mapStyles.map((mapStyle: MapStyle, index: number) => (
+                      {props.mapStyles.map((mapStyle: MapStyle, index: number) => (
                         <TouchableHighlight
                           key={index}
                           onPress={() => { props.onSelectMapStyle(mapStyle.name)} }

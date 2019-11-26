@@ -464,25 +464,27 @@ const sagas = {
     const long = params && params.long;
     const nowClock = params && params.nowClock;
     yield call(log.trace, `clockPress, now: ${nowClock} long: ${long}`);
-    if (long) {
-      yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
-    } else {
-      const timelineNow = yield select(state => state.flags.timelineNow);
-      if (nowClock) {
-        if (timelineNow) {
-          yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
-        } else {
-          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-        }
-      } else { // pausedClock
-        if (timelineNow) {
-          yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-        } else {
-          yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
-          yield put(newAction(AppAction.flagEnable, 'timelineNow')); // avoid pausedClock if timeline not visible
-        }
-      }
-    }
+    yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
+    yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+    // if (long) {
+    //   yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+    // } else {
+    //   const timelineNow = yield select(state => state.flags.timelineNow);
+    //   if (nowClock) {
+    //     if (timelineNow) {
+    //       yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
+    //     } else {
+    //       yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+    //     }
+    //   } else { // pausedClock
+    //     if (timelineNow) {
+    //       yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+    //     } else {
+    //       yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
+    //       yield put(newAction(AppAction.flagEnable, 'timelineNow')); // avoid pausedClock if timeline not visible
+    //     }
+    //   }
+    // }
   },
 
   closePanels: function* (action: Action) {
@@ -490,11 +492,15 @@ const sagas = {
     yield call(log.debug, 'saga closePanels', params);
     const option = (params && params.option) || '';
     const {
+      clockMenuOpen,
       helpOpen,
       settingsOpen,
       topMenuOpen,
     } = yield select((state: AppState) => state.flags);
 
+    if (clockMenuOpen && option !== 'otherThanClockMenu') {
+      yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
+    }
     if (helpOpen && option !== 'otherThanHelp') {
       yield put(newAction(AppAction.flagDisable, 'helpOpen'));
     }

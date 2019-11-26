@@ -13,11 +13,15 @@ import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
 
 const colors = constants.colors.refTime;
-const { height, leftContentsWidth, width } = constants.refTime;
+const {
+  height,
+  leftContentsWidth,
+  width
+} = constants.refTime;
 
 const Styles = StyleSheet.create({
   leftHalf: {
-    backgroundColor: 'transparent', // nothing left of the centerline, for now TODO3
+    backgroundColor: 'transparent', // nothing to the left of the centerline, for now TODO3
     flexDirection: 'row-reverse',
     width,
   },

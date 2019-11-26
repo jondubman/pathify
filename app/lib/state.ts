@@ -2,7 +2,6 @@
 
 import { Polygon } from "@turf/helpers";
 
-import { initialMenus } from 'containers/PopupMenusContainer';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
@@ -15,9 +14,10 @@ const now = utils.now();
 export const initialAppState = {
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
+    allowMapStyleNone: false, // really only useful for debugging / perf
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
-    clockMenuOpen: false, // TODO2 clockMenu is among the PopupMenus. See initialMenus.
+    clockMenuOpen: false,
     ticksEnabled: true, // normally true, set false only for testing to disable actions that occur every second
     flag1: false, // for experimentation
     flag2: false, // for experimentation
@@ -50,7 +50,6 @@ export const initialAppState = {
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
-  menus: initialMenus,
   options: { // non-boolean
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: '', // while tracking Activity

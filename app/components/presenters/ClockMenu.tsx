@@ -8,17 +8,16 @@ import {
   View,
 } from 'react-native';
 
-import TopButtonContainer from 'containers/TopButtonContainer';
-import { TopMenuProps } from 'containers/TopMenuContainer';
+import { ClockMenuProps } from 'containers/ClockMenuContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
+// import log from 'shared/log';
 
-const colors = constants.colors.topMenu;
+const colors = constants.colors.clockMenu;
 const {
-  subpanelTopOffset,
-  topOffset,
+  height,
   width,
-} = constants.topMenu;
+} = constants.clockMenu;
 
 const Styles = StyleSheet.create({
   panel: {
@@ -26,12 +25,10 @@ const Styles = StyleSheet.create({
     borderRadius: constants.buttonSize / 2,
     borderColor: colors.border,
     borderWidth: 1,
-    height: constants.panelHeight,
+    height,
     justifyContent: 'flex-start',
     left: centerline() - width / 2,
     paddingRight: constants.buttonOffset,
-    position: 'absolute',
-    top: topOffset,
     width,
   },
   subpanel: {
@@ -39,9 +36,6 @@ const Styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     marginBottom: 10,
-  },
-  subpanels: {
-    top: subpanelTopOffset,
   },
   text: {
     color: constants.fonts.colors.default,
@@ -55,7 +49,7 @@ const initialState = {
 }
 type State = Readonly<typeof initialState>
 
-class TopMenu extends React.Component<TopMenuProps> {
+class ClockMenu extends React.Component<ClockMenuProps> {
 
   public readonly state: State = initialState;
 
@@ -68,8 +62,8 @@ class TopMenu extends React.Component<TopMenuProps> {
     return (
       <React.Fragment>
         { props.open ?
-          <View style={Styles.panel}>
-            <View style={Styles.subpanels}>
+          <View style={[Styles.panel, {bottom: props.bottom}]}>
+            <View>
               <View style={Styles.subpanel}>
               </View>
             </View>
@@ -77,10 +71,9 @@ class TopMenu extends React.Component<TopMenuProps> {
         :
         null
         }
-        <TopButtonContainer />
       </React.Fragment>
     )
   }
 }
 
-export default TopMenu;
+export default ClockMenu;

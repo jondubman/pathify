@@ -121,6 +121,10 @@ export const dynamicAreaTop = (state: AppState): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )
 
+export const dynamicClockBottom = (state: AppState): number => (
+  dynamicTimelineHeight(state) + constants.refTime.height + 1
+)
+
 export const dynamicLowerButtonBase = (state: AppState): number => (
   (state.flags.mapFullScreen ? constants.safeAreaBottom + constants.mapLogoHeight : constants.mapLogoHeight)
 )
@@ -156,6 +160,10 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
 
 export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '' || state.flags.mapDisable)
+)
+
+export const mapStyles = (state: AppState): MapStyle[] => (
+  constants.mapStyles.filter((mapStyle: MapStyle) => state.flags.allowMapStyleNone || (mapStyle.name !== 'None'))
 )
 
 // TODO4 cache for performance

@@ -54,13 +54,13 @@ const TimelineControls = (props: TimelineControlsProps) => (
       null
       :
       <View style={[props.nowMode ? Styles.clockLeft : Styles.clockCenter,
-                  { bottom: props.timelineHeight + constants.refTime.height + 1 }]}
+        { bottom: props.bottom }]}
       >
         <PausedClockContainer />
       </View>
     }
     <View style={[props.nowMode ? Styles.clockCenter : Styles.clockRight,
-                { bottom: props.timelineHeight + constants.refTime.height + 1 }]}
+      { bottom: props.bottom }]}
     >
       <NowClockContainer />
     </View>
@@ -78,4 +78,3 @@ const TimelineControls = (props: TimelineControlsProps) => (
 )
 
 export default React.memo(TimelineControls); // Note use of memo (optimization based on shallow comparison of props)
-

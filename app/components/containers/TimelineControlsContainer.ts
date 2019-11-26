@@ -2,9 +2,13 @@ import { connect } from 'react-redux';
 
 import { AppState } from 'lib/state';
 import TimelineControls from 'presenters/TimelineControls';
-import { dynamicTimelineHeight } from 'lib/selectors';
+import {
+  dynamicClockBottom,
+  dynamicTimelineHeight,
+} from 'lib/selectors';
 
 interface TimelineControlsStateProps {
+  bottom: number;
   mapFullScreen: boolean;
   nowMode: boolean;
   timelineHeight: number;
@@ -17,6 +21,7 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
+    bottom: dynamicClockBottom(state),
     mapFullScreen: state.flags.mapFullScreen,
     nowMode: state.flags.timelineNow,
     timelineHeight: dynamicTimelineHeight(state),

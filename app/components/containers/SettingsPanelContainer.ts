@@ -4,6 +4,7 @@ import { AppAction, newAction } from 'lib/actions';
 import { MapStyle } from 'lib/constants';
 import {
   dynamicMapStyle,
+  mapStyles,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import SettingsPanel from 'presenters/SettingsPanel';
@@ -13,6 +14,7 @@ interface SettingsPanelStateProps {
   open: boolean;
   mapOpacity: number;
   mapStyle: MapStyle;
+  mapStyles: MapStyle[];
 }
 
 interface SettingsPanelDispatchProps {
@@ -28,6 +30,7 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
     open: state.flags.settingsOpen,
     mapOpacity: state.options.mapOpacity, // note: not using state.options.mapOpacityPreview, to avoid stuttering slider
     mapStyle: dynamicMapStyle(state),
+    mapStyles: mapStyles(state),
   }
 }
 

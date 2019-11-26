@@ -104,6 +104,10 @@ const colors = {
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.7),
     underlay: withOpacity(namedColors.black, 0.5),
   },
+  clockMenu: {
+    background: withOpacity(colorThemes.background, defaultOpacity),
+    border: namedColors.darkerGray,
+  },
   compassButton: {
     background: 'white',
     icon: 'black',
@@ -279,8 +283,8 @@ const constants = {
     width: clockHeight, // Note this is not a typo. Width and height are identical because clock is round.
   },
   clockMenu: {
-    height: 240,
-    sliderMargin: 20,
+    height: panelHeight,
+    width: minDeviceWidth - (buttonSize + buttonOffset) * 2 - buttonOffset,
   },
   colors,
   colorThemes,
@@ -362,34 +366,34 @@ const constants = {
     rectHeight: 0,
     pointLength: 30,
   },
-  menus: {
-    defaultItemContainerStyle: {
-    },
-    defaultItemStyle: {
-      alignSelf: 'center',
-      backgroundColor: 'transparent',
-      justifyContent: 'center', // centers item vertically
-      margin: 0,
-      padding: 0,
-    },
-    defaultItemUnderlayColor: colors.menus.underlayColor,
-    defaultLabelStyle: {
-      color: colors.byName.white,
-      fontFamily,
-      fontSize: 12,
-      margin: 0,
-      padding: 0,
-      textAlign: 'center', // centers text horizontally
-    },
-  defaultTextStyle: {
-      color: colors.byName.white,
-      fontFamily,
-      fontSize: 16,
-      margin: 0,
-      padding: 0,
-      textAlign: 'center', // centers text horizontally
-    },
-  },
+  // menus: {
+  //   defaultItemContainerStyle: {
+  //   },
+  //   defaultItemStyle: {
+  //     alignSelf: 'center',
+  //     backgroundColor: 'transparent',
+  //     justifyContent: 'center', // centers item vertically
+  //     margin: 0,
+  //     padding: 0,
+  //   },
+  //   defaultItemUnderlayColor: colors.menus.underlayColor,
+  //   defaultLabelStyle: {
+  //     color: colors.byName.white,
+  //     fontFamily,
+  //     fontSize: 12,
+  //     margin: 0,
+  //     padding: 0,
+  //     textAlign: 'center', // centers text horizontally
+  //   },
+  // defaultTextStyle: {
+  //     color: colors.byName.white,
+  //     fontFamily,
+  //     fontSize: 16,
+  //     margin: 0,
+  //     padding: 0,
+  //     textAlign: 'center', // centers text horizontally
+  //   },
+  // },
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
