@@ -17,11 +17,11 @@ class TimelineSpan extends React.Component<TimelineSpanProps> {
     super(props);
   }
 
-  // public shouldComponentUpdate(nextProps: TimelineSpanProps, nextState: any) {
+  // shouldComponentUpdate(nextProps: TimelineSpanProps, nextState: any) {
   //   return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
   // }
 
-  public render() {
+  render() {
     const { scale, ts } = this.props;
     const { timeline } = constants;
     const yBase = timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars;

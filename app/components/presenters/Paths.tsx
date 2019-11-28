@@ -31,7 +31,7 @@ const lineLayerStyleCurrent = {
 }
 
 class Paths extends PureComponent<PathsProps> {
-  public render() {
+  render() {
     const { activities, currentActivityId } = this.props;
     let shapes = [] as JSX.Element[];
     for (let a = 0; a < activities.length; a++) {

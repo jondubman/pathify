@@ -86,8 +86,9 @@ export interface ActivityUpdate { // also used to create. Note this is same as a
   loss?: number; // total elevation loss
 }
 
-export const loggableActivity = (activity: Activity) => {
-  let a = { ...activity } as any; // Adorn the provided activity with additional fields
+// This returns an object that is simply the same Activity adorned with additional fields. (Strong typing not needed.)
+export const loggableActivity = (activity: Activity): any  => {
+  let a = { ...activity } as any;
   a.pathLats = a.pathLats.length; // Return just the array length rather than all the
   a.pathLons = a.pathLons.length; // individual points.
   if (a.odo && a.odoStart) {

@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 import { ActivityInfoProps } from 'containers/ActivityInfoContainer';
+import ActivityListContainer from 'containers/ActivityListContainer';
 import constants from 'lib/constants';
 
 const colors = constants.colors.activityInfo;
@@ -27,7 +28,10 @@ const Styles = StyleSheet.create({
 })
 
 const ActivityInfo = (props: ActivityInfoProps) => (
-  <View style={Styles.box} />
+  <React.Fragment>
+    <View style={Styles.box} />
+    {props.showActivityList ? <ActivityListContainer /> : null}
+  </React.Fragment>
 )
 
 export default ActivityInfo;

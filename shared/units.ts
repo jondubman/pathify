@@ -19,7 +19,7 @@ export const minutesToString = (minutes: number) => {
     const zeroPaddedMinutes = minutesOnly < 10 ? `0${minutesOnly}` : minutesOnly;
     return `${hours}:${zeroPaddedMinutes}:${seconds}`;
   }
-   else {
+  else {
     return `${minutesOnly}:${seconds}`;
   }
 }
@@ -30,3 +30,8 @@ export const precisionRound = (num: number, precision: number) => {
   const factor = Math.pow(10, precision);
   return Math.round(num * factor) / factor;
 }
+
+export const metersToMilesText = (odo: number | undefined) => (
+  (odo === undefined) ? '' :
+  `${parseFloat(metersToMiles(odo).toFixed(2))} mi`
+)

@@ -90,7 +90,22 @@ const colors = {
     itemBackground_selected: withOpacity(namedColors.azure, 0.5),
   },
   activityInfo: {
-    background: withOpacity(namedColors.silver, 0.5),
+    background: withOpacity(namedColors.silver, 0), // TODO
+  },
+  activityList: {
+    background: withOpacity(namedColors.silver, 0),
+    current: {
+      background: withOpacity(namedColors.green, 0.3),
+      border: withOpacity(namedColors.green, 1),
+      underlay: withOpacity(namedColors.green, 0.35),
+    },
+    past: {
+      background: withOpacity(namedColors.azure, 0.25),
+      backgroundSelected: withOpacity(namedColors.azure, 0.75),
+      border: withOpacity(namedColors.azure, 1),
+      underlay: withOpacity(namedColors.azure, 0.35),
+    },
+    text: withOpacity(namedColors.white, 1),
   },
   appBackground: colorThemes.background,
   appText: 'black',
@@ -193,7 +208,7 @@ const colors = {
     background: withOpacity(namedColors.darkerGray, 0.5),
     thumb: withOpacity(namedColors.green, 1),
     track: {
-      // false: withOpacity(namedColors.black, 1),
+      false: withOpacity(namedColors.black, 1),
       true: withOpacity(namedColors.blue, 0.75),
     }
   },
@@ -244,6 +259,11 @@ const constants = {
     height: 200,
     sideMargin: 5,
     topOffset: safeAreaTop,
+  },
+  activityList: {
+    borderRadius: 0,
+    borderWidth: 2,
+    height: initialTimelineHeight,
   },
   appName: 'Pathify',
   buttonOffset,
@@ -374,6 +394,7 @@ const constants = {
     rectHeight: 0,
     pointLength: 30,
   },
+  maxTimeGapForContinuousTrack: interval.seconds(5),
   // menus: {
   //   defaultItemContainerStyle: {
   //   },
@@ -405,7 +426,7 @@ const constants = {
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
-  maxTimeGapForContinuousTrack: interval.seconds(5),
+  minDeviceWidth,
   nowButton: {
     iconSize: clockHeight - 8,
     margin: clockMargin,

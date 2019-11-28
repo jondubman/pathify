@@ -16,9 +16,7 @@ import { MapAreaProps } from 'containers/MapContainer';
 import MapDimmerContainer from 'containers/MapDimmerContainer';
 import PathsContainer from 'components/containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
-import { AppAction, newAction } from 'lib/actions';
 import constants from 'lib/constants';
-import store from 'lib/store';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component

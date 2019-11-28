@@ -38,7 +38,8 @@ const AppStyles = StyleSheet.create({
 })
 
 class AppUI extends Component<AppUIProps> {
-  public render() {
+
+  render() {
     const {
       showActivityInfo,
       showDebugInfo,

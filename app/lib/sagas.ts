@@ -22,6 +22,10 @@
 // Inside one of these sagas, you should generally use yield call for any async function call.
 // Use yield call(log...) instead of log directly (yield call effect) so the call happens at the right time.
 
+import {
+  Alert,
+  AlertButton,
+} from 'react-native';
 import { Polygon } from '@turf/helpers';
 import RNRestart from 'react-native-restart';
 import {
@@ -61,9 +65,15 @@ import {
 } from 'lib/actions'
 import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
-import { currentActivity, selectedActivity } from 'lib/selectors';
+import {
+  currentActivity,
+  selectedActivity
+} from 'lib/selectors';
 import { postToServer } from 'lib/server';
-import { AppState } from 'lib/state';
+import {
+  AppState,
+  CacheInfo,
+} from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
@@ -79,7 +89,10 @@ import {
   AppStateChangeEvent,
   AppUserAction,
 } from 'shared/appEvents';
-import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
+import {
+  AppQueryParams,
+  AppQueryResponse
+} from 'shared/appQuery';
 import database from 'shared/database';
 import locations, {
   LocationEvent,
@@ -168,7 +181,6 @@ const sagas = {
         const pathExtension = [] as LonLat[];
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
         const appending: boolean = !!(firstNewLoc && firstNewLoc.t > activity.tLastUpdate);
-        yield call(log.debug, 'saga addEvents appending', appending, update.count);
         if (appending) {
           // odo
           if (firstNewLoc && firstNewLoc.odo) { // TODO what if firstNewLoc.odo is zero but other added odo are nonzero?
@@ -257,9 +269,9 @@ const sagas = {
       switch (queryType) {
 
         case 'activities': { // all
-          let fullActivities = yield call(database.activities);
+          let realmActivities = yield call(database.activities);
           let results = [] as any;
-          let activities = Array.from(fullActivities) as any;
+          let activities = Array.from(realmActivities) as any;
           for (let i = 0; i < activities.length; i++) {
             let modifiedActivity = loggableActivity(activities[i]);
             results.push(modifiedActivity);
@@ -389,6 +401,14 @@ const sagas = {
     yield put(newAction(AppAction.flagDisable, 'settingsVisible'));
   },
 
+  cache: function* (action: Action) {
+    try {
+      yield put(newAction(ReducerAction.CACHE, action.params as CacheInfo));
+    } catch(err) {
+      yield call(log.error, 'saga cache', err);
+    }
+  },
+
   // Center map on absolute position or relative to current position (see CenterMapParams).
   // Note this has the side effect of disabling following on the map if the center is moved.
   centerMap: function* (action: Action) {
@@ -464,27 +484,15 @@ const sagas = {
     const long = params && params.long;
     const nowClock = params && params.nowClock;
     yield call(log.trace, `clockPress, now: ${nowClock} long: ${long}`);
-    yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
-    yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
-    // if (long) {
-    //   yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
-    // } else {
-    //   const timelineNow = yield select(state => state.flags.timelineNow);
-    //   if (nowClock) {
-    //     if (timelineNow) {
-    //       yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
-    //     } else {
-    //       yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-    //     }
-    //   } else { // pausedClock
-    //     if (timelineNow) {
-    //       yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    //     } else {
-    //       yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
-    //       yield put(newAction(AppAction.flagEnable, 'timelineNow')); // avoid pausedClock if timeline not visible
-    //     }
-    //   }
-    // }
+    // TODO experiment
+    if (long) {
+      let b1: AlertButton = { text: 'Delete', style: 'destructive' };
+      let b2: AlertButton = { text: 'Cancel', style: 'cancel' }; // cancel is always on the left
+      yield call(Alert.alert, 'Delete Activity?', 'This operation cannot be undone.', [ b1, b2 ]);
+    } else {
+      yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
+      yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+    }
   },
 
   closePanels: function* (action: Action) {
@@ -725,6 +733,12 @@ const sagas = {
     // yield put(newAction(AppAction.setAppOption, { refTime: newRefTime, timelineRefTime: newRefTime }));
   },
 
+  refreshCache: function* (action: Action) {
+    let realmActivities = yield call(database.activities);
+    let activities = Array.from(realmActivities) as any;
+    yield put(newAction(AppAction.cache, { activities }));
+  },
+
   // Set map bearing to 0 (true north) typically in response to user action (button).
   reorientMap: function* () {
     const map = MapUtils();
@@ -737,7 +751,7 @@ const sagas = {
     }
   },
 
-  // See sequence saga.
+  // See sequence saga. This looks like a no-op but has a real purpose.
   repeatedAction: function* () {
   },
 
@@ -924,7 +938,6 @@ const sagas = {
       if (trackingActivity) {
         yield put(newAction(AppAction.flagDisable, 'backgroundGeolocation'));
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
-
         const activityId = yield select(state => state.options.currentActivityId);
         const now = utils.now();
         const stopEvent: AppUserActionEvent = {

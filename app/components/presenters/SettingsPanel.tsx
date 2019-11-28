@@ -113,7 +113,7 @@ type State = Readonly<typeof initialState>
 
 class SettingsPanel extends React.Component<SettingsPanelProps> {
 
-  public readonly state: State = initialState;
+  readonly state: State = initialState;
 
   constructor(props: any) {
     super(props);
@@ -121,15 +121,15 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
     this.onSlidingComplete = this.onSlidingComplete.bind(this);
   }
 
-  public onValueChange(value: number) {
+  onValueChange(value: number) {
     this.props.onSetMapOpacityPreview(value);
   }
 
-  public onSlidingComplete(value: number) {
+  onSlidingComplete(value: number) {
     this.props.onSetMapOpacity(value);
   }
 
-  public render() {
+  render() {
     const { props } = this;
     const colors = constants.colors.switch;
     return (

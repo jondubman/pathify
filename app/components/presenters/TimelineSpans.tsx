@@ -15,11 +15,11 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
     super(props);
   }
 
-  public shouldComponentUpdate(nextProps: TimelineSpansProps, nextState: any) {
+  shouldComponentUpdate(nextProps: TimelineSpansProps, nextState: any) {
     return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
   }
 
-  public render() {
+  render() {
     const data = this.props.data;
     const { scale } = this.props as any;
     return data.map((ts: Timespan, index: number) => (

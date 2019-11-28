@@ -51,13 +51,13 @@ type State = Readonly<typeof initialState>
 
 class ClockMenu extends React.Component<ClockMenuProps> {
 
-  public readonly state: State = initialState;
+  readonly state: State = initialState;
 
   constructor(props: any) {
     super(props);
   }
 
-  public render() {
+  render() {
     const { props } = this;
     return (
       <React.Fragment>

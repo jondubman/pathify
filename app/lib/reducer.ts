@@ -9,8 +9,9 @@ import {
 } from 'lib/actions';
 
 import {
-  initialAppState,
   AppState,
+  CacheInfo,
+  initialAppState,
 } from 'lib/state';
 import { LocationEvent, LocationEvents } from 'shared/locations';
 import { EventType } from "shared/timeseries";
@@ -22,6 +23,15 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
   const newState = { ...state }; // shallow copy for now
   const { params } = action;
   switch (action.type) {
+
+    case ReducerAction.CACHE:
+      {
+        const cacheInfo = params as CacheInfo;
+        if (cacheInfo.activities) {
+          newState.cache.activities = cacheInfo.activities;
+        }
+      }
+      break;
 
     // Set newState.userLocation to be the most recent locationEvent
     case ReducerAction.GEOLOCATION:

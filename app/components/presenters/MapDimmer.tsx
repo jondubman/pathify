@@ -14,7 +14,7 @@ import constants from 'lib/constants';
 
 class MapDimmer extends PureComponent<MapDimmerProps> {
 
-  public dimmerShape = turf.polygon([[ // Entire globe!
+  dimmerShape = turf.polygon([[ // Entire globe!
     [
       -180,
       -90

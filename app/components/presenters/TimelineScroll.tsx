@@ -35,12 +35,12 @@ const TimelineStyles = StyleSheet.create({
 
 class TimelineScroll extends Component<TimelineScrollProps> {
 
-  public readonly state: State = initialState;
-  public _lastDomain: DomainPropType | undefined;
-  public _refTime: number | undefined;
-  public _scrollView: any;
-  public _scrolling: boolean = false;
-  public _timer: any;
+  readonly state: State = initialState;
+  _lastDomain: DomainPropType | undefined;
+  _refTime: number | undefined;
+  _scrollView: any;
+  _scrolling: boolean = false;
+  _timer: any;
 
   constructor(props: any) {
     super(props);
@@ -54,7 +54,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
   }
 
-  public shouldComponentUpdate(nextProps: TimelineScrollProps, nextState: any) {
+  shouldComponentUpdate(nextProps: TimelineScrollProps, nextState: any) {
     if (this._scrolling) {
       return false; // TODO2 defer all updates to the timeline while it is being interactively scrolled
     }
@@ -62,17 +62,17 @@ class TimelineScroll extends Component<TimelineScrollProps> {
   }
 
   // Auto-scroll to the correct spot when component is updated.
-  public componentDidUpdate() {
+  componentDidUpdate() {
     const x = this.props.scrollToX;
     this._scrollView.scrollTo({ x, y: 0, animated: false });
   }
 
-  public componentWillUnmount() {
+  componentWillUnmount() {
     this.clearTimer();
     this.props.setTimelineScrolling(false);
   }
 
-  public render() {
+  render() {
     const {
       refTime,
       scrollableWidth,

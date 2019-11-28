@@ -4,6 +4,7 @@ import { AppState } from 'lib/state';
 import ActivityInfo from 'presenters/ActivityInfo';
 
 interface ActivityInfoStateProps {
+  showActivityList: boolean;
 }
 
 interface ActivityInfoDispatchProps {
@@ -13,6 +14,7 @@ export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
   return {
+    showActivityList: state.flags.showActivityList,
   }
 }
 

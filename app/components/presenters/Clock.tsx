@@ -96,7 +96,7 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: centerCircle.color,
     height: centerCircle.radius,
-    bottom: radius - borderWidth,
+    bottom: radius - borderWidth - 1,
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
   },

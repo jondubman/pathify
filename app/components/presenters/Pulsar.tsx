@@ -34,7 +34,7 @@ interface PulsarState {
 
 class Pulsar extends PureComponent<PulsarProps, PulsarState> {
 
-  public readonly state: PulsarState = {
+  readonly state: PulsarState = {
     pulse: new Animated.Value(pulseMin),
   }
   _pulseAnimation: any = null;

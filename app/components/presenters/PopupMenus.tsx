@@ -43,9 +43,9 @@ interface State {
 
 class PopupMenus extends React.Component<PopupMenusProps> {
 
-  public readonly state: State = {
+  readonly state: State = {
   }
-  public onSlidingComplete;
+  onSlidingComplete;
 
   constructor(props: any) {
     super(props);
@@ -57,15 +57,15 @@ class PopupMenus extends React.Component<PopupMenusProps> {
     }).bind(this);
   }
 
-  public onSlidingStart(value: number) {
+  onSlidingStart(value: number) {
     this.props.slidingStart(MenuItem.TIMELINE_ZOOM, value);
   }
 
-  public onValueChange(value: number) {
+  onValueChange(value: number) {
       this.props.sliderMoved(MenuItem.TIMELINE_ZOOM, value);
   }
 
-  public render() {
+  render() {
     const { menus } = this.props;
     const renderMenu = (menuName: PopupMenuName, menuConfig: PopupMenuConfig) => { // called in a loop below
 

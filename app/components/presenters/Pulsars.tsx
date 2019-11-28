@@ -9,7 +9,7 @@ import Pulsar from 'presenters/Pulsar'; // singular
 import { PulsarsProps } from 'containers/PulsarsContainer';
 
 class Pulsars extends PureComponent<PulsarsProps> {
-  public render() {
+  render() {
     const { keySuffix, pulsars } = this.props;
     return (
       <Fragment>

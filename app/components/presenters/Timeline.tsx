@@ -38,7 +38,7 @@ const TimelineStyles = StyleSheet.create({
 
 class Timeline extends Component<TimelineProps> {
 
-  public readonly state: State = initialState;
+  readonly state: State = initialState;
 
   constructor(props: any) {
     super(props);
@@ -46,10 +46,10 @@ class Timeline extends Component<TimelineProps> {
   }
 
   // This responds to user zoom interaction (which won't be happening if allowZoom is false)
-  public handleZoom(domain: DomainPropType, props: any) {
+  handleZoom(domain: DomainPropType, props: any) {
   }
 
-  public render() {
+  render() {
     const {
       allowZoom,
       currentActivityId,

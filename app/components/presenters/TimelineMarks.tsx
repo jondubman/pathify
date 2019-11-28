@@ -12,11 +12,11 @@ class TimelineMarks extends React.Component<TimelineMarksProps> {
     super(props);
   }
 
-  public shouldComponentUpdate(nextProps: TimelineMarksProps, nextState: any) {
+  shouldComponentUpdate(nextProps: TimelineMarksProps, nextState: any) {
     return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
   }
 
-  public render() {
+  render() {
     const {
       currentActivityId,
       data,

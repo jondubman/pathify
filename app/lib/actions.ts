@@ -12,6 +12,7 @@
 // There seems to be no way to avoid the repetition on each line given the syntax for TypeScript string enums.
 
 export enum ReducerAction {
+  'CACHE' = 'CACHE',
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'SET_APP_OPTION' = 'SET_APP_OPTION',
@@ -31,6 +32,7 @@ export enum AppAction {
   'appStateChange' = 'appStateChange',
   'appQuery' = 'appQuery', // see AppQueryParams
   'backgroundTapped' = 'backgroundTapped',
+  'cache' = 'cache',
   'centerMap' = 'centerMap', // see CenterMapParams
   'centerMapOnUser' = 'centerMapOnUser',
   'clearStorage' = 'clearStorage',
@@ -52,6 +54,7 @@ export enum AppAction {
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'panTimeline' = 'panTimeline', // see PanTimelineParams
+  'refreshCache' = 'refreshCache',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'restartApp' = 'restartApp',

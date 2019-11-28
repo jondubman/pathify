@@ -5,13 +5,19 @@ import { Polygon } from "@turf/helpers";
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
+import { ActivityUpdate } from 'shared/activities';
 import { LocationEvent } from 'shared/locations';
 
 const now = utils.now();
 
 // Note events and persistent settings are external to this (in Realm) - see database module
 
+export interface CacheInfo {
+  activities?: ActivityUpdate[];
+}
+
 export const initialAppState = {
+  cache: {} as CacheInfo,
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
     allowMapStyleNone: false, // really only useful for debugging / perf
@@ -32,11 +38,12 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
-    settingsOpen: true, // settings panel visible state
-    showActivityDetails: false, // TODO2
+    settingsOpen: false, // settings panel visible state
+    showActivityDetails: false,
+    showActivityList: true,
     showAppStateTimespans: false,
-    showActivityInfo: false,
-    showDebugInfo: true,
+    showActivityInfo: true,
+    showDebugInfo: false,
     showPathsOnMap: true,
     showPriorLocation: true,
     showTimeline: true,

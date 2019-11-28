@@ -57,13 +57,13 @@ type State = Readonly<typeof initialState>
 
 class TopMenu extends React.Component<TopMenuProps> {
 
-  public readonly state: State = initialState;
+  readonly state: State = initialState;
 
   constructor(props: any) {
     super(props);
   }
 
-  public render() {
+  render() {
     const { props } = this;
     return (
       <React.Fragment>

@@ -8,7 +8,7 @@ import {
 import { AppState } from 'lib/state';
 import DebugInfo from 'presenters/DebugInfo';
 import {
-  metersToMiles,
+  metersToMilesText,
   msecToString,
 } from 'shared/units';
 
@@ -31,7 +31,7 @@ const mapStateToProps = (state: AppState): DebugInfoStateProps => {
     text += `Events ${activity.count}\n`;
     if (activity.odo) {
       const odo = activity.odo - activity.odoStart;
-      text += `${Math.round(odo)} meters, ${metersToMiles(odo).toFixed(2)} mi`;
+      text += metersToMilesText(odo);
       // if (activityLength) {
       //   const speed = metersPerSecondToMilesPerHour(odo / (activityLength / 1000));
       //   text += '\n';
