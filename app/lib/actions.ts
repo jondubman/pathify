@@ -58,6 +58,7 @@ export enum AppAction {
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction', // see RepeatedActionParams
   'restartApp' = 'restartApp',
+  'scroll' = 'scroll',
   'sequence' = 'sequence', // see SequenceParams
   'setAppOption' = 'setAppOption',
   'sleep' = 'sleep', // see SleepParams
@@ -176,6 +177,11 @@ export interface PanTimelineParams {
 export interface RepeatedActionParams {
   repeat: Action,
   times: number,
+}
+
+export interface ScrollParams {
+  offset?: number;
+  index?: number;
 }
 
 export type SequenceParams = Action[];

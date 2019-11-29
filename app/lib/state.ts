@@ -14,10 +14,13 @@ const now = utils.now();
 
 export interface CacheInfo {
   activities?: ActivityUpdate[];
+  refreshCount: number;
 }
 
 export const initialAppState = {
-  cache: {} as CacheInfo,
+  cache: {
+    refreshCount: 0,
+  } as CacheInfo,
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
     allowMapStyleNone: false, // really only useful for debugging / perf

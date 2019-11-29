@@ -38,6 +38,10 @@ import {
 } from 'redux-saga/effects';
 import { DomainPropType } from 'victory-native';
 
+import {
+  ActivityList_scrollToIndex,
+  ActivityList_scrollToOffset,
+} from 'containers/ActivityListContainer';
 import { MenuItem } from 'containers/PopupMenusContainer';
 import {
   AbsoluteRelativeOption,
@@ -58,6 +62,7 @@ import {
   ImportGPXParams,
   LogActionParams,
   RepeatedActionParams,
+  ScrollParams,
   SequenceParams,
   SleepParams,
   SliderMovedParams,
@@ -254,6 +259,7 @@ const sagas = {
         }
         update.tLastUpdate = utils.now();
         yield call(database.updateActivity, update, pathExtension);
+        yield put(newAction(AppAction.refreshCache));
       }
     }
   },
@@ -292,6 +298,14 @@ const sagas = {
               results.push({ events: query.count ? events.length : Array.from(events) })
             }
             response = { results };
+          }
+          break;
+        }
+        case 'cache': {
+          const cache: CacheInfo = yield select(state => state.cache);
+          response = {
+            activityCount: cache.activities ? cache.activities.length : 0,
+            refreshCount: cache.refreshCount,
           }
           break;
         }
@@ -393,6 +407,11 @@ const sagas = {
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
     if (activeNow) { // Don't do this in the background... might take too long
       yield call(Geo.processSavedLocations);
+      const refreshCount = yield select(state => state.cache.refreshCount);
+      yield call(log.debug, 'cache refreshCount', refreshCount);
+      if (!refreshCount) { // Populate the cache for the first time
+        yield put(newAction(AppAction.refreshCache));
+      }
     }
   },
 
@@ -734,9 +753,16 @@ const sagas = {
   },
 
   refreshCache: function* (action: Action) {
-    let realmActivities = yield call(database.activities);
-    let activities = Array.from(realmActivities) as any;
-    yield put(newAction(AppAction.cache, { activities }));
+    try {
+      yield call(log.debug, 'saga refreshCache');
+      let realmActivities = yield call(database.activities);
+      let activities = Array.from(realmActivities) as any;
+      const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
+      yield put(newAction(AppAction.cache, { activities, refreshCount }));
+      yield call(log.debug, 'new refreshCount', refreshCount);
+    } catch(err) {
+      yield call(log.error, 'saga refreshCache', err);
+    }
   },
 
   // Set map bearing to 0 (true north) typically in response to user action (button).
@@ -760,6 +786,16 @@ const sagas = {
     yield call(log.warn, 'saga restartApp');
     yield call(log.info, RNRestart);
     yield call(RNRestart.Restart);
+  },
+
+  scroll: function* (action: Action) {
+    yield call(log.debug, 'saga scroll');
+    const scrollParams = action.params as ScrollParams;
+    if (scrollParams.index !== undefined) {
+      ActivityList_scrollToIndex(scrollParams);
+    } else if (scrollParams.offset !== undefined) {
+      ActivityList_scrollToOffset(scrollParams);
+    }
   },
 
   // The sequence action is an array of actions to be executed in sequence, such that
@@ -894,6 +930,7 @@ const sagas = {
           yield put(newAction(AppAction.addEvents, { events: [startEvent, startMark] }));
         }
         yield put(newAction(AppAction.setAppOption, { currentActivityId: activityId }));
+        yield put(newAction(AppAction.refreshCache));
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);
@@ -961,6 +998,7 @@ const sagas = {
           })
         }
         yield put(newAction(AppAction.setAppOption, { currentActivityId: null }));
+        yield put(newAction(AppAction.refreshCache));
       }
     } catch (err) {
       yield call(log.error, 'saga stopActivity', err);

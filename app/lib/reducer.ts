@@ -28,8 +28,9 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       {
         const cacheInfo = params as CacheInfo;
         if (cacheInfo.activities) {
-          newState.cache.activities = cacheInfo.activities;
+          newState.cache.activities = [ ...cacheInfo.activities ];
         }
+        newState.cache.refreshCount = cacheInfo.refreshCount;
       }
       break;
 

@@ -261,9 +261,11 @@ const constants = {
     topOffset: safeAreaTop,
   },
   activityList: {
+    activityWidth: 100, // < minDeviceWidth / 3
     borderRadius: 0,
     borderWidth: 2,
     height: initialTimelineHeight,
+    marginHorizontal: buttonOffset,
   },
   appName: 'Pathify',
   buttonOffset,
