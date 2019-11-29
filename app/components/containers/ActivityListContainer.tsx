@@ -3,6 +3,10 @@ import {
   FlatList,
 } from 'react-native';
 
+import {
+  AppAction,
+  newAction,
+} from 'lib/actions';
 import constants from 'lib/constants';
 import {
   dynamicAreaTop,
@@ -56,8 +60,9 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (activity: ActivityUpdate): void => {
-    // TODO maybe put Delete Activity here for now?
-    log.debug('onPressActivity', activity);
+    if (activity.tEnd) { // Don't try to delete an unfinished activity
+      dispatch(newAction(AppAction.deleteActivity, { id: activity.id }));
+    }
   }
   const dispatchers = {
     onPressActivity,

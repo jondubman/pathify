@@ -57,6 +57,7 @@ import {
   ClosePanelsParams,
   ContinueActivityParams,
   DelayedActionParams,
+  DeleteActivityParams,
   GeolocationParams,
   ImportEventsParams,
   ImportGPXParams,
@@ -72,6 +73,7 @@ import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
 import {
   currentActivity,
+  currentOrSelectedActivity,
   selectedActivity
 } from 'lib/selectors';
 import { postToServer } from 'lib/server';
@@ -505,9 +507,10 @@ const sagas = {
     yield call(log.trace, `clockPress, now: ${nowClock} long: ${long}`);
     // TODO experiment
     if (long) {
-      let b1: AlertButton = { text: 'Delete', style: 'destructive' };
-      let b2: AlertButton = { text: 'Cancel', style: 'cancel' }; // cancel is always on the left
-      yield call(Alert.alert, 'Delete Activity?', 'This operation cannot be undone.', [ b1, b2 ]);
+      const activity = yield select(state => selectedActivity(state));
+      if (activity) {
+        yield put(newAction(AppAction.deleteActivity, { id: activity.id }));
+      }
     } else {
       yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
       yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
@@ -556,6 +559,34 @@ const sagas = {
       yield put(params.run);
     } catch (err) {
       yield call(log.error, 'saga delayedAction', err);
+    }
+  },
+
+  // TODO paint this activity red on the ActivityList while it is on the chopping block.
+  // TODO consider an option to avoid the confirmation alert.
+  deleteActivity: function* (action: Action) {
+    try {
+      const params = action.params as DeleteActivityParams;
+      const { id } = params;
+      let deleteButton: AlertButton = {
+        onPress: () => {
+          log.warn('Delete activity', id);
+          database.deleteActivity(id);
+          store.dispatch(newAction(AppAction.refreshCache));
+        },
+        text: 'Delete',
+        style: 'destructive'
+      }
+      let cancelButton: AlertButton = {
+        onPress: () => {
+          log.info('deleteActivity canceled');
+        },
+        text: 'Cancel',
+        style: 'cancel'
+      } // cancel is always on the left
+      yield call(Alert.alert, 'Delete Activity?', 'This operation cannot be undone.', [deleteButton, cancelButton]);
+    } catch (err) {
+      yield call(log.error, 'saga deleteActivity', err);
     }
   },
 

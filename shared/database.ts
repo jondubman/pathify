@@ -106,7 +106,9 @@ const database = {
     let existingActivity = realm.objects('Activity')
                                 .filtered(`id == "${activityId}"`);
     if (existingActivity) {
-      realm.delete(existingActivity);
+      realm.write(() => {
+        realm.delete(existingActivity);
+      })
     }
   },
 

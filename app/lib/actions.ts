@@ -40,6 +40,7 @@ export enum AppAction {
   'closePanels' = 'closePanels',
   'continueActivity' = 'continueActivity',
   'delayedAction' = 'delayedAction', // see DelayedActionParams
+  'deleteActivity' = 'deleteActivity',
   'flagDisable' = 'flagDisable',
   'flagEnable' = 'flagEnable',
   'flagToggle' = 'flagToggle',
@@ -147,6 +148,10 @@ export interface ContinueActivityParams {
 export interface DelayedActionParams {
   run: Action,
   after: number,
+}
+
+export interface DeleteActivityParams {
+  id: string,
 }
 
 export interface GeolocationParams {

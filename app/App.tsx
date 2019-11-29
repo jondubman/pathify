@@ -9,7 +9,11 @@ import { Provider } from 'react-redux';
 // https: //www.npmjs.com/package/react-native-typescript-transformer
 // This is referenced in getTransformModulePath in rn-cli.config.js.
 
-import { AppAction, newAction, ReducerAction } from 'lib/actions';
+import {
+  AppAction,
+  newAction,
+  ReducerAction
+} from 'lib/actions';
 import constants from 'lib/constants';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
