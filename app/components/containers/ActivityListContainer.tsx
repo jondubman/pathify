@@ -60,8 +60,16 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (activity: ActivityUpdate): void => {
-    if (activity.tEnd) { // Don't try to delete an unfinished activity
-      dispatch(newAction(AppAction.deleteActivity, { id: activity.id }));
+    if (activity) {
+      dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
+      if (activity.tStart) {
+        const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
+                                        (activity.tStart + (activity.tLastUpdate || activity.tStart)) / 2;
+        dispatch(newAction(AppAction.setAppOption, {
+          refTime: newTime,
+          timelineRefTime: newTime,
+        }))
+      }
     }
   }
   const dispatchers = {

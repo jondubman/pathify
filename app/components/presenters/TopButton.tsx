@@ -32,13 +32,15 @@ const Styles = StyleSheet.create({
   },
 })
 
+// TODO props.onPress
+
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.enabled ? colors.underlay : colors.background,
       top: props.topOffset,
     }]}
-    onPress={props.onPress}
+    onPress={() => { props.onDeleteActivity(props.activityId) }}
     underlayColor={props.enabled ? colors.background : colors.underlay}
   >
     <FontAwesome5

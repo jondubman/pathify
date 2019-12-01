@@ -417,11 +417,12 @@ const sagas = {
     }
   },
 
+  // The 'background' is unlikely to be actually visible as it only appears when there is no map.
   backgroundTapped: function* (action: Action) {
     yield call(log.trace, 'saga backgroundTapped');
-    yield put(newAction(AppAction.flagDisable, 'settingsVisible'));
   },
 
+  // Store objects in the Redux cache.
   cache: function* (action: Action) {
     try {
       yield put(newAction(ReducerAction.CACHE, action.params as CacheInfo));
@@ -490,6 +491,7 @@ const sagas = {
     }
   },
 
+  // Caution: clearStorage is highly destructive, without warning or confirmation!
   clearStorage: function* () {
     try {
       yield call(database.reset);
@@ -517,6 +519,7 @@ const sagas = {
     }
   },
 
+  // Panels here refer to popups / menus.
   closePanels: function* (action: Action) {
     const params = action.params as ClosePanelsParams;
     yield call(log.debug, 'saga closePanels', params);
@@ -542,6 +545,8 @@ const sagas = {
     }
   },
 
+  // Activities are 'continued' automatically when the app is terminated and then restarted during activity tracking,
+  // whether the app was restarted manually, by the user, or automatically, in the background.
   continueActivity: function* (action: Action) {
     try {
       const params = action.params as ContinueActivityParams;
@@ -808,7 +813,7 @@ const sagas = {
     }
   },
 
-  // See sequence saga. This looks like a no-op but has a real purpose.
+  // See sequence saga. This looks like a no-op; the saga is, because it needs to exist, but the action is still useful.
   repeatedAction: function* () {
   },
 
