@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-community/cli": "^2.9.0",
+    "@react-native-community/cli": "^2.10.0",
     "@react-native-community/slider": "^2.0.2",
     "@react-native-mapbox-gl/maps": "^7.0.6",
     "@turf/distance": "^6.0.1",
