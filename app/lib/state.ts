@@ -5,7 +5,7 @@ import { Polygon } from "@turf/helpers";
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
-import { ActivityData } from 'shared/activities';
+import { ActivityDataExtended } from 'shared/activities';
 import { LocationEvent } from 'shared/locations';
 
 const now = utils.now();
@@ -13,7 +13,7 @@ const now = utils.now();
 // Note events and persistent settings are external to this (in Realm) - see database module
 
 export interface CacheInfo {
-  activities?: ActivityData[];
+  activities?: ActivityDataExtended[];
   refreshCount: number;
 }
 

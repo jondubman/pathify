@@ -14,26 +14,26 @@ import {
 import { AppState } from 'lib/state';
 import ActivityList from 'presenters/ActivityList';
 import {
-  ActivityData,
+  ActivityDataExtended,
 } from 'shared/activities';
 
 interface ActivityListStateProps {
-  list: ActivityData[];
+  list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string;
   top: number;
 }
 
 interface ActivityListDispatchProps {
-  onPressActivity: (activity: ActivityData) => void;
-  registerRef: (ref: FlatList<ActivityData>) => void;
+  onPressActivity: (activity: ActivityDataExtended) => void;
+  registerRef: (ref: FlatList<ActivityDataExtended>) => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
 
-let _ref: FlatList<ActivityData>;
+let _ref: FlatList<ActivityDataExtended>;
 
-const registerRef = (ref: FlatList<ActivityData>) => {
+const registerRef = (ref: FlatList<ActivityDataExtended>) => {
   // TODO Here, we have a ref to control the FlatList (https://facebook.github.io/react-native/docs/flatlist)
   _ref = ref;
 }
@@ -60,7 +60,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
-  const onPressActivity = (activity: ActivityData): void => {
+  const onPressActivity = (activity: ActivityDataExtended): void => {
     if (activity) {
       dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
       if (activity.tStart) {
