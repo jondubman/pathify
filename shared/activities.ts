@@ -88,9 +88,20 @@ export interface ActivityData {
   loss?: number; // total elevation loss
 }
 
+export interface ActivityDataExtended extends ActivityData {
+  distance?: number;
+  distanceMiles?: number;
+  tStartText?: string;
+  tTotal?: number;
+  tTotalText?: string;
+}
 
-export const extendActivity = (activity: Activity): ActivityData => {
-  let a = { ...activity } as any;
+export const extendedActivities = (activities: ActivityData[]) => {
+  return activities.map((activityData) => extendActivity(activityData));
+}
+
+export const extendActivity = (activity: ActivityData): ActivityDataExtended => {
+  let a = { ...activity } as ActivityDataExtended;
   if (a.odo && a.odoStart) {
     a.distance = a.odo - a.odoStart;
     a.distanceMiles = metersToMiles(a.distance);

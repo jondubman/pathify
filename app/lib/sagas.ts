@@ -86,6 +86,7 @@ import { MapUtils } from 'presenters/MapArea';
 import {
   Activity,
   ActivityData,
+  extendedActivities,
   loggableActivity,
 } from 'shared/activities';
 import {
@@ -795,7 +796,8 @@ const sagas = {
     try {
       yield call(log.debug, 'saga refreshCache');
       const realmActivities = yield call(database.activities);
-      const activities = Array.from(realmActivities) as ActivityData[];
+      const activitiesAsArray = Array.from(realmActivities) as ActivityData[]
+      const activities = extendedActivities(activitiesAsArray);
       const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
       yield put(newAction(AppAction.cache, { activities, refreshCount }));
       yield call(log.debug, 'new refreshCount', refreshCount);
