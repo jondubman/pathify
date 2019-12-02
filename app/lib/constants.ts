@@ -54,13 +54,18 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   darkGreen: '#239c31',
   darkerGreen: '#035a0d',
   darkRed: '#bf0a00',
+  darkerRed: '#840700',
   black: '#000000',
   white: '#ffffff',
 }
 
+// colorThemes is pretty simple right now; just colors that are reused
 const colorThemes = {
   background: namedColors.black,
   help: namedColors.yellow,
+  now: namedColors.green,
+  nowDark: namedColors.darkGreen,
+  nowDarker: namedColors.darkerGreen,
   settings: namedColors.darkerGray,
   topMenu: namedColors.darkerGray,
 }
@@ -87,7 +92,7 @@ export const withOpacity = (color: string, opacity: number): string => (color + 
 
 const colors = {
   activityDetails: {
-    itemBackground_current: withOpacity(namedColors.green, 0.5),
+    itemBackground_current: withOpacity(colorThemes.now, 0.5),
     itemBackground_selected: withOpacity(namedColors.azure, 0.5),
   },
   activityInfo: {
@@ -96,15 +101,17 @@ const colors = {
   activityList: {
     background: withOpacity(namedColors.silver, 0),
     current: {
-      background: withOpacity(namedColors.green, 0.3),
-      border: withOpacity(namedColors.green, 1),
-      underlay: withOpacity(namedColors.green, 0.35),
+      background: withOpacity(colorThemes.now, 0.3),
+      border: withOpacity(colorThemes.now, 1),
+      underlay: withOpacity(colorThemes.now, 0.35),
     },
     past: {
       background: withOpacity(namedColors.azure, 0.25),
       backgroundSelected: withOpacity(namedColors.azure, 0.75),
       border: withOpacity(namedColors.azure, 1),
-      underlay: withOpacity(namedColors.azure, 0.35),
+      borderSelected: withOpacity(namedColors.white, 0.75),
+      selected: withOpacity(namedColors.azure, 0.5),
+      underlay: withOpacity(namedColors.azure, 0.65),
     },
     text: withOpacity(namedColors.white, 1),
   },
@@ -114,7 +121,7 @@ const colors = {
   clock: {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.9),
-    backgroundNow: withOpacity(namedColors.darkerGreen, 0.65),
+    backgroundNow: withOpacity(colorThemes.nowDark, 0.65),
     backgroundPast: withOpacity(namedColors.azure_dark, 0.75),
     backgroundStopped: withOpacity(namedColors.black, 0.7),
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.7),
@@ -127,7 +134,7 @@ const colors = {
   compassButton: {
     background: 'white',
     icon: 'black',
-    underlay: namedColors.purple,
+    underlay: withOpacity(namedColors.purple, 1),
   },
   debugInfo: {
     backgroundColor: withOpacity(namedColors.black, 0.65),
@@ -136,9 +143,9 @@ const colors = {
     text: 'white',
   },
   followMeButton: {
-    background: { active: namedColors.darkGreen, inactive: 'black' },
-    icon: { active: 'black', inactive: namedColors.green },
-    underlay: namedColors.green,
+    background: { active: colorThemes.nowDark, inactive: 'black' },
+    icon: { active: 'black', inactive: colorThemes.now },
+    underlay: colorThemes.now,
   },
   geolocationButton: {
     background: 'white',
@@ -191,8 +198,12 @@ const colors = {
   },
   paths: {
     transparent: 'transparent',
-    current: withOpacity(namedColors.green, 0.75),
+    current: withOpacity(colorThemes.now, 0.75),
     default: withOpacity(namedColors.blue, 0.75),
+  },
+  pulsars: {
+    userLocation: withOpacity(colorThemes.now, 1),
+    priorLocation: withOpacity(namedColors.blue, 1),
   },
   settingsButton: {
     background: 'white',
@@ -217,7 +228,7 @@ const colors = {
     axis: namedColors.darkerGray,
     axisLabels: namedColors.gray,
     background: colorThemes.background,
-    currentActivity: withOpacity(namedColors.green, 0.75),
+    currentActivity: withOpacity(colorThemes.now, 0.75),
     selectedActivity: withOpacity(namedColors.blue, 1), // special case when timespan is selected
     timespans: {
       [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65), // unselected state (selectedActivity color above)
@@ -241,7 +252,7 @@ const colors = {
     background: withOpacity(colorThemes.background, defaultOpacity),
     border: namedColors.darkerGray,
   },
-  user: namedColors.green, // note: was azure
+  user: colorThemes.now,
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -173,10 +173,11 @@ export const menuOpen = (state: AppState): boolean => (
 // TODO4 cache for performance
 export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars };
+  const { colors } = constants;
   if (state.userLocation) {
     pulsars.userLocation = {
       loc: locations.lonLat(state.userLocation),
-      color: constants.colors.user,
+      color: colors.pulsars.userLocation,
       visible: true,
     }
   }
@@ -191,7 +192,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     if (locEvent) {
       pulsars.priorLocation = {
         loc: locations.lonLat(locEvent),
-        color: constants.colors.byName.red,
+        color: colors.pulsars.priorLocation,
         visible: true,
       }
     }

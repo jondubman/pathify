@@ -46,6 +46,10 @@ const Styles = StyleSheet.create({
     backgroundColor: colors.past.background,
     borderColor: colors.past.border,
   },
+  pastActivitySelected: {
+    backgroundColor: colors.past.selected,
+    borderColor: colors.past.borderSelected,
+  },
   box: {
     backgroundColor: colors.background,
     height,
@@ -93,6 +97,7 @@ class ActivityList extends Component<ActivityListProps> {
       <View style={[Styles.box, { top: this.props.top }]}>
         <FlatList<ActivityData>
           data={this.props.list}
+          extraData={this.props}
           getItemLayout={getItemLayout}
           horizontal
           onScroll={this.handleScroll}
@@ -114,6 +119,11 @@ class ActivityList extends Component<ActivityListProps> {
       msecToString(activity.tLastUpdate - activity.tStart) : '';
     const distance = (activity.odo && activity.odoStart) ?
       metersToMilesText(activity.odo - activity.odoStart) : '';
+    const isSelected = (activity.id === this.props.selectedActivityId);
+    const activityStyle = [
+      Styles.activity,
+      isCurrent ? Styles.currentActivity : (isSelected ? Styles.pastActivitySelected : Styles.pastActivity),
+    ]
 
     // Note onPress receives a GestureResponderEvent we are ignoring.
     return (
@@ -128,15 +138,13 @@ class ActivityList extends Component<ActivityListProps> {
         ]}
         underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
       >
-        <View style={[Styles.activity, isCurrent ? Styles.currentActivity : Styles.pastActivity]}>
+        <View style={activityStyle}>
           <Text style={Styles.text}>{time}</Text>
           <Text style={Styles.text}>{distance}</Text>
         </View>
       </TouchableHighlight>
     )
   }
-
-
 }
 
 export default ActivityList;

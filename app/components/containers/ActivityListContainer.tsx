@@ -20,6 +20,7 @@ import {
 interface ActivityListStateProps {
   list: ActivityData[];
   refreshCount: number;
+  selectedActivityId: string;
   top: number;
 }
 
@@ -53,6 +54,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
+    selectedActivityId: state.options.selectedActivityId,
     top: dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset,
   }
 }
