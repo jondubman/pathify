@@ -67,6 +67,9 @@ const Styles = StyleSheet.create({
     margin: 2,
     marginRight: 4,
   },
+  textSelected: {
+    color: colors.textSelected,
+  },
 })
 
 const marginLeft = centerline() - (0.5 * (activityWidth + marginHorizontal * 2));
@@ -124,7 +127,7 @@ class ActivityList extends Component<ActivityListProps> {
       Styles.activity,
       isCurrent ? Styles.currentActivity : (isSelected ? Styles.pastActivitySelected : Styles.pastActivity),
     ]
-
+    const textStyle = [Styles.text, isSelected ? Styles.textSelected : null ];
     // Note onPress receives a GestureResponderEvent we are ignoring.
     return (
       <TouchableHighlight
@@ -139,8 +142,8 @@ class ActivityList extends Component<ActivityListProps> {
         underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
       >
         <View style={activityStyle}>
-          <Text style={Styles.text}>{time}</Text>
-          <Text style={Styles.text}>{distance}</Text>
+          <Text style={textStyle}>{time}</Text>
+          <Text style={textStyle}>{distance}</Text>
         </View>
       </TouchableHighlight>
     )

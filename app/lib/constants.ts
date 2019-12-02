@@ -99,21 +99,22 @@ const colors = {
     background: withOpacity(namedColors.silver, 0), // TODO
   },
   activityList: {
-    background: withOpacity(namedColors.silver, 0),
+    background: 'transparent',
     current: {
       background: withOpacity(colorThemes.now, 0.3),
       border: withOpacity(colorThemes.now, 1),
       underlay: withOpacity(colorThemes.now, 0.35),
     },
     past: {
-      background: withOpacity(namedColors.azure, 0.25),
-      backgroundSelected: withOpacity(namedColors.azure, 0.75),
-      border: withOpacity(namedColors.azure, 1),
+      background: withOpacity(namedColors.darkerGray, 0.25),
+      backgroundSelected: withOpacity(namedColors.blue, 0.75),
+      border: withOpacity(namedColors.gray, 0.5),
       borderSelected: withOpacity(namedColors.white, 0.75),
       selected: withOpacity(namedColors.azure, 0.5),
       underlay: withOpacity(namedColors.azure, 0.65),
     },
-    text: withOpacity(namedColors.white, 1),
+    text: withOpacity(namedColors.white, 0.75),
+    textSelected: withOpacity(namedColors.white, 1),
   },
   appBackground: colorThemes.background,
   appText: 'black',

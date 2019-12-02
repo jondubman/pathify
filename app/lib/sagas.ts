@@ -790,8 +790,8 @@ const sagas = {
   refreshCache: function* (action: Action) {
     try {
       yield call(log.debug, 'saga refreshCache');
-      let realmActivities = yield call(database.activities);
-      let activities = Array.from(realmActivities) as any;
+      const realmActivities = yield call(database.activities);
+      const activities = Array.from(realmActivities) as ActivityData[];
       const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
       yield put(newAction(AppAction.cache, { activities, refreshCount }));
       yield call(log.debug, 'new refreshCount', refreshCount);
