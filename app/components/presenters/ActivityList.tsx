@@ -15,7 +15,7 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
-import { ActivityUpdate } from 'shared/activities';
+import { ActivityData } from 'shared/activities';
 import log from 'shared/log';
 import {
   metersToMilesText,
@@ -68,7 +68,7 @@ const Styles = StyleSheet.create({
 const marginLeft = centerline() - (0.5 * (activityWidth + marginHorizontal * 2));
 const marginRight = marginLeft + marginHorizontal;
 
-const getItemLayout = (data: ActivityUpdate[] | null, index: number) => (
+const getItemLayout = (data: ActivityData[] | null, index: number) => (
   {
     index,
     length: ((marginHorizontal * 2) + activityWidth),
@@ -91,7 +91,7 @@ class ActivityList extends Component<ActivityListProps> {
   render() {
     return (
       <View style={[Styles.box, { top: this.props.top }]}>
-        <FlatList<ActivityUpdate>
+        <FlatList<ActivityData>
           data={this.props.list}
           getItemLayout={getItemLayout}
           horizontal
@@ -108,7 +108,7 @@ class ActivityList extends Component<ActivityListProps> {
   }
 
   renderItem({ item, index, separators }) {
-    const activity = item as ActivityUpdate;
+    const activity = item as ActivityData;
     const isCurrent = !activity.tEnd;
     const time = (activity.tLastUpdate && activity.tStart) ?
       msecToString(activity.tLastUpdate - activity.tStart) : '';

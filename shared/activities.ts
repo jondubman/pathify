@@ -4,9 +4,9 @@ import Realm from 'realm';
 import { Timepoint } from './timeseries';
 import { metersToMiles, msecToString } from './units';
 
-// TODO the repetition here is not ideal, particularly between Activity and ActivityUpdate.
+// TODO the repetition here is not ideal, particularly between Activity and ActivityData.
 
-export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityUpdate in sync, below!
+export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
   name: 'Activity',
   primaryKey: 'id',
   properties: {
@@ -59,7 +59,7 @@ export interface Activity extends Realm.Object { // returned from Realm
 }
 export type Activities = Activity[];
 
-export interface ActivityUpdate { // also used to create. Note this is same as above but does not extend Realm.Object.
+export interface ActivityData { // also used to create. Note this is same as above but does not extend Realm.Object.
   // id required
   id: string; // use matching activityId for corresponding START and END marks and events collected between
 

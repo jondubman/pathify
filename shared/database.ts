@@ -12,7 +12,7 @@ import {
 } from './timeseries';
 import {
   Activity,
-  ActivityUpdate,
+  ActivityData,
   ActivitySchema,
 } from './activities';
 
@@ -67,7 +67,7 @@ const database = {
 
   // Return new Activity
   createActivity: (now: number, odoStart: number = 0): Activity => {
-    const newActivityTemplate: ActivityUpdate = {
+    const newActivityTemplate: ActivityData = {
       id: uuid.default(),
       count: 0,
       gain: 0,
@@ -91,7 +91,7 @@ const database = {
     return database.events().filtered('activityId == $0', id);
   },
 
-  updateActivity: async (activityUpdate: ActivityUpdate, pathExtension: LonLat[] = []) => {
+  updateActivity: async (activityUpdate: ActivityData, pathExtension: LonLat[] = []) => {
     let activity: Activity;
     realm.write(() => {
       activity = realm.create('Activity', activityUpdate, true) as Activity; // true: update

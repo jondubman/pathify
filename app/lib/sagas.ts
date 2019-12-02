@@ -73,7 +73,6 @@ import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
 import {
   currentActivity,
-  currentOrSelectedActivity,
   selectedActivity
 } from 'lib/selectors';
 import { postToServer } from 'lib/server';
@@ -86,7 +85,7 @@ import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import {
   Activity,
-  ActivityUpdate,
+  ActivityData,
   loggableActivity,
 } from 'shared/activities';
 import {
@@ -183,8 +182,8 @@ const sagas = {
     if (activityId) {
       const activity: Activity = yield call(database.activityById, activityId);
       if (activity) {
-        const update: ActivityUpdate = { id: activity.id };
-        update.count = (activity.count || 0) + events.length;
+        const activityUpdate: ActivityData = { id: activity.id };
+        activityUpdate.count = (activity.count || 0) + events.length;
         const pathExtension = [] as LonLat[];
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
         const appending: boolean = !!(firstNewLoc && firstNewLoc.t > activity.tLastUpdate);
@@ -192,12 +191,12 @@ const sagas = {
           // odo
           if (firstNewLoc && firstNewLoc.odo) { // TODO what if firstNewLoc.odo is zero but other added odo are nonzero?
             if (!activity.odoStart || firstNewLoc.odo < activity.odoStart) {
-              update.odoStart = firstNewLoc.odo; // set odoStart on the activity if not set already
+              activityUpdate.odoStart = firstNewLoc.odo; // set odoStart on the activity if not set already
             }
           }
           if (lastNewLoc) {
-            update.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
-            update.odo = lastNewLoc.odo;
+            activityUpdate.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
+            activityUpdate.odo = lastNewLoc.odo;
           }
           // pathExtension
           for (let i = 0; i < events.length; i++) {
@@ -211,14 +210,14 @@ const sagas = {
           if (activity.tLastLoc && firstNewLoc) {
             const gapTime = firstNewLoc.t - activity.tLastLoc;
             if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-              update.maxGapTime = gapTime;
-              update.tMaxGapTime = activity.tLastLoc;
+              activityUpdate.maxGapTime = gapTime;
+              activityUpdate.tMaxGapTime = activity.tLastLoc;
             }
             if (firstNewLoc.odo && activity.odo) {
               const gapDistance = firstNewLoc.odo - activity.odo;
               if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                update.maxGapDistance = gapDistance;
-                update.tMaxGapDistance = activity.tLastLoc;
+                activityUpdate.maxGapDistance = gapDistance;
+                activityUpdate.tMaxGapDistance = activity.tLastLoc;
               }
             }
           }
@@ -886,28 +885,29 @@ const sagas = {
     if (action.params.currentActivityId === null) { // Explicit check for null
       database.changeSettings({ currentActivityId: null });
     }
-    // Whenever refTime is set, update selectedActivity automatically based on marks.containingActivity,
-    // which looks for bookending MarkType.START and MarkType.END events.
-    // Also update pausedTime, if timelineNow is false.
+    // Whenever refTime is set, pausedTime and selectedActivityId may also be updated.
+    // Note that setting timelineRefTime (which changes as the Timeline is scrolled) lacks these side effects.
+    // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
     if (action.params.refTime) {
       const timelineNow = yield select(state => state.flags.timelineNow);
-      if (!timelineNow) {
-        yield put(newAction(AppAction.setAppOption, { pausedTime: action.params.refTime }));
-      }
-      const currentActivityId = yield select(state => state.options.currentActivityId);
       if (timelineNow) {
-        yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
+        yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
       } else {
         const t = action.params.refTime;
+        // Setting refTime when timeline is paused updates pausedTime.
+        // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
+        yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
+
+        const currentActivityId = yield select(state => state.options.currentActivityId);
         const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
         if (!activity || !activity.id || activity.id === currentActivityId) {
-          // Clear selectedActivity if it would be redundant to currentActivity.
-          yield put(newAction(AppAction.setAppOption, { selectedActivityId: null })); // recursive
+          // Note selectedActivity is cleared if it would be redundant to currentActivity.
+          yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
         } else {
-          yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id })); // recursive
+          yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id }));
           // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
-          // it's because something other than the currentActivity is selected. That way, a selectedActivity is always
-          // a completed activity.
+          // it's because something other than the currentActivity is selected.
+          // Thus selectedActivity is always a completed activity, while currentActivity is never a completed activity.
         }
       }
     }
