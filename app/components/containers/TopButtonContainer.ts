@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { AppAction, newAction } from 'lib/actions';
 import {
   dynamicAreaTop,
-  selectedActivity,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import TopButton from 'presenters/TopButton';
@@ -43,7 +42,9 @@ const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
   }
   const onDeleteActivity = (id: string) => {
     log.debug('TopButton onDeleteActivity');
-    dispatch(newAction(AppAction.deleteActivity, { id }));
+    if (id) {
+      dispatch(newAction(AppAction.deleteActivity, { id }));
+    }
   }
   const dispatchers = {
     onDeleteActivity,
