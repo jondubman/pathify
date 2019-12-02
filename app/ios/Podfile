@@ -48,8 +48,8 @@ target 'Pathify' do
     # Pods for testing
   end
 
-  require_relative ‘../node_modules/@react-native-community/cli-platform-ios/native_modules’
-  use_native_modules!(“../”)
+  require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+  use_native_modules!('../')
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|
