@@ -71,12 +71,12 @@ const database = {
       id: uuid.default(),
       count: 0,
       gain: 0,
-      tLastUpdate: now,
       loss: 0,
       odo: 0,
       odoStart,
       pathLons: [],
       pathLats: [],
+      tLastUpdate: now,
       tStart: now,
       tEnd: 0,
     }

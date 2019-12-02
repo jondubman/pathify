@@ -480,7 +480,7 @@ const sagas = {
         if (userLocation && userLocation.lon && userLocation.lat) {
           yield call(map.flyTo as any, locations.lonLat(userLocation));
         } else {
-          yield call(log.warn, 'saga centerMapOnUser: missing userLocation');
+          yield call(log.info, 'saga centerMapOnUser: missing userLocation');
         }
       } else {
         yield call(log.warn, 'saga centerMapOnUser: missing map');
@@ -731,9 +731,13 @@ const sagas = {
 
   // Generate a client-side log with an Action
   log: function* (action: Action) {
-    const params = action.params as LogActionParams;
-    const { level, message } = params;
-    yield call(log[level || 'debug'], message);
+    try {
+      const params = action.params as LogActionParams;
+      const { level, message } = params;
+      yield call(log[level || 'debug'], message);
+    } catch(err) {
+      // eat it
+    }
   },
 
   // Triggered by Mapbox
@@ -988,20 +992,24 @@ const sagas = {
   },
 
   startupActions: function* () {
-    const { startupAction_clearStorage } = yield select(state => state.flags);
-    if (startupAction_clearStorage) {
-      yield put(newAction(AppAction.clearStorage));
-    }
-    const settings = yield call(database.settings) as any; // TODO typings
-    yield call(log.info, 'Persisted App settings', settings);
+    try {
+      const { startupAction_clearStorage } = yield select(state => state.flags);
+      if (startupAction_clearStorage) {
+        yield put(newAction(AppAction.clearStorage));
+      }
+      const settings = yield call(database.settings) as any; // TODO typings
+      yield call(log.info, 'Persisted App settings', settings);
 
-    const { currentActivityId } = settings;
-    yield call(Geo.initializeGeolocation, store, !!currentActivityId);
-    if (currentActivityId) {
-      yield call(log.info, 'Continuing previous activity...');
-      yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
-    } else {
-      yield put(newAction(AppAction.startFollowingUser));
+      const { currentActivityId } = settings;
+      yield call(Geo.initializeGeolocation, store, !!currentActivityId);
+      if (currentActivityId) {
+        yield call(log.info, 'Continuing previous activity...');
+        yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
+      } else {
+        yield put(newAction(AppAction.startFollowingUser));
+      }
+    } catch (err) {
+      yield call(log.error, 'startupActions exception', err);
     }
   },
 

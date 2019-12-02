@@ -37,12 +37,12 @@ export interface Activity extends Realm.Object { // returned from Realm
   id: string; // use matching activityId for corresponding START and END marks and events collected between
 
   odoStart: number; // odo of the earliest location in the activity
-  pathLons: number[];
-  pathLats: number[];
-  tLastLoc?: Timepoint;
-  tLastUpdate: Timepoint;
-  tStart: Timepoint;
-  tEnd: Timepoint;
+  pathLons: number[]; // required, may be empty
+  pathLats: number[]; // required, may be empty, should have same length as pathLons
+  tLastLoc?: Timepoint; // optional
+  tLastUpdate: Timepoint; // required
+  tStart: Timepoint; // required
+  tEnd: Timepoint; // required
 
   // metrics
   count?: number; // of events
@@ -59,7 +59,9 @@ export interface Activity extends Realm.Object { // returned from Realm
 }
 export type Activities = Activity[];
 
-export interface ActivityData { // also used to create. Note this is same as above but does not extend Realm.Object.
+// ActivityData facilitate creating and updating Activities and they are also used to populate the cache in Redux.
+// All the Activity properties above are included, without extending Realm.Object. Here, all but id are optional.
+export interface ActivityData {
   // id required
   id: string; // use matching activityId for corresponding START and END marks and events collected between
 
@@ -86,11 +88,9 @@ export interface ActivityData { // also used to create. Note this is same as abo
   loss?: number; // total elevation loss
 }
 
-// This returns an object that is simply the same Activity adorned with additional fields. (Strong typing not needed.)
-export const loggableActivity = (activity: Activity): any  => {
+
+export const extendActivity = (activity: Activity): ActivityData => {
   let a = { ...activity } as any;
-  a.pathLats = a.pathLats.length; // Return just the array length rather than all the
-  a.pathLons = a.pathLons.length; // individual points.
   if (a.odo && a.odoStart) {
     a.distance = a.odo - a.odoStart;
     a.distanceMiles = metersToMiles(a.distance);
@@ -101,5 +101,12 @@ export const loggableActivity = (activity: Activity): any  => {
     a.tTotal = tEnd - a.tStart;
     a.tTotalText = msecToString(a.tTotal);
   }
+  return a;
+}
+
+export const loggableActivity = (activity: Activity): any => {
+  let a = { ...extendActivity(activity) } as any; // any, so we can replace pathLats and pathLons with just a length,
+  a.pathLats = a.pathLats.length; // blasting away all the individual points,
+  a.pathLons = a.pathLons.length; // which we don't want cluttering up a log.
   return a;
 }

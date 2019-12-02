@@ -5,7 +5,11 @@ import constants from 'lib/constants';
 import store from 'lib/store';
 import log, { messageToLog } from 'shared/log';
 
-const { clientId, headers, serverUrl } = constants;
+const {
+  clientId,
+  headers,
+  serverUrl
+} = constants;
 
 // This handles the server response to /poll, which is a server push.
 export const handleServerPush = async (data: any) => {
@@ -42,9 +46,14 @@ const pollServerOnce = async () => {
     const message = await response.json();
     handleServerPush(message);
   } catch (err) {
-    log.warn('pollServerOnce', err);
+    log.info('pollServerOnce', err);
+
     // take a brief nap and then try again
-    await new Promise(resolve => setTimeout(resolve, constants.serverDelayAfterFailedRequest));
+    try {
+      await new Promise(resolve => setTimeout(resolve, constants.serverDelayAfterFailedRequest));
+    } catch (err) {
+      log.info('pollServerOnce inner exception', err);
+    }
     log.info('...continuing...');
   }
 }
