@@ -49,6 +49,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   teal: '#39cccc',
   yellow: '#ffdc00',
 
+  brightGreen: '#08f222',
   darkerGray: '#888888',
   darkGreen: '#239c31',
   darkerGreen: '#035a0d',
@@ -135,17 +136,17 @@ const colors = {
     text: 'white',
   },
   followMeButton: {
-    background: { active: namedColors.blue, inactive: 'black' },
-    icon: { active: 'black', inactive: namedColors.azure },
-    underlay: namedColors.azure,
+    background: { active: namedColors.darkGreen, inactive: 'black' },
+    icon: { active: 'black', inactive: namedColors.green },
+    underlay: namedColors.green,
   },
   geolocationButton: {
     background: 'white',
     opacity: 0.75, // TODO use withOpacity
     disabledBackground: namedColors.green,
-    disabledUnderlay: namedColors.yellow, // in transition
-    enabledBackground: namedColors.red,
-    enabledUnderlay: namedColors.darkRed, // in transition
+    disabledUnderlay: namedColors.brightGreen, // in transition
+    enabledBackground: namedColors.darkRed,
+    enabledUnderlay: namedColors.red, // in transition
   },
   helpButton: {
     background: 'white',
@@ -240,7 +241,7 @@ const colors = {
     background: withOpacity(colorThemes.background, defaultOpacity),
     border: namedColors.darkerGray,
   },
-  user: namedColors.azure,
+  user: namedColors.green, // note: was azure
 }
 
 // --------------------------------------------------------------------------------------------------------------------

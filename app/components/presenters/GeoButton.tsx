@@ -1,3 +1,4 @@
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import React, {
 } from 'react';
 
@@ -32,21 +33,10 @@ const Styles = StyleSheet.create({
     fontSize: 16,
     paddingTop: 2,
   },
-  start: {
-  },
-  stop: {
-  },
 })
 
-// import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-// const modeIcons = ['ghost', 'bullseye', 'running', 'bolt'];
-/*
-<FontAwesome5
-  color={constants.colors.byName.black}
-  name={props.enabled ? 'stop' : 'play'}
-  size={constants.geolocationButton.size / 2}
-/>
-*/
+// const modeIcons = ['ghost', 'bullseye', 'running', 'bolt']; // also 'play'
+
 import { GeoButtonProps } from 'containers/GeoButtonContainer';
 
 const GeoButton = (props: GeoButtonProps) => (
@@ -59,9 +49,17 @@ const GeoButton = (props: GeoButtonProps) => (
     onPress={props.onPress}
     underlayColor={props.enabled ? colors.enabledUnderlay : colors.disabledUnderlay}
   >
-    <Text style={[Styles.label, props.enabled ? Styles.stop : Styles.start]}>
-      {props.enabled ? 'STOP' : 'START'}
-    </Text>
+    {props.enabled ? (
+      <FontAwesome5
+        color={constants.colors.byName.black}
+        name={'stop'}
+        size={constants.geolocationButton.size / 2}
+      />
+    ) : (
+      <Text style={Styles.label}>
+        {'START'}
+      </Text>
+    )}
   </TouchableHighlight>
 )
 
