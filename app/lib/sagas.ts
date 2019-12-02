@@ -182,8 +182,8 @@ const sagas = {
     if (activityId) {
       const activity: Activity = yield call(database.activityById, activityId);
       if (activity) {
-        const activityUpdate: ActivityData = { id: activity.id };
-        activityUpdate.count = (activity.count || 0) + events.length;
+        const update: ActivityData = { id: activity.id };
+        update.count = (activity.count || 0) + events.length;
         const pathExtension = [] as LonLat[];
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
         const appending: boolean = !!(firstNewLoc && firstNewLoc.t > activity.tLastUpdate);
@@ -191,12 +191,12 @@ const sagas = {
           // odo
           if (firstNewLoc && firstNewLoc.odo) { // TODO what if firstNewLoc.odo is zero but other added odo are nonzero?
             if (!activity.odoStart || firstNewLoc.odo < activity.odoStart) {
-              activityUpdate.odoStart = firstNewLoc.odo; // set odoStart on the activity if not set already
+              update.odoStart = firstNewLoc.odo; // set odoStart on the activity if not set already
             }
           }
           if (lastNewLoc) {
-            activityUpdate.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
-            activityUpdate.odo = lastNewLoc.odo;
+            update.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
+            update.odo = lastNewLoc.odo;
           }
           // pathExtension
           for (let i = 0; i < events.length; i++) {
@@ -210,14 +210,14 @@ const sagas = {
           if (activity.tLastLoc && firstNewLoc) {
             const gapTime = firstNewLoc.t - activity.tLastLoc;
             if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-              activityUpdate.maxGapTime = gapTime;
-              activityUpdate.tMaxGapTime = activity.tLastLoc;
+              update.maxGapTime = gapTime;
+              update.tMaxGapTime = activity.tLastLoc;
             }
             if (firstNewLoc.odo && activity.odo) {
               const gapDistance = firstNewLoc.odo - activity.odo;
               if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                activityUpdate.maxGapDistance = gapDistance;
-                activityUpdate.tMaxGapDistance = activity.tLastLoc;
+                update.maxGapDistance = gapDistance;
+                update.tMaxGapDistance = activity.tLastLoc;
               }
             }
           }
