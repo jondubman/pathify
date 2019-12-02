@@ -1212,10 +1212,10 @@
     eslint-plugin-react-native "3.6.0"
     prettier "1.16.4"
 
-"@react-native-community/slider@^2.0.2":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.3.tgz#ae13f6b8e924f49817a8f0bd12bfdde85bb2e00d"
-  integrity sha512-i+KKYK0XHs8ZOyHRxI8ZxFS559IlVs32JiGwBLljPQSP91MJLcC1sIg6n5jFO6X43oA9fhKhVy2W5VeCVDhBxg==
+"@react-native-community/slider@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.7.tgz#5c2d474d6f5210193dd64d802254f45a8528a9a7"
+  integrity sha512-MepSA4XOQbMAE/vc47XsFPPUtWVB//l9ea+x9Bp7lKwaBbtwRUMC1miDFO045ud4YEQ7a0PrviczyxkoiSUFwQ==
 
 "@react-native-mapbox-gl/maps@^7.0.6":
   version "7.0.8"
