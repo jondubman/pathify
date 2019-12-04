@@ -1,6 +1,7 @@
 // Shared code (client + server) to support activities that collect events that occur between START and STOP actions.
 import Realm from 'realm';
 
+import log from './log';
 import { Timepoint } from './timeseries';
 import { metersToMiles, msecToString } from './units';
 
@@ -33,7 +34,7 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
   },
 }
 
-export interface Activity extends Realm.Object { // returned from Realm
+export interface Activity extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
   id: string; // use matching activityId for corresponding START and END marks and events collected between
 
   odoStart: number; // odo of the earliest location in the activity
@@ -88,9 +89,13 @@ export interface ActivityData {
   loss?: number; // total elevation loss
 }
 
-export interface ActivityDataExtended extends ActivityData {
+export interface ActivityDataExtended extends ActivityData { // these are the 'Extended' properties:
   distance?: number;
   distanceMiles?: number;
+  latMax?: number;
+  latMin?: number;
+  lonMax?: number;
+  lonMin?: number;
   tStartText?: string;
   tTotal?: number;
   tTotalText?: string;
@@ -101,22 +106,42 @@ export const extendedActivities = (activities: ActivityData[]) => {
 }
 
 export const extendActivity = (activity: ActivityData): ActivityDataExtended => {
-  let a = { ...activity } as ActivityDataExtended;
-  if (a.odo && a.odoStart) {
-    a.distance = a.odo - a.odoStart;
-    a.distanceMiles = metersToMiles(a.distance);
-  }
-  a.tStartText = new Date(a.tStart).toLocaleString()
-  const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
-  if (tEnd) {
-    a.tTotal = tEnd - a.tStart;
-    a.tTotalText = msecToString(a.tTotal);
+  const a = { ...activity } as ActivityDataExtended;
+  try {
+    if (a.odo && a.odoStart) {
+      a.distance = a.odo - a.odoStart;
+      a.distanceMiles = metersToMiles(a.distance);
+    }
+    a.tStartText = new Date(a.tStart).toLocaleString()
+    const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
+    if (tEnd) {
+      a.tTotal = tEnd - a.tStart;
+      a.tTotalText = msecToString(a.tTotal);
+    }
+    // compute bounds
+    a.latMax = -Infinity;
+    a.latMin = Infinity;
+    a.lonMax = -Infinity;
+    a.lonMin = Infinity;
+    const length = a.pathLats.length;
+    if (length === a.pathLons.length) { // these should really match, but...
+      for (let i = 0; i < length; i++) {
+        const lat = a.pathLats[i];
+        const lon = a.pathLons[i];
+        a.latMax = Math.max(a.latMax, lat);
+        a.latMin = Math.min(a.latMin, lat);
+        a.lonMax = Math.max(a.lonMax, lon);
+        a.lonMin = Math.min(a.lonMin, lon);
+      }
+    }
+  } catch (err) {
+    log.warn('extendActivity', err);
   }
   return a;
 }
 
 export const loggableActivity = (activity: Activity): any => {
-  let a = { ...extendActivity(activity) } as any; // any, so we can replace pathLats and pathLons with just a length,
+  const a = { ...extendActivity(activity) } as any; // any, so we can replace pathLats and pathLons with just a length,
   a.pathLats = a.pathLats.length; // blasting away all the individual points,
   a.pathLons = a.pathLons.length; // which we don't want cluttering up a log.
   return a;

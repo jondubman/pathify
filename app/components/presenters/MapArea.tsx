@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 
+// https://github.com/react-native-mapbox-gl/maps/blob/master/docs/MapView.md
 import Mapbox from '@react-native-mapbox-gl/maps';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
@@ -21,7 +22,7 @@ import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
 import { LonLat } from 'shared/locations';
-export type Bounds = [LonLat, LonLat] | null;
+export type Bounds = [LonLat, LonLat] | null; // NE, SW
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.
 
@@ -49,6 +50,7 @@ class MapArea extends Component<MapAreaProps> {
 
   getMap(): IMapUtils{
     return {
+      fitBounds: this.fitBounds,
       flyTo: this.flyTo,
       moveTo: this.moveTo,
       getCenter: this.getCenter,
@@ -130,16 +132,10 @@ class MapArea extends Component<MapAreaProps> {
     )
   }
 
-  // https://github.com/mapbox/react-native-mapbox-gl/blob/master/docs/MapView.md
-
-  // padding is [ verticalPadding, horizontalPadding ]
-  //   (TODO What are the units exactly? Pixels?)
-  // all coords: [lon, lat]
-  // duration is msec.
-  fitBounds(neCoords: LonLat, swCoords: LonLat, padding: number, duration: number) {
+  fitBounds(neCoords: LonLat, swCoords: LonLat, paddingVerticalHorizontal: [number, number], duration: number) {
     if (this._camera) {
       const camera = this._camera!;
-      camera.fitBounds(neCoords, swCoords, padding, duration);
+      camera.fitBounds(neCoords, swCoords, paddingVerticalHorizontal, duration);
     }
   }
 
@@ -164,8 +160,7 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  // coordinates is [lon, lat]
-  async getPointInView(coordinates): Promise<number[]> {
+  async getPointInView(coordinates: LonLat): Promise<number[]> {
     try {
       if (this._map) {
         const mapView = this._map;
@@ -177,12 +172,12 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  // return the coordinate bounds [NE [lon, lat], SW [lon, lat]] visible in the users’s viewport.
+  // return the coordinate bounds [NE LonLat, SW LonLat] visible in the users’s viewport.
   async getVisibleBounds(): Promise<Bounds> {
     try {
       if (this._map) {
         const mapView = this._map;
-        // TODO casting types until index.d.ts TypeScript declaration is fixed
+        // TODO double casting types until index.d.ts TypeScript declaration is fixed
         const bounds = await mapView.getVisibleBounds() as unknown as Bounds;
         return bounds;
       }
@@ -215,7 +210,6 @@ class MapArea extends Component<MapAreaProps> {
 
   onRegionWillChange(...args) {
     // log.trace('onRegionWillChange', args);
-
     // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
     if (args[0].properties.isUserInteraction) {
       this.props.userMovedMap(args);
@@ -247,6 +241,7 @@ class MapArea extends Component<MapAreaProps> {
 
 // methods exposed for imperative use as needed
 export interface IMapUtils {
+  fitBounds: (neCoords: LonLat, swCoords: LonLat, paddingVerticalHorizontal: [number, number], duration: number) => void;
   flyTo: (coordinates: LonLat, duration: number) => void;
   moveTo: (coordinates: LonLat, duration: number) => void;
   getCenter: () => Promise<LonLat>

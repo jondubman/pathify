@@ -9,7 +9,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 import database from 'shared/database';
 import locations from 'shared/locations';
-import { Activity } from 'shared/activities';
+import { Activity, ActivityDataExtended } from 'shared/activities';
 import { MarkEvent } from 'shared/marks';
 import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
@@ -78,6 +78,14 @@ const appStateTimespans = (state: AppState): Timespans => {
     color: colorForAppState[previousState],
   })
   return timespans;
+}
+
+export const cachedActivity = (state: AppState, id: string): ActivityDataExtended | undefined => {
+  const cache = state.cache;
+  if (cache.activities) {
+    return cache.activities.find(activity => activity.id === id);
+  }
+  return undefined;
 }
 
 export const centerline = () => {

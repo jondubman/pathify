@@ -385,12 +385,16 @@ const constants = {
   },
   map: {
     centerMapDuration: 500, // TODO not honored on iOS https://github.com/nitaliano/react-native-mapbox-gl/issues/1411
-    // TODO fitBounds can be used instead
     default: {
       opacity: 0.5,
       style: 'Satellite', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO3
       zoom: 14,
       zoomStartActivity: 16,
+    },
+    fitBounds: {
+      duration: 500,
+      paddingHorizontal: 80,
+      paddingVertical: 180,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
     reorientationTime: interval.seconds(1) / 2,
@@ -410,34 +414,6 @@ const constants = {
     pointLength: 30,
   },
   maxTimeGapForContinuousTrack: interval.seconds(5),
-  // menus: {
-  //   defaultItemContainerStyle: {
-  //   },
-  //   defaultItemStyle: {
-  //     alignSelf: 'center',
-  //     backgroundColor: 'transparent',
-  //     justifyContent: 'center', // centers item vertically
-  //     margin: 0,
-  //     padding: 0,
-  //   },
-  //   defaultItemUnderlayColor: colors.menus.underlayColor,
-  //   defaultLabelStyle: {
-  //     color: colors.byName.white,
-  //     fontFamily,
-  //     fontSize: 12,
-  //     margin: 0,
-  //     padding: 0,
-  //     textAlign: 'center', // centers text horizontally
-  //   },
-  // defaultTextStyle: {
-  //     color: colors.byName.white,
-  //     fontFamily,
-  //     fontSize: 16,
-  //     margin: 0,
-  //     padding: 0,
-  //     textAlign: 'center', // centers text horizontally
-  //   },
-  // },
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],

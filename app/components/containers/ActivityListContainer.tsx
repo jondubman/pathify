@@ -16,6 +16,7 @@ import ActivityList from 'presenters/ActivityList';
 import {
   ActivityDataExtended,
 } from 'shared/activities';
+import log from 'shared/log';
 
 interface ActivityListStateProps {
   list: ActivityDataExtended[];
@@ -62,6 +63,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (activity: ActivityDataExtended): void => {
     if (activity) {
+      log.debug('onPressActivity', activity.id);
       dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
       if (activity.tStart) {
         const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :

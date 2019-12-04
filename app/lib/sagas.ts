@@ -72,6 +72,7 @@ import {
 import constants from 'lib/constants';
 import { Geo } from 'lib/geo';
 import {
+  cachedActivity,
   currentActivity,
   selectedActivity
 } from 'lib/selectors';
@@ -86,6 +87,7 @@ import { MapUtils } from 'presenters/MapArea';
 import {
   Activity,
   ActivityData,
+  ActivityDataExtended,
   extendedActivities,
   loggableActivity,
 } from 'shared/activities';
@@ -795,12 +797,14 @@ const sagas = {
   refreshCache: function* (action: Action) {
     try {
       yield call(log.debug, 'saga refreshCache');
+      const timestamp = yield call(utils.now);
       const realmActivities = yield call(database.activities);
       const activitiesAsArray = Array.from(realmActivities) as ActivityData[]
       const activities = extendedActivities(activitiesAsArray);
       const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
       yield put(newAction(AppAction.cache, { activities, refreshCount }));
-      yield call(log.debug, 'new refreshCount', refreshCount);
+      const now = yield call(utils.now);
+      yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp);
     } catch(err) {
       yield call(log.error, 'saga refreshCache', err);
     }
@@ -878,11 +882,17 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-    // First set the option itself:
+
+    // Actually set the options:
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
-    // Then, handle side effects:
+    // Then, handle side effects of setting app options:
 
+    // Note: Since the select follows the ReducerAction, it is possible to override previouslySelectedActivityId,
+    // which would force the map fitBounds side effect below.
+    const previouslySelectedActivityId = yield select((state: AppState) => state.options.previouslySelectedActivityId);
+
+    // Write through to settings in database
     if (action.params.currentActivityId) {
       const { currentActivityId } = action.params;
       yield call(log.debug, 'Setting currentActivityId', currentActivityId);
@@ -891,7 +901,8 @@ const sagas = {
     if (action.params.currentActivityId === null) { // Explicit check for null
       database.changeSettings({ currentActivityId: null });
     }
-    // Whenever refTime is set, pausedTime and selectedActivityId may also be updated.
+
+    // An important side effect: Whenever refTime is set, pausedTime and selectedActivityId may also be updated.
     // Note that setting timelineRefTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
     if (action.params.refTime) {
@@ -914,6 +925,25 @@ const sagas = {
           // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
           // it's because something other than the currentActivity is selected.
           // Thus selectedActivity is always a completed activity, while currentActivity is never a completed activity.
+        }
+      }
+    }
+    const activityId = yield select(state => state.options.selectedActivityId || state.options.currentActivityId);
+    if (activityId && activityId !== previouslySelectedActivityId) {
+      const state = yield select((state: AppState) => state);
+      const activity = cachedActivity(state, activityId);
+      if (activity) {
+        const { duration, paddingHorizontal, paddingVertical } = constants.map.fitBounds;
+        const map = MapUtils();
+        if (map && map.fitBounds) {
+          const { latMax, latMin, lonMax, lonMin } = activity;
+          if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
+            map.fitBounds([lonMax, latMax], [lonMin, latMin], [paddingVertical, paddingHorizontal], duration);
+          }
+          if (activityId !== action.params.currentActivityId) {
+            yield put(newAction(AppAction.stopFollowingUser));
+          }
+          yield put(newAction(AppAction.setAppOption, { previouslySelectedActivityId: activity.id }));
         }
       }
     }

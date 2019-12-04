@@ -27,7 +27,7 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false,
-    ticksEnabled: true, // normally true, set false only for testing to disable actions that occur every second
+    ticksEnabled: false, // normally true, set false only for testing to disable actions that occur every second
     flag1: false, // for experimentation
     flag2: false, // for experimentation
     flag3: false, // for experimentation
@@ -69,6 +69,7 @@ export const initialAppState = {
     nowTime: now,
     pulsars: {} as OptionalPulsars,
     pausedTime: now, // timepoint where timeline was last paused
+    previouslySelectedActivityId: '', // used to determine whether selectedActivityId has changed
     refTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: '', // for now, no more than one Activity is 'selected' at a time
     startupTime: now, // not persisted, never changed once set
