@@ -62,16 +62,20 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (activity: ActivityDataExtended): void => {
-    if (activity) {
+    if (activity && activity.tStart) {
       log.debug('onPressActivity', activity.id);
-      dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
-      if (activity.tStart) {
+      if (activity.tEnd) {
+        dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
         const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
                                         (activity.tStart + (activity.tLastUpdate || activity.tStart)) / 2;
         dispatch(newAction(AppAction.setAppOption, {
           refTime: newTime,
           timelineRefTime: newTime,
         }))
+      } else {
+        // This is the currentActivity.
+        dispatch(newAction(AppAction.flagEnable, 'timelineNow'));
+        dispatch(newAction(AppAction.startFollowingUser));
       }
     }
   }
