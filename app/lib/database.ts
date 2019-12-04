@@ -1,22 +1,27 @@
 import Realm from 'realm';
 import * as uuid from 'uuid/v4';
 
-import { LonLat } from './locations';
-import sharedConstants from './sharedConstants';
+import {
+  AppAction,
+  newAction,
+} from 'lib/actions';
+import store from 'lib/store';
+import { LonLat } from 'shared/locations';
+import sharedConstants from 'shared/sharedConstants';
 import {
   Events,
   EventSchema,
   GenericEvent,
   GenericEvents,
   Timepoint,
-} from './timeseries';
+} from 'shared/timeseries';
 import {
   Activity,
   ActivityData,
   ActivitySchema,
-} from './activities';
+} from 'shared/activities';
 
-import log from './log';
+import log from 'shared/log';
 
 const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything else to persist across app sessions
   name: 'Settings',
@@ -92,7 +97,7 @@ const database = {
   },
 
   updateActivity: async (activityUpdate: ActivityData, pathExtension: LonLat[] = []) => {
-    let activity: Activity;
+    let activity: Activity | null = null;
     realm.write(() => {
       activity = realm.create('Activity', activityUpdate, true) as Activity; // true: update
       const lons = pathExtension.map((lonLat: LonLat) => lonLat[0]);
@@ -100,6 +105,9 @@ const database = {
       activity.pathLats.push(...lats);
       activity.pathLons.push(...lons);
     })
+    if (activity) {
+      store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: activity!.id }));
+    }
   },
 
   deleteActivity: (activityId: string): void => {

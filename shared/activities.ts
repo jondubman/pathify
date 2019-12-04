@@ -123,15 +123,17 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
     a.latMin = Infinity;
     a.lonMax = -Infinity;
     a.lonMin = Infinity;
-    const length = a.pathLats.length;
-    if (length === a.pathLons.length) { // these should really match, but...
-      for (let i = 0; i < length; i++) {
-        const lat = a.pathLats[i];
-        const lon = a.pathLons[i];
-        a.latMax = Math.max(a.latMax, lat);
-        a.latMin = Math.min(a.latMin, lat);
-        a.lonMax = Math.max(a.lonMax, lon);
-        a.lonMin = Math.min(a.lonMin, lon);
+    if (a.pathLats && a.pathLons) {
+      const length = a.pathLats.length;
+      if (length === a.pathLons.length) { // these should really match, but...
+        for (let i = 0; i < length; i++) {
+          const lat = a.pathLats[i];
+          const lon = a.pathLons[i];
+          a.latMax = Math.max(a.latMax, lat);
+          a.latMin = Math.min(a.latMin, lat);
+          a.lonMax = Math.max(a.lonMax, lon);
+          a.lonMin = Math.min(a.lonMin, lon);
+        }
       }
     }
   } catch (err) {

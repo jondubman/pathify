@@ -4,12 +4,12 @@ import {
   PopupMenuConfig
 } from 'containers/PopupMenusContainer';
 import constants from 'lib/constants';
+import database from 'lib/database';
 import {
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
-import database from 'shared/database';
 import log from 'shared/log';
 import { activityMetrics, ActivityMetrics, ActivityMetricName } from 'shared/metrics';
 import { msecToString } from 'shared/units';

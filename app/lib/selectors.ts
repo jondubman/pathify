@@ -4,10 +4,10 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
+import database from 'lib/database';
 import utils from 'lib/utils';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
-import database from 'shared/database';
 import locations from 'shared/locations';
 import { Activity, ActivityDataExtended } from 'shared/activities';
 import { MarkEvent } from 'shared/marks';

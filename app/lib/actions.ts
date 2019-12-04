@@ -54,8 +54,8 @@ export enum AppAction {
   'menuItemSelected' = 'menuItemSelected',
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
-  'panTimeline' = 'panTimeline',
   'refreshCache' = 'refreshCache',
+  'refreshCachedActivity' = 'refreshCachedActivity',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction',
   'restartApp' = 'restartApp',
@@ -174,9 +174,8 @@ export interface LogActionParams {
   message: string;
 }
 
-export interface PanTimelineParams {
-  option: AbsoluteRelativeOption;
-  t: number; // actually delta t, if option is relative
+export interface RefreshCachedActivityParams {
+  activityId: string;
 }
 
 export interface RepeatedActionParams {

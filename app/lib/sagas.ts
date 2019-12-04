@@ -62,6 +62,7 @@ import {
   ImportEventsParams,
   ImportGPXParams,
   LogActionParams,
+  RefreshCachedActivityParams,
   RepeatedActionParams,
   ScrollParams,
   SequenceParams,
@@ -70,6 +71,7 @@ import {
   StartActivityParams,
 } from 'lib/actions'
 import constants from 'lib/constants';
+import database from 'lib/database';
 import { Geo } from 'lib/geo';
 import {
   cachedActivity,
@@ -102,7 +104,6 @@ import {
   AppQueryParams,
   AppQueryResponse
 } from 'shared/appQuery';
-import database from 'shared/database';
 import locations, {
   LocationEvent,
   LonLat,
@@ -263,7 +264,6 @@ const sagas = {
         }
         update.tLastUpdate = utils.now();
         yield call(database.updateActivity, update, pathExtension);
-        yield put(newAction(AppAction.refreshCache));
       }
     }
   },
@@ -780,20 +780,6 @@ const sagas = {
     yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
   },
 
-  panTimeline: function* (action: Action) {
-    // TODO this was for programmatic panning via script
-
-    // const params = action.params as PanTimelineParams;
-    // const { t, option } = params;
-    // let newRefTime = t;
-    // if (option === AbsoluteRelativeOption.relative) {
-    //   const refTime = yield select(state => state.options.refTime);
-    //   newRefTime = refTime + t;
-    // }
-    // yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-    // yield put(newAction(AppAction.setAppOption, { refTime: newRefTime, timelineRefTime: newRefTime }));
-  },
-
   refreshCache: function* (action: Action) {
     try {
       yield call(log.debug, 'saga refreshCache');
@@ -807,6 +793,25 @@ const sagas = {
       yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp);
     } catch(err) {
       yield call(log.error, 'saga refreshCache', err);
+    }
+  },
+
+  refreshCachedActivity: function* (action: Action) {
+    try {
+      const params = action.params as RefreshCachedActivityParams;
+      const id = params.activityId;
+      yield call(log.debug, 'saga refreshCachedActivity', id);
+      const activity = database.activityById(id);
+      const extendedActivity = extendedActivities(Array.from([activity]) as ActivityData[])[0];
+      const activities = [ ...(yield select(state => state.cache.activities)) ];
+      const extendedActivityIndex = activities.findIndex(activity => activity.id === extendedActivity.id);
+      if (extendedActivityIndex >= 0) {
+        activities[extendedActivityIndex] = extendedActivity;
+        const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
+        yield put(newAction(AppAction.cache, { activities, refreshCount }));
+      }
+    } catch (err) {
+      yield call(log.error, 'saga refreshCachedActivity', err);
     }
   },
 

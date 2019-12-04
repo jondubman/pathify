@@ -2,12 +2,12 @@ import { connect } from 'react-redux';
 import * as Victory from 'victory-native';
 
 import TimelineMarks from 'presenters/TimelineMarks';
+import database from 'lib/database';
 import { AppState } from 'lib/state';
 import {
   MarkEvents,
   markList,
 } from 'shared/marks';
-import database from 'shared/database';
 
 export interface TimelineMarksStateProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
   currentActivityId: string;
