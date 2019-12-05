@@ -80,9 +80,10 @@ const appStateTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
+// cachedActivity by id
 export const cachedActivity = (state: AppState, id: string): ActivityDataExtended | undefined => {
   const cache = state.cache;
-  if (cache.activities) {
+  if (id && cache.activities) {
     return cache.activities.find(activity => activity.id === id);
   }
   return undefined;
@@ -254,20 +255,16 @@ export const timelineZoomLevel = (value: number): number => {
   return 0; // fallback
 }
 
-// This is the inverse function of timelineVisibleTime.
+// This is the inverse function of timelineVisibleTime, to zoom timeline to show an entire selected activity in context.
 export const timelineZoomValue = (visibleTime: number): number => {
   const { activityZoomFactor, zoomLevels } = constants.timeline;
   const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
   const minVisibleTime = zoomLevels[zoomLevels.length - 1].visibleTime; // a relatively small number (order 10K)
   const logMax = Math.log2(maxVisibleTime); // larger
   const logMin = Math.log2(minVisibleTime); // smaller
+  // So far, this is like timelineVisibleTime above. Here we need to bounds check the incoming visibleTime.
   const boundedVisibleTime = Math.min(Math.max(visibleTime, minVisibleTime), maxVisibleTime) * activityZoomFactor;
-
-  // const visibleTime = Math.pow(2, logMax - (logMax - logMin) * zoomValue);
-  // log2(visibleTime) = logMax - (logMax - logMin) * zoomValue;
-  // logMax - log2(visibleTime) = (logMax - logMin) * zoomValue
-  // zoomValue = (logMax - log2(visibleTime)) / (logMax - logMin)
-
-  const zoomValue = (logMax - Math.log2(boundedVisibleTime)) / (logMax - logMin)
+  // And now, calculate zoomValue, the inverse of the visibleTime calculation in timelineVisibleTime.
+  const zoomValue = (logMax - Math.log2(boundedVisibleTime)) / (logMax - logMin);
   return zoomValue;
 }

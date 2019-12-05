@@ -176,6 +176,7 @@ export interface LogActionParams {
 
 export interface RefreshCachedActivityParams {
   activityId: string;
+  remove: boolean; // default false
 }
 
 export interface RepeatedActionParams {

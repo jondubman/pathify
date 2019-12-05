@@ -425,6 +425,7 @@ const constants = {
   panelHeight,
   panelWidth,
   paths: {
+    metersAccuracyRequired: 30,
     width: 8,
   },
   refTime: {
@@ -458,7 +459,6 @@ const constants = {
     timelineCloseToNow: 1000, // TODO2
     timelineZoomThrottle: 100,
     timerTickInterval: 1000,
-    // watchPositionInterval: 1000,
   },
   timeline: {
     activityZoomFactor: 1.25, // 1 means zoom Timeline to exact duration of Activity. Should be somewhat >1 for context.

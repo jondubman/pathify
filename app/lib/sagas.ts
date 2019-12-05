@@ -90,6 +90,7 @@ import { MapUtils } from 'presenters/MapArea';
 import {
   Activity,
   ActivityData,
+  ActivityDataExtended,
   extendedActivities,
   loggableActivity,
 } from 'shared/activities';
@@ -220,8 +221,10 @@ const sagas = {
           for (let i = 0; i < events.length; i++) {
             const event = events[i];
             if (event.type == EventType.LOC) {
-              const { lon, lat } = event as LocationEvent;
-              pathExtension.push([lon, lat]); // add a single path segment
+              const { accuracy, lon, lat } = event as LocationEvent;
+              if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+                pathExtension.push([lon, lat]); // add a single path segment
+              }
             }
           }
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
@@ -249,9 +252,12 @@ const sagas = {
             const event = e as any as GenericEvent;
             if (e.type === EventType.LOC) {
               const locEvent = event as LocationEvent;
-              update.pathLats.push(locEvent.lat);
-              update.pathLons.push(locEvent.lon);
-              update.tLastLoc = Math.max(activity.tLastLoc || 0, locEvent.t);
+              const { accuracy, lon, lat, t } = locEvent;
+              if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+                update.pathLats.push(lat);
+                update.pathLons.push(lon);
+              }
+              update.tLastLoc = Math.max(activity.tLastLoc || 0, t);
 
               // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
               if (prevLocEvent !== null) {
@@ -585,27 +591,35 @@ const sagas = {
     }
   },
 
-  // TODO paint this activity red on the ActivityList while it is on the chopping block.
-  // TODO consider an option to avoid the confirmation alert.
+  // TODO paint this activity red on the ActivityList while on the chopping block so it's clear which it is.
+  // TODO consider an option to avoid the confirmation alert, at least for testing.
   deleteActivity: function* (action: Action) {
     try {
       const params = action.params as DeleteActivityParams;
       const { id } = params;
+      const { currentActivityId, selectedActivityId } = yield select(state => state.options);
       let deleteButton: AlertButton = {
         onPress: () => {
-          log.warn('Delete activity', id);
+          log.info('Delete activity', id);
+          if (id === currentActivityId) {
+            log.warn('attempt to delete currentActivity (not permitted)');
+            return;
+          }
+          store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: id, remove: true }));
           database.deleteActivity(id);
-          store.dispatch(newAction(AppAction.refreshCache)); // TODO more efficient to just delete this cache entry
+          if (id === selectedActivityId) {
+            store.dispatch(newAction(AppAction.setAppOption, { selectedActivityId: null }));
+          }
         },
         text: 'Delete',
-        style: 'destructive'
+        style: 'destructive',
       }
       let cancelButton: AlertButton = {
         onPress: () => {
           log.info('deleteActivity canceled');
         },
         text: 'Cancel',
-        style: 'cancel'
+        style: 'cancel',
       } // cancel is always on the left
       yield call(Alert.alert, 'Delete Activity?', 'This operation cannot be undone.', [deleteButton, cancelButton]);
     } catch (err) {
@@ -812,19 +826,27 @@ const sagas = {
     }
   },
 
+  // updates, or removes stale entry from cache, as needed
   refreshCachedActivity: function* (action: Action) {
     try {
       const params = action.params as RefreshCachedActivityParams;
       const id = params.activityId;
+      const { remove } = params;
       yield call(log.debug, 'saga refreshCachedActivity', id);
-      const activity = database.activityById(id);
-      const extendedActivity = extendedActivities(Array.from([activity]) as ActivityData[])[0];
-      const activities = [ ...(yield select(state => state.cache.activities)) ];
-      const extendedActivityIndex = activities.findIndex(activity => activity.id === extendedActivity.id);
-      if (extendedActivityIndex >= 0) {
-        activities[extendedActivityIndex] = extendedActivity;
-        const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
-        yield put(newAction(AppAction.cache, { activities, refreshCount }));
+      const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
+      const activity = remove ? null : database.activityById(id);
+      if (activity) {
+        const activities = [...(yield select(state => state.cache.activities))];
+        const extendedActivity = extendedActivities(Array.from([activity]) as ActivityData[])[0];
+        const extendedActivityIndex = activities.findIndex(activity => activity.id === extendedActivity.id);
+        if (extendedActivityIndex >= 0) {
+          activities[extendedActivityIndex] = extendedActivity;
+          yield put(newAction(AppAction.cache, { activities, refreshCount }));
+        }
+      } else {
+        const activities = (yield select(state => state.cache.activities)) as ActivityDataExtended[];
+        const activitiesFiltered = activities.filter(activity => activity.id !== id);
+        yield put(newAction(AppAction.cache, { activities: activitiesFiltered, refreshCount }));
       }
     } catch (err) {
       yield call(log.error, 'saga refreshCachedActivity', err);
@@ -969,7 +991,7 @@ const sagas = {
         // Now zoom Timeline to show the entire activity.
         if (activity.tTotal) {
           const newTimelineZoomValue = yield call(timelineZoomValue, activity.tTotal);
-          yield call(log.debug, 'zanzi newTimelineZoomValue', newTimelineZoomValue);
+          yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
           yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
         }
       }

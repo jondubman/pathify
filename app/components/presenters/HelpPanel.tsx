@@ -41,9 +41,9 @@ const Styles = StyleSheet.create({
   },
   subpanelContents: {
     flexDirection: 'column',
-    height: 20,
-    width: 20,
-    backgroundColor: 'blue',
+    height: 200,
+    width: 200,
+    backgroundColor: '#1d4e89', // classic blue square TODO temporary
   },
   subpanels: {
     top: subpanelTopOffset,

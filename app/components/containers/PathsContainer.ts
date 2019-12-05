@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 
-import { currentActivity, selectedActivity } from 'lib/selectors';
+import { cachedActivity } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
-import { Activities } from 'shared/activities';
+import { ActivityDataExtended } from 'shared/activities';
 
 interface PathsStateProps {
-  activities: Activities;
+  activities: ActivityDataExtended[];
   currentActivityId?: string;
   selectedActivityId?: string;
 }
@@ -18,14 +18,16 @@ export type PathsProps = PathsStateProps & PathsDispatchProps;
 
 const mapStateToProps = (state: AppState): PathsStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
-  const activities: Activities = [];
+  const activities: ActivityDataExtended[] = [];
   if (state.flags.showPathsOnMap) {
-      const activity = currentActivity(state);
+    if (currentActivityId) {
+      const activity = cachedActivity(state, currentActivityId);
       if (activity) {
         activities.push(activity);
       }
+    }
     if (selectedActivityId) {
-      const activity = selectedActivity(state);
+      const activity = cachedActivity(state, selectedActivityId);
       if (activity) {
         activities.push(activity);
       }
