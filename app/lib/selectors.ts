@@ -229,8 +229,8 @@ export const timelineTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-// value (from logarithmic timeline zoom slider) is between 0 and 1.
-// visibleTime is the number of msec shown on the timeline.
+// value (from logarithmic timeline zoom slider) should be between 0 and 1.
+// Returned visibleTime is the number of msec to show on the timeline.
 export const timelineVisibleTime = (value: number): number => {
   const { zoomLevels } = constants.timeline;
   const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
@@ -252,4 +252,22 @@ export const timelineZoomLevel = (value: number): number => {
     }
   }
   return 0; // fallback
+}
+
+// This is the inverse function of timelineVisibleTime.
+export const timelineZoomValue = (visibleTime: number): number => {
+  const { activityZoomFactor, zoomLevels } = constants.timeline;
+  const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
+  const minVisibleTime = zoomLevels[zoomLevels.length - 1].visibleTime; // a relatively small number (order 10K)
+  const logMax = Math.log2(maxVisibleTime); // larger
+  const logMin = Math.log2(minVisibleTime); // smaller
+  const boundedVisibleTime = Math.min(Math.max(visibleTime, minVisibleTime), maxVisibleTime) * activityZoomFactor;
+
+  // const visibleTime = Math.pow(2, logMax - (logMax - logMin) * zoomValue);
+  // log2(visibleTime) = logMax - (logMax - logMin) * zoomValue;
+  // logMax - log2(visibleTime) = (logMax - logMin) * zoomValue
+  // zoomValue = (logMax - log2(visibleTime)) / (logMax - logMin)
+
+  const zoomValue = (logMax - Math.log2(boundedVisibleTime)) / (logMax - logMin)
+  return zoomValue;
 }

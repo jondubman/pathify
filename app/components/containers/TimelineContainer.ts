@@ -25,8 +25,6 @@ export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
   allowZoom: boolean;
-  currentActivityId: string;
-  selectedActivityId: string;
   showMarks: boolean;
   showSpans: boolean;
   timelineNow: boolean;
@@ -35,7 +33,7 @@ export interface TimelineStateProps {
   visibleTime: number;
   visibleWidth: number;
   zoomDomain: DomainPropType;
-  zoomLevel: number;
+  zoomLevel: number; // TODO this is not currently used
 }
 
 export interface TimelineDispatchProps {
@@ -45,7 +43,7 @@ export type TimelineProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   const { yDomain } = constants.timeline;
-  const { currentActivityId, selectedActivityId, timelineRefTime } = state.options;
+  const { timelineRefTime } = state.options;
   const allowZoom = state.flags.timelinePinchToZoom;
   const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
   const visibleTime = timelineVisibleTime(state.options.timelineZoomValue);
@@ -59,8 +57,6 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   const showSpans = state.flags.showTimelineSpans;
   return {
     allowZoom,
-    currentActivityId,
-    selectedActivityId,
     showMarks,
     showSpans,
     timelineNow: state.flags.timelineNow,

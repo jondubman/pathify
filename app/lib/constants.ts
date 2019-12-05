@@ -461,13 +461,14 @@ const constants = {
     // watchPositionInterval: 1000,
   },
   timeline: {
+    activityZoomFactor: 1.25, // 1 means zoom Timeline to exact duration of Activity. Should be somewhat >1 for context.
     barHeight: 40, // big enough to be touchable
     bottomPaddingForAxis,
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     default: {
       height: initialTimelineHeight + bottomPaddingForAxis,
-      zoomValue: 0.64, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below (0.7 is a good default)
+      zoomValue: 0.64, // between 0 (min zoom) and 1 (max zoom) relative to zoomLevels below (0.64 is a good default)
     },
     miniBarHeight: 15,
     minimumZoomMsec: 1000, // 1 second

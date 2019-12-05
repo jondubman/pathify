@@ -75,7 +75,7 @@ export const initialAppState = {
     startupTime: now, // not persisted, never changed once set
     timelineRefTime: now, // By design this remains constant, as refTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline refTime, etc.
-    timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (see constants.timeline for meaning)
+    timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)
   },
 }
 

@@ -52,8 +52,6 @@ class Timeline extends Component<TimelineProps> {
   render() {
     const {
       allowZoom,
-      currentActivityId,
-      selectedActivityId,
       showMarks,
       showSpans,
       timelineRefTime,
@@ -77,7 +75,7 @@ class Timeline extends Component<TimelineProps> {
       timeRoundDown = timeseries.timeRoundDown(timelineRefTime, tickInterval);
     }
     const tickValues: number[] = [];
-    const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // approx
+    const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // 12 is not magic per se, just about right.
     for (let i = -maxTicksPerScreenWidth / 2; i < maxTicksPerScreenWidth / 2; i++) {
        // Any outside the visible range will be clipped.
       tickValues.push(timeRoundDown + tickInterval * i);

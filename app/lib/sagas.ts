@@ -76,7 +76,8 @@ import { Geo } from 'lib/geo';
 import {
   cachedActivity,
   currentActivity,
-  selectedActivity
+  selectedActivity,
+  timelineZoomValue,
 } from 'lib/selectors';
 import { postToServer } from 'lib/server';
 import {
@@ -89,7 +90,6 @@ import { MapUtils } from 'presenters/MapArea';
 import {
   Activity,
   ActivityData,
-  ActivityDataExtended,
   extendedActivities,
   loggableActivity,
 } from 'shared/activities';
@@ -965,6 +965,12 @@ const sagas = {
             yield put(newAction(AppAction.stopFollowingUser));
           }
           yield put(newAction(AppAction.setAppOption, { previouslySelectedActivityId: activity.id }));
+        }
+        // Now zoom Timeline to show the entire activity.
+        if (activity.tTotal) {
+          const newTimelineZoomValue = yield call(timelineZoomValue, activity.tTotal);
+          yield call(log.debug, 'zanzi newTimelineZoomValue', newTimelineZoomValue);
+          yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
         }
       }
     }

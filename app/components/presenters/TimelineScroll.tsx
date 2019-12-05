@@ -67,7 +67,6 @@ class TimelineScroll extends Component<TimelineScrollProps> {
 
   // Auto-scroll to the correct spot after component is updated.
   componentDidUpdate(prevProps: TimelineScrollProps) {
-    log.trace('TimelineScroll componentDidUpdate', this.props.scrollToX, prevProps, this.props);
     if (this._timer) {
       log.debug('timer active during scrolling?');
       this.clearTimer();
@@ -76,7 +75,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       log.debug('componentDidUpdate during scrolling?');
     } else {
       const x = this.props.scrollToX;
-      log.trace('scrolling in componentDidUpdate to', x);
+      // log.trace('scrolling in componentDidUpdate to', x);
       this._scrollView.scrollTo({ x, y: 0, animated: false });
     }
   }
