@@ -15,9 +15,9 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
     super(props);
   }
 
-  shouldComponentUpdate(nextProps: TimelineSpansProps, nextState: any) {
-    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
-  }
+  // shouldComponentUpdate(nextProps: TimelineSpansProps, nextState: any) {
+  //   return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
+  // }
 
   render() {
     const data = this.props.data;

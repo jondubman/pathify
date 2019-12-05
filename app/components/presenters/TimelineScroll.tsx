@@ -36,8 +36,6 @@ const TimelineStyles = StyleSheet.create({
 class TimelineScroll extends Component<TimelineScrollProps> {
 
   readonly state: State = initialState;
-  _lastDomain: DomainPropType | undefined;
-  _refTime: number | undefined;
   _scrollView: any;
   _scrolling: boolean = false;
   _timer: any;
@@ -58,16 +56,33 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     if (this._scrolling) {
       return false; // TODO2 defer all updates to the timeline while it is being interactively scrolled
     }
-    return true;
+    if (nextProps.timelineRefTime !== this.props.timelineRefTime) {
+      return true;
+    }
+    if (nextProps.visibleTime !== this.props.visibleTime) {
+      return true;
+    }
+    return false;
   }
 
-  // Auto-scroll to the correct spot when component is updated.
-  componentDidUpdate() {
-    const x = this.props.scrollToX;
-    this._scrollView.scrollTo({ x, y: 0, animated: false });
+  // Auto-scroll to the correct spot after component is updated.
+  componentDidUpdate(prevProps: TimelineScrollProps) {
+    log.trace('TimelineScroll componentDidUpdate', this.props.scrollToX, prevProps, this.props);
+    if (this._timer) {
+      log.debug('timer active during scrolling?');
+      this.clearTimer();
+    }
+    if (this._scrolling) {
+      log.debug('componentDidUpdate during scrolling?');
+    } else {
+      const x = this.props.scrollToX;
+      log.trace('scrolling in componentDidUpdate to', x);
+      this._scrollView.scrollTo({ x, y: 0, animated: false });
+    }
   }
 
   componentWillUnmount() {
+    log.trace('TimelineScroll componentWillUnmount');
     this.clearTimer();
     this.props.setTimelineScrolling(false);
   }
@@ -107,36 +122,35 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
 
     const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      logScrollEvents && log.trace('onMomentumScrollEnd');
       const { x } = event.nativeEvent.contentOffset;
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, timelineRefTime + timeDelta);
-      this._refTime = newTime;
+      const newTime = Math.min(rightNow, refTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
       }
-      onFinishScrolling(domain);
       logScrollEvents && log.trace('onMomentumScrollEnd', newTime, rightNow, newTime - rightNow);
+      onFinishScrolling(domain);
     }
 
     const onScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       logScrollEvents && log.trace('onScrollEndDrag');
+      this.clearTimer();
       const { x } = event.nativeEvent.contentOffset;
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, timelineRefTime + timeDelta);
+      const newTime = Math.min(rightNow, refTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
       }
       log.debug('domain', domain);
       setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
-      this.clearTimer();
       this._timer = setTimeout(() => {
+        log.trace('timer!', domain);
         if (this._scrolling) {
           onFinishScrolling(domain);
         }
@@ -145,11 +159,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
 
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (!this._scrolling) {
-        logScrollEvents && log.trace('onScroll called when not scrolling - ignoring');
-        return;
-      }
-      logScrollEvents && log.trace('onScroll', timelineRefTime, refTime, this._refTime);
+      logScrollEvents && log.trace('onScroll', timelineRefTime, refTime);
       const { x } = event.nativeEvent.contentOffset;
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
@@ -158,20 +168,22 @@ class TimelineScroll extends Component<TimelineScrollProps> {
           Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
       }
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, timelineRefTime + timeDelta);
+      const newTime = Math.min(rightNow, refTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
       }
       logScrollEvents && log.debug('domain', domain);
+      if (!this._scrolling) {
+        logScrollEvents && log.trace('onScroll called when not scrolling - avoiding setZoomDomainWhileScrolling');
+        return;
+      }
       setZoomDomainWhileScrolling(domain);
-      this._refTime = newTime;
     }
 
     const onScrollBeginDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       this.clearTimer();
       this._scrolling = true;
-      this._refTime = this.props.refTime;
       logScrollEvents && log.trace('onScrollBeginDrag');
       setTimelineScrolling(true);
     }

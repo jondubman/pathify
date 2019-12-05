@@ -232,7 +232,7 @@ const colors = {
     currentActivity: withOpacity(colorThemes.now, 0.75),
     selectedActivity: withOpacity(namedColors.blue, 1), // special case when timespan is selected
     timespans: {
-      [TimespanKind.ACTIVITY]: withOpacity(namedColors.blue, 0.65), // unselected state (selectedActivity color above)
+      [TimespanKind.ACTIVITY]: withOpacity(namedColors.white, 0.4), // unselected state (selectedActivity color above)
       [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
       [TimespanKind.FUTURE]: withOpacity(namedColors.silver, 0.15),
       [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),

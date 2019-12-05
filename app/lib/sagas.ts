@@ -130,7 +130,7 @@ const sagas = {
       if (AppAction[action]) {
         yield call(log.debug, 'configuring saga for AppAction', action);
         if (action === AppAction.sliderMoved) {
-          // Special case: For slider, always use latest position.
+          // Special case: For slider, always use latest position, simply ignoring any intermediate position.
           yield takeLatest(AppAction[action], sagas[AppAction[action]]);
         } else {
           // General case
@@ -149,18 +149,25 @@ const sagas = {
 
   // From here on, functions are alphabetized:
 
-  // Note: To keep this simple is currently required that added events be sorted by t and consistent in activityId.
+  // Note: To keep this simple it's currently required that added events be sorted by t and consistent in activityId.
   addEvents: function* (action: Action) {
     const params = action.params as AddEventsParams;
     const { events } = params;
+    // First, add the given events. This is the easy part. The rest is side effects.
     if (events && events.length) {
       yield call(database.createEvents, events);
     }
-    // Update any Activity/Activities related to the added events: specifically, the paths, maxGaps and odoStart.
+    // Now update any Activity/Activities related to the added events.
+    // The Activity is essentially a redundant, persisted summary of events with the same activityId.
+    // Activities are then cached in Redux state in "extended" form with additional properties that make it more
+    // readily consumable. (See ActivityDataExtended.) It would/should be possible to reconstruct these from the events.
     let activityId: string | undefined;
     let firstNewLoc: LocationEvent | undefined;
+    let firstNewOdo: number = 0;
     let lastNewLoc: LocationEvent | undefined;
     let previousEventTimestamp = 0;
+
+    // Scan through the new events to compute. This is a simple loop.
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const id = event.activityId;
@@ -180,6 +187,10 @@ const sagas = {
         if (!firstNewLoc) {
           firstNewLoc = event as LocationEvent;
         }
+        const locEvent = event as LocationEvent;
+        if (locEvent.odo && !firstNewOdo) {
+          firstNewOdo = locEvent.odo;
+        }
         lastNewLoc = event as LocationEvent;
       }
     }
@@ -190,14 +201,17 @@ const sagas = {
         update.count = (activity.count || 0) + events.length;
         const pathExtension = [] as LonLat[];
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
+        // The typical case of simply appending one or more events to an Activity is handled here with little work.
+        // The case of inserting events in the middle of an existing Activity is handled by the big else block below.
         const appending: boolean = !!(firstNewLoc && firstNewLoc.t > activity.tLastUpdate);
         if (appending) {
-          // odo
-          if (firstNewLoc && firstNewLoc.odo) { // TODO what if firstNewLoc.odo is zero but other added odo are nonzero?
-            if (!activity.odoStart || firstNewLoc.odo < activity.odoStart) {
-              update.odoStart = firstNewLoc.odo; // set odoStart on the activity if not set already
+          // odoStart
+          if (firstNewOdo) {
+            if (!activity.odoStart || firstNewOdo < activity.odoStart) {
+              update.odoStart = firstNewOdo;
             }
           }
+          // odo
           if (lastNewLoc) {
             update.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
             update.odo = lastNewLoc.odo;
@@ -226,7 +240,7 @@ const sagas = {
             }
           }
         } else { // not simply appending events; recalc entire path et al (note new events were already added above)
-          // Fetch all the events for this activity. This is an expensive operation we want to avoid whenever possible:
+          // Fetch all the events for this activity. This is an expensive operation we want to avoid whenever possible.
           const eventsForActivity = yield call(database.eventsForActivity, activityId);
           update.pathLats = [];
           update.pathLons = [];
@@ -268,6 +282,8 @@ const sagas = {
     }
   },
 
+  // appQuery is used for debugging
+  // TODO disable for production
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
@@ -579,7 +595,7 @@ const sagas = {
         onPress: () => {
           log.warn('Delete activity', id);
           database.deleteActivity(id);
-          store.dispatch(newAction(AppAction.refreshCache));
+          store.dispatch(newAction(AppAction.refreshCache)); // TODO more efficient to just delete this cache entry
         },
         text: 'Delete',
         style: 'destructive'
