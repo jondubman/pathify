@@ -441,7 +441,7 @@ const sagas = {
     }
   },
 
-  // The 'background' is unlikely to be actually visible as it only appears when there is no map.
+  // The 'background' is unlikely to be actually visible as it's generally covered entirely by the map.
   backgroundTapped: function* (action: Action) {
     yield call(log.trace, 'saga backgroundTapped');
   },
@@ -801,13 +801,19 @@ const sagas = {
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
     yield call(log.debug, 'saga modeChange', modeChangeEvent);
-    yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
+    const appActive = yield select((state: AppState) => state.flags.appActive);
+    if (appActive) {
+      yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
+    } // else TODO
   },
 
   motionChange: function* (action: Action) {
     const motionEvent = action.params as MotionEvent;
     yield call(log.debug, 'saga motionChange', motionEvent);
-    yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
+    const appActive = yield select((state: AppState) => state.flags.appActive);
+    if (appActive) {
+        yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
+    } // else TODO
   },
 
   refreshCache: function* (action: Action) {
@@ -841,8 +847,10 @@ const sagas = {
         const extendedActivityIndex = activities.findIndex(activity => activity.id === extendedActivity.id);
         if (extendedActivityIndex >= 0) {
           activities[extendedActivityIndex] = extendedActivity;
-          yield put(newAction(AppAction.cache, { activities, refreshCount }));
+        } else {
+          activities.push(extendedActivity);
         }
+        yield put(newAction(AppAction.cache, { activities, refreshCount }));
       } else {
         const activities = (yield select(state => state.cache.activities)) as ActivityDataExtended[];
         const activitiesFiltered = activities.filter(activity => activity.id !== id);
@@ -971,11 +979,12 @@ const sagas = {
         }
       }
     }
-    const activityId = yield select(state => state.options.selectedActivityId || state.options.currentActivityId);
+    const activityId = yield select(state => state.options.selectedActivityId);
     if (activityId && activityId !== previouslySelectedActivityId) {
       const state = yield select((state: AppState) => state);
       const activity = cachedActivity(state, activityId);
       if (activity) {
+        // Fit map bounds to bounds of activity (with padding)
         const { duration, paddingHorizontal, paddingVertical } = constants.map.fitBounds;
         const map = MapUtils();
         if (map && map.fitBounds) {
@@ -988,7 +997,7 @@ const sagas = {
           }
           yield put(newAction(AppAction.setAppOption, { previouslySelectedActivityId: activity.id }));
         }
-        // Now zoom Timeline to show the entire activity.
+        // Zoom Timeline to show the entire activity, in context.
         if (activity.tTotal) {
           const newTimelineZoomValue = yield call(timelineZoomValue, activity.tTotal);
           yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
@@ -1051,7 +1060,8 @@ const sagas = {
           yield put(newAction(AppAction.addEvents, { events: [startEvent, startMark] }));
         }
         yield put(newAction(AppAction.setAppOption, { currentActivityId: activityId }));
-        yield put(newAction(AppAction.refreshCache));
+        yield put(newAction(AppAction.refreshCachedActivity, { activityId }));
+        // yield put(newAction(AppAction.refreshCache));
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);

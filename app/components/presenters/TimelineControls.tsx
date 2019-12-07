@@ -14,17 +14,18 @@ import PausedClockContainer from 'containers/PausedClockContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import RefTimeContainer from 'containers/RefTimeContainer';
 import { TimelineControlsProps } from 'containers/TimelineControlsContainer';
+import { centerline } from 'lib/selectors';
 
 const Styles = StyleSheet.create({
   centerLine: {
     backgroundColor: constants.colors.timeline.centerLine,
     bottom: constants.timeline.bottomPaddingForAxis,
-    left: utils.windowSize().width / 2 - constants.timeline.centerLineWidth / 2,
+    left: centerline() - constants.timeline.centerLineWidth / 2,
     position: 'absolute',
     width: constants.timeline.centerLineWidth,
   },
   clockCenter: {
-    left: utils.windowSize().width / 2 - constants.clock.height / 2,
+    left: centerline() - constants.clock.height / 2,
     position: 'absolute',
   },
   topLine: {

@@ -418,13 +418,13 @@ export const Geo = {
       if (location.sample) {
         return;
       }
-      const processLocation = async (location: Location) => {
-        const state = store.getState();
-        const activityId = state.options.currentActivityId;
-        if (!state.flags.receiveLocations) {
-          log.trace('processLocation: ignoring location', location.timestamp);
-          return;
-        }
+      const state = store.getState();
+      const activityId = state.options.currentActivityId;
+      if (!state.flags.receiveLocations) {
+        log.trace('onLocation: ignoring location', location.timestamp);
+        return;
+      }
+      if (state.flags.appActive) {
         const locationEvent = newLocationEvent(location, activityId);
         if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
@@ -434,23 +434,12 @@ export const Geo = {
           recheckMapBounds: true,
         }
         store.dispatch(newAction(AppAction.geolocation, geolocationParams));
-      }
-      const state = store.getState();
-      if (state.flags.appActive) {
-        await processLocation(location);
       } else {
-        // TODO4 do we want to do this when appActive is false?
-        let taskId;
-        try {
-          taskId = await BackgroundGeolocation.startBackgroundTask();
-          await processLocation(location);
-        } catch (err) {
-          log.error('onLocation error during background execution');
-        } finally {
-          if (taskId) {
-            await BackgroundGeolocation.stopBackgroundTask(taskId);
-          }
-        }
+        // App is running (obviously!) but it is doing so in the background (appActive is false.)
+        // Add the raw location to the plugin's SQLite DB so they will be included in processSavedLocations
+        // in addition to the locations that come in when the RN JS thread is asleep.
+        // Note: Could await insertLocation as it returns a promise, or check for errors if needed.
+        BackgroundGeolocation.insertLocation(location);
       }
     } catch (err) {
       log.error('onLocation', err);
