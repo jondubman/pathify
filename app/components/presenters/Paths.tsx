@@ -13,9 +13,9 @@ import { LonLat } from 'shared/locations';
 import log from 'shared/log';
 
 const lineLayerStyleBase = {
-  // lineCap: 'round', // TODO
+  // lineCap: 'round',
   // lineDasharray: [1, 1],
-  // lineJoin: 'round', // TODO
+  // lineJoin: 'round',
   lineWidth: constants.paths.width,
   lineOpacity: 1,
 }

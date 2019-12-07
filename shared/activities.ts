@@ -5,8 +5,6 @@ import log from './log';
 import { Timepoint } from './timeseries';
 import { metersToMiles, msecToString } from './units';
 
-// TODO the repetition here is not ideal, particularly between Activity and ActivityData.
-
 export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
   name: 'Activity',
   primaryKey: 'id',
@@ -60,7 +58,7 @@ export interface Activity extends Realm.Object { // returned from Realm, resembl
 }
 export type Activities = Activity[];
 
-// ActivityData facilitate creating and updating Activities and they are also used to populate the cache in Redux.
+// ActivityData facilitate creating and updating Activities.
 // All the Activity properties above are included, without extending Realm.Object. Here, all but id are optional.
 export interface ActivityData {
   // id required
@@ -89,6 +87,7 @@ export interface ActivityData {
   loss?: number; // total elevation loss
 }
 
+// ActivityDataExtended populate the activities cache in Redux store, and appear on the ActivityList.
 export interface ActivityDataExtended extends ActivityData { // these are the 'Extended' properties:
   distance?: number;
   distanceMiles?: number;

@@ -96,7 +96,7 @@ const colors = {
     itemBackground_selected: withOpacity(namedColors.azure, 0.5),
   },
   activityInfo: {
-    background: withOpacity(namedColors.silver, 0), // TODO
+    background: withOpacity(namedColors.silver, 0),
   },
   activityList: {
     background: 'transparent',

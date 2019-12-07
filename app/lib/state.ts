@@ -53,7 +53,7 @@ export const initialAppState = {
     showTimelineMarks: false,
     showTimelineSpans: true,
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking?
-    timelineNow: true, // is the timeline continuously scrolling to show the current time? TODO2
+    timelineNow: true, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
     timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data

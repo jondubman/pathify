@@ -1,6 +1,4 @@
 // Redux reducer for the app
-// TODO reorganize using combineReducers or something better
-
 import { Polygon } from "@turf/helpers";
 
 import {

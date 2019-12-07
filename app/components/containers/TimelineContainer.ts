@@ -33,7 +33,7 @@ export interface TimelineStateProps {
   visibleTime: number;
   visibleWidth: number;
   zoomDomain: DomainPropType;
-  zoomLevel: number; // TODO this is not currently used
+  zoomLevel: number;
 }
 
 export interface TimelineDispatchProps {

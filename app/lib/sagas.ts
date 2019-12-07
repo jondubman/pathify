@@ -677,7 +677,7 @@ const sagas = {
   },
 
   // Update state.userLocation as appropriate in response to geolocation events.
-  // TODO If these events are old, do we still want to do that?
+  // TODO If these events are old or known to be semi-inaccurate, do we still want to do that?
   // Note it is not the responsibility of this saga to add events when locations comes in. See addEvents.
   geolocation: function* (action: Action) {
     try {
@@ -1061,7 +1061,6 @@ const sagas = {
         }
         yield put(newAction(AppAction.setAppOption, { currentActivityId: activityId }));
         yield put(newAction(AppAction.refreshCachedActivity, { activityId }));
-        // yield put(newAction(AppAction.refreshCache));
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);
@@ -1161,7 +1160,7 @@ const sagas = {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(AppAction.flagDisable, 'followingUser'));
-      // TODO3 leave background geolocation running in 'navigating' mode
+      // TODO leave background geolocation running in 'navigating' mode.
       // yield call(Geo.stopBackgroundGeolocation, 'navigating');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
