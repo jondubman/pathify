@@ -22,40 +22,22 @@ interface ActivityListStateProps {
   list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string;
+  refTime: number;
   top: number;
 }
 
 interface ActivityListDispatchProps {
   onPressActivity: (activity: ActivityDataExtended) => void;
-  registerRef: (ref: FlatList<ActivityDataExtended>) => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
-
-let _ref: FlatList<ActivityDataExtended>;
-
-const registerRef = (ref: FlatList<ActivityDataExtended>) => {
-  // TODO Here, we have a ref to control the FlatList (https://facebook.github.io/react-native/docs/flatlist)
-  _ref = ref;
-}
-
-export const ActivityList_scrollToIndex = (params) => {
-  if (_ref) {
-    _ref.scrollToIndex(params);
-  }
-}
-
-export const ActivityList_scrollToOffset = (params) => {
-  if (_ref) {
-    _ref.scrollToOffset(params);
-  }
-}
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
     selectedActivityId: state.options.selectedActivityId,
+    refTime: state.options.refTime,
     top: dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset,
   }
 }
@@ -81,7 +63,6 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   }
   const dispatchers = {
     onPressActivity,
-    registerRef,
   }
   return dispatchers;
 }

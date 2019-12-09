@@ -1,4 +1,4 @@
-//  Selector functions for Redux reducer
+// Selector functions for Redux reducer, plus some other derived quantities not necessarily dependent on Redux state.
 
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
@@ -15,11 +15,13 @@ import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 
+// TODO review
 export const activityIncludesMark = (activityId: string, mark: MarkEvent): boolean => {
   const activity = database.activityById(activityId);
   return !!(mark.activityId && activity && mark.activityId === activity.id)
 }
 
+// TODO review
 export const continuousTrackList = (state: AppState): Tracks => {
   const tr: TimeRange = [0, utils.now()];
   return continuousTracks(database.events(), constants.maxTimeGapForContinuousTrack, tr);
@@ -34,6 +36,7 @@ const colorForAppState = {
 }
 
 // Each activityTimespan shows one Activity
+// TODO review
 const activityTimespans = (state: AppState): Timespans => {
   const activities = database.activities();
   return activities.map((activity: Activity): Timespan => {
@@ -52,6 +55,7 @@ const activityTimespans = (state: AppState): Timespans => {
 }
 
 // For debugging, appStateTimespans show appState over time.
+// TODO review
 const appStateTimespans = (state: AppState): Timespans => {
   const timespans: Timespans = [];
   let previousState = AppStateChange.NONE;

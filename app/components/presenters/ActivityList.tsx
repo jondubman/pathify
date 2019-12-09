@@ -72,16 +72,21 @@ const Styles = StyleSheet.create({
   },
 })
 
-const marginLeft = centerline() - (0.5 * (activityWidth + marginHorizontal * 2));
-const marginRight = marginLeft + marginHorizontal;
+// marginLeft allows scrolling so left margin of leftmost activity is centered
+const marginLeft = centerline();
+
+// marginRight allows scrolling to right margin of rightmost activity is centered
+const marginRight = marginLeft + marginHorizontal + (0.5 * activityWidth);
 
 const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
   {
     index,
     length: ((marginHorizontal * 2) + activityWidth),
-    offset: marginLeft + (index * (marginHorizontal + activityWidth + marginHorizontal))
+    offset: marginLeft + (index * (marginHorizontal + activityWidth + marginHorizontal)),
   }
 )
+
+let _ref: FlatList<ActivityDataExtended>;
 
 class ActivityList extends Component<ActivityListProps> {
 
@@ -89,6 +94,28 @@ class ActivityList extends Component<ActivityListProps> {
     super(props);
     this.handleScroll = this.handleScroll.bind(this);
     this.renderItem = this.renderItem.bind(this);
+  }
+
+  // Auto-scroll to the correct spot after component is updated.
+  componentDidUpdate(prevProps: ActivityListProps) {
+    log.debug('ActivityList componentDidUpdate', this.props.refTime);
+    const { list, selectedActivityId } = this.props;
+    const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
+    if (index >= 0) {
+      if (this.props.refTime !== prevProps.refTime) { // TODO any other instances requiring scrolling?
+        if (_ref) {
+          const params = {
+            animated: true,
+            index,
+            viewOffset: 0,
+            viewPosition: 0.5, // center in middle
+          }
+          _ref.scrollToIndex(params);
+        }
+      }
+    } else {
+      // TODO
+    }
   }
 
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
@@ -106,7 +133,7 @@ class ActivityList extends Component<ActivityListProps> {
           onScroll={this.handleScroll}
           ref={(ref) => {
             if (ref) {
-              this.props.registerRef(ref);
+              _ref = ref;
             }
           }}
           renderItem={this.renderItem}
