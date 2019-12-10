@@ -138,7 +138,6 @@ android {
 
 dependencies {
     implementation project(':react-native-restart')
-    implementation project(':realm')
     implementation project(':@react-native-community_slider')
     implementation project(':@mapbox_react-native-mapbox-gl')
     implementation project(':react-native-vector-icons')
