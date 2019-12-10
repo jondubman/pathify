@@ -98,11 +98,11 @@ class ActivityList extends Component<ActivityListProps> {
 
   // Auto-scroll to the correct spot after component is updated.
   componentDidUpdate(prevProps: ActivityListProps) {
-    log.debug('ActivityList componentDidUpdate', this.props.refTime);
+    log.debug('ActivityList componentDidUpdate', this.props.scrollTime);
     const { list, selectedActivityId } = this.props;
     const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
     if (index >= 0) {
-      if (this.props.refTime !== prevProps.refTime) { // TODO any other instances requiring scrolling?
+      if (this.props.scrollTime !== prevProps.scrollTime) { // TODO any other instances requiring scrolling?
         if (_ref) {
           const params = {
             animated: true,

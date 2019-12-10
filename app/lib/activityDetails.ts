@@ -35,20 +35,20 @@ export const activityDetails = (state: AppState, activityDetails: PopupMenuConfi
       height,
     }
     // For now, compute metrics for just the selectedActivity if that exists, else currentActivity, if that exists.
-    const { currentActivity, refTime, selectedActivity } = state.options;
+    const { currentActivity, scrollTime, selectedActivity } = state.options;
     let timeText: string;
     let metrics: ActivityMetrics | null = null;
     if (selectedActivity) {
-      metrics = activityMetrics(database.events(), selectedActivity.tr, refTime);
+      metrics = activityMetrics(database.events(), selectedActivity.tr, scrollTime);
     } else if (currentActivity) {
       let tr = { ...currentActivity.tr };
       if (!tr[1]) {
-        tr[1] = Math.max(utils.now(), refTime);
+        tr[1] = Math.max(utils.now(), scrollTime);
       }
-      metrics = activityMetrics(database.events(), tr, timelineNow ? tr[1] : refTime);
+      metrics = activityMetrics(database.events(), tr, timelineNow ? tr[1] : scrollTime);
       if (timelineNow) {
         // special case to ensure time is as current as can be
-        timeText = msecToString(Math.max(0, refTime - tr[0]));
+        timeText = msecToString(Math.max(0, scrollTime - tr[0]));
       }
     }
     if (metrics) {

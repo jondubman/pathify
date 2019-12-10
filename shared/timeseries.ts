@@ -123,7 +123,7 @@ const timeseries = {
   //   const existingDuration = existingEnd - existingStart;
 
   //   // relativeTo is typically set at runtime, whereas startAt / endAt are likely to be specified, e.g. in test samples.
-  //   // relativeTo might be the current time, or perhaps the refTime of the timeline.
+  //   // relativeTo might be the current time, or perhaps the scrollTime of the timeline.
 
   //   let newStart = startAt ? (startAt.relative ? relativeTo + startAt.t : startAt.t) : existingStart;
   //   let newEnd = endAt ? (endAt.relative ? relativeTo + endAt.t : endAt.t) : existingEnd;

@@ -5,6 +5,7 @@ import {
   AppAction,
   newAction,
 } from 'lib/actions';
+import constants from 'lib/constants';
 import store from 'lib/store';
 import { LonLat } from 'shared/locations';
 import sharedConstants from 'shared/sharedConstants';
@@ -23,13 +24,44 @@ import {
 
 import log from 'shared/log';
 
+const schemaVersion = 9;
+
 const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything else to persist across app sessions
   name: 'Settings',
   primaryKey: 'id',
   properties: {
     id: 'int', // singleton, always 1
     currentActivityId: 'string?',
+    followingUser: 'bool',
+    latMax: 'double',
+    latMin: 'double',
+    lonMax: 'double',
+    lonMin: 'double',
+    mapFullScreen: 'bool',
+    mapOpacity: 'double',
+    mapStyle: 'string',
+    pausedTime: 'int',
+    showTimeline: 'bool',
+    timelineNow: 'bool',
+    timelineZoomValue: 'double',
   }
+}
+
+export interface SettingsObject extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
+  id: number,
+  currentActivityId?: string,
+  followingUser: boolean,
+  latMax: number,
+  latMin: number,
+  lonMax: number,
+  lonMin: number,
+  mapFullScreen: boolean,
+  mapOpacity: number,
+  mapStyle: string,
+  pausedTime: number,
+  showTimeline: boolean,
+  timelineNow: boolean,
+  timelineZoomValue: number,
 }
 
 const schema = [
@@ -37,8 +69,34 @@ const schema = [
   EventSchema,
   SettingsSchema,
 ]
-// TODO use deleteRealmIfMigrationNeeded: false for production - see https://realm.io/docs/javascript/latest/
-const config = { schema, deleteRealmIfMigrationNeeded: true } as Realm.Configuration;
+
+const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
+  if (oldRealm.schemaVersion < schemaVersion) {
+    const oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
+    const newSettings = newRealm.objects('Settings')[0] as SettingsObject;
+    newSettings.currentActivityId = oldSettings.currentActivityId;
+    newSettings.followingUser = false;
+    newSettings.latMax = 0;
+    newSettings.latMin = 0;
+    newSettings.lonMax = 0;
+    newSettings.lonMin = 0;
+    newSettings.mapFullScreen = false;
+    newSettings.mapOpacity = constants.map.default.opacity,
+    newSettings.mapStyle = constants.map.default.style,
+    newSettings.pausedTime = 0;
+    newSettings.showTimeline = true,
+    newSettings.timelineNow = true;
+    newSettings.timelineZoomValue = constants.timeline.default.zoomValue;
+  }
+}
+
+// TODO always use deleteRealmIfMigrationNeeded: false for production - see https://realm.io/docs/javascript/latest/
+const config: Realm.Configuration = {
+  deleteRealmIfMigrationNeeded: false,
+  migration,
+  schema,
+  schemaVersion,
+}
 const realm = new Realm(config);
 
 // TODO which errors to handle?
@@ -147,19 +205,22 @@ const database = {
 
   changeSettings: async (changes: any) => {
     try {
-      const currentState = realm.objects('Settings');
-      let newState;
-      if (currentState.length) {
-        log.debug('changeSettings: currentState is', currentState[0]);
-        newState = { ...currentState[0], ...changes }; // merge any changes
+      const settings = realm.objects('Settings');
+      if (settings.length) {
+        realm.write(() => {
+          for (let [key, value] of Object.entries(changes)) {
+            settings[0][key] = value;
+          }
+        })
       } else {
-        // note id is always 1 (Settings is a singleton)
-        newState = { id: 1, ...changes }; // merge any changes
+        // Note id is always 1 (Settings is a singleton)
+        // Initialize settings:
+        const settings = { id: 1, ...changes }; // merge any changes
+        realm.write(() => {
+          realm.create('Settings', settings, true); // true: update
+        })
       }
-      log.info('changeSettings', 'changes', changes, 'newState', newState);
-      realm.write(() => {
-        realm.create('Settings', newState, true); // true: update
-      })
+      log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
     } catch (err) {
       log.error('changeSettings error', err);
     }
@@ -169,7 +230,7 @@ const database = {
     try {
       const currentState = realm.objects('Settings');
       if (currentState.length) {
-        return currentState[0]; // return all the settings
+        return { ...currentState[0], schemaVersion }; // return a copy of all the settings plus schemaVersion
       }
       return {};
     } catch (err) {

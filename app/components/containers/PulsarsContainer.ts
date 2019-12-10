@@ -34,7 +34,7 @@ export type PulsarsProps = PulsarsStateProps & PulsarsDispatchProps;
 
 const mapStateToProps = (state: AppState): PulsarsStateProps => {
   const { options } = state;
-  const keySuffix = (options.currentActivityId || options.selectedActivityId ? `${options.refTime}` : '') +
+  const keySuffix = (options.currentActivityId || options.selectedActivityId ? `${options.scrollTime}` : '') +
     `${JSON.stringify(options.currentActivityId)}${JSON.stringify(options.selectedActivityId)}`;
   return {
     keySuffix,

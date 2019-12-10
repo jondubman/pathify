@@ -111,8 +111,8 @@ export const clockNowMode = (state: AppState): boolean => {
     return true;
   }
   if (state.flags.timelineScrolling &&
-    state.options.refTime >= state.options.timelineRefTime - constants.timing.timelineCloseToNow &&
-    state.options.refTime >= utils.now() - constants.timing.timelineCloseToNow) {
+    state.options.scrollTime >= state.options.viewTime - constants.timing.timelineCloseToNow &&
+    state.options.scrollTime >= utils.now() - constants.timing.timelineCloseToNow) {
     return true;
   }
   return false;
@@ -195,11 +195,11 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   }
   if (!state.flags.timelineNow && state.flags.showPriorLocation) {
     const { nearTimeThreshold } = constants.timeline;
-    const { refTime } = state.options;
-    const tMin = refTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
-    const tMax = refTime + nearTimeThreshold;
+    const { scrollTime } = state.options;
+    const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
+    const tMax = scrollTime + nearTimeThreshold;
     const locEvent = locations.locEventNearestTimepoint(database.events().filtered('t >= $0 AND t <= $1', tMin, tMax),
-                                                        refTime,
+                                                        scrollTime,
                                                         nearTimeThreshold);
     if (locEvent) {
       pulsars.priorLocation = {

@@ -54,7 +54,7 @@ class Timeline extends Component<TimelineProps> {
       allowZoom,
       showMarks,
       showSpans,
-      timelineRefTime,
+      viewTime,
       timelineWidth,
       zoomDomain,
       zoomLevel,
@@ -68,11 +68,11 @@ class Timeline extends Component<TimelineProps> {
     }
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
-      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(timelineRefTime), interval.hours(1))
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(viewTime), interval.hours(1))
     } else if (tickInterval >= interval.hours(12)) {
-      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(timelineRefTime), interval.hours(1))
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(viewTime), interval.hours(1))
     } else {
-      timeRoundDown = timeseries.timeRoundDown(timelineRefTime, tickInterval);
+      timeRoundDown = timeseries.timeRoundDown(viewTime, tickInterval);
     }
     const tickValues: number[] = [];
     const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // 12 is not magic per se, just about right.

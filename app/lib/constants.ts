@@ -189,7 +189,7 @@ const colors = {
     text: namedColors.black,
     underlay: namedColors.maroon,
   },
-  refTime: {
+  scrollTime: {
     background: withOpacity(namedColors.navy, 0.75),
     hoursMinutes: namedColors.white,
     seconds: withOpacity(namedColors.white, 0.75),
@@ -387,7 +387,7 @@ const constants = {
     centerMapDuration: 500, // TODO not honored on iOS https://github.com/nitaliano/react-native-mapbox-gl/issues/1411
     default: {
       opacity: 0.5,
-      style: 'Satellite', // e.g. None, Default, Topo, Satellite. See mapStyles name TODO3
+      style: 'Satellite', // e.g. None, Trails, Topo, Satellite. See mapStyles.name
       zoom: 14,
       zoomStartActivity: 16,
     },
@@ -402,7 +402,7 @@ const constants = {
   mapLogoHeight,
   mapStyles: [
     { name: 'None', opacity: 1, url: '' },
-    { name: 'Default', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
+    { name: 'Trails', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
     { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
   ] as MapStyle[],

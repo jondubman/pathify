@@ -47,7 +47,7 @@ export enum AppAction {
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
   'importGPX' = 'importGPX',
-  'log' = 'log', // see LogActionParams
+  'log' = 'log',
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
@@ -74,6 +74,7 @@ export enum AppAction {
   'timelineZooming' = 'timelineZooming',
   'timerTick' = 'timerTick',
   'userMovedMap' = 'userMovedMap',
+  'zoomToActivity' = 'zoomToActivity',
 }
 
 export type ActionType = ReducerAction | AppAction;
@@ -176,7 +177,7 @@ export interface LogActionParams {
 
 export interface RefreshCachedActivityParams {
   activityId: string;
-  remove: boolean; // default false
+  remove: boolean;
 }
 
 export interface RepeatedActionParams {
@@ -202,4 +203,8 @@ export interface SliderMovedParams {
 
 export interface StartActivityParams {
   continueActivityId?: string;
+}
+
+export interface ZoomToActivityParams {
+  id: string,
 }

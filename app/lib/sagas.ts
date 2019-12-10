@@ -38,10 +38,10 @@ import {
 } from 'redux-saga/effects';
 import { DomainPropType } from 'victory-native';
 
-import {
-  ActivityList_scrollToIndex,
-  ActivityList_scrollToOffset,
-} from 'containers/ActivityListContainer';
+// import {
+//   ActivityList_scrollToIndex, // TODO restore
+//   ActivityList_scrollToOffset, // TODO restore
+// } from 'containers/ActivityListContainer';
 import { MenuItem } from 'containers/PopupMenusContainer';
 import {
   AbsoluteRelativeOption,
@@ -69,6 +69,7 @@ import {
   SleepParams,
   SliderMovedParams,
   StartActivityParams,
+  ZoomToActivityParams,
 } from 'lib/actions'
 import constants from 'lib/constants';
 import database from 'lib/database';
@@ -83,6 +84,8 @@ import { postToServer } from 'lib/server';
 import {
   AppState,
   CacheInfo,
+  persistedFlags,
+  persistedOptions,
 } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
@@ -425,6 +428,7 @@ const sagas = {
     yield call(log.info, 'appStateChange saga:', newState);
     const activeNow = (newState === AppStateChange.ACTIVE);
     yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
+    yield put(newAction(AppAction.setAppOption, { appState: newState }));
     const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
       t: utils.now(),
       type: EventType.APP,
@@ -631,6 +635,12 @@ const sagas = {
   flag_sideEffects: function* (flagName: string) {
     const flags = yield select((state: AppState) => state.flags);
     const enabledNow = flags[flagName];
+    const appState = yield select((state: AppState) => state.options.appState);
+    if (appState !== AppStateChange.STARTUP) {
+      if (persistedFlags.includes(flagName)) {
+        yield call(database.changeSettings, { [flagName]: enabledNow });
+      }
+    }
     if (flagName === 'backgroundGeolocation') {
       yield call(Geo.enableBackgroundGeolocation, enabledNow);
       if (flags.setPaceAfterStart && enabledNow) {
@@ -642,7 +652,7 @@ const sagas = {
     }
     if (flagName === 'timelineNow') {
       if (enabledNow) {
-        const pausedTime = yield select((state: AppState) => state.options.timelineRefTime); // current pos of timeline
+        const pausedTime = yield select((state: AppState) => state.options.viewTime); // current pos of timeline
         yield put(newAction(AppAction.setAppOption, { pausedTime })); // remember prior position of timeline
         yield put(newAction(AppAction.timerTick, utils.now()));
       } else {
@@ -650,9 +660,9 @@ const sagas = {
         const { timelineScrolling } = flags;
         if (timelineScrolling) {
           // TODO is this right? Can this ever happen?
-          yield put(newAction(AppAction.setAppOption, { refTime: pausedTime }));
+          yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime }));
         } else {
-          yield put(newAction(AppAction.setAppOption, { refTime: pausedTime, timelineRefTime: pausedTime }));
+          yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime, viewTime: pausedTime }));
         }
       }
     }
@@ -842,7 +852,7 @@ const sagas = {
       const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
       const activity = remove ? null : database.activityById(id);
       if (activity) {
-        const activities = [...(yield select(state => state.cache.activities))];
+        const activities = [...(yield select(state => state.cache.activities || []))];
         const extendedActivity = extendedActivities(Array.from([activity]) as ActivityData[])[0];
         const extendedActivityIndex = activities.findIndex(activity => activity.id === extendedActivity.id);
         if (extendedActivityIndex >= 0) {
@@ -885,13 +895,13 @@ const sagas = {
   },
 
   scroll: function* (action: Action) {
-    yield call(log.debug, 'saga scroll');
-    const scrollParams = action.params as ScrollParams;
-    if (scrollParams.index !== undefined) {
-      ActivityList_scrollToIndex(scrollParams);
-    } else if (scrollParams.offset !== undefined) {
-      ActivityList_scrollToOffset(scrollParams);
-    }
+    yield call(log.debug, 'saga scroll TODO');
+    // const scrollParams = action.params as ScrollParams;
+    // if (scrollParams.index !== undefined) {
+    //   ActivityList_scrollToIndex(scrollParams);
+    // } else if (scrollParams.offset !== undefined) {
+    //   ActivityList_scrollToOffset(scrollParams);
+    // }
   },
 
   // The sequence action is an array of actions to be executed in sequence, such that
@@ -935,43 +945,30 @@ const sagas = {
   setAppOption: function* (action: Action) {
 
     // Actually set the options:
+    const { params } = action;
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
 
     // Then, handle side effects of setting app options:
 
-    // Note: Since the select follows the ReducerAction, it is possible to override previouslySelectedActivityId,
-    // which would force the map fitBounds side effect below.
-    const previouslySelectedActivityId = yield select((state: AppState) => state.options.previouslySelectedActivityId);
-
-    // Write through to settings in database
-    if (action.params.currentActivityId) {
-      const { currentActivityId } = action.params;
-      yield call(log.debug, 'Setting currentActivityId', currentActivityId);
-      database.changeSettings({ currentActivityId });
-    }
-    if (action.params.currentActivityId === null) { // Explicit check for null
-      database.changeSettings({ currentActivityId: null });
-    }
-
-    // An important side effect: Whenever refTime is set, pausedTime and selectedActivityId may also be updated.
-    // Note that setting timelineRefTime (which changes as the Timeline is scrolled) lacks these side effects.
+    // An important side effect: Whenever viewTime is set, pausedTime and selectedActivityId may also be updated.
+    // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
-    if (action.params.refTime) {
+    if (params.viewTime !== undefined) {
       const timelineNow = yield select(state => state.flags.timelineNow);
       if (timelineNow) {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
       } else {
-        const t = action.params.refTime;
-        // Setting refTime when timeline is paused updates pausedTime.
+        const t = params.viewTime;
+        // Setting scrollTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
-
-        const currentActivityId = yield select(state => state.options.currentActivityId);
         const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
+        const currentActivityId = yield select(state => state.options.currentActivityId);
         if (!activity || !activity.id || activity.id === currentActivityId) {
-          // Note selectedActivity is cleared if it would be redundant to currentActivity.
+          // selectedActivity is cleared if it would be redundant to currentActivity.
           yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
-        } else {
+        } else if (activity) {
+          // This is where selectedActivity is set to the activity for the new viewTime.
           yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id }));
           // Note the currentActivity is never selected; If there's a currentActivity and a selectedActivity,
           // it's because something other than the currentActivity is selected.
@@ -979,30 +976,18 @@ const sagas = {
         }
       }
     }
-    const activityId = yield select(state => state.options.selectedActivityId);
-    if (activityId && activityId !== previouslySelectedActivityId) {
-      const state = yield select((state: AppState) => state);
-      const activity = cachedActivity(state, activityId);
-      if (activity) {
-        // Fit map bounds to bounds of activity (with padding)
-        const { duration, paddingHorizontal, paddingVertical } = constants.map.fitBounds;
-        const map = MapUtils();
-        if (map && map.fitBounds) {
-          const { latMax, latMin, lonMax, lonMin } = activity;
-          if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
-            map.fitBounds([lonMax, latMax], [lonMin, latMin], [paddingVertical, paddingHorizontal], duration);
-          }
-          if (activityId !== action.params.currentActivityId) {
-            yield put(newAction(AppAction.stopFollowingUser));
-          }
-          yield put(newAction(AppAction.setAppOption, { previouslySelectedActivityId: activity.id }));
+    // Write through to settings in database
+    const appState = yield select((state: AppState) => state.options.appState);
+    if (appState !== AppStateChange.STARTUP) {
+      const newSettings = {} as any;
+      for (let propName of persistedOptions) {
+        if (params[propName] !== undefined) {
+          newSettings[propName] = params[propName];
         }
-        // Zoom Timeline to show the entire activity, in context.
-        if (activity.tTotal) {
-          const newTimelineZoomValue = yield call(timelineZoomValue, activity.tTotal);
-          yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
-          yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
-        }
+      }
+      if (Object.entries(newSettings).length) {
+        yield call(log.trace, 'Writing settings to database', newSettings);
+        yield call(database.changeSettings, newSettings);
       }
     }
   },
@@ -1088,8 +1073,24 @@ const sagas = {
         yield put(newAction(AppAction.clearStorage));
       }
       const settings = yield call(database.settings) as any; // TODO typings
-      yield call(log.info, 'Persisted App settings', settings);
+      yield call(log.info, 'Saved App settings', settings);
 
+      for (let propName of persistedFlags) {
+        if (settings[propName] !== undefined) {
+          const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
+          yield put(newAction(actionType, propName));
+        }
+      }
+      const newSettings = {} as any;
+      for (let propName of persistedOptions) {
+        if (settings[propName] !== undefined) {
+          newSettings[propName] = settings[propName];
+        }
+      }
+      if (Object.entries(newSettings).length) {
+        yield call(log.debug, 'Reading settings from database', newSettings);
+        yield put(newAction(AppAction.setAppOption, newSettings));
+      }
       const { currentActivityId } = settings;
       yield call(Geo.initializeGeolocation, store, !!currentActivityId);
       if (currentActivityId) {
@@ -1168,21 +1169,21 @@ const sagas = {
   },
 
   // Respond to timeline pan/zoom. x is in the time domain.
-  // timelineRefTime changes here only after scrolling, whereas refTime changes during scrolling too.
+  // viewTime changes here only after scrolling, whereas scrollTime changes during scrolling too.
   timelineZoomed: function* (action: Action) {
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
-    const refTime = (x[0] + x[1]) / 2;
+    const scrollTime = (x[0] + x[1]) / 2;
     yield put(newAction(AppAction.flagDisable, 'timelineScrolling'));
-    yield put(newAction(AppAction.setAppOption, { refTime, timelineRefTime: refTime }));
+    yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
   },
 
   timelineZooming: function* (action: Action) {
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
-    const refTime = (x[0] + x[1]) / 2;
-    yield put(newAction(AppAction.setAppOption, { refTime })); // note: not changing timelineRefTime! see timelineZoomed
-    yield call(log.trace, 'timelineZooming', refTime);
+    const scrollTime = (x[0] + x[1]) / 2;
+    yield put(newAction(AppAction.setAppOption, { scrollTime })); // note: not changing viewTime! see timelineZoomed
+    yield call(log.trace, 'timelineZooming', scrollTime);
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -1195,9 +1196,9 @@ const sagas = {
       const { timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
       const options = { nowTime: now } as any; // always update nowTime
       if (timelineNow) {
-        options.refTime = now;
+        options.scrollTime = now;
         if (!timelineScrolling) {
-          options.timelineRefTime = now;
+          options.viewTime = now;
         }
       }
       yield put(newAction(AppAction.setAppOption, options));
@@ -1211,6 +1212,34 @@ const sagas = {
       yield put(newAction(AppAction.stopFollowingUser));
     } catch (err) {
       yield call(log.error, 'userMovedMap', err);
+    }
+  },
+
+  zoomToActivity: function* (action: Action) {
+    const { id } = action.params as ZoomToActivityParams;
+    const state = yield select((state: AppState) => state);
+    const activity = cachedActivity(state, id);
+    if (activity) {
+      // Fit map bounds to bounds of activity (with padding)
+      const { duration, paddingHorizontal, paddingVertical } = constants.map.fitBounds;
+      const map = MapUtils();
+      if (map && map.fitBounds) {
+        const { latMax, latMin, lonMax, lonMin } = activity;
+        if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
+          map.fitBounds([lonMax, latMax], [lonMin, latMin], [paddingVertical, paddingHorizontal], duration);
+        }
+        if (id === state.options.currentActivityId) {
+          yield put(newAction(AppAction.startFollowingUser));
+        } else {
+          yield put(newAction(AppAction.stopFollowingUser));
+        }
+      }
+      // Zoom Timeline to show the entire activity, in context. Note we are not resetting its viewTime, just zooming.
+      if (activity.tTotal) {
+        const newTimelineZoomValue = yield call(timelineZoomValue, activity.tTotal);
+        yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
+        yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
+      }
     }
   },
 }

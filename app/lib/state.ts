@@ -6,6 +6,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
+import { AppStateChange } from 'shared/appEvents';
 import { LocationEvent } from 'shared/locations';
 
 const now = utils.now();
@@ -61,6 +62,7 @@ export const initialAppState = {
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
   options: { // non-boolean
+    appState: AppStateChange,
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: '', // while tracking Activity
     mapOpacity: constants.map.default.opacity,
@@ -69,12 +71,11 @@ export const initialAppState = {
     nowTime: now,
     pulsars: {} as OptionalPulsars,
     pausedTime: now, // timepoint where timeline was last paused
-    previouslySelectedActivityId: '', // used to determine whether selectedActivityId has changed
-    refTime: now, // timepoint that changes even as user is scrolling the timeline
+    scrollTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: '', // for now, no more than one Activity is 'selected' at a time
     startupTime: now, // not persisted, never changed once set
-    timelineRefTime: now, // By design this remains constant, as refTime changes, while user is scrolling the timeline.
-    timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline refTime, etc.
+    viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
+    timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)
   },
 }
@@ -86,3 +87,21 @@ export interface AppState extends InitialAppState {
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
   userLocation?: LocationEvent;
 }
+
+// TODO keep in sync with database.SettingsSchema
+
+export const persistedFlags = [
+  'followingUser',
+  'mapFullScreen',
+  'showTimeline',
+  'timelineNow',
+]
+
+export const persistedOptions = [
+  'currentActivityId',
+  'mapOpacity',
+  'mapStyle',
+  'pausedTime',
+  'timelineZoomValue',
+  'viewTime',
+]

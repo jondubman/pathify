@@ -47,9 +47,9 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * constants.timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.centerLine, {
       height: props.timelineHeight
-              + constants.refTime.height
-              + constants.refTime.bottomMargin
-              - constants.timeline.bottomPaddingForAxis
+        + constants.refTime.height
+        + constants.refTime.bottomMargin
+        - constants.timeline.bottomPaddingForAxis
     }]} />
   </View>
 )

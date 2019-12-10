@@ -28,8 +28,8 @@ export interface TimelineStateProps {
   showMarks: boolean;
   showSpans: boolean;
   timelineNow: boolean;
-  timelineRefTime: number;
   timelineWidth: number;
+  viewTime: number;
   visibleTime: number;
   visibleWidth: number;
   zoomDomain: DomainPropType;
@@ -43,14 +43,14 @@ export type TimelineProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   const { yDomain } = constants.timeline;
-  const { timelineRefTime } = state.options;
+  const { viewTime } = state.options;
   const allowZoom = state.flags.timelinePinchToZoom;
   const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
   const visibleTime = timelineVisibleTime(state.options.timelineZoomValue);
   const visibleWidth = dynamicTimelineWidth(state);
   const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
   const zoomDomain: DomainPropType = { // the visible domain of the Timeline
-    x: [timelineRefTime - scrollableAreaTime / 2, timelineRefTime + scrollableAreaTime / 2], // half on either side
+    x: [viewTime - scrollableAreaTime / 2, viewTime + scrollableAreaTime / 2], // half on either side
     y: yDomain,
   }
   const showMarks = state.flags.showTimelineMarks;
@@ -60,7 +60,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     showMarks,
     showSpans,
     timelineNow: state.flags.timelineNow,
-    timelineRefTime,
+    viewTime,
     timelineWidth,
     visibleTime,
     visibleWidth,

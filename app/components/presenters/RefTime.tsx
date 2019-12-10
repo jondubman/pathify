@@ -12,7 +12,7 @@ import {
 import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
 
-const colors = constants.colors.refTime;
+const colors = constants.colors.scrollTime;
 const {
   height,
   leftContentsWidth,
