@@ -35,7 +35,8 @@ const colorForAppState = {
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.3),
 }
 
-const selectedActivityIndex = (state: AppState) => (
+// note this assumes activities exists
+export const selectedActivityIndex = (state: AppState) => (
   state.cache.activities!.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
 )
 

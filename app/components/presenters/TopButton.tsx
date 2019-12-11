@@ -20,16 +20,21 @@ const {
   fontFamily,
   fontSize,
   opacity,
+  opacitySelected,
   size,
 } = constants.topButton;
 
-const expansionPerChar = 6.5;
+const expansionPerChar = 6.8; // this was empirically determined and depends on fontSize
 const expansion = (count: string) => (count.length - 1) * expansionPerChar;
+const sizeBase = size / 3;
+
+const bubbleLeft = centerline() + size / 2 - 8;
 
 const Styles = StyleSheet.create({
   bubble: {
     borderRadius: size / 6,
     position: 'absolute',
+    paddingLeft: 1,
     paddingTop: size / 4,
     height: size / 3,
     justifyContent: 'center',
@@ -37,15 +42,17 @@ const Styles = StyleSheet.create({
     opacity,
   },
   button: {
+    borderWidth: 1.5,
+    borderColor: 'white',
     borderRadius: size / 2,
     position: 'absolute',
-    paddingTop: size / 4,
+    paddingLeft: 1,
+    paddingTop: size / 4 - 2,
     width: size,
     height: size,
     left: centerline() - constants.buttonSize / 2,
     justifyContent: 'center',
     flexDirection: 'row',
-    opacity,
   },
   count: {
     color: colors.bubbleLabel,
@@ -55,33 +62,38 @@ const Styles = StyleSheet.create({
   }
 })
 
+const backgroundColor = (props: TopButtonProps) => (props.selected ? colors.backgroundSelected : colors.background);
+
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <Fragment>
     <View
       style={[Styles.bubble, {
-        backgroundColor: colors.bubble,
-        left: centerline() + size / 2 - 4,
+        backgroundColor: props.selected ? colors.bubble : colors.bubbleSelected,
+        left: bubbleLeft,
         top: props.topOffset,
-        width: size / 3 + expansion(props.activityCount),
+        width: sizeBase + expansion(props.activityCount),
       }]}
     >
     </View>
     <Text style={[Styles.count, {
       top: props.topOffset,
-      left: centerline() + size / 2 + 0.5,
+      left: bubbleLeft,
+      textAlign: 'center',
+      width: sizeBase + expansion(props.activityCount),
     }]}>
       {props.activityCount}
     </Text>
     <TouchableHighlight
       style={[Styles.button, {
-        backgroundColor: props.enabled ? colors.underlay : colors.background,
+        backgroundColor: props.enabled ? colors.underlay : backgroundColor(props),
+        opacity: props.selected ? opacitySelected : opacity,
         top: props.topOffset,
       }]}
       onPress={() => { props.onDeleteActivity(props.activityId) }}
-      underlayColor={props.enabled ? colors.background : colors.underlay}
+      underlayColor={props.enabled ? backgroundColor(props) : colors.underlay}
     >
       <FontAwesome5
-        color={colors.icon}
+        color={props.selected ? colors.iconSelected : colors.icon}
         name='bars'
         size={size / 2}
       />

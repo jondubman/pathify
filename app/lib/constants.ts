@@ -66,6 +66,7 @@ const colorThemes = {
   now: namedColors.green,
   nowDark: namedColors.darkGreen,
   nowDarker: namedColors.darkerGreen,
+  past: namedColors.blue,
   settings: namedColors.darkerGray,
   topMenu: namedColors.darkerGray,
 }
@@ -107,11 +108,11 @@ const colors = {
     },
     past: {
       background: withOpacity(namedColors.darkerGray, 0.25),
-      backgroundSelected: withOpacity(namedColors.blue, 0.75),
+      backgroundSelected: withOpacity(colorThemes.past, 0.75),
       border: withOpacity(namedColors.gray, 0.5),
       borderSelected: withOpacity(namedColors.white, 0.75),
-      selected: withOpacity(namedColors.azure, 0.5),
-      underlay: withOpacity(namedColors.azure, 0.65),
+      selected: withOpacity(colorThemes.past, 0.5),
+      underlay: withOpacity(colorThemes.past, 0.65),
     },
     text: withOpacity(namedColors.white, 0.75),
     textSelected: withOpacity(namedColors.white, 1),
@@ -230,7 +231,7 @@ const colors = {
     axisLabels: namedColors.gray,
     background: colorThemes.background,
     currentActivity: withOpacity(colorThemes.now, 0.75),
-    selectedActivity: withOpacity(namedColors.blue, 1), // special case when timespan is selected
+    selectedActivity: withOpacity(namedColors.blue, 0.75), // special case when timespan is selected
     timespans: {
       [TimespanKind.ACTIVITY]: withOpacity(namedColors.white, 0.4), // unselected state (selectedActivity color above)
       [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
@@ -246,9 +247,12 @@ const colors = {
   },
   topButton: {
     background: 'white',
-    bubble: withOpacity(namedColors.blue, 0.75),
+    backgroundSelected: withOpacity(colorThemes.past, 1),
+    bubble: withOpacity(colorThemes.past, 1),
+    bubbleSelected: withOpacity(namedColors.darkerGray, 1),
     bubbleLabel: 'white',
     icon: 'black',
+    iconSelected: 'white',
     underlay: colorThemes.topMenu,
   },
   topMenu: {
@@ -278,7 +282,7 @@ const constants = {
   activityList: {
     activityWidth: 100, // < minDeviceWidth / 3
     borderRadius: 0,
-    borderWidth: 2,
+    borderWidth: 1,
     height: initialTimelineHeight,
     marginHorizontal: buttonOffset,
   },
@@ -571,6 +575,7 @@ const constants = {
     fontFamily,
     fontSize: 12,
     opacity: defaultOpacity,
+    opacitySelected: defaultOpacity,
     size: buttonSize,
   },
   topMenu: {

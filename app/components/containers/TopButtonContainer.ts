@@ -15,7 +15,9 @@ import log from 'shared/log';
 interface TopButtonStateProps {
   activityCount: string;
   activityId: string;
+  current: boolean;
   enabled: boolean;
+  selected: boolean;
   topOffset: number;
   visible: boolean;
 }
@@ -31,7 +33,9 @@ const mapStateToProps = (state: AppState): TopButtonStateProps => {
   return {
     activityCount: activityIndex(state).toString(),
     activityId: state.options.selectedActivityId,
+    current: state.options.currentActivityId !== null,
     enabled: state.flags.topMenuOpen,
+    selected: state.options.selectedActivityId !== null,
     topOffset: dynamicAreaTop(state),
     visible: !(state.flags.settingsOpen || state.flags.helpOpen),
   }
