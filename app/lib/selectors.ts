@@ -35,6 +35,20 @@ const colorForAppState = {
   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.3),
 }
 
+const selectedActivityIndex = (state: AppState) => (
+  state.cache.activities!.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
+)
+
+export const activityIndex = (state: AppState) => (
+  state.cache.activities ?
+    selectedActivityIndex(state) > -1 ?
+      `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}`
+      :
+      `${state.cache.activities.length}`
+    :
+    0
+)
+
 // Each activityTimespan shows one Activity
 // TODO review
 const activityTimespans = (state: AppState): Timespans => {

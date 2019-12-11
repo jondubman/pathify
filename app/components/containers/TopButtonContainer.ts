@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import {
+  activityIndex,
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -28,8 +29,8 @@ export type TopButtonProps = TopButtonStateProps & TopButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): TopButtonStateProps => {
   return {
+    activityCount: activityIndex(state).toString(),
     activityId: state.options.selectedActivityId,
-    activityCount: state.cache.activities ? state.cache.activities.length.toString() : '0',
     enabled: state.flags.topMenuOpen,
     topOffset: dynamicAreaTop(state),
     visible: !(state.flags.settingsOpen || state.flags.helpOpen),
