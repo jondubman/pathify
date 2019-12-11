@@ -12,6 +12,7 @@ import TopButton from 'presenters/TopButton';
 import log from 'shared/log';
 
 interface TopButtonStateProps {
+  activityCount: string;
   activityId: string;
   enabled: boolean;
   topOffset: number;
@@ -28,6 +29,7 @@ export type TopButtonProps = TopButtonStateProps & TopButtonDispatchProps;
 const mapStateToProps = (state: AppState): TopButtonStateProps => {
   return {
     activityId: state.options.selectedActivityId,
+    activityCount: state.cache.activities ? state.cache.activities.length.toString() : '0',
     enabled: state.flags.topMenuOpen,
     topOffset: dynamicAreaTop(state),
     visible: !(state.flags.settingsOpen || state.flags.helpOpen),

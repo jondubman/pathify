@@ -246,6 +246,8 @@ const colors = {
   },
   topButton: {
     background: 'white',
+    bubble: withOpacity(namedColors.blue, 0.75),
+    bubbleLabel: 'white',
     icon: 'black',
     underlay: colorThemes.topMenu,
   },
@@ -566,6 +568,8 @@ const constants = {
     ],
   },
   topButton: {
+    fontFamily,
+    fontSize: 12,
     opacity: defaultOpacity,
     size: buttonSize,
   },
