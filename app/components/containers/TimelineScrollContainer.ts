@@ -31,8 +31,9 @@ const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
   const { scrollTime, viewTime } = state.options;
   return {
     scrollableWidth: dynamicTimelineScrollWidth(state), // scrollable width
-    // to calc scrollToX: start at the center of the scrollable area, then back up half the width of the visible area.
     scrollTime,
+    // To calc scrollToX: start at the center of the scrollable area, then back up half the width of the visible area,
+    // yielding the desired scroll position of the left edge of the scrollArea.
     scrollToX: (dynamicTimelineScrollWidth(state) / 2) - (dynamicTimelineWidth(state) / 2),
     viewTime,
     visibleTime: timelineVisibleTime(state.options.timelineZoomValue),

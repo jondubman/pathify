@@ -43,7 +43,7 @@ const Styles = StyleSheet.create({
   },
   button: {
     borderWidth: 1.5,
-    borderColor: 'white',
+    borderColor: colors.borderSelected,
     borderRadius: size / 2,
     position: 'absolute',
     paddingLeft: 1,

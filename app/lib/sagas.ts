@@ -38,10 +38,6 @@ import {
 } from 'redux-saga/effects';
 import { DomainPropType } from 'victory-native';
 
-// import {
-//   ActivityList_scrollToIndex, // TODO restore
-//   ActivityList_scrollToOffset, // TODO restore
-// } from 'containers/ActivityListContainer';
 import { MenuItem } from 'containers/PopupMenusContainer';
 import {
   AbsoluteRelativeOption,
@@ -959,7 +955,7 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
       } else {
         const t = params.viewTime;
-        // Setting scrollTime when timeline is paused updates pausedTime.
+        // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
         const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
@@ -976,7 +972,7 @@ const sagas = {
         }
       }
     }
-    // Write through to settings in database
+    // Write through to settings in database, if needed
     const appState = yield select((state: AppState) => state.options.appState);
     if (appState !== AppStateChange.STARTUP) {
       const newSettings = {} as any;
@@ -992,6 +988,7 @@ const sagas = {
     }
   },
 
+  // sleep is a non-production script-originated action, to facilitate automated testing.
   // Note sleep only works as expected if enclosed in a sequence action; sequence is where sleep is really implemented.
   // Behavior is odd when nesting sequences involving sleep and repeated actions if not enclosed in a sequence.
   // Mostly, more things will happen in parallel than you might anticipate, due to the somewhat subtle semantics of

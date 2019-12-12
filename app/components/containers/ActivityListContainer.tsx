@@ -1,7 +1,4 @@
 import { connect } from 'react-redux';
-import {
-  FlatList,
-} from 'react-native';
 
 import {
   AppAction,

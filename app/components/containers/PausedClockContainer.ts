@@ -8,13 +8,13 @@ import { AppState } from 'lib/state';
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
 const mapStateToProps = (state: AppState): ClockStateProps => {
-  const d = new Date(state.options.pausedTime);
-  return {
+  const d = new Date(state.flags.timelineScrolling ? state.options.scrollTime : state.options.pausedTime);
+    return {
     hours: d.getHours(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),
     stopped: !state.flags.ticksEnabled,
-    nowMode: false, // TODO use clockNowMode?
+    nowMode: false,
   }
 }
 

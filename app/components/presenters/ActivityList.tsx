@@ -31,6 +31,7 @@ const {
   borderWidth,
   height,
   marginHorizontal,
+  scrollbarHeight,
 } = constants.activityList;
 
 const Styles = StyleSheet.create({
@@ -52,12 +53,6 @@ const Styles = StyleSheet.create({
     backgroundColor: colors.past.selected,
     borderColor: colors.past.borderSelected,
   },
-  // borderLine: {
-  //   backgroundColor: constants.colors.timeline.topLine,
-  //   height: constants.timeline.topLineHeight,
-  //   marginTop: 0,
-  //   paddingTop: 0,
-  // },
   box: {
     backgroundColor: colors.background,
     height,
@@ -101,37 +96,44 @@ class ActivityList extends Component<ActivityListProps> {
 
   constructor(props: ActivityListProps) {
     super(props);
+    this.autoScroll = this.autoScroll.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.renderItem = this.renderItem.bind(this);
   }
 
-  // Auto-scroll to the correct spot after component is updated.
-  componentDidUpdate(prevProps: ActivityListProps) {
-    log.debug('ActivityList componentDidUpdate', this.props.scrollTime);
+  // Automatically scroll the ActivityList as scrollTime changes.
+  autoScroll() {
     const { list, selectedActivityId } = this.props;
     const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
     if (index >= 0) {
-      if (this.props.scrollTime !== prevProps.scrollTime) { // TODO any other instances requiring scrolling?
-        if (_ref) {
-          const params = {
-            animated: true,
-            index,
-            viewOffset: 0,
-            viewPosition: 0.5, // center in middle
-          }
-          _ref.scrollToIndex(params);
+      if (_ref) {
+        const activity = list[index];
+        let viewOffset = activityWidth / 2; // TODO if current do we want to use -activityWidth / 2?
+        if (activity.tStart && activity.tTotal) {
+          viewOffset -= ((this.props.scrollTime - activity.tStart) / activity.tTotal) * activityWidth;
+          log.trace('viewOffset', viewOffset);
         }
+        const params = {
+          animated: true,
+          index,
+          viewOffset,
+          viewPosition: 0.5, // 0.5 tells scrollToIndex to scroll the center point (use 0 for left, 1 for right)
+        }
+        log.trace('autoScroll scrollToIndex', params);
+        _ref.scrollToIndex(params);
       }
     } else {
-      // TODO
+      log.trace('autoScroll index', index, list.length, selectedActivityId);
     }
   }
 
+  // Handle an interactive scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    log.debug('handleScroll', event.nativeEvent.contentOffset.x);
+    log.trace('handleScroll', event.nativeEvent.contentOffset.x, event.nativeEvent);
   }
 
   render() {
+    const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
     return (
       <Fragment>
         <View style={[Styles.box, { top: this.props.top }]}>
@@ -145,10 +147,11 @@ class ActivityList extends Component<ActivityListProps> {
               if (ref) {
                 _ref = ref;
               }
+              setTimeout(this.autoScroll, constants.autoScrollTimeout);
             }}
             renderItem={this.renderItem}
-          />
-          {/* <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} /> */}
+            scrollIndicatorInsets={scrollInsets}
+        />
         </View>
       </Fragment>
     )

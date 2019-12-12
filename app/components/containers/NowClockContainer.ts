@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import { AppState } from 'lib/state';
+import utils from 'lib/utils';
 
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
 const mapStateToProps = (state: AppState): ClockStateProps => {
-  const d = new Date(state.options.nowTime);
+  const d = new Date(utils.now()); // TODO was state.options.nowTime, but this is more current, if running in real-time.
   return {
     hours: d.getHours(),
     minutes: d.getMinutes(),

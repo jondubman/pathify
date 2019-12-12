@@ -29,7 +29,7 @@ interface RefTimeDispatchProps {
 export type RefTimeProps = RefTimeStateProps & RefTimeDispatchProps;
 
 const mapStateToProps = (state: AppState): RefTimeStateProps => {
-  const { scrollTime, viewTime } = state.options;
+  const { scrollTime } = state.options;
   const d = new Date(scrollTime);
   const { twoDigitString } = utils;
   const hours24 = d.getHours(); // TODO 24-hour clock
@@ -46,7 +46,6 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   return {
     bottom: dynamicTimelineHeight(state),
     scrollTime,
-    viewTime,
     hours,
     minutes,
     seconds,

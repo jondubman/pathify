@@ -75,7 +75,6 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       log.debug('componentDidUpdate during scrolling?');
     } else {
       const x = this.props.scrollToX;
-      // log.trace('scrolling in componentDidUpdate to', x);
       this._scrollView.scrollTo({ x, y: 0, animated: false });
     }
   }

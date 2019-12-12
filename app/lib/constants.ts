@@ -49,13 +49,14 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   teal: '#39cccc',
   yellow: '#ffdc00',
 
+  black: '#000000',
   brightGreen: '#08f222',
   darkerGray: '#888888',
   darkGreen: '#239c31',
   darkerGreen: '#035a0d',
   darkRed: '#bf0a00',
   darkerRed: '#840700',
-  black: '#000000',
+  lighterBlue: '#77c0ff',
   white: '#ffffff',
 }
 
@@ -80,6 +81,7 @@ const minDeviceWidth = 320; // iPhone SE
 const initialTimelineHeight = 90;
 const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
+const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activities
 const clockHeight = 70;
 const clockMargin = 4;
 
@@ -110,7 +112,7 @@ const colors = {
       background: withOpacity(namedColors.darkerGray, 0.25),
       backgroundSelected: withOpacity(colorThemes.past, 0.75),
       border: withOpacity(namedColors.gray, 0.5),
-      borderSelected: withOpacity(namedColors.white, 0.75),
+      borderSelected: withOpacity(namedColors.lighterBlue, 0.5),
       selected: withOpacity(colorThemes.past, 0.5),
       underlay: withOpacity(colorThemes.past, 0.65),
     },
@@ -248,6 +250,7 @@ const colors = {
   topButton: {
     background: 'white',
     backgroundSelected: withOpacity(colorThemes.past, 1),
+    borderSelected: withOpacity(namedColors.lighterBlue, 0.5),
     bubble: withOpacity(colorThemes.past, 1),
     bubbleSelected: withOpacity(namedColors.darkerGray, 1),
     bubbleLabel: 'white',
@@ -284,10 +287,12 @@ const constants = {
     activityWidth: 100, // < minDeviceWidth / 3
     borderRadius: 0,
     borderWidth: 1,
-    height: initialTimelineHeight,
+    height: initialTimelineHeight + scrollbarHeight,
     marginHorizontal: buttonOffset,
+    scrollbarHeight,
   },
   appName: 'Pathify',
+  autoScrollTimeout: 50, // msec TODO
   buttonOffset,
   buttonSize,
   clientId,
