@@ -28,7 +28,7 @@ const expansionPerChar = 6.8; // this was empirically determined and depends on 
 const expansion = (count: string) => (count.length - 1) * expansionPerChar;
 const sizeBase = size / 3;
 
-const bubbleLeft = centerline() + size / 2 - 8;
+const bubbleLeft = centerline() + size / 2 - 6;
 
 const Styles = StyleSheet.create({
   bubble: {

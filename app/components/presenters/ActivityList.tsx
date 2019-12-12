@@ -1,5 +1,6 @@
 import React, {
   Component,
+  Fragment,
 } from 'react';
 
 import {
@@ -24,6 +25,7 @@ import {
 
 const colors = constants.colors.activityList;
 const {
+  activityHeight,
   activityWidth,
   borderRadius,
   borderWidth,
@@ -35,7 +37,7 @@ const Styles = StyleSheet.create({
   activity: {
     borderRadius,
     borderWidth,
-    height: height,
+    height: activityHeight,
     width: activityWidth,
   },
   currentActivity: {
@@ -50,15 +52,18 @@ const Styles = StyleSheet.create({
     backgroundColor: colors.past.selected,
     borderColor: colors.past.borderSelected,
   },
+  // borderLine: {
+  //   backgroundColor: constants.colors.timeline.topLine,
+  //   height: constants.timeline.topLineHeight,
+  //   marginTop: 0,
+  //   paddingTop: 0,
+  // },
   box: {
     backgroundColor: colors.background,
     height,
     left: 0,
     position: 'absolute',
     right: 0,
-  },
-  outer: {
-    marginHorizontal,
   },
   text: {
     alignSelf: 'flex-end',
@@ -69,6 +74,10 @@ const Styles = StyleSheet.create({
   },
   textSelected: {
     color: colors.textSelected,
+  },
+  touchableActivity: {
+    marginHorizontal,
+    height: activityHeight,
   },
 })
 
@@ -124,21 +133,24 @@ class ActivityList extends Component<ActivityListProps> {
 
   render() {
     return (
-      <View style={[Styles.box, { top: this.props.top }]}>
-        <FlatList<ActivityDataExtended>
-          data={this.props.list}
-          extraData={this.props}
-          getItemLayout={getItemLayout}
-          horizontal
-          onScroll={this.handleScroll}
-          ref={(ref) => {
-            if (ref) {
-              _ref = ref;
-            }
-          }}
-          renderItem={this.renderItem}
-        />
-      </View>
+      <Fragment>
+        <View style={[Styles.box, { top: this.props.top }]}>
+          <FlatList<ActivityDataExtended>
+            data={this.props.list}
+            extraData={this.props}
+            getItemLayout={getItemLayout}
+            horizontal
+            onScroll={this.handleScroll}
+            ref={(ref) => {
+              if (ref) {
+                _ref = ref;
+              }
+            }}
+            renderItem={this.renderItem}
+          />
+          {/* <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} /> */}
+        </View>
+      </Fragment>
     )
   }
 
@@ -160,7 +172,7 @@ class ActivityList extends Component<ActivityListProps> {
       <TouchableHighlight
         onPress={() => { this.props.onPressActivity(item) }}
         style={[
-          Styles.outer,
+          Styles.touchableActivity,
           isCurrent || index === this.props.list.length - 1 ? { marginRight } : {},
           (index === 0) ?
             { marginLeft: marginLeft + marginHorizontal } :

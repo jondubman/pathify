@@ -280,6 +280,7 @@ const constants = {
     topOffset: safeAreaTop,
   },
   activityList: {
+    activityHeight: initialTimelineHeight,
     activityWidth: 100, // < minDeviceWidth / 3
     borderRadius: 0,
     borderWidth: 1,
