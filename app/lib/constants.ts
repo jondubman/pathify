@@ -292,7 +292,6 @@ const constants = {
     scrollbarHeight,
   },
   appName: 'Pathify',
-  autoScrollTimeout: 50, // msec TODO
   buttonOffset,
   buttonSize,
   clientId,

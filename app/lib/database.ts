@@ -220,7 +220,7 @@ const database = {
           realm.create('Settings', settings, true); // true: update
         })
       }
-      log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
+      // log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
     } catch (err) {
       log.error('changeSettings error', err);
     }

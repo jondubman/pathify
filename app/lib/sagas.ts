@@ -982,7 +982,7 @@ const sagas = {
         }
       }
       if (Object.entries(newSettings).length) {
-        yield call(log.trace, 'Writing settings to database', newSettings);
+        // yield call(log.trace, 'Writing settings to database', newSettings);
         yield call(database.changeSettings, newSettings);
       }
     }

@@ -56,6 +56,8 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     if (this._scrolling) {
       return false; // defer all updates to the timeline while it is being interactively scrolled
     }
+    // if (nextProps.scrollToX !== this.props.scrollToX) {
+    // }
     if (nextProps.viewTime !== this.props.viewTime) {
       return true;
     }

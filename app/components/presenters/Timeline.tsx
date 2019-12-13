@@ -51,7 +51,7 @@ class Timeline extends Component<TimelineProps> {
 
   render() {
     const {
-      allowZoom,
+      pinchZoom,
       showMarks,
       showSpans,
       viewTime,
@@ -102,7 +102,7 @@ class Timeline extends Component<TimelineProps> {
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
     // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
 
-    // TODO
+    // TODO future?
     // animate={{ duration: 0, onExit: { duration: 0 }, onEnter: { duration: 0 }, onLoad: { duration: 0 }}}
     return (
       <View style={TimelineStyles.timeline}>
@@ -110,7 +110,7 @@ class Timeline extends Component<TimelineProps> {
           containerComponent={
             <VictoryZoomContainer
               allowPan={false}
-              allowZoom={allowZoom}
+              allowZoom={pinchZoom}
               minimumZoom={{ x: constants.timeline.minimumZoomMsec, y: 1 }}
               responsive={false}
               width={timelineWidth}

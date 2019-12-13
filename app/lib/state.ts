@@ -28,21 +28,20 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled
     clockMenuOpen: false,
-    ticksEnabled: true, // normally true, set false only for testing to disable actions that occur every second
     flag1: false, // for experimentation
     flag2: false, // for experimentation
     flag3: false, // for experimentation
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel
-    setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
-    startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     mapDisable: false, // if true, map will not be shown at all
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
+    setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // settings panel visible state
+    startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     showActivityDetails: false,
     showActivityList: true,
     showAppStateTimespans: false,
@@ -54,6 +53,7 @@ export const initialAppState = {
     showTimelineMarks: false,
     showTimelineSpans: true,
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking?
+    ticksEnabled: true, // normally true, set false only for testing to disable actions that occur every second
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)

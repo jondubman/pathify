@@ -127,9 +127,14 @@ class ActivityList extends Component<ActivityListProps> {
     }
   }
 
-  // Handle an interactive scroll event
+  componentDidUpdate() {
+    this.autoScroll();
+  }
+
+  // Handle a scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    log.trace('handleScroll', event.nativeEvent.contentOffset.x, event.nativeEvent);
+    const offset = event.nativeEvent.contentOffset.x;
+    log.trace('handleScroll', offset);
   }
 
   render() {
@@ -142,12 +147,12 @@ class ActivityList extends Component<ActivityListProps> {
             extraData={this.props}
             getItemLayout={getItemLayout}
             horizontal
+            initialScrollIndex={Math.min(0, this.props.list.length - 1) /* TODO no effect? */}
             onScroll={this.handleScroll}
             ref={(ref) => {
               if (ref) {
                 _ref = ref;
               }
-              setTimeout(this.autoScroll, constants.autoScrollTimeout);
             }}
             renderItem={this.renderItem}
             scrollIndicatorInsets={scrollInsets}
