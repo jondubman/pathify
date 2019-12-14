@@ -16,6 +16,8 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
+import store from 'lib/store';
+import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
 import {
@@ -31,7 +33,6 @@ const {
   borderWidth,
   height,
   marginHorizontal,
-  scrollbarHeight,
 } = constants.activityList;
 
 const Styles = StyleSheet.create({
@@ -91,27 +92,33 @@ const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
 )
 
 let _ref: FlatList<ActivityDataExtended>;
+let _lastAutoScrollTime: number = 0;
 
 class ActivityList extends Component<ActivityListProps> {
 
   constructor(props: ActivityListProps) {
     super(props);
     this.autoScroll = this.autoScroll.bind(this);
+    this.autoScrollOnLayout = this.autoScrollOnLayout.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.renderItem = this.renderItem.bind(this);
   }
 
   // Automatically scroll the ActivityList as scrollTime changes.
-  autoScroll() {
+  autoScroll(scrollTime: number) {
+    log.trace('ActivityList autoScroll');
     const { list, selectedActivityId } = this.props;
     const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
     if (index >= 0) {
       if (_ref) {
         const activity = list[index];
-        let viewOffset = activityWidth / 2; // TODO if current do we want to use -activityWidth / 2?
-        if (activity.tStart && activity.tTotal) {
-          viewOffset -= ((this.props.scrollTime - activity.tStart) / activity.tTotal) * activityWidth;
-          log.trace('viewOffset', viewOffset);
+        let viewOffset = 0; // TODO if current do we want to use -activityWidth / 2, or...?
+        if (activity.tStart && activity.tEnd && activity.tTotal) {
+          const tMiddle = activity.tStart + (activity.tEnd - activity.tStart) / 2;
+          viewOffset = ((tMiddle - scrollTime) / (activity.tTotal / 2)) * (activityWidth / 2);
+          log.trace('tStart', activity.tStart, 'tMiddle', tMiddle, 'tEnd', activity.tEnd, 'tTotal', activity.tTotal,
+                    'scrollTime', scrollTime, '%', (100 * (scrollTime - activity.tStart) / activity.tTotal).toFixed(0),
+                    'viewOffset', viewOffset);
         }
         const params = {
           animated: true,
@@ -120,6 +127,7 @@ class ActivityList extends Component<ActivityListProps> {
           viewPosition: 0.5, // 0.5 tells scrollToIndex to scroll the center point (use 0 for left, 1 for right)
         }
         log.trace('autoScroll scrollToIndex', params);
+        _lastAutoScrollTime = utils.now();
         _ref.scrollToIndex(params);
       }
     } else {
@@ -127,14 +135,33 @@ class ActivityList extends Component<ActivityListProps> {
     }
   }
 
-  componentDidUpdate() {
-    this.autoScroll();
+  autoScrollOnLayout() {
+    const state = store.getState(); // TODO not great form to grab state straight from here, but it's expedient
+    const scrollTime = state.options.scrollTime;
+    if (scrollTime) {
+      log.trace('ActivityList autoScrollOnLayout', 'refreshCount', this.props.refreshCount,
+                'length', this.props.list.length);
+      this.autoScroll(scrollTime);
+    }
+  }
+
+  componentDidUpdate(prevProps: ActivityListProps) {
+    if (prevProps.list.length !== this.props.list.length ||
+        prevProps.selectedActivityId != this.props.selectedActivityId) {
+      this.autoScrollOnLayout();
+    }
   }
 
   // Handle a scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const offset = event.nativeEvent.contentOffset.x;
-    log.trace('handleScroll', offset);
+    const timeGap = utils.now() - _lastAutoScrollTime;
+    if (timeGap > constants.timing.activityListAnimationCompletion) {
+      log.trace('handleScroll (ActivityList --> Timeline)', offset, _lastAutoScrollTime, timeGap);
+      // TODO
+    } else {
+      log.trace('handleScroll (ignoring)', offset, this.props.timelineScrolling, _lastAutoScrollTime, timeGap);
+    }
   }
 
   render() {
@@ -148,10 +175,12 @@ class ActivityList extends Component<ActivityListProps> {
             getItemLayout={getItemLayout}
             horizontal
             initialScrollIndex={Math.min(0, this.props.list.length - 1) /* TODO no effect? */}
+            onLayout={this.autoScrollOnLayout}
             onScroll={this.handleScroll}
             ref={(ref) => {
               if (ref) {
                 _ref = ref;
+                this.props.register && this.props.register(this);
               }
             }}
             renderItem={this.renderItem}

@@ -3,7 +3,7 @@
 import {
   applyMiddleware,
   createStore,
-  Store,
+  Store, // TODO TypeScript warning: Import declaration conflicts with local declaration of 'Store'.ts(2440)
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 

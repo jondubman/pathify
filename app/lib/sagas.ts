@@ -60,7 +60,8 @@ import {
   LogActionParams,
   RefreshCachedActivityParams,
   RepeatedActionParams,
-  ScrollParams,
+  ScrollActivityListParams,
+  ScrollTimelineParams,
   SequenceParams,
   SleepParams,
   SliderMovedParams,
@@ -433,9 +434,9 @@ const sagas = {
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
     if (activeNow) { // Don't do this in the background... might take too long
       yield call(Geo.processSavedLocations);
-      const refreshCount = yield select(state => state.cache.refreshCount);
-      yield call(log.debug, 'cache refreshCount', refreshCount);
-      if (!refreshCount) { // Populate the cache for the first time
+      const populated = yield select(state => state.cache.populated);
+      yield call(log.debug, 'cache has been populated:', populated);
+      if (!populated) { // Populate the cache for the first time
         yield put(newAction(AppAction.refreshCache));
       }
     }
@@ -830,9 +831,9 @@ const sagas = {
       const activitiesAsArray = Array.from(realmActivities) as ActivityData[]
       const activities = extendedActivities(activitiesAsArray);
       const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
-      yield put(newAction(AppAction.cache, { activities, refreshCount }));
+      yield put(newAction(AppAction.cache, { activities, populated: true, refreshCount }));
       const now = yield call(utils.now);
-      yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp);
+      yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp, 'count', activities.length);
     } catch(err) {
       yield call(log.error, 'saga refreshCache', err);
     }
@@ -845,7 +846,7 @@ const sagas = {
       const id = params.activityId;
       const { remove } = params;
       yield call(log.debug, 'saga refreshCachedActivity', id);
-      const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
+      const refreshCount = (yield select((state: AppState) => state.cache.refreshCount)) + 1;
       const activity = remove ? null : database.activityById(id);
       if (activity) {
         const activities = [...(yield select(state => state.cache.activities || []))];
@@ -890,14 +891,18 @@ const sagas = {
     yield call(RNRestart.Restart);
   },
 
-  scroll: function* (action: Action) {
-    yield call(log.debug, 'saga scroll TODO');
-    // const scrollParams = action.params as ScrollParams;
-    // if (scrollParams.index !== undefined) {
-    //   ActivityList_scrollToIndex(scrollParams);
-    // } else if (scrollParams.offset !== undefined) {
-    //   ActivityList_scrollToOffset(scrollParams);
-    // }
+  scrollActivityList: function* (action: Action) {
+    yield call(log.trace, 'saga scroll scrollActivityList');
+    const params = action.params as ScrollActivityListParams;
+    const callbacks = yield select((state: AppState) => state.callbacks);
+    if (callbacks.activityList !== undefined && callbacks.activityList.autoScroll) {
+      yield call(log.trace, 'scrollActivityList:', params.scrollTime);
+      yield call(callbacks.activityList.autoScroll, params.scrollTime);
+    }
+  },
+
+  scrollTimeline: function* (action: Action) {
+    yield call(log.trace, 'saga scroll TODO');
   },
 
   // The sequence action is an array of actions to be executed in sequence, such that
@@ -972,8 +977,14 @@ const sagas = {
         }
       }
     }
+    const timelineScrolling = yield select((state: AppState) => state.flags.timelineScrolling);
+    if (timelineScrolling && params.scrollTime !== undefined) {
+      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime }));
+      yield call(log.trace, 'setAppOption saga scrollTime:', params.scrollTime);
+    }
     // Write through to settings in database, if needed
-    const appState = yield select((state: AppState) => state.options.appState);
+    const options = yield select((state: AppState) => state.options);
+    const { appState } = options;
     if (appState !== AppStateChange.STARTUP) {
       const newSettings = {} as any;
       for (let propName of persistedOptions) {
@@ -985,6 +996,15 @@ const sagas = {
         // yield call(log.trace, 'Writing settings to database', newSettings);
         yield call(database.changeSettings, newSettings);
       }
+    }
+  },
+
+  setCallback: function* (action: Action) {
+    try {
+      // yield call(log.trace, 'saga setCallback', action.params);
+      yield put(newAction(ReducerAction.SET_CALLBACK, action.params));
+    } catch (err) {
+      yield call(log.error, 'saga setCallback', err);
     }
   },
 

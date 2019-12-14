@@ -89,6 +89,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
 
   render() {
     const {
+      decelerationRate,
       scrollableWidth,
       scrollTime,
       scrollToX,
@@ -113,6 +114,18 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       log.debug('onContentSizeChange', contentWidth, contentHeight);
     }
 
+    const onFinishScrolling = (domain: DomainPropType) => {
+      this.clearTimer();
+      this._scrolling = false;
+      logScrollEvents && log.trace('onFinishScrolling', domain);
+      const x = (domain as any).x as [number, number];
+      const newTime = Math.min(utils.now(), (x[0] + x[1]) / 2);
+      const rightNow = utils.now();
+      setTimelineNow(newTime >= rightNow - constants.timing.timelineCloseToNow);
+      setTimelineScrolling(false);
+      zoomDomainChanged(domain);
+    }
+
     const onMomentumScrollBegin = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       this._scrolling = true;
       logScrollEvents && log.trace('onMomentumScrollBegin');
@@ -133,29 +146,6 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       }
       logScrollEvents && log.trace('onMomentumScrollEnd', newTime, rightNow, newTime - rightNow);
       onFinishScrolling(domain);
-    }
-
-    const onScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      logScrollEvents && log.trace('onScrollEndDrag');
-      this.clearTimer();
-      const { x } = event.nativeEvent.contentOffset;
-      const movedX = x - scrollToX;
-      const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
-      const rightNow = utils.now();
-      const newTime = Math.min(rightNow, scrollTime + timeDelta); // TODO should this be viewTime?
-      const domain: DomainPropType = {
-        x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
-        y: yDomain,
-      }
-      log.debug('domain', domain);
-      setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
-      this._timer = setTimeout(() => {
-        log.trace('timer!', domain);
-        if (this._scrolling) {
-          onFinishScrolling(domain);
-        }
-        this._timer = undefined;
-      }, constants.timing.scrollViewWaitForMomentumScroll)
     }
 
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -188,16 +178,27 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       setTimelineScrolling(true);
     }
 
-    const onFinishScrolling = (domain: DomainPropType) => {
+    const onScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      logScrollEvents && log.trace('onScrollEndDrag');
       this.clearTimer();
-      this._scrolling = false;
-      logScrollEvents && log.trace('onFinishScrolling', domain);
-      const x = (domain as any).x as [number, number];
-      const newTime = Math.min(utils.now(), (x[0] + x[1]) / 2);
+      const { x } = event.nativeEvent.contentOffset;
+      const movedX = x - scrollToX;
+      const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      setTimelineNow(newTime >= rightNow - constants.timing.timelineCloseToNow);
-      setTimelineScrolling(false);
-      zoomDomainChanged(domain);
+      const newTime = Math.min(rightNow, scrollTime + timeDelta); // TODO should this be viewTime?
+      const domain: DomainPropType = {
+        x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
+        y: yDomain,
+      }
+      log.debug('domain', domain);
+      setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
+      this._timer = setTimeout(() => {
+        log.trace('timer!', domain);
+        // if (this._scrolling) {
+          onFinishScrolling(domain);
+        // }
+        this._timer = undefined;
+      }, constants.timing.scrollViewWaitForMomentumScroll)
     }
 
     return (
@@ -205,7 +206,8 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         centerContent={false}
         contentOffset={{ x: this.props.scrollToX, y: 0 }}
         horizontal={true}
-        decelerationRate={0}
+        decelerationRate={decelerationRate}
+        disableIntervalMomentum={true}
         onContentSizeChange={onContentSizeChange}
         onMomentumScrollBegin={onMomentumScrollBegin}
         onMomentumScrollEnd={onMomentumScrollEnd}

@@ -1,3 +1,6 @@
+import React, {
+  Component,
+} from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -9,6 +12,7 @@ import {
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import utils from 'lib/utils';
 import ActivityList from 'presenters/ActivityList';
 import {
   ActivityDataExtended,
@@ -18,13 +22,14 @@ import log from 'shared/log';
 interface ActivityListStateProps {
   list: ActivityDataExtended[];
   refreshCount: number;
-  scrollTime: number;
   selectedActivityId: string;
+  timelineScrolling: boolean;
   top: number;
 }
 
 interface ActivityListDispatchProps {
   onPressActivity: (activity: ActivityDataExtended) => void;
+  register: (component: Component) => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
@@ -33,8 +38,8 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
-    scrollTime: state.options.scrollTime,
     selectedActivityId: state.options.selectedActivityId,
+    timelineScrolling: state.flags.timelineScrolling,
     top: dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset,
   }
 }
@@ -55,16 +60,24 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
         }
         log.debug('onPressActivity appOptions', appOptions);
         dispatch(newAction(AppAction.setAppOption, appOptions));
+        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime }));
       } else {
         // Pressing the currentActivity.
         dispatch(newAction(AppAction.flagEnable, 'timelineNow'));
         dispatch(newAction(AppAction.startFollowingUser));
+        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() }));
       }
       dispatch(newAction(AppAction.zoomToActivity, { id: activity.id }));
     }
   }
+  const register = (component) => {
+    setTimeout(() => {
+      dispatch(newAction(AppAction.setCallback, { activityList: component }));
+    }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the ActivityList.
+  }
   const dispatchers = {
     onPressActivity,
+    register,
   }
   return dispatchers;
 }

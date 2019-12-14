@@ -20,8 +20,12 @@ export interface CacheInfo {
 
 export const initialAppState = {
   cache: {
+    populated: false,
     refreshCount: 0,
   } as CacheInfo,
+  callbacks: {
+    activityList: undefined as any,
+  },
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
     allowMapStyleNone: false, // really only useful for debugging / perf
@@ -65,6 +69,7 @@ export const initialAppState = {
     appState: AppStateChange,
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: '', // while tracking Activity
+    decelerationRate: 0, // for ScrolLViews
     mapOpacity: constants.map.default.opacity,
     mapOpacityPreview: null as number | null, // while adjusting
     mapStyle: constants.map.default.style,

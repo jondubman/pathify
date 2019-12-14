@@ -72,21 +72,28 @@ const schema = [
 
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
-    const oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
-    const newSettings = newRealm.objects('Settings')[0] as SettingsObject;
-    newSettings.currentActivityId = oldSettings.currentActivityId;
-    newSettings.followingUser = false;
-    newSettings.latMax = 0;
-    newSettings.latMin = 0;
-    newSettings.lonMax = 0;
-    newSettings.lonMin = 0;
-    newSettings.mapFullScreen = false;
-    newSettings.mapOpacity = constants.map.default.opacity,
-    newSettings.mapStyle = constants.map.default.style,
-    newSettings.pausedTime = 0;
-    newSettings.showTimeline = true,
-    newSettings.timelineNow = true;
-    newSettings.timelineZoomValue = constants.timeline.default.zoomValue;
+    let oldSettings;
+    if (oldRealm.objects('Settings').length > 0) {
+      oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
+    }
+    const newSettings = { id: 1,
+      currentActivityId: oldSettings ? oldSettings.currentActivityId : undefined,
+      followingUser: false,
+      latMax: 0,
+      latMin: 0,
+      lonMax: 0,
+      lonMin: 0,
+      mapFullScreen: false,
+      mapOpacity: constants.map.default.opacity,
+      mapStyle: constants.map.default.style,
+      pausedTime: 0,
+      showTimeline: true,
+      timelineNow: true,
+      timelineZoomValue: constants.timeline.default.zoomValue,
+    }
+    // newRealm.write(() => {
+      newRealm.create('Settings', newSettings, true); // true: update
+    // })
   }
 }
 

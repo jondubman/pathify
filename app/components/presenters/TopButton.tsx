@@ -43,7 +43,6 @@ const Styles = StyleSheet.create({
   },
   button: {
     borderWidth: 1.5,
-    borderColor: colors.borderSelected,
     borderRadius: size / 2,
     position: 'absolute',
     paddingLeft: 1,
@@ -86,6 +85,7 @@ const TopButton = (props: TopButtonProps) => (props.visible ? (
     <TouchableHighlight
       style={[Styles.button, {
         backgroundColor: props.enabled ? colors.underlay : backgroundColor(props),
+        borderColor: props.selected ? colors.borderSelected : colors.border,
         opacity: props.selected ? opacitySelected : opacity,
         top: props.topOffset,
       }]}

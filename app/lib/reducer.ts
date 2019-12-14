@@ -72,6 +72,15 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         }
         break;
 
+      case ReducerAction.SET_CALLBACK:
+        {
+          newState.callbacks = {
+            ...state.callbacks,
+            ...params, // TODO watch out; zero validation of incoming params!
+          }
+        }
+        break;
+
       case ReducerAction.SET_TIMER_TICK_INTERVAL:
         {
           const interval = params as number;

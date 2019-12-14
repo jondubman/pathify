@@ -250,6 +250,7 @@ const colors = {
   topButton: {
     background: 'white',
     backgroundSelected: withOpacity(colorThemes.past, 1),
+    border: withOpacity(namedColors.silver, 0.65),
     borderSelected: withOpacity(namedColors.lighterBlue, 0.5),
     bubble: withOpacity(colorThemes.past, 1),
     bubbleSelected: withOpacity(namedColors.darkerGray, 1),
@@ -284,11 +285,11 @@ const constants = {
   },
   activityList: {
     activityHeight: initialTimelineHeight,
-    activityWidth: 100, // < minDeviceWidth / 3
+    activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderRadius: 0,
     borderWidth: 1,
     height: initialTimelineHeight + scrollbarHeight,
-    marginHorizontal: buttonOffset,
+    marginHorizontal: buttonOffset + 2,
     scrollbarHeight,
   },
   appName: 'Pathify',
@@ -463,13 +464,13 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
-    backgroundTaskSlackTime: 5000,
+    activityListAnimationCompletion: 600,
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2
-    timelineCloseToNow: 1000, // TODO2
+    timelineCloseToNow: 1000,
     timelineZoomThrottle: 100,
-    timerTickInterval: 1000,
+    timerTickInterval: 1000, // once per second
   },
   timeline: {
     activityZoomFactor: 1.25, // 1 means zoom Timeline to exact duration of Activity. Should be somewhat >1 for context.
