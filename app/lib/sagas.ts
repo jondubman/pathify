@@ -798,13 +798,6 @@ const sagas = {
     yield put(newAction(AppAction.closePanels));
   },
 
-  menuItemSelected: function* (action: Action) {
-    const menuItem: string = action.params;
-    if (menuItem === MenuItem.NOW) {
-      yield put(newAction(AppAction.flagToggle, 'timelineNow'));
-    }
-  },
-
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
     yield call(log.debug, 'saga modeChange', modeChangeEvent);
@@ -1109,7 +1102,7 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption, newSettings));
       }
       const { currentActivityId } = settings;
-      yield call(Geo.initializeGeolocation, store, !!currentActivityId);
+      yield call(Geo.initializeGeolocation, store, !!currentActivityId); // use highPower if have currentActivityId
       if (currentActivityId) {
         yield call(log.info, 'Continuing previous activity...');
         yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));

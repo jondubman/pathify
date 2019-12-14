@@ -27,7 +27,6 @@ export const initialAppState = {
     activityList: undefined as any,
   },
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
-    activityDetailsExpanded: true, // true: activityDetails is expanded, with greater height (false: collapsed)
     allowMapStyleNone: false, // really only useful for debugging / perf
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     backgroundGeolocation: false, // until enabled

@@ -37,7 +37,6 @@ import {
 } from 'shared/locations';
 import log from 'shared/log';
 import timeseries, { EventType } from 'shared/timeseries';
-import { metersPerSecondToMilesPerHour } from 'shared/units';
 
 // TODO3
 // pausesLocationUpdatesAutomatically: true, (sets disableStopDetection: true and prevents preventSuspend from working)
@@ -205,8 +204,7 @@ const geolocationOptions_highPower: Config = {
   // url: 'http://tracker.transistorsoft.com/locations/jondubman',
 }
 
-// const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
-const geolocationOptions_default: Config = geolocationOptions_highPower; // TODO3
+const geolocationOptions_default: Config = geolocationOptions_highPower;
 
 const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
 const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
@@ -224,9 +222,9 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
     ele: info.coords.altitude,
     heading: info.coords.heading,
     lat: info.coords.latitude,
-    latIndexed: Math.round(info.coords.latitude * 1000000),
+    latIndexed: Math.round(info.coords.latitude * 1000000), // * 1 million
     lon: info.coords.longitude,
-    lonIndexed: Math.round(info.coords.longitude * 1000000),
+    lonIndexed: Math.round(info.coords.longitude * 1000000), // * 1 million
     odo: Math.round(info.odometer), // It's meters and accuracy is not <1m. Half a meter on the odo is just confusing.
     speed: info.coords.speed, // meters per second
   }
@@ -266,7 +264,7 @@ export const Geo = {
 
   initializeGeolocation: async (store: Store, highPower: boolean = false) => {
     try {
-      log.debug('initializeGeolocation');
+      log.debug('initializeGeolocation: highPower', highPower);
 
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();

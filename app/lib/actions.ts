@@ -52,7 +52,6 @@ export enum AppAction {
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
-  'menuItemSelected' = 'menuItemSelected',
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'refreshCache' = 'refreshCache',

@@ -128,10 +128,10 @@ class TimelineScroll extends Component<TimelineScrollProps> {
 
     const onMomentumScrollBegin = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       this._scrolling = true;
-      logScrollEvents && log.trace('onMomentumScrollBegin');
-      setTimelineScrolling(true);
       // The timer was only around to finish scrolling in case we are not momentum scrolling.
       this.clearTimer();
+      logScrollEvents && log.trace('onMomentumScrollBegin');
+      setTimelineScrolling(true);
     }
 
     const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {

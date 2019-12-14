@@ -20,7 +20,6 @@ import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import GeoButtonContainer from 'containers/GeoButtonContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
 import MapContainer from 'containers/MapContainer';
-import PopupMenusContainer from 'containers/PopupMenusContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 import TimelineScrollContainer from 'containers/TimelineScrollContainer';
@@ -56,7 +55,6 @@ class AppUI extends Component<AppUIProps> {
         <View style={AppStyles.safeAreaView}>
           <MapContainer />
           {showTimeline ? <TimelineScrollContainer /> : null}
-          <PopupMenusContainer />
           {showActivityInfo ? <ActivityInfoContainer /> : null}
           {showDebugInfo ? <DebugInfoContainer /> : null}
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
