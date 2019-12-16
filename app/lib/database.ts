@@ -70,30 +70,30 @@ const schema = [
   SettingsSchema,
 ]
 
+const defaultSettings = {
+  id: 1,
+  currentActivityId: undefined,
+  followingUser: false,
+  latMax: 0,
+  latMin: 0,
+  lonMax: 0,
+  lonMin: 0,
+  mapFullScreen: false,
+  mapOpacity: constants.map.default.opacity,
+  mapStyle: constants.map.default.style,
+  pausedTime: 0,
+  showTimeline: true,
+  timelineNow: true,
+  timelineZoomValue: constants.timeline.default.zoomValue,
+}
+
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
     let oldSettings;
     if (oldRealm.objects('Settings').length > 0) {
       oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
     }
-    const newSettings = { id: 1,
-      currentActivityId: oldSettings ? oldSettings.currentActivityId : undefined,
-      followingUser: false,
-      latMax: 0,
-      latMin: 0,
-      lonMax: 0,
-      lonMin: 0,
-      mapFullScreen: false,
-      mapOpacity: constants.map.default.opacity,
-      mapStyle: constants.map.default.style,
-      pausedTime: 0,
-      showTimeline: true,
-      timelineNow: true,
-      timelineZoomValue: constants.timeline.default.zoomValue,
-    }
-    // newRealm.write(() => {
-      newRealm.create('Settings', newSettings, true); // true: update
-    // })
+    newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, true); // true: update
   }
 }
 
@@ -222,7 +222,7 @@ const database = {
       } else {
         // Note id is always 1 (Settings is a singleton)
         // Initialize settings:
-        const settings = { id: 1, ...changes }; // merge any changes
+        const settings = { ...defaultSettings, ...changes }; // merge any changes
         realm.write(() => {
           realm.create('Settings', settings, true); // true: update
         })

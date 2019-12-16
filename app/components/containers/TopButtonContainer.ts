@@ -33,7 +33,7 @@ const mapStateToProps = (state: AppState): TopButtonStateProps => {
   return {
     activityCount: activityIndex(state).toString(),
     activityId: state.options.selectedActivityId,
-    current: state.options.currentActivityId !== null,
+    current: !!(state.options.currentActivityId && state.options.currentActivityId === state.options.selectedActivityId),
     enabled: state.flags.topMenuOpen,
     selected: state.options.selectedActivityId !== null,
     topOffset: dynamicAreaTop(state),

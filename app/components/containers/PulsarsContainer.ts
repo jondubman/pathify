@@ -34,7 +34,8 @@ export type PulsarsProps = PulsarsStateProps & PulsarsDispatchProps;
 
 const mapStateToProps = (state: AppState): PulsarsStateProps => {
   const { options } = state;
-  const keySuffix = (options.currentActivityId || options.selectedActivityId ? `${options.scrollTime}` : '') +
+  // keySuffix needs to be unique, but is only used to populate the React component key.
+  const keySuffix = (options.currentActivityId || (options.selectedActivityId ? `${options.scrollTime}` : '')) +
     `${JSON.stringify(options.currentActivityId)}${JSON.stringify(options.selectedActivityId)}`;
   return {
     keySuffix,

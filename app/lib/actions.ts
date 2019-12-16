@@ -63,9 +63,9 @@ export enum AppAction {
   'scrollActivityList' = 'scrollActivityList',
   'sequence' = 'sequence',
   'setAppOption' = 'setAppOption',
+  'setAppOptionASAP' = 'setAppOptionASAP',
   'setCallback' = 'setCallback',
   'sleep' = 'sleep',
-  'sliderMoved' = 'sliderMoved',
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',
   'startActivity' = 'startActivity',
@@ -188,6 +188,7 @@ export interface RepeatedActionParams {
 }
 
 export interface ScrollActivityListParams {
+  forceUpdate: boolean;
   scrollTime: number;
 }
 
@@ -200,11 +201,6 @@ export type SequenceParams = Action[];
 
 export interface SleepParams {
   for: number,
-}
-
-export interface SliderMovedParams {
-  name: string;
-  value: number;
 }
 
 export interface StartActivityParams {

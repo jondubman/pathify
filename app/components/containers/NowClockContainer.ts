@@ -9,7 +9,7 @@ import utils from 'lib/utils';
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
 const mapStateToProps = (state: AppState): ClockStateProps => {
-  const d = new Date(utils.now()); // TODO was state.options.nowTime, but this is more current, if running in real-time.
+  const d = new Date(utils.now());
   return {
     hours: d.getHours(),
     minutes: d.getMinutes(),

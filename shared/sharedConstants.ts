@@ -1,8 +1,10 @@
 // TODO where does this belong?
 export type Optional<T> = T | null; // TODO This simple construct is very generally useful and belongs in shared code.
+import { interval } from './timeseries';
 
 const sharedConstants = {
   maxAgeEvents: Infinity, // anything older than this will be ignored (for testing)
+  // maxAgeEvents: interval.days(2),
   metrics: {
     speed: {
       maxAgeCurrent: 5000, // msec max age of event to be considered the "current" speed

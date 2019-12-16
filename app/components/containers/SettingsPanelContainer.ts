@@ -46,7 +46,7 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
     dispatch(newAction(AppAction.setAppOption, { mapOpacity }));
   }
   const onSetMapOpacityPreview = (mapOpacityPreview: number) => {
-    dispatch(newAction(AppAction.setAppOption, { mapOpacityPreview }));
+    dispatch(newAction(AppAction.setAppOptionASAP, { mapOpacityPreview })); // ASAP really speeds things up here
   }
   const onSetMapFullScreen = (value: boolean) => {
     log.debug('SettingsPanel onSetMapFullScreen', value);

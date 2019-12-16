@@ -26,7 +26,7 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
         activities.push(activity);
       }
     }
-    if (selectedActivityId) {
+    if (selectedActivityId && selectedActivityId !== currentActivityId) {
       const activity = cachedActivity(state, selectedActivityId);
       if (activity) {
         activities.push(activity);

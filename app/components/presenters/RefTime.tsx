@@ -21,7 +21,7 @@ const {
 
 const Styles = StyleSheet.create({
   leftHalf: {
-    backgroundColor: 'transparent', // nothing to the left of the centerline, for now TODO3
+    backgroundColor: 'transparent', // nothing to the left of the centerline, for now TODO
     flexDirection: 'row-reverse',
     width,
   },

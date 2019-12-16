@@ -61,13 +61,16 @@ const Styles = StyleSheet.create({
   }
 })
 
-const backgroundColor = (props: TopButtonProps) => (props.selected ? colors.backgroundSelected : colors.background);
+const backgroundColor = (props: TopButtonProps) => (props.selected ? (props.current ? colors.backgroundCurrentSelected :
+                                                                                      colors.backgroundSelected) :
+                                                                     colors.background)
+
 
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <Fragment>
     <View
       style={[Styles.bubble, {
-        backgroundColor: props.selected ? colors.bubble : colors.bubbleSelected,
+        backgroundColor: props.selected ? (props.current ? colors.bubbleNow : colors.bubblePast) : colors.bubble,
         left: bubbleLeft,
         top: props.topOffset,
         width: sizeBase + expansion(props.activityCount),
@@ -89,7 +92,11 @@ const TopButton = (props: TopButtonProps) => (props.visible ? (
         opacity: props.selected ? opacitySelected : opacity,
         top: props.topOffset,
       }]}
-      onPress={() => { props.onDeleteActivity(props.activityId) }}
+      onPress={() => {
+        if (!props.current) {
+          props.onDeleteActivity(props.activityId)
+        }
+      }}
       underlayColor={props.enabled ? backgroundColor(props) : colors.underlay}
     >
       <FontAwesome5

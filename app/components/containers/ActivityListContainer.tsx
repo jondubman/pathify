@@ -45,21 +45,15 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
+
   const onPressActivity = (activity: ActivityDataExtended): void => {
     if (activity && activity.tStart) {
       log.debug('onPressActivity', activity.id);
+      const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
+        (activity.tStart + (activity.tLastUpdate || activity.tStart)) / 2;
       if (activity.tEnd) {
         // Pressing some prior activity.
         dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
-        const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
-          (activity.tStart + (activity.tLastUpdate || activity.tStart)) / 2;
-        const appOptions = {
-          scrollTime: newTime,
-          selectedActivityId: activity.id,
-          viewTime: newTime,
-        }
-        log.debug('onPressActivity appOptions', appOptions);
-        dispatch(newAction(AppAction.setAppOption, appOptions));
         dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime }));
       } else {
         // Pressing the currentActivity.
@@ -67,6 +61,13 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
         dispatch(newAction(AppAction.startFollowingUser));
         dispatch(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() }));
       }
+      const appOptions = {
+        scrollTime: newTime,
+        selectedActivityId: activity.id,
+        viewTime: newTime,
+      }
+      log.debug('onPressActivity appOptions', appOptions);
+      dispatch(newAction(AppAction.setAppOption, appOptions));
       dispatch(newAction(AppAction.zoomToActivity, { id: activity.id }));
     }
   }

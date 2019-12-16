@@ -30,7 +30,7 @@ const AppStyles = StyleSheet.create({
     backgroundColor: constants.colors.appBackground,
     flex: 1,
   },
-  safeAreaView: { // TODO this used to be a SafeAreaView; is now just View
+  mainAppView: {
     flex: 1,
     flexDirection: 'column',
   },
@@ -52,7 +52,7 @@ class AppUI extends Component<AppUIProps> {
           backgroundColor={constants.colors.appBackground}
           barStyle="light-content"
         />
-        <View style={AppStyles.safeAreaView}>
+        <View style={AppStyles.mainAppView}>
           <MapContainer />
           {showTimeline ? <TimelineScrollContainer /> : null}
           {showActivityInfo ? <ActivityInfoContainer /> : null}

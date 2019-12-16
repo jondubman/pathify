@@ -98,57 +98,33 @@ class ActivityList extends Component<ActivityListProps> {
 
   constructor(props: ActivityListProps) {
     super(props);
+    this.autoScrollAfterForcedUpdate = this.autoScrollAfterForcedUpdate.bind(this);
     this.autoScroll = this.autoScroll.bind(this);
-    this.autoScrollOnLayout = this.autoScrollOnLayout.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.renderItem = this.renderItem.bind(this);
+    this.scrollToTime = this.scrollToTime.bind(this);
   }
 
-  // Automatically scroll the ActivityList as scrollTime changes.
-  autoScroll(scrollTime: number) {
-    log.trace('ActivityList autoScroll');
-    const { list, selectedActivityId } = this.props;
-    const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
-    if (index >= 0) {
-      if (_ref) {
-        const activity = list[index];
-        let viewOffset = 0; // TODO if current do we want to use -activityWidth / 2, or...?
-        if (activity.tStart && activity.tEnd && activity.tTotal) {
-          const tMiddle = activity.tStart + (activity.tEnd - activity.tStart) / 2;
-          viewOffset = ((tMiddle - scrollTime) / (activity.tTotal / 2)) * (activityWidth / 2);
-          log.trace('tStart', activity.tStart, 'tMiddle', tMiddle, 'tEnd', activity.tEnd, 'tTotal', activity.tTotal,
-                    'scrollTime', scrollTime, '%', (100 * (scrollTime - activity.tStart) / activity.tTotal).toFixed(0),
-                    'viewOffset', viewOffset);
-        }
-        const params = {
-          animated: true,
-          index,
-          viewOffset,
-          viewPosition: 0.5, // 0.5 tells scrollToIndex to scroll the center point (use 0 for left, 1 for right)
-        }
-        log.trace('autoScroll scrollToIndex', params);
-        _lastAutoScrollTime = utils.now();
-        _ref.scrollToIndex(params);
-      }
-    } else {
-      log.trace('autoScroll index', index, list.length, selectedActivityId);
-    }
-  }
-
-  autoScrollOnLayout() {
-    const state = store.getState(); // TODO not great form to grab state straight from here, but it's expedient
-    const scrollTime = state.options.scrollTime;
+  autoScroll() {
+    const state = store.getState(); // TODO not great form to grab state straight from here, but it's expedient.
+    const scrollTime = state.options.scrollTime; // This may change rapidly and we just want the latest we can get.
     if (scrollTime) {
-      log.trace('ActivityList autoScrollOnLayout', 'refreshCount', this.props.refreshCount,
-                'length', this.props.list.length);
-      this.autoScroll(scrollTime);
+      log.trace('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
+        'length', this.props.list.length);
+      this.scrollToTime(scrollTime);
     }
+  }
+
+  autoScrollAfterForcedUpdate() {
+    this.forceUpdate(() => {
+      this.autoScroll();
+    })
   }
 
   componentDidUpdate(prevProps: ActivityListProps) {
     if (prevProps.list.length !== this.props.list.length ||
         prevProps.selectedActivityId != this.props.selectedActivityId) {
-      this.autoScrollOnLayout();
+      this.autoScroll();
     }
   }
 
@@ -175,7 +151,7 @@ class ActivityList extends Component<ActivityListProps> {
             getItemLayout={getItemLayout}
             horizontal
             initialScrollIndex={Math.min(0, this.props.list.length - 1) /* TODO no effect? */}
-            onLayout={this.autoScrollOnLayout}
+            onLayout={this.autoScroll}
             onScroll={this.handleScroll}
             ref={(ref) => {
               if (ref) {
@@ -203,7 +179,7 @@ class ActivityList extends Component<ActivityListProps> {
       Styles.activity,
       isCurrent ? Styles.currentActivity : (isSelected ? Styles.pastActivitySelected : Styles.pastActivity),
     ]
-    const textStyle = [Styles.text, isSelected ? Styles.textSelected : null ];
+    const textStyle = [Styles.text, isSelected ? Styles.textSelected : null];
     // Note onPress receives a GestureResponderEvent we are ignoring.
     return (
       <TouchableHighlight
@@ -223,6 +199,41 @@ class ActivityList extends Component<ActivityListProps> {
         </View>
       </TouchableHighlight>
     )
+  }
+
+  scrollToTime(scrollTime: number) {
+    log.trace('ActivityList scrollToTime', scrollTime);
+    const { list, selectedActivityId } = this.props;
+    const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
+    if (index >= 0) {
+      if (_ref) {
+        const activity = list[index];
+        let viewOffset = 0;
+        if (activity.tStart) {
+          if (activity.tEnd && activity.tTotal) {
+            const tMiddle = activity.tStart + (activity.tEnd - activity.tStart) / 2;
+            viewOffset = ((tMiddle - scrollTime) / (activity.tTotal / 2)) * (activityWidth / 2);
+            log.trace('tStart', activity.tStart, 'tMiddle', tMiddle, 'tEnd', activity.tEnd, 'tTotal', activity.tTotal,
+              'scrollTime', scrollTime, '%', (100 * (scrollTime - activity.tStart) / activity.tTotal).toFixed(0),
+              'viewOffset', viewOffset);
+          } else {
+            // currentActivity
+            viewOffset = -activityWidth / 2;
+          }
+          const params = {
+            animated: true,
+            index,
+            viewOffset,
+            viewPosition: 0.5, // 0.5 tells scrollToIndex to scroll the center point (use 0 for left, 1 for right)
+          }
+          log.trace('scrollToTime scrollToIndex', params);
+          _lastAutoScrollTime = utils.now();
+          _ref.scrollToIndex(params);
+        }
+      }
+    } else {
+      log.trace('scrollToTime index', index, 'length', list.length, 'selectedActivityId', selectedActivityId);
+    }
   }
 }
 

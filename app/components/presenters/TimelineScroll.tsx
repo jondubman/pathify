@@ -91,7 +91,6 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     const {
       decelerationRate,
       scrollableWidth,
-      scrollTime,
       scrollToX,
       setTimelineScrolling,
       setTimelineNow,
@@ -139,7 +138,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, scrollTime + timeDelta);
+      const newTime = Math.min(rightNow, viewTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -149,7 +148,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
 
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      logScrollEvents && log.trace('onScroll', viewTime, scrollTime);
+      logScrollEvents && log.trace('onScroll', viewTime);
       const { x } = event.nativeEvent.contentOffset;
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
@@ -158,7 +157,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
           Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
       }
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, scrollTime + timeDelta);
+      const newTime = Math.min(rightNow, viewTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -185,7 +184,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, scrollTime + timeDelta); // TODO should this be viewTime?
+      const newTime = Math.min(rightNow, viewTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -194,9 +193,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
       this._timer = setTimeout(() => {
         log.trace('timer!', domain);
-        // if (this._scrolling) {
-          onFinishScrolling(domain);
-        // }
+        onFinishScrolling(domain);
         this._timer = undefined;
       }, constants.timing.scrollViewWaitForMomentumScroll)
     }

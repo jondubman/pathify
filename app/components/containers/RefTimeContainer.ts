@@ -10,7 +10,6 @@ import utils from 'lib/utils';
 interface RefTimeStateProps {
   bottom: number;
   scrollTime: number;
-  viewTime: number;
   hours: string;
   minutes: string;
   seconds: string;

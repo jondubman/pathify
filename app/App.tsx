@@ -57,7 +57,7 @@ export default class App extends Component {
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
-      pollServer(); // attempt to stay in contact with server
+      setTimeout(pollServer, 0); // attempt to stay in contact with server
     } catch (err) {
       log.warn('App componentDidMount err', err);
     }
