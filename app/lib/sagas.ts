@@ -740,7 +740,7 @@ const sagas = {
     } // else TODO
   },
 
-  // Refresh (recreate) the Activity and Path from the raw Events in the database (given an existing Activity id.)
+  // Refresh (recreate) existing Activity/Path from the raw Events in the database (given an existing Activity id.)
   refreshActivity: function* (action: Action) {
     const params = action.params as RefreshActivityParams;
     const { id } = params;
@@ -793,6 +793,10 @@ const sagas = {
       // TODO
       // yield call(database.updatePath, pathUpdate);
     }
+  },
+
+  refreshAllActivities: function* (action: Action) {
+    yield call(database.activityIds);
   },
 
   refreshCache: function* (action: Action) {

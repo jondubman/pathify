@@ -54,6 +54,7 @@ export enum AppAction {
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'refreshActivity' = 'refreshActivity',
+  'refreshAllActivities' = 'refreshAllActivities',
   'refreshCache' = 'refreshCache',
   'refreshCachedActivity' = 'refreshCachedActivity',
   'reorientMap' = 'reorientMap',
@@ -112,7 +113,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 
 import { LocationEvents, LonLat } from 'shared/locations';
 import { AppStateChange } from 'shared/appEvents';
-import { GenericEvents, TimeReference } from 'shared/timeseries';
+import { GenericEvents } from 'shared/timeseries';
 
 // TODO complete this list
 

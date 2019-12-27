@@ -122,6 +122,12 @@ const realm = new Realm(config);
 const database = {
   // activities
 
+  activities: (): Realm.Results<Activity> => (
+    realm.objects('Activity')
+      .filtered('tStart >= $0', Math.max(0, Date.now() - sharedConstants.maxAgeEvents))
+      .sorted('tStart') as Realm.Results<Activity>
+  ),
+
   activityById: (id: string): Activity | undefined => {
     if (!id) {
       return undefined;
@@ -140,11 +146,39 @@ const database = {
     return null;
   },
 
-  activities: (): Realm.Results<Activity> => (
-    realm.objects('Activity')
-         .filtered('tStart >= $0', Math.max(0, Date.now() - sharedConstants.maxAgeEvents))
-         .sorted('tStart') as Realm.Results<Activity>
-  ),
+  activityIds: (): string[] => {
+    const eventsWithDistinctActivityIds = realm.objects('Event')
+      .filtered('TRUEPREDICATE SORT(t ASC, activityId ASC) DISTINCT(activityId)');
+    const activityIdsOfEvents: string[] = eventsWithDistinctActivityIds
+      .map((e => (e as any as GenericEvent).activityId))
+      .filter((id: string | undefined) => !!(id && id.length > 0)) as string[];
+    // log.trace(activityIdsOfEvents.length, 'activityIdsOfEvents', activityIdsOfEvents);
+
+    const activityIds = database.activities().sorted('tStart').map((activity: Activity) => activity.id);
+    // log.trace(activityIds.length, 'activityIds', activityIds);
+
+    // If an id is in both of those lists (activityIds, activityIdsOfEvents)
+    // then we can recreate the Activity, Path, etc. from the underlying events.
+    // If an id in activityIdsOfEvents is missing from activityIds, it has been deleted.
+    const deletedActivityIds = [] as string[]; // TODO not currently used
+    const keptActivityIds = [] as string[]; // activityIds mentioned in events whose activity exists
+    const orphanedActivityIds = [] as string[]; // activityIds mentioned in events but whose activity was deleted
+    activityIdsOfEvents.map((id: string) => {
+      if (activityIds.includes(id)) {
+        keptActivityIds.push(id);
+      } else {
+        deletedActivityIds.push(id);
+      }
+    })
+    activityIds.map((id: string) => {
+      if (!activityIdsOfEvents.includes(id)) {
+        orphanedActivityIds.push(id); // TODO knowing these, it would be easy to delete orphaned events.
+      }
+    })
+    log.trace(keptActivityIds.length, 'keptActivityIds', keptActivityIds);
+    log.trace(orphanedActivityIds.length, 'orphanedActivityIds', orphanedActivityIds);
+    return keptActivityIds;
+  },
 
   // Return new Activity
   createActivity: (now: number, odoStart: number = 0): Activity => {
