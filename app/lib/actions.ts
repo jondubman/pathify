@@ -47,13 +47,13 @@ export enum AppAction {
   'flagToggle' = 'flagToggle',
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
-  'importGPX' = 'importGPX',
   'log' = 'log',
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',
   'mapTapped' = 'mapTapped',
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
+  'refreshActivity' = 'refreshActivity',
   'refreshCache' = 'refreshCache',
   'refreshCachedActivity' = 'refreshCachedActivity',
   'reorientMap' = 'reorientMap',
@@ -166,15 +166,13 @@ export interface ImportEventsParams {
   include: object; // TODO
 }
 
-export interface ImportGPXParams {
-  include: object;
-  adjustStartTime?: TimeReference;
-  adjustEndTime?: TimeReference;
-}
-
 export interface LogActionParams {
   level?: string; // TODO validate?
   message: string;
+}
+
+export interface RefreshActivityParams {
+  id: string,
 }
 
 export interface RefreshCachedActivityParams {

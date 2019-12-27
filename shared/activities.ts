@@ -23,7 +23,7 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     maxGapTime: 'int?',
     tMaxGapTime: 'int?',
 
-    odo: 'int?', // total distance
+    odo: 'int?', // total distance (meters, so OK that it's an int)
     maxGapDistance: 'int?',
     tMaxGapDistance: 'int?',
 

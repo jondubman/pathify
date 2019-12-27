@@ -55,12 +55,11 @@ import {
   DeleteActivityParams,
   GeolocationParams,
   ImportEventsParams,
-  ImportGPXParams,
   LogActionParams,
+  RefreshActivityParams,
   RefreshCachedActivityParams,
   RepeatedActionParams,
   ScrollActivityListParams,
-  ScrollTimelineParams,
   SequenceParams,
   SleepParams,
   StartActivityParams,
@@ -114,6 +113,10 @@ import {
   MarkEvent,
   MarkType
 } from 'shared/marks';
+import {
+  Path,
+  PathUpdate,
+} from 'shared/paths';
 import timeseries, {
   EventType,
   GenericEvent,
@@ -241,48 +244,11 @@ const sagas = {
               }
             }
           }
+          update.tLastUpdate = utils.now();
+          yield call(database.updateActivity, update, pathExtension);
         } else { // not simply appending events; recalc entire path et al (note new events were already added above)
-          // Fetch all the events for this activity. This is an expensive operation we want to avoid whenever possible.
-          const eventsForActivity = yield call(database.eventsForActivity, activityId);
-          update.pathLats = [];
-          update.pathLons = [];
-          let prevLocEvent: LocationEvent | null = null;
-          for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
-            const event = e as any as GenericEvent;
-            if (e.type === EventType.LOC) {
-              const locEvent = event as LocationEvent;
-              const { accuracy, lon, lat, t } = locEvent;
-              if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
-                update.pathLats.push(lat);
-                update.pathLons.push(lon);
-              }
-              update.tLastLoc = Math.max(activity.tLastLoc || 0, t);
-
-              // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
-              if (prevLocEvent !== null) {
-                const gapTime = locEvent.t - prevLocEvent.t;
-                if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-                  if (!update.maxGapTime || gapTime > update.maxGapTime) {
-                    update.maxGapTime = gapTime;
-                    update.tMaxGapTime = prevLocEvent.t;
-                  }
-                }
-                if (locEvent.odo && prevLocEvent.odo) {
-                  const gapDistance = locEvent.odo - prevLocEvent.odo;
-                  if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                    if (!update.maxGapDistance || gapDistance > update.maxGapDistance) {
-                      update.maxGapDistance = gapDistance;
-                      update.tMaxGapDistance = prevLocEvent.t;
-                    }
-                  }
-                }
-              }
-              prevLocEvent = { ...locEvent };
-            }
-          }
+          yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
         }
-        update.tLastUpdate = utils.now();
-        yield call(database.updateActivity, update, pathExtension);
       }
     }
   },
@@ -727,49 +693,6 @@ const sagas = {
       yield call(log.error, 'importEvents', err);
     }
   },
-
-  // GPX: geolocation data that may have been eported from other apps, already converted from XML to JSON to POJO.
-  // TODO process this GPX on the server and turn it into events there.
-  importGPX: function* (action: Action) {
-    // TODO2 - will return to this
-    // try {
-    //   const params = action.params as ImportGPXParams;
-    //   yield call(log.info, 'importGPX', messageToLog(action), params.adjustStartTime, params.adjustEndTime);
-    //   const gpx = (params.include as any).gpx; // GPX as JSON (already converted from XML)
-    //   const gpxEvents = locations.eventsFromGPX(gpx);
-    //   const source = gpxEvents[0].source || 'import';
-    //   const activityId = uuid.default();
-    //   const startEvent: MarkEvent = {
-    //     ...timeseries.newSyncedEvent(gpxEvents[0].t),
-    //     source,
-    //     type: EventType.MARK,
-    //     activityId,
-    //     subtype: MarkType.START,
-    //   }
-    //   const endEvent: MarkEvent = {
-    //     ...timeseries.newSyncedEvent(gpxEvents[gpxEvents.length - 1].t + 1),
-    //     activityId,
-    //     source,
-    //     type: EventType.MARK,
-    //     subtype: MarkType.END,
-    //   }
-    //   const events = [
-    //     startEvent,
-    //     ...gpxEvents,
-    //     endEvent,
-    //   ]
-    //   const relativeTo = utils.now(); // TODO may want more flexibility later
-    //   const adjustedEvents = timeseries.adjustTime(events, params.adjustStartTime, params.adjustEndTime, relativeTo);
-    //   yield call(log.debug, 'adjustedEvents',
-    //     relativeTo,
-    //     adjustedEvents[0].t - relativeTo,
-    //     adjustedEvents[adjustedEvents.length - 1].t - relativeTo);
-    //   yield put(newAction(AppAction.addEvents, { events: adjustedEvents }));
-    // } catch (err) {
-    //   yield call(log.error, 'importGPX', err);
-    // }
-  },
-
   // Generate a client-side log with an Action
   log: function* (action: Action) {
     try {
@@ -815,6 +738,61 @@ const sagas = {
     if (appActive) {
         yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
     } // else TODO
+  },
+
+  // Refresh (recreate) the Activity and Path from the raw Events in the database (given an existing Activity id.)
+  refreshActivity: function* (action: Action) {
+    const params = action.params as RefreshActivityParams;
+    const { id } = params;
+    yield call(log.debug, 'refreshActivity saga', id);
+    const activity: Activity = yield call(database.activityById, id);
+    if (activity) {
+      const eventsForActivity = yield call(database.eventsForActivity, id);
+      const activityUpdate: ActivityData = { id, pathLats: [], pathLons: [] };
+      activityUpdate.count = eventsForActivity.length;
+      const pathExtension = [] as LonLat[];
+      const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
+      let prevLocEvent: LocationEvent | null = null;
+      for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+        const event = e as any as GenericEvent;
+        if (e.type === EventType.LOC) {
+          const locEvent = event as LocationEvent;
+          const { accuracy, lon, lat, t } = locEvent;
+          if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+            activityUpdate.pathLats!.push(lat);
+            activityUpdate.pathLons!.push(lon);
+            pathUpdate.lats.push(lat);
+            pathUpdate.lons.push(lon);
+          }
+          activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t);
+
+          // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
+          if (prevLocEvent !== null) {
+            const gapTime = locEvent.t - prevLocEvent.t;
+            if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
+              if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
+                activityUpdate.maxGapTime = gapTime;
+                activityUpdate.tMaxGapTime = prevLocEvent.t;
+              }
+            }
+            if (locEvent.odo && prevLocEvent.odo) {
+              const gapDistance = locEvent.odo - prevLocEvent.odo;
+              if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
+                if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
+                  activityUpdate.maxGapDistance = gapDistance;
+                  activityUpdate.tMaxGapDistance = prevLocEvent.t;
+                }
+              }
+            }
+          }
+          prevLocEvent = { ...locEvent };
+        }
+      }
+      activityUpdate.tLastUpdate = utils.now();
+      yield call(database.updateActivity, activityUpdate, pathExtension);
+      // TODO
+      // yield call(database.updatePath, pathUpdate);
+    }
   },
 
   refreshCache: function* (action: Action) {

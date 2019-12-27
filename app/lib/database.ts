@@ -7,7 +7,16 @@ import {
 } from 'lib/actions';
 import constants from 'lib/constants';
 import store from 'lib/store';
+import {
+  Activity,
+  ActivityData,
+  ActivitySchema,
+} from 'shared/activities';
 import { LonLat } from 'shared/locations';
+import {
+  Path,
+  PathSchema,
+} from 'shared/paths';
 import sharedConstants from 'shared/sharedConstants';
 import {
   Events,
@@ -16,15 +25,8 @@ import {
   GenericEvents,
   Timepoint,
 } from 'shared/timeseries';
-import {
-  Activity,
-  ActivityData,
-  ActivitySchema,
-} from 'shared/activities';
 
 import log from 'shared/log';
-
-const schemaVersion = 9;
 
 const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything else to persist across app sessions
   name: 'Settings',
@@ -67,6 +69,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
 const schema = [
   ActivitySchema,
   EventSchema,
+  PathSchema,
   SettingsSchema,
 ]
 
@@ -87,13 +90,21 @@ const defaultSettings = {
   timelineZoomValue: constants.timeline.default.zoomValue,
 }
 
+// schemaVersion is important to Realm. Running with a bumped up schemaVersion yields a migration callback with the
+// oldRealm and newRealm, each of which has a schemaVersion property. It's possible that multiple upgrades will need
+// to be performed in sequence during the migration.
+const schemaVersion = 10;
+
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
+    // TODO this currently overwrites user settings with new defaults on a DB migration; fix this for production.
     let oldSettings;
     if (oldRealm.objects('Settings').length > 0) {
       oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
     }
     newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, true); // true: update
+  }
+  if (oldRealm.schemaVersion < 11) {
   }
 }
 
@@ -245,6 +256,7 @@ const database = {
     }
   },
 
+  // Caution: This will simply, instantly delete EVERYTHING in the database! There is no undo!
   reset: async () => {
     log.debug('Resetting Realm database!');
     realm.write(() => {
