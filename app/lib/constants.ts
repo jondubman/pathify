@@ -413,8 +413,8 @@ const constants = {
     },
     fitBounds: {
       duration: 500,
-      paddingHorizontal: 80,
-      paddingVertical: 180,
+      minHorizontalPadding: 20,
+      minVerticalPadding: 20,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
     reorientationTime: interval.seconds(1) / 2,

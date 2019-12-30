@@ -161,6 +161,10 @@ export const dynamicMapHeight = (state: AppState): number => {
   return utils.windowSize().height - dynamicTimelineHeight(state);
 }
 
+export const dynamicMapStyle = (state: AppState): MapStyle => (
+  constants.mapStyles.find((mapStyle: MapStyle) => (mapStyle.name === state.options.mapStyle)) as MapStyle
+)
+
 export const dynamicTimelineHeight = (state: AppState): number => (
   state.flags.mapFullScreen ?
     0
@@ -182,9 +186,19 @@ export const dynamicTimelineWidth = (state: AppState): number => (
     utils.windowSize().width
 )
 
-export const dynamicMapStyle = (state: AppState): MapStyle => (
-  constants.mapStyles.find((mapStyle: MapStyle) => (mapStyle.name === state.options.mapStyle)) as MapStyle
+export const dynamicTopBelowButtons = (state: AppState): number => (
+  dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
+
+export const mapFitBounds = (state: AppState): [number, number] => {
+  let horizontal = constants.map.fitBounds.minHorizontalPadding;
+  const { showActivityList, showTimeline } = state.flags;
+  const topClearZone = dynamicTopBelowButtons(state)
+    + (showActivityList ? 1 : 0) * constants.activityList.height;
+  const bottomClearZone = (showTimeline ? 1 : 0) * constants.timeline.default.height;
+  const vertical = Math.max(constants.map.fitBounds.minVerticalPadding, topClearZone, bottomClearZone);
+  return [vertical, horizontal];
+}
 
 export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '' || state.flags.mapDisable)

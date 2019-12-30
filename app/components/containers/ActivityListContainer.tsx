@@ -9,7 +9,7 @@ import {
 } from 'lib/actions';
 import constants from 'lib/constants';
 import {
-  dynamicAreaTop,
+  dynamicTopBelowButtons,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
@@ -40,7 +40,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     refreshCount: state.cache.refreshCount,
     selectedActivityId: state.options.selectedActivityId,
     timelineScrolling: state.flags.timelineScrolling,
-    top: dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset,
+    top: dynamicTopBelowButtons(state),
   }
 }
 

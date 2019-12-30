@@ -10,6 +10,7 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
   primaryKey: 'id',
   properties: {
     id: 'string',
+    schemaVersion: 'int',
     odoStart: 'int?',
     tLastLoc: 'int?',
     tLastUpdate: { type: 'int', indexed: true },

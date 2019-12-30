@@ -37,8 +37,6 @@ export enum ActivityMetricName {
   'time' = 'time',
 }
 
-// bounds: TODO use separate latMin, latMax, lonMin, lonMax. With these, could easily do bounding box queries
-
 export type ActivityMetric = {
   average?: number;            // over entire activity
   label?: string;              // 'mi'

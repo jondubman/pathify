@@ -72,6 +72,7 @@ import { Geo } from 'lib/geo';
 import {
   cachedActivity,
   currentActivity,
+  mapFitBounds,
   selectedActivity,
   timelineZoomValue,
 } from 'lib/selectors';
@@ -1251,12 +1252,12 @@ const sagas = {
     if (activity) {
       yield call(log.debug, 'saga zoomToActivity', activity.id);
       // Fit map bounds to bounds of activity (with padding)
-      const { duration, paddingHorizontal, paddingVertical } = constants.map.fitBounds;
+      const { duration } = constants.map.fitBounds;
       const map = MapUtils();
       if (map && map.fitBounds) {
         const { latMax, latMin, lonMax, lonMin } = activity;
         if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
-          map.fitBounds([lonMax, latMax], [lonMin, latMin], [paddingVertical, paddingHorizontal], duration);
+          map.fitBounds([lonMax, latMax], [lonMin, latMin], mapFitBounds(state), duration);
         }
         if (id === state.options.currentActivityId) { // zooming to currentActivity automatically engages following
           yield put(newAction(AppAction.startFollowingUser));
