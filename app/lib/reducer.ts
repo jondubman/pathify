@@ -8,6 +8,7 @@ import {
 
 import {
   AppState,
+  CountUpdate,
   CacheInfo,
   initialAppState,
 } from 'lib/state';
@@ -31,6 +32,15 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
             newState.cache.activities = [ ...cacheInfo.activities ];
           }
           newState.cache.refreshCount = cacheInfo.refreshCount;
+        }
+        break;
+
+      case ReducerAction.COUNT:
+        {
+          const countUpdate = params as CountUpdate;
+          for (let [name, increment] of Object.entries(countUpdate)) {
+            newState.counts[name] += increment;
+          }
         }
         break;
 

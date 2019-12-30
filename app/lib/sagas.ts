@@ -33,6 +33,7 @@ import {
   delay,
   put,
   select,
+  take,
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
@@ -200,32 +201,38 @@ const sagas = {
     if (activityId) {
       const activity: Activity = yield call(database.activityById, activityId);
       if (activity) {
-        const update: ActivityData = { id: activity.id };
-        update.count = (activity.count || 0) + events.length;
-        const pathExtension = [] as LonLat[];
+        const activityUpdate: ActivityData = {
+          id: activity.id,
+          count: (activity.count || 0) + events.length,
+        }
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
         // The typical case of simply appending one or more events to an Activity is handled here with little work.
-        // The case of inserting events in the middle of an existing Activity is handled by the big else block below.
-        const appending: boolean = !!(firstNewLoc && firstNewLoc.t > activity.tLastUpdate);
+        // The case of inserting events in the middle of an existing Activity is handled by the else block below.
+        const appending: boolean = !!(!firstNewLoc || firstNewLoc.t > activity.tLastUpdate);
         if (appending) {
           // odoStart
           if (firstNewOdo) {
             if (!activity.odoStart || firstNewOdo < activity.odoStart) {
-              update.odoStart = firstNewOdo;
+              activityUpdate.odoStart = firstNewOdo;
             }
           }
           // odo
           if (lastNewLoc) {
-            update.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
-            update.odo = lastNewLoc.odo;
+            activityUpdate.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
+            activityUpdate.odo = lastNewLoc.odo;
           }
-          // pathExtension
+          // Scan through the events
           for (let i = 0; i < events.length; i++) {
             const event = events[i];
             if (event.type == EventType.LOC) {
               const { accuracy, lon, lat } = event as LocationEvent;
               if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
-                pathExtension.push([lon, lat]); // add a single path segment
+                // add a single path segment
+                activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat);
+                activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat);
+                activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon);
+                activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon);
+                database.appendToPath({ id: activity.id, lon, lat });
               }
             }
           }
@@ -233,20 +240,23 @@ const sagas = {
           if (activity.tLastLoc && firstNewLoc) {
             const gapTime = firstNewLoc.t - activity.tLastLoc;
             if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-              update.maxGapTime = gapTime;
-              update.tMaxGapTime = activity.tLastLoc;
+              activityUpdate.maxGapTime = gapTime;
+              activityUpdate.tMaxGapTime = activity.tLastLoc;
             }
             if (firstNewLoc.odo && activity.odo) {
               const gapDistance = firstNewLoc.odo - activity.odo;
               if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                update.maxGapDistance = gapDistance;
-                update.tMaxGapDistance = activity.tLastLoc;
+                activityUpdate.maxGapDistance = gapDistance;
+                activityUpdate.tMaxGapDistance = activity.tLastLoc;
               }
             }
           }
-          update.tLastUpdate = utils.now();
-          yield call(database.updateActivity, update, pathExtension);
-        } else { // not simply appending events; recalc entire path et al (note new events were already added above)
+          activityUpdate.tLastUpdate = utils.now();
+          yield call(database.updateActivity, activityUpdate);
+        } else {
+          // not simply appending events; recalc entire path et al (note new events were already added above)
+          // yield call(log.trace, 'firstNewLoc.t', firstNewLoc && firstNewLoc.t,
+          //                       'activity.tLastUpdate', activity.tLastUpdate);
           yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
         }
       }
@@ -303,7 +313,10 @@ const sagas = {
         case 'counts': {
           response = {
             activities: (yield call(database.activities)).length,
+            counts: (yield select((state: AppState) => state.counts)),
             events: (yield call(database.events)).length,
+            paths: (yield call(database.paths)).length,
+            schemaVersion: constants.database.schemaVersion,
           }
           break;
         }
@@ -397,8 +410,11 @@ const sagas = {
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
+    const { recoveryMode } = yield select((state: AppState) => state.flags);
     if (activeNow) { // Don't do this in the background... might take too long
-      yield call(Geo.processSavedLocations);
+      if (!recoveryMode) {
+        yield call(Geo.processSavedLocations);
+      }
       const populated = yield select(state => state.cache.populated);
       yield call(log.debug, 'cache has been populated:', populated);
       if (!populated) { // Populate the cache for the first time
@@ -560,6 +576,7 @@ const sagas = {
 
   // TODO paint this activity red on the ActivityList while on the chopping block so it's clear which it is.
   // TODO consider an option to avoid the confirmation alert, at least for testing.
+  // TODO delete path?
   deleteActivity: function* (action: Action) {
     try {
       const params = action.params as DeleteActivityParams;
@@ -618,16 +635,6 @@ const sagas = {
         const pausedTime = yield select((state: AppState) => state.options.viewTime); // current pos of timeline
         yield put(newAction(AppAction.setAppOption, { pausedTime })); // remember prior position of timeline
         yield put(newAction(AppAction.timerTick, utils.now()));
-      } else {
-        // // disabling timelineNow TODO remove?
-        // const pausedTime = yield select((state: AppState) => state.options.pausedTime); // apply prior pos of timeline
-        // const { timelineScrolling } = flags;
-        // if (timelineScrolling) {
-        //   // TODO is this right? Can this ever happen?
-        //   yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime }));
-        // } else {
-        //   yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime, viewTime: pausedTime }));
-        // }
       }
     }
   },
@@ -744,59 +751,84 @@ const sagas = {
   refreshActivity: function* (action: Action) {
     const params = action.params as RefreshActivityParams;
     const { id } = params;
-    yield call(log.debug, 'refreshActivity saga', id);
-    const activity: Activity = yield call(database.activityById, id);
-    if (activity) {
-      const eventsForActivity = yield call(database.eventsForActivity, id);
-      const activityUpdate: ActivityData = { id, pathLats: [], pathLons: [] };
-      activityUpdate.count = eventsForActivity.length;
-      const pathExtension = [] as LonLat[];
-      const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
-      let prevLocEvent: LocationEvent | null = null;
-      for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
-        const event = e as any as GenericEvent;
-        if (e.type === EventType.LOC) {
-          const locEvent = event as LocationEvent;
-          const { accuracy, lon, lat, t } = locEvent;
-          if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
-            activityUpdate.pathLats!.push(lat);
-            activityUpdate.pathLons!.push(lon);
-            pathUpdate.lats.push(lat);
-            pathUpdate.lons.push(lon);
-          }
-          activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t);
+    yield call(log.debug, 'saga refreshActivity', id);
+    const eventsForActivity = yield call(database.eventsForActivity, id);
+    const { currentActivityId } = yield select((state: AppState) => state.options);
+    const { schemaVersion } = constants.database;
+    const activityUpdate: ActivityData = { id, schemaVersion };
+    const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
+    activityUpdate.count = eventsForActivity.length;
+    let prevLocEvent: LocationEvent | null = null;
+    yield call(log.trace, 'trace2');
+     for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+      const event = e as any as GenericEvent;
+      if (event.type === EventType.LOC) {
+        const locEvent = event as LocationEvent;
+        const { accuracy, lon, lat, t } = locEvent;
+        if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+          // lats
+          pathUpdate.lats.push(lat);
+          activityUpdate.latMax = Math.max(activityUpdate.latMax || -Infinity, lat);
+          activityUpdate.latMin = Math.min(activityUpdate.latMin || Infinity, lat);
+          // lons
+          pathUpdate.lons.push(lon);
+          activityUpdate.lonMax = Math.max(activityUpdate.lonMax || -Infinity, lon);
+          activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
+        }
+        activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max is redundant when events sorted by t
+        activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
 
-          // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
-          if (prevLocEvent !== null) {
-            const gapTime = locEvent.t - prevLocEvent.t;
-            if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-              if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
-                activityUpdate.maxGapTime = gapTime;
-                activityUpdate.tMaxGapTime = prevLocEvent.t;
-              }
+        // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
+        if (prevLocEvent !== null) {
+          const gapTime = locEvent.t - prevLocEvent.t;
+          if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
+            if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
+              activityUpdate.maxGapTime = gapTime;
+              activityUpdate.tMaxGapTime = prevLocEvent.t;
             }
-            if (locEvent.odo && prevLocEvent.odo) {
-              const gapDistance = locEvent.odo - prevLocEvent.odo;
-              if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
-                  activityUpdate.maxGapDistance = gapDistance;
-                  activityUpdate.tMaxGapDistance = prevLocEvent.t;
-                }
+          }
+          if (locEvent.odo && prevLocEvent.odo) {
+            const gapDistance = locEvent.odo - prevLocEvent.odo;
+            if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
+              if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
+                activityUpdate.maxGapDistance = gapDistance;
+                activityUpdate.tMaxGapDistance = prevLocEvent.t;
               }
             }
           }
-          prevLocEvent = { ...locEvent };
+        }
+        prevLocEvent = { ...locEvent };
+      } else if (event.type == EventType.MARK) {
+        const markEvent = event as MarkEvent;
+        if (markEvent.subtype === MarkType.END) {
+          activityUpdate.tEnd = markEvent.t;
         }
       }
-      activityUpdate.tLastUpdate = utils.now();
-      yield call(database.updateActivity, activityUpdate, pathExtension);
-      // TODO
-      // yield call(database.updatePath, pathUpdate);
+      activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastLoc || 0, activityUpdate.tEnd || 0);
+      if (id !== currentActivityId && !activityUpdate.tEnd) {
+        // This only happens if the END MARK event did not get properly inserted.
+        activityUpdate.tEnd = activityUpdate.tLastUpdate;
+      }
     }
+    yield call(database.updateActivity, activityUpdate, pathUpdate);
+    yield put(newAction(ReducerAction.COUNT, { refreshedActivities: 1 }));
+    yield put(newAction(AppAction.refreshActivityDone));    yield call(log.trace, 'trace6');
+  },
+
+  refreshActivityDone: function* (action: Action) {
+    yield call(log.trace, 'refreshActivityDone');
   },
 
   refreshAllActivities: function* (action: Action) {
-    yield call(database.activityIds);
+    const activityIds = yield call(database.activityIds);
+    let count = 0;
+    for (let id of activityIds) {
+      yield put(newAction(AppAction.refreshActivity, { id })); // initiate activity refresh
+      yield take(AppAction.refreshActivityDone); // wait for it to finish
+      count++;
+      yield call(log.trace, 'refreshAllActivities: refreshActivityDone', count, id);
+      yield delay(constants.timing.activityRefreshDelay);
+    }
   },
 
   refreshCache: function* (action: Action) {
@@ -1056,7 +1088,9 @@ const sagas = {
 
   startupActions: function* () {
     try {
-      const { startupAction_clearStorage } = yield select(state => state.flags);
+      yield call(database.completeAnyMigration);
+
+      const { recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
       if (startupAction_clearStorage) {
         yield put(newAction(AppAction.clearStorage));
       }
@@ -1081,11 +1115,13 @@ const sagas = {
       }
       const { currentActivityId } = settings;
       yield call(Geo.initializeGeolocation, store, !!currentActivityId); // use highPower if have currentActivityId
-      if (currentActivityId) {
-        yield call(log.info, 'Continuing previous activity...');
-        yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
-      } else {
-        yield put(newAction(AppAction.startFollowingUser));
+      if (!recoveryMode) {
+        if (currentActivityId) {
+          yield call(log.info, 'Continuing previous activity...');
+          yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
+        } else {
+          yield put(newAction(AppAction.startFollowingUser));
+        }
       }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
@@ -1116,6 +1152,7 @@ const sagas = {
         if (activity) { // TODO error if not
           yield call(database.updateActivity, {
             id: activityId,
+            schemaVersion: constants.database.schemaVersion, // TODO make sure to handle schema update while tracking
             tLastUpdate: now,
             tEnd: now,
           })

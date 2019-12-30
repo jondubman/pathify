@@ -13,6 +13,7 @@
 
 export enum ReducerAction {
   'CACHE' = 'CACHE',
+  'COUNT' = 'COUNT',
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'SET_APP_OPTION' = 'SET_APP_OPTION',
@@ -54,6 +55,7 @@ export enum AppAction {
   'modeChange' = 'modeChange',
   'motionChange' = 'motionChange',
   'refreshActivity' = 'refreshActivity',
+  'refreshActivityDone' = 'refreshActivityDone',
   'refreshAllActivities' = 'refreshAllActivities',
   'refreshCache' = 'refreshCache',
   'refreshCachedActivity' = 'refreshCachedActivity',

@@ -16,6 +16,7 @@ import { LonLat } from 'shared/locations';
 import {
   Path,
   PathSchema,
+  PathUpdate,
 } from 'shared/paths';
 import sharedConstants from 'shared/sharedConstants';
 import {
@@ -73,6 +74,11 @@ const schema = [
   SettingsSchema,
 ]
 
+// schemaVersion is important to Realm. Running with a bumped up schemaVersion yields a migration callback with the
+// oldRealm and newRealm, each of which has a schemaVersion property. It's possible that multiple upgrades will need
+// to be performed in sequence during the migration.
+const { schemaVersion } = constants.database;
+
 const defaultSettings = {
   id: 1,
   currentActivityId: undefined,
@@ -90,32 +96,29 @@ const defaultSettings = {
   timelineZoomValue: constants.timeline.default.zoomValue,
 }
 
-// schemaVersion is important to Realm. Running with a bumped up schemaVersion yields a migration callback with the
-// oldRealm and newRealm, each of which has a schemaVersion property. It's possible that multiple upgrades will need
-// to be performed in sequence during the migration.
-const schemaVersion = 10;
+let migrationRequired = false;
 
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
-    // TODO this currently overwrites user settings with new defaults on a DB migration; fix this for production.
+    // Migrate Settings
+    // TODO this currently overwrites user settings with new defaults on any DB migration; fix this for production.
     let oldSettings;
     if (oldRealm.objects('Settings').length > 0) {
       oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
     }
     newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, true); // true: update
-  }
-  if (oldRealm.schemaVersion < 11) {
+
+    migrationRequired = true;
   }
 }
 
-// TODO always use deleteRealmIfMigrationNeeded: false for production - see https://realm.io/docs/javascript/latest/
 const config: Realm.Configuration = {
-  deleteRealmIfMigrationNeeded: false,
+  deleteRealmIfMigrationNeeded: false, // Use false for production, as using true will result in irreversible data loss!
   migration,
   schema,
   schemaVersion,
 }
-const realm = new Realm(config);
+const realm = new Realm(config); // This performs a migration if needed
 
 // TODO which errors to handle?
 
@@ -146,6 +149,7 @@ const database = {
     return null;
   },
 
+  // Return the activityIds that remain in active use in the app (i.e. have the events, plus the corresponding Activity)
   activityIds: (): string[] => {
     const eventsWithDistinctActivityIds = realm.objects('Event')
       .filtered('TRUEPREDICATE SORT(t ASC, activityId ASC) DISTINCT(activityId)');
@@ -175,22 +179,31 @@ const database = {
         orphanedActivityIds.push(id); // TODO knowing these, it would be easy to delete orphaned events.
       }
     })
+    log.trace(deletedActivityIds.length, 'deletedActivityIds', deletedActivityIds);
     log.trace(keptActivityIds.length, 'keptActivityIds', keptActivityIds);
     log.trace(orphanedActivityIds.length, 'orphanedActivityIds', orphanedActivityIds);
     return keptActivityIds;
+  },
+
+  completeAnyMigration: () => {
+    if (migrationRequired) {
+      log.info('database.completeMigration');
+
+      // Migrate Activities and Paths, based on underlying Events
+      store.dispatch(newAction(AppAction.refreshAllActivities));
+    }
   },
 
   // Return new Activity
   createActivity: (now: number, odoStart: number = 0): Activity => {
     const newActivityTemplate: ActivityData = {
       id: uuid.default(),
+      schemaVersion,
       count: 0,
       gain: 0,
       loss: 0,
       odo: 0,
       odoStart,
-      pathLons: [],
-      pathLats: [],
       tLastUpdate: now,
       tStart: now,
       tEnd: 0,
@@ -206,14 +219,13 @@ const database = {
     return database.events().filtered('activityId == $0', id);
   },
 
-  updateActivity: async (activityUpdate: ActivityData, pathExtension: LonLat[] = []) => {
+  updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
     let activity: Activity | null = null;
     realm.write(() => {
-      activity = realm.create('Activity', activityUpdate, true) as Activity; // true: update
-      const lons = pathExtension.map((lonLat: LonLat) => lonLat[0]);
-      const lats = pathExtension.map((lonLat: LonLat) => lonLat[1]);
-      activity.pathLats.push(...lats);
-      activity.pathLons.push(...lons);
+      activity = realm.create('Activity', activityUpdate, Realm.UpdateMode.Modified) as Activity; // true: update
+      if (pathUpdate) { // otherwise leave it alone
+        const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
+      }
     })
     if (activity) {
       store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: activity!.id }));
@@ -223,9 +235,16 @@ const database = {
   deleteActivity: (activityId: string): void => {
     let existingActivity = realm.objects('Activity')
                                 .filtered(`id == "${activityId}"`);
-    if (existingActivity) {
+    let existingPath = realm.objects('Path')
+                            .filtered(`id == "${activityId}"`);
+    if (existingActivity || existingPath) {
       realm.write(() => {
-        realm.delete(existingActivity);
+        if (existingActivity) {
+          realm.delete(existingActivity);
+        }
+        if (existingPath) {
+          realm.delete(existingPath);
+        }
       })
     }
   },
@@ -277,6 +296,29 @@ const database = {
       log.error('changeSettings error', err);
     }
   },
+
+  // paths
+
+  appendToPath: ({ id, lat, lon }) => {
+    const path = database.pathById(id);
+    if (path) {
+      realm.write(() => {
+        path.lats.push(lat);
+        path.lons.push(lon);
+      })
+    }
+  },
+
+  pathById: (id: string): Path | undefined => {
+    if (!id) {
+      return undefined;
+    }
+    return realm.objectForPrimaryKey('Path', id);
+  },
+
+  paths: (): any => (
+    realm.objects('Path') as Realm.Results<Path>
+  ),
 
   settings: (): any => {
     try {

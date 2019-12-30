@@ -18,6 +18,10 @@ export interface CacheInfo {
   refreshCount: number;
 }
 
+export interface CountUpdate {
+  refreshedActivities?: number;
+}
+
 export const initialAppState = {
   cache: {
     populated: false,
@@ -25,6 +29,9 @@ export const initialAppState = {
   } as CacheInfo,
   callbacks: {
     activityList: undefined as any,
+  },
+  counts: {
+    refreshedActivities: 0,
   },
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     allowMapStyleNone: false, // really only useful for debugging / perf
@@ -41,6 +48,7 @@ export const initialAppState = {
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
+    recoveryMode: true,
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // settings panel visible state

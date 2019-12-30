@@ -33,32 +33,31 @@ const lineLayerStyleCurrent = {
 class Paths extends PureComponent<PathsProps> {
 
   render() {
-    const { activities, currentActivityId } = this.props;
+    const { currentActivityId, paths } = this.props;
     let shapes = [] as JSX.Element[];
-    for (let a = 0; a < activities.length; a++) {
-      const activity = activities[a];
-      if (!activity) {
+    for (let a = 0; a < paths.length; a++) {
+      const path = paths[a];
+      if (!path) {
         continue;
       }
-      const { pathLons, pathLats } = activity;
+      const { id, lons, lats } = path;
       try {
-        if (!pathLats || !pathLons || !pathLats.length || !pathLons.length || pathLats.length != pathLons.length) {
+        if (!lats || !lons || !lats.length || !lons.length || lats.length != lons.length) {
           continue;
         }
-        const length = pathLats.length;
+        const length = lats.length;
         if (length < 2) {
           continue;  // need at least one path segment to draw
         }
         let coordinates = [] as LonLat[];
         for (let i = 0; i < length; i++) {
-          const lonLat = [pathLons[i], pathLats[i]] as LonLat;
+          const lonLat = [lons[i], lats[i]] as LonLat;
           coordinates.push(lonLat);
         }
-        const pathId = activity.tStart;
         const pathShape = {
           type: 'Feature',
           properties: {
-            name: `pathStarting${pathId}`,
+            name: `pathId${id}`,
           },
           geometry: {
             type: 'LineString',
@@ -66,16 +65,16 @@ class Paths extends PureComponent<PathsProps> {
           },
         }
         shapes.push(
-          <Mapbox.ShapeSource id={`pathShape${pathId}`} key={`pathShape${pathId}`} shape={pathShape}>
+          <Mapbox.ShapeSource id={`pathShape${id}`} key={`pathShape${id}`} shape={pathShape}>
             <Mapbox.LineLayer
-              id={`path${pathId}`}
-              key={`path${pathId}`}
-              style={activity.id === currentActivityId ? lineLayerStyleCurrent : lineLayerStyleDefault}
+              id={`path${id}`}
+              key={`path${id}`}
+              style={id === currentActivityId ? lineLayerStyleCurrent : lineLayerStyleDefault}
             />
           </Mapbox.ShapeSource>
         )
       } catch (err) {
-        log.error('Paths render', activity, err);
+        log.error('Paths render', id, err);
       }
     }
     return (

@@ -72,6 +72,9 @@ const colorThemes = {
   topMenu: namedColors.darkerGray,
 }
 
+// For Realm database
+const schemaVersion = 13;
+
 const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
@@ -352,6 +355,9 @@ const constants = {
     opacity: defaultOpacity,
     size: buttonSize,
   },
+  database: {
+    schemaVersion,
+  },
   days: [
     'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'
   ],
@@ -467,6 +473,7 @@ const constants = {
   },
   timing: { // msec
     activityListAnimationCompletion: 600,
+    activityRefreshDelay: 1000, // TODO
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2

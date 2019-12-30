@@ -3,7 +3,7 @@
 import {
   applyMiddleware,
   createStore,
-  Store, // TODO TypeScript warning: Import declaration conflicts with local declaration of 'Store'.ts(2440)
+  Store as ReduxStore,
 } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
@@ -17,7 +17,7 @@ import {
   AppState,
 } from 'lib/state';
 
-let reduxStore: Store<AppState, Action>; // global singleton Redux store
+let reduxStore: ReduxStore<AppState, Action>; // global singleton Redux store
 
 const store = {
 

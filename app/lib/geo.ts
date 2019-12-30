@@ -451,7 +451,7 @@ export const Geo = {
   processSavedLocations: async () => {
     try {
       const state = store.getState();
-      if (!state.flags.receiveLocations) {
+      if (state.flags.recoveryMode || !state.flags.receiveLocations) {
         log.trace('processSavedLocations: ignoring locations');
         return;
       }

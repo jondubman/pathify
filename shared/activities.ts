@@ -11,8 +11,6 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
   properties: {
     id: 'string',
     odoStart: 'int?',
-    pathLons: 'double[]',
-    pathLats: 'double[]',
     tLastLoc: 'int?',
     tLastUpdate: { type: 'int', indexed: true },
     tStart: { type: 'int', indexed: true },
@@ -29,15 +27,20 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
 
     gain: 'int?', // total elevation gain
     loss: 'int?', // total elevation loss
+
+    // bounds
+    latMax: 'double?',
+    latMin: 'double?',
+    lonMax: 'double?',
+    lonMin: 'double?',
   },
 }
 
 export interface Activity extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
   id: string; // use matching activityId for corresponding START and END marks and events collected between
+  schemaVersion: number;
 
   odoStart: number; // odo of the earliest location in the activity
-  pathLons: number[]; // required, may be empty
-  pathLats: number[]; // required, may be empty, should have same length as pathLons
   tLastLoc?: Timepoint; // optional
   tLastUpdate: Timepoint; // required
   tStart: Timepoint; // required
@@ -55,6 +58,12 @@ export interface Activity extends Realm.Object { // returned from Realm, resembl
 
   gain?: number; // total elevation gain
   loss?: number; // total elevation loss
+
+  // bounds
+  latMax?: number;
+  latMin?: number;
+  lonMax?: number;
+  lonMin?: number;
 }
 export type Activities = Activity[];
 
@@ -63,11 +72,10 @@ export type Activities = Activity[];
 export interface ActivityData {
   // id required
   id: string; // use matching activityId for corresponding START and END marks and events collected between
+  schemaVersion: number;
 
   // All others optional: (TODO should be same properties as in Activity above, but all are optional)
   odoStart?: number;
-  pathLons?: number[];
-  pathLats?: number[];
   tLastLoc?: Timepoint;
   tLastUpdate?: Timepoint;
   tStart?: number;
@@ -85,16 +93,18 @@ export interface ActivityData {
 
   gain?: number; // total elevation gain
   loss?: number; // total elevation loss
+
+  // bounds
+  latMax?: number;
+  latMin?: number;
+  lonMax?: number;
+  lonMin?: number;
 }
 
 // ActivityDataExtended populate the activities cache in Redux store, and appear on the ActivityList.
 export interface ActivityDataExtended extends ActivityData { // these are the 'Extended' properties:
   distance?: number;
   distanceMiles?: number;
-  latMax?: number;
-  latMin?: number;
-  lonMax?: number;
-  lonMin?: number;
   tStartText?: string;
   tTotal?: number;
   tTotalText?: string;
@@ -111,28 +121,12 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
       a.distance = a.odo - a.odoStart;
       a.distanceMiles = metersToMiles(a.distance);
     }
-    a.tStartText = new Date(a.tStart).toLocaleString()
-    const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
-    if (tEnd) {
-      a.tTotal = tEnd - a.tStart;
-      a.tTotalText = msecToString(a.tTotal);
-    }
-    // compute bounds
-    a.latMax = -Infinity;
-    a.latMin = Infinity;
-    a.lonMax = -Infinity;
-    a.lonMin = Infinity;
-    if (a.pathLats && a.pathLons) {
-      const length = a.pathLats.length;
-      if (length === a.pathLons.length) { // these should really match, but...
-        for (let i = 0; i < length; i++) {
-          const lat = a.pathLats[i];
-          const lon = a.pathLons[i];
-          a.latMax = Math.max(a.latMax, lat);
-          a.latMin = Math.min(a.latMin, lat);
-          a.lonMax = Math.max(a.lonMax, lon);
-          a.lonMin = Math.min(a.lonMin, lon);
-        }
+    if (a.tStart) {
+      a.tStartText = new Date(a.tStart).toLocaleString()
+      const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
+      if (tEnd) {
+        a.tTotal = tEnd - a.tStart;
+        a.tTotalText = msecToString(a.tTotal);
       }
     }
   } catch (err) {
@@ -141,9 +135,6 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
   return a;
 }
 
-export const loggableActivity = (activity: Activity): any => {
-  const a = { ...extendActivity(activity) } as any; // any, so we can replace pathLats and pathLons with just a length,
-  a.pathLats = a.pathLats.length; // blasting away all the individual points,
-  a.pathLons = a.pathLons.length; // which we don't want cluttering up a log.
-  return a;
+export const loggableActivity = (activity: Activity) => {
+  return extendActivity(activity);
 }

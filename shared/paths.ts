@@ -7,8 +7,8 @@ export const PathSchema: Realm.ObjectSchema = { // Note: keep Activity and Activ
   primaryKey: 'id',
   properties: {
     id: 'string',
-    pathLats: 'double[]',
-    pathLons: 'double[]',
+    lats: 'double[]',
+    lons: 'double[]',
   },
 }
 
