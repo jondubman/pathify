@@ -759,8 +759,7 @@ const sagas = {
     const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
     activityUpdate.count = eventsForActivity.length;
     let prevLocEvent: LocationEvent | null = null;
-    yield call(log.trace, 'trace2');
-     for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+    for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
       const event = e as any as GenericEvent;
       if (event.type === EventType.LOC) {
         const locEvent = event as LocationEvent;
@@ -812,7 +811,7 @@ const sagas = {
     }
     yield call(database.updateActivity, activityUpdate, pathUpdate);
     yield put(newAction(ReducerAction.COUNT, { refreshedActivities: 1 }));
-    yield put(newAction(AppAction.refreshActivityDone));    yield call(log.trace, 'trace6');
+    yield put(newAction(AppAction.refreshActivityDone));
   },
 
   refreshActivityDone: function* (action: Action) {

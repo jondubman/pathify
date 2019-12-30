@@ -73,7 +73,7 @@ const colorThemes = {
 }
 
 // For Realm database
-const schemaVersion = 13;
+const schemaVersion = 15;
 
 const buttonOffset = 6;
 const buttonSize = 50;
