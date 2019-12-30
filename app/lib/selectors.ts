@@ -191,13 +191,13 @@ export const dynamicTopBelowButtons = (state: AppState): number => (
 )
 
 export const mapFitBounds = (state: AppState): [number, number] => {
-  let horizontal = constants.map.fitBounds.minHorizontalPadding;
+  const horizontal = constants.map.fitBounds.minHorizontalPadding;
   const { showActivityList, showTimeline } = state.flags;
   const topClearZone = dynamicTopBelowButtons(state)
     + (showActivityList ? 1 : 0) * constants.activityList.height;
   const bottomClearZone = (showTimeline ? 1 : 0) * constants.timeline.default.height;
-  const vertical = Math.max(constants.map.fitBounds.minVerticalPadding, topClearZone, bottomClearZone);
-  return [vertical, horizontal];
+  const vertical = Math.max(topClearZone, bottomClearZone);
+  return [vertical + constants.map.fitBounds.minVerticalPadding, horizontal];
 }
 
 export const mapHidden = (state: AppState): boolean => (

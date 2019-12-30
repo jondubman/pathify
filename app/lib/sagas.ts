@@ -67,7 +67,7 @@ import {
   ZoomToActivityParams,
 } from 'lib/actions'
 import constants from 'lib/constants';
-import database from 'lib/database';
+import database, { SettingsObject } from 'lib/database';
 import { Geo } from 'lib/geo';
 import {
   cachedActivity,
@@ -381,7 +381,6 @@ const sagas = {
           }
           break;
         }
-
         case 'settings': {
           response = yield call(database.settings);
           break;
@@ -1088,15 +1087,14 @@ const sagas = {
 
   startupActions: function* () {
     try {
+      yield call(log.debug, 'saga startupActions');
       yield call(database.completeAnyMigration);
-
       const { recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
       if (startupAction_clearStorage) {
         yield put(newAction(AppAction.clearStorage));
       }
-      const settings = yield call(database.settings) as any; // TODO typings
+      const settings = (yield call(database.settings)) as SettingsObject;
       yield call(log.info, 'Saved App settings', settings);
-
       for (let propName of persistedFlags) {
         if (settings[propName] !== undefined) {
           const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
@@ -1113,7 +1111,15 @@ const sagas = {
         yield call(log.debug, 'Reading settings from database', newSettings);
         yield put(newAction(AppAction.setAppOption, newSettings));
       }
-      const { currentActivityId } = settings;
+      const { currentActivityId, pausedTime } = settings;
+      if (pausedTime) {
+        yield put(newAction(AppAction.setAppOption, {
+          pausedTime,
+          refTime: pausedTime,
+          scrollTime: pausedTime,
+          timelineRefTime: pausedTime,
+        }))
+      }
       yield call(Geo.initializeGeolocation, store, !!currentActivityId); // use highPower if have currentActivityId
       if (!recoveryMode) {
         if (currentActivityId) {
