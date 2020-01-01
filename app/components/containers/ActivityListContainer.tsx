@@ -54,12 +54,12 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
       if (activity.tEnd) {
         // Pressing some prior activity.
         dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
-        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime }));
+        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in onPressActivity
       } else {
         // Pressing the currentActivity.
         dispatch(newAction(AppAction.flagEnable, 'timelineNow'));
         dispatch(newAction(AppAction.startFollowingUser));
-        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() }));
+        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() })); // in onPressActivity
       }
       const appOptions = {
         scrollTime: newTime,
@@ -68,7 +68,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
       }
       log.debug('onPressActivity appOptions', appOptions);
       dispatch(newAction(AppAction.setAppOption, appOptions));
-      dispatch(newAction(AppAction.zoomToActivity, { id: activity.id }));
+      dispatch(newAction(AppAction.zoomToActivity, { id: activity.id })); // in onPressActivity
     }
   }
   const register = (component) => {

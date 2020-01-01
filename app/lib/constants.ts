@@ -408,7 +408,7 @@ const constants = {
     default: {
       opacity: 0.5,
       style: 'Satellite', // e.g. None, Trails, Topo, Satellite. See mapStyles.name
-      zoom: 14,
+      zoom: 10,
       zoomStartActivity: 16,
     },
     fitBounds: {

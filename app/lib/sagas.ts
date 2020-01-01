@@ -457,24 +457,26 @@ const sagas = {
         yield call(log.trace, 'saga centerMap', params);
         const { center, option, zoom } = params;
         if (center) {
-          let newCenter = center;
-          if (option === AbsoluteRelativeOption.relative) {
-            const currentCenter = yield call(map.getCenter as any);
-            yield call(log.trace, 'saga centerMap: currentCenter', currentCenter);
-            newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
-          }
-          if ((center[0] || center[1]) && haveUserLocation) {
-            yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
-          }
-          if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
-            const config = {
-              animationDuration: constants.map.centerMapDuration,
-              centerCoordinate: newCenter,
-              zoomLevel: zoom,
+          if (center[0] || center[1]) {
+            let newCenter = center;
+            if (option === AbsoluteRelativeOption.relative) {
+              const currentCenter = yield call(map.getCenter as any);
+              yield call(log.trace, 'saga centerMap: currentCenter', currentCenter);
+              newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
             }
-            yield call(map.setCamera as any, config);
-          } else {
-            yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
+            if ((center[0] || center[1]) && haveUserLocation) {
+              yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
+            }
+            if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
+              const config = {
+                animationDuration: constants.map.centerMapDuration,
+                centerCoordinate: newCenter,
+                zoomLevel: zoom,
+              }
+              yield call(map.setCamera as any, config);
+            } else {
+              yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
+            }
           }
         }
       } else {
@@ -565,8 +567,19 @@ const sagas = {
     try {
       const params = action.params as ContinueActivityParams;
       const { activityId } = params;
+      yield call(log.info, 'saga continueActivity', activityId);
       yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
-      yield put(newAction(AppAction.zoomToActivity, { id: activityId }));
+      const mapRendered = yield select((state: AppState) => state.flags.mapRendered);
+      if (!mapRendered) {
+        yield call(log.warn, 'mapRendered false in continueActivity');
+        yield take(AppAction.mapRendered);
+        yield delay(100); // TODO - fudge
+        const mapRenderedNow = yield select((state: AppState) => state.flags.mapRendered);
+        yield call(log.info, 'mapRenderedNow', mapRenderedNow);
+      }
+      yield put(newAction(AppAction.zoomToActivity, { id: activityId })); // in continueActivity
+      // const scrollTime = yield select((state: AppState) => state.options.scrollTime);
+      // yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in continueActivity
     } catch (err) {
       yield call(log.error, 'saga continueActivity', err);
     }
@@ -732,6 +745,10 @@ const sagas = {
     yield put(newAction(AppAction.flagEnable, 'mapMoving'));
   },
 
+  mapRendered: function* (action: Action) {
+    yield put(newAction(AppAction.flagEnable, 'mapRendered'));
+  },
+
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
     yield put(newAction(AppAction.closePanels));
@@ -849,9 +866,16 @@ const sagas = {
       yield put(newAction(AppAction.cache, { activities, populated: true, refreshCount }));
       const now = yield call(utils.now);
       yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp, 'count', activities.length);
+      yield put(newAction(AppAction.refreshCacheDone));
     } catch(err) {
       yield call(log.error, 'saga refreshCache', err);
     }
+  },
+
+  refreshCacheDone: function* (action: Action) {
+    yield call(log.trace, 'refreshCacheDone');
+    const scrollTime = yield select((state: AppState) => state.options.scrollTime);
+    yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in refreshCacheDone
   },
 
   // updates, or removes stale entry from cache, as needed
@@ -1001,7 +1025,7 @@ const sagas = {
     }
     const timelineScrolling = yield select((state: AppState) => state.flags.timelineScrolling);
     if (timelineScrolling && params.scrollTime !== undefined) {
-      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime }));
+      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // during timelineScrolling
       yield call(log.trace, 'setAppOption saga scrollTime:', params.scrollTime);
     }
     // Write through to settings in database, if needed
@@ -1084,7 +1108,8 @@ const sagas = {
           { currentActivityId: activityId, selectedActivityId: activityId }));
         yield put(newAction(AppAction.refreshCachedActivity, { activityId }));
         yield delay(0); // TODO seems required to allow ActivityList to get itself ready to scroll... race condition?
-        yield put(newAction(AppAction.scrollActivityList, { forceUpdate: true, scrollTime: utils.now() }));
+        const scrollTime = utils.now();
+        yield put(newAction(AppAction.scrollActivityList, { forceUpdate: true, scrollTime })); // in startActivity
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);
@@ -1152,7 +1177,7 @@ const sagas = {
             if (activity && activity.id) {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
               yield delay(2000); // TODO this gives map time to load, but shouldn't be needed
-              yield put(newAction(AppAction.zoomToActivity, { id: activity.id }));
+              yield put(newAction(AppAction.zoomToActivity, { id: activity.id })); // in startupActions
             }
           } else {
             yield put(newAction(AppAction.startFollowingUser));
@@ -1198,8 +1223,8 @@ const sagas = {
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,
           { currentActivityId: null, selectedActivityId: activityId, scrollTime: halfTime, viewTime: halfTime }));
-        yield put(newAction(AppAction.zoomToActivity, { id: activityId }));
-        yield put(newAction(AppAction.scrollActivityList, { scrollTime: halfTime }));
+        yield put(newAction(AppAction.zoomToActivity, { id: activityId })); // in stopActivity
+        yield put(newAction(AppAction.scrollActivityList, { scrollTime: halfTime })); // in stopActivity
       }
     } catch (err) {
       yield call(log.error, 'saga stopActivity', err);
@@ -1287,12 +1312,16 @@ const sagas = {
     const activity = cachedActivity(state, id);
     if (activity) {
       yield call(log.debug, 'saga zoomToActivity', activity.id);
+      if (!state.flags.mapRendered) {
+        yield call(log.info, 'mapRendered false in zoomToActivity');
+      }
       // Fit map bounds to bounds of activity (with padding)
       const { duration } = constants.map.fitBounds;
       const map = MapUtils();
       if (map && map.fitBounds) {
         const { latMax, latMin, lonMax, lonMin } = activity;
-        if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
+        if (latMax !== undefined && latMin !== undefined && latMax !== 0 && latMin !== 0 &&
+            lonMax !== undefined && lonMin !== undefined && lonMax !== 0 && lonMin !== 0) {
           map.fitBounds([lonMax, latMax], [lonMin, latMin], mapFitBounds(state), duration);
         }
         if (id === state.options.currentActivityId) { // zooming to currentActivity automatically engages following

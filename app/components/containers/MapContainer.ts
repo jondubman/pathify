@@ -13,13 +13,13 @@ interface MapAreaStateProps {
   mapHidden: boolean;
   mapStyleURL: string;
   width: number;
-  userLocation?: LocationEvent;
 }
 
 interface MapAreaDispatchProps {
   backgroundTapped: (args: any) => void;
   mapRegionChanged: (args: any) => void;
   mapRegionChanging: (args: any) => void;
+  mapRendered: (args: any) => void;
   mapTapped: (args: any) => void;
   userMovedMap: (args: any) => void;
 }
@@ -34,7 +34,6 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
     mapHidden: mapHidden(state),
     mapStyleURL: mapStyle.url,
     width,
-    userLocation: state.userLocation,
   }
 }
 
@@ -48,6 +47,9 @@ const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
     },
     mapRegionChanged: (args: any) => {
       dispatch(newAction(AppAction.mapRegionChanged, args));
+    },
+    mapRendered: (args: any) => {
+      dispatch(newAction(AppAction.mapRendered, args));
     },
     mapRegionChanging: (args: any) => {
       dispatch(newAction(AppAction.mapRegionChanging, args));

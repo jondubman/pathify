@@ -95,6 +95,7 @@ class MapArea extends Component<MapAreaProps> {
         </View>
       )
     }
+    const initialZoomLevel = 10;
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>
@@ -119,10 +120,11 @@ class MapArea extends Component<MapAreaProps> {
             zoomEnabled={true}
           >
             <Mapbox.Camera
+              animationDuration={0}
               followUserLocation={false}
               heading={0}
               ref={camera => { this._camera = camera }}
-              zoomLevel={constants.map.default.zoom}
+              zoomLevel={initialZoomLevel}
             />
             <MapDimmerContainer />
             <PathsContainer />
@@ -135,8 +137,10 @@ class MapArea extends Component<MapAreaProps> {
 
   fitBounds(neCoords: LonLat, swCoords: LonLat, paddingVerticalHorizontal: [number, number], duration: number) {
     if (this._camera) {
-      const camera = this._camera!;
-      camera.fitBounds(neCoords, swCoords, paddingVerticalHorizontal, duration);
+      if (!(neCoords[0] === 0 && neCoords[1] === 0 && swCoords[0] === 0 && swCoords[1] === 0)) {
+        const camera = this._camera!;
+        camera.fitBounds(neCoords, swCoords, paddingVerticalHorizontal, duration);
+      }
     }
   }
 
@@ -224,8 +228,8 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onDidFinishRenderingMapFully(...args) {
-    log.trace('onDidFinishRenderingMapFully', args);
-    // TODO flip a flag here in the Redux store that we can essentially wait for in a saga.
+    log.trace('onDidFinishRenderingMapFully --> mapRendered', args);
+    this.props.mapRendered(true);
   }
 
   async onPress(...args) {
