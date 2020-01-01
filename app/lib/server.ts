@@ -21,7 +21,7 @@ export const handleServerPush = async (data: any) => {
     // TODO For now, for convenience, assume that any JSON that comes in is an AppAction and just dispatch it with params.
     // TODO Handle other kinds of incoming JSON
     if (typeof data === 'object') {
-      log.info(`serverPush: message count ${data.length}`);
+      // log.info(`serverPush: message count ${data.length}`);
       for (let message of data) {
         log.debug('serverPush message', messageToLog(message));
         const action = message.type;

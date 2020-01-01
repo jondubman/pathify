@@ -2,7 +2,7 @@ import Realm from 'realm';
 
 // import log from './log';
 
-export const PathSchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
+export const PathSchema: Realm.ObjectSchema = { // Note: keep PathSchema and Path in sync, below!
   name: 'Path',
   primaryKey: 'id',
   properties: {

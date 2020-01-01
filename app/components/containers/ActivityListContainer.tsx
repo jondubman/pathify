@@ -45,7 +45,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
-
+  // TODO move most of this to selectActivity saga so it can be triggered independently
   const onPressActivity = (activity: ActivityDataExtended): void => {
     if (activity && activity.tStart) {
       log.debug('onPressActivity', activity.id);

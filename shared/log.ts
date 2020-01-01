@@ -1,7 +1,23 @@
 // Replacement for console that adds a prefix and handles exceptions.
+import Realm from 'realm';
 
 const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
+
+// @ts-ignore
+const productionMode = !(__DEV__); // __DEV__ is quite possibly undefined
+const debugMode = !productionMode;
+
+// type LogMethod = (level: string, ...args) => void;
+// export const LogSchema: Realm.ObjectSchema = {
+//   name: 'Log',
+//   primaryKey: 'id',
+//   properties: {
+//     t: 'number',
+//     level: 'string',
+// TODO
+//   }
+// }
 
 const log = {
   levels: ['trace', 'debug', 'info', 'warn', 'error', 'fatalError' ], // from low to high
@@ -9,9 +25,6 @@ const log = {
   // Note this is the only place in the app where console.log is used directly.
   // This is the lower-level function. Normally, use one of log.trace, log.debug, log.info, log.warn, log.error.
   inner: (level = 'info', ...args) => {
-    if (!__DEV__) {
-      return; // skip all logging for production
-    }
     if (!log.levels.includes(level)) {
       log.log('warn', 'app', `....pathify: Invalid log level ${level}`); // recurse one level deep
       level = 'warn'; // assume warn level if level unknown
@@ -19,9 +32,14 @@ const log = {
     try {
       logCount++;
       const logPrefix = `${logCount}${log.dotsFor(level)}${appName} ${level}`;
-      console.log(logPrefix, ...args); // prefix enables easy filtering in Console
+      if (debugMode) {
+        console.log(logPrefix, ...args); // prefix enables easy filtering in Console
+      }
+      // Now write to database if logging is enabled
     } catch (err) {
-      console.log(`${appName} log err ${err}`);
+      if (debugMode) {
+        console.log(`${appName} log err ${err}`);
+      }
     }
   },
 

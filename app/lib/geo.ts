@@ -467,10 +467,9 @@ export const Geo = {
           const locationEvent = newLocationEvent(location, activityId);
           locationEvents.push(locationEvent);
         }
-        log.debug('processSavedLocations: ready to addEvents');
-        if (locationEvents.length) {
-          store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
-        }
+        locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
+        log.debug('processSavedLocations: sorted, ready to addEvents');
+        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
         log.debug('processSavedLocations: ready to destroyLocations');
         await Geo.destroyLocations();
       }

@@ -107,7 +107,6 @@ const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): v
       oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
     }
     newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, true); // true: update
-
     migrationRequired = true;
   }
 }
@@ -185,12 +184,15 @@ const database = {
     return keptActivityIds;
   },
 
+  // It's quite likely that a minor schema change in the DB will not require any migration of Activities or Paths.
+  // The schemaVersion of the Activity/Path is stored on the Activity so migrations can be performed as needed.
   completeAnyMigration: () => {
     if (migrationRequired) {
       log.info('database.completeMigration');
 
       // Migrate Activities and Paths, based on underlying Events
-      store.dispatch(newAction(AppAction.refreshAllActivities));
+      // TODO full refresh is no longer needed in the general case
+      // store.dispatch(newAction(AppAction.refreshAllActivities));
     }
   },
 
@@ -299,12 +301,12 @@ const database = {
 
   // paths
 
-  appendToPath: ({ id, lat, lon }) => {
-    const path = database.pathById(id);
-    if (path) {
+  appendToPath: (update: PathUpdate) => {
+    const path = database.pathById(update.id);
+    if (path && update.lats && update.lons && update.lats.length === update.lons.length) {
       realm.write(() => {
-        path.lats.push(lat);
-        path.lons.push(lon);
+        path.lats.push(...update.lats);
+        path.lons.push(...update.lons);
       })
     }
   },

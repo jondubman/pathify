@@ -61,6 +61,7 @@ import {
   RefreshCachedActivityParams,
   RepeatedActionParams,
   ScrollActivityListParams,
+  SelectActivityParams,
   SequenceParams,
   SleepParams,
   StartActivityParams,
@@ -172,12 +173,12 @@ const sagas = {
     let lastNewLoc: LocationEvent | undefined;
     let previousEventTimestamp = 0;
 
-    // Scan through the new events to compute. This is a simple loop.
+    // Scan through the new events. This is a simple loop.
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const id = event.activityId;
       if (event.t < previousEventTimestamp) {
-        yield call(log.warn, 'addEvents: added events are out of order (not yet supported)');
+        yield call(log.warn, 'addEvents: added events are out of order');
       } else {
         previousEventTimestamp = event.t;
       }
@@ -204,10 +205,12 @@ const sagas = {
       if (activity) {
         const activityUpdate: ActivityData = {
           id: activity.id,
+          schemaVersion: constants.database.schemaVersion,
           count: (activity.count || 0) + events.length,
         }
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
         // The typical case of simply appending one or more events to an Activity is handled here with little work.
+        // We simply append to the path and avoid reformulating it entirely.
         // The case of inserting events in the middle of an existing Activity is handled by the else block below.
         const appending: boolean = !!(!firstNewLoc || firstNewLoc.t > activity.tLastUpdate);
         if (appending) {
@@ -223,6 +226,7 @@ const sagas = {
             activityUpdate.odo = lastNewLoc.odo;
           }
           // Scan through the events
+          const pathUpdate: PathUpdate = { id: activityId, lats: [], lons: [] };
           for (let i = 0; i < events.length; i++) {
             const event = events[i];
             if (event.type == EventType.LOC) {
@@ -233,10 +237,13 @@ const sagas = {
                 activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat);
                 activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon);
                 activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon);
-                database.appendToPath({ id: activity.id, lon, lat });
+                pathUpdate.lats.push(lat);
+                pathUpdate.lons.push(lon);
               }
             }
           }
+          database.appendToPath(pathUpdate);
+
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
           if (activity.tLastLoc && firstNewLoc) {
             const gapTime = firstNewLoc.t - activity.tLastLoc;
@@ -307,6 +314,7 @@ const sagas = {
           const cache: CacheInfo = yield select(state => state.cache);
           response = {
             activityCount: cache.activities ? cache.activities.length : 0,
+            populated: cache.populated || false,
             refreshCount: cache.refreshCount,
           }
           break;
@@ -751,7 +759,7 @@ const sagas = {
   refreshActivity: function* (action: Action) {
     const params = action.params as RefreshActivityParams;
     const { id } = params;
-    yield call(log.debug, 'saga refreshActivity', id);
+    // yield call(log.trace, 'saga refreshActivity', id);
     const eventsForActivity = yield call(database.eventsForActivity, id);
     const { currentActivityId } = yield select((state: AppState) => state.options);
     const { schemaVersion } = constants.database;
@@ -815,7 +823,7 @@ const sagas = {
   },
 
   refreshActivityDone: function* (action: Action) {
-    yield call(log.trace, 'refreshActivityDone');
+    // yield call(log.trace, 'refreshActivityDone');
   },
 
   refreshAllActivities: function* (action: Action) {
@@ -852,7 +860,7 @@ const sagas = {
       const params = action.params as RefreshCachedActivityParams;
       const id = params.activityId;
       const { remove } = params;
-      yield call(log.debug, 'saga refreshCachedActivity', id);
+      // yield call(log.trace, 'saga refreshCachedActivity', id);
       const refreshCount = (yield select((state: AppState) => state.cache.refreshCount)) + 1;
       const activity = remove ? null : database.activityById(id);
       if (activity) {
@@ -912,6 +920,18 @@ const sagas = {
 
   scrollTimeline: function* (action: Action) {
     yield call(log.trace, 'saga scroll TODO');
+  },
+
+  selectActivity: function* (action: Action) {
+    yield call(log.trace, 'saga ');
+    try {
+      const params = action.params as SelectActivityParams;
+      const id = params.id;
+      // TODO
+      yield call(log.debug, 'saga selectActivity', id);
+    } catch (err) {
+      yield call(log.error, 'saga selectActivity', err);
+    }
   },
 
   // The sequence action is an array of actions to be executed in sequence, such that
@@ -1113,11 +1133,12 @@ const sagas = {
       }
       const { currentActivityId, pausedTime } = settings;
       if (pausedTime) {
-        yield put(newAction(AppAction.setAppOption, {
+        yield call(log.trace, 'startupActions: pausedTime', pausedTime);
+        yield put(newAction(AppAction.setAppOption, { // TODO review
           pausedTime,
-          refTime: pausedTime,
           scrollTime: pausedTime,
           timelineRefTime: pausedTime,
+          viewTime: pausedTime,
         }))
       }
       yield call(Geo.initializeGeolocation, store, !!currentActivityId); // use highPower if have currentActivityId
@@ -1126,7 +1147,16 @@ const sagas = {
           yield call(log.info, 'Continuing previous activity...');
           yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
         } else {
-          yield put(newAction(AppAction.startFollowingUser));
+          if (pausedTime) {
+            const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
+            if (activity && activity.id) {
+              yield call(log.trace, 'startupActions: activity.id', activity.id);
+              yield delay(2000); // TODO this gives map time to load, but shouldn't be needed
+              yield put(newAction(AppAction.zoomToActivity, { id: activity.id }));
+            }
+          } else {
+            yield put(newAction(AppAction.startFollowingUser));
+          }
         }
       }
     } catch (err) {

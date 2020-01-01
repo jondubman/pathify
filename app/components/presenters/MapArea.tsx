@@ -103,6 +103,7 @@ class MapArea extends Component<MapAreaProps> {
             compassEnabled={false}
             contentInset={[0, 0, 0, 0]}
             logoEnabled={true}
+            onDidFinishRenderingMapFully={this.onDidFinishRenderingMapFully}
             onPress={this.onPress}
             onRegionDidChange={this.onRegionDidChange}
             onRegionWillChange={this.onRegionWillChange}
@@ -223,7 +224,8 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onDidFinishRenderingMapFully(...args) {
-    // log.trace('onDidFinishRenderingMapFully', args);
+    log.trace('onDidFinishRenderingMapFully', args);
+    // TODO flip a flag here in the Redux store that we can essentially wait for in a saga.
   }
 
   async onPress(...args) {

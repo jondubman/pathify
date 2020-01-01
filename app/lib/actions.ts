@@ -64,6 +64,7 @@ export enum AppAction {
   'restartApp' = 'restartApp',
   'scrollTimeline' = 'scrollTimeline',
   'scrollActivityList' = 'scrollActivityList',
+  'selectActivity' = 'selectActivity',
   'sequence' = 'sequence',
   'setAppOption' = 'setAppOption',
   'setAppOptionASAP' = 'setAppOptionASAP',
@@ -196,6 +197,10 @@ export interface ScrollActivityListParams {
 export interface ScrollTimelineParams {
   offset?: number;
   index?: number;
+}
+
+export interface SelectActivityParams {
+  id: string;
 }
 
 export type SequenceParams = Action[];
