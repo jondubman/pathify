@@ -12,10 +12,7 @@ export const PathSchema: Realm.ObjectSchema = { // Note: keep PathSchema and Pat
   },
 }
 
-export interface Path extends Realm.Object {
-  id: string; // should match id of corresponding Activity
-  lats: number[]; // required, may be empty, should have same length as pathLons
-  lons: number[]; // required, may be empty
+export interface Path extends PathUpdate, Realm.Object {
 }
 
 export interface PathUpdate {

@@ -12,7 +12,6 @@ import {
   ActivityData,
   ActivitySchema,
 } from 'shared/activities';
-import { LonLat } from 'shared/locations';
 import {
   Path,
   PathSchema,
@@ -28,6 +27,24 @@ import {
 } from 'shared/timeseries';
 
 import log from 'shared/log';
+
+export const LogSchema: Realm.ObjectSchema = {
+  name: 'Log',
+  properties: {
+    t: { type: 'int', indexed: true },
+    level: 'string',
+    items: 'string[]',
+  }
+}
+
+export interface LogMessage extends LogMessageData, Realm.Object {
+}
+
+export interface LogMessageData {
+  t: number,
+  level: string,
+  items: string[],
+}
 
 const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything else to persist across app sessions
   name: 'Settings',
@@ -67,9 +84,10 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   timelineZoomValue: number,
 }
 
-const schema = [
+const schemaList = [
   ActivitySchema,
   EventSchema,
+  LogSchema,
   PathSchema,
   SettingsSchema,
 ]
@@ -114,7 +132,7 @@ const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): v
 const config: Realm.Configuration = {
   deleteRealmIfMigrationNeeded: false, // Use false for production, as using true will result in irreversible data loss!
   migration,
-  schema,
+  schema: schemaList,
   schemaVersion,
 }
 const realm = new Realm(config); // This performs a migration if needed
@@ -272,6 +290,28 @@ const database = {
     return realm.objects('Event')
                 .filtered('tStart >= $0', Math.max(0, Date.now() - sharedConstants.maxAgeEvents))
                 .sorted('t'); // always sort by time (which is indexed) first
+  },
+
+  // logs
+
+  appendLogMessage: async (message: LogMessageData) => {
+    realm.write(() => {
+      realm.create('Log', message, Realm.UpdateMode.All);
+    })
+  },
+
+  clearLogs: async () => {
+    let logs = realm.objects('Log')
+    if (logs.length) {
+      realm.write(() => {
+        realm.delete(logs);
+      })
+    }
+  },
+
+  logs: () => {
+    return realm.objects('Log')
+                .sorted('t');
   },
 
   // settings

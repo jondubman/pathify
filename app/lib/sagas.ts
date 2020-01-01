@@ -68,7 +68,7 @@ import {
   ZoomToActivityParams,
 } from 'lib/actions'
 import constants from 'lib/constants';
-import database, { SettingsObject } from 'lib/database';
+import database, { LogMessage, SettingsObject } from 'lib/database';
 import { Geo } from 'lib/geo';
 import {
   cachedActivity,
@@ -324,6 +324,7 @@ const sagas = {
             activities: (yield call(database.activities)).length,
             counts: (yield select((state: AppState) => state.counts)),
             events: (yield call(database.events)).length,
+            logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
             schemaVersion: constants.database.schemaVersion,
           }
@@ -364,6 +365,17 @@ const sagas = {
         }
         case 'lastStartupTime': {
           response = lastStartupTime(yield call(database.events));
+          break;
+        }
+        case 'logs': {
+          const logs = (yield call(database.logs)).slice(0, constants.maxLogsToTransmit);
+          response = logs.map((message: LogMessage) => (
+            {
+              t: message.t,
+              level: message.level,
+              items: message.items.map((item: any) => JSON.parse(item)),
+            }
+          ))
           break;
         }
         case 'options': {
@@ -505,6 +517,12 @@ const sagas = {
     } catch (err) {
       yield call(log.error, 'saga centerMapOnUser', err);
     }
+  },
+
+  clearLogs: function* () {
+    log.debug('saga clearLogs');
+    yield call(database.clearLogs);
+    log.info('logs cleared');
   },
 
   // Caution: clearStorage is highly destructive, without warning or confirmation!
@@ -1320,8 +1338,7 @@ const sagas = {
       const map = MapUtils();
       if (map && map.fitBounds) {
         const { latMax, latMin, lonMax, lonMin } = activity;
-        if (latMax !== undefined && latMin !== undefined && latMax !== 0 && latMin !== 0 &&
-            lonMax !== undefined && lonMin !== undefined && lonMax !== 0 && lonMin !== 0) {
+        if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
           map.fitBounds([lonMax, latMax], [lonMin, latMin], mapFitBounds(state), duration);
         }
         if (id === state.options.currentActivityId) { // zooming to currentActivity automatically engages following

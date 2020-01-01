@@ -83,13 +83,13 @@ export const getFromServer = async (route: string, message: any = {}) => {
 
 export const postToServer = async (route: string, message: any = {}) => {
   try {
-    log.info('postToServer', route, message);
+    // log.info('postToServer', route, message);
     const url = serverUrl + route;
     const method = 'POST';
     const body = JSON.stringify(message);
     const response = await fetch(url, { method, headers, body });
     const serverReply = await response.json();
-    log.info('serverReply', serverReply);
+    // log.info('serverReply', serverReply);
   } catch (err) {
     log.warn('postToServer', err);
   }

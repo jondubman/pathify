@@ -73,7 +73,7 @@ const colorThemes = {
 }
 
 // For Realm database
-const schemaVersion = 15;
+const schemaVersion = 16;
 
 const buttonOffset = 6;
 const buttonSize = 50;
@@ -433,6 +433,7 @@ const constants = {
     rectHeight: 0,
     pointLength: 30,
   },
+  maxLogsToTransmit: 100,
   maxTimeGapForContinuousTrack: interval.seconds(5),
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'

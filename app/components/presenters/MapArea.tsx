@@ -95,7 +95,6 @@ class MapArea extends Component<MapAreaProps> {
         </View>
       )
     }
-    const initialZoomLevel = 10;
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>
@@ -124,7 +123,7 @@ class MapArea extends Component<MapAreaProps> {
               followUserLocation={false}
               heading={0}
               ref={camera => { this._camera = camera }}
-              zoomLevel={initialZoomLevel}
+              zoomLevel={constants.map.default.zoom}
             />
             <MapDimmerContainer />
             <PathsContainer />

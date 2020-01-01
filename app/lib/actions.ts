@@ -37,6 +37,7 @@ export enum AppAction {
   'cache' = 'cache',
   'centerMap' = 'centerMap',
   'centerMapOnUser' = 'centerMapOnUser',
+  'clearLogs' = 'clearLogs',
   'clearStorage' = 'clearStorage',
   'clockPress' = 'clockPress',
   'closePanels' = 'closePanels',

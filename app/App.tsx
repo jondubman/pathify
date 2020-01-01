@@ -15,6 +15,7 @@ import {
   ReducerAction
 } from 'lib/actions';
 import constants from 'lib/constants';
+import database, { LogMessageData } from 'lib/database';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
@@ -38,6 +39,16 @@ export default class App extends Component {
 
   componentDidMount() {
     try {
+      log.registerCallback((level: string, ...args) => {
+        const message: LogMessageData = {
+          t: utils.now(),
+          level,
+          items: [...args].map((arg: any) => JSON.stringify(arg)),
+        }
+        setTimeout(() => {
+          database.appendLogMessage(message);
+        }, 0);
+      })
       log.info('----- App starting up! (device log)');
       log.info('windowSize', utils.windowSize());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);

@@ -45,6 +45,7 @@ export const initialAppState = {
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel
+    logToDatabase: true, // TODO
     mapDisable: false, // if true, map will not be shown at all
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)

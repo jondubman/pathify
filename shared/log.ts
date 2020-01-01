@@ -1,6 +1,4 @@
 // Replacement for console that adds a prefix and handles exceptions.
-import Realm from 'realm';
-
 const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
@@ -8,16 +6,8 @@ let logCount = 0;
 const productionMode = !(__DEV__); // __DEV__ is quite possibly undefined
 const debugMode = !productionMode;
 
-// type LogMethod = (level: string, ...args) => void;
-// export const LogSchema: Realm.ObjectSchema = {
-//   name: 'Log',
-//   primaryKey: 'id',
-//   properties: {
-//     t: 'number',
-//     level: 'string',
-// TODO
-//   }
-// }
+type LogMethod = (level: string, ...args) => void;
+let _callback: LogMethod;
 
 const log = {
   levels: ['trace', 'debug', 'info', 'warn', 'error', 'fatalError' ], // from low to high
@@ -34,6 +24,9 @@ const log = {
       const logPrefix = `${logCount}${log.dotsFor(level)}${appName} ${level}`;
       if (debugMode) {
         console.log(logPrefix, ...args); // prefix enables easy filtering in Console
+      }
+      if (_callback) {
+        _callback(level, ...args);
       }
       // Now write to database if logging is enabled
     } catch (err) {
@@ -93,6 +86,10 @@ const log = {
     log.warn = logger.warn;
     log.error = logger.error;
     log.fatalError = logger.fatalError;
+  },
+
+  registerCallback: (callback: LogMethod) => {
+    _callback = callback;
   },
 }
 

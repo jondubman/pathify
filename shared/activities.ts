@@ -37,34 +37,7 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
   },
 }
 
-export interface Activity extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
-  id: string; // use matching activityId for corresponding START and END marks and events collected between
-  schemaVersion: number;
-
-  odoStart: number; // odo of the earliest location in the activity
-  tLastLoc?: Timepoint; // optional
-  tLastUpdate: Timepoint; // required
-  tStart: Timepoint; // required
-  tEnd: Timepoint; // required
-
-  // metrics
-  count?: number; // of events
-
-  maxGapTime?: number; // msec
-  tMaxGapTime?: number; //timestamp
-
-  odo?: number; // total distance
-  maxGapDistance?: number; // meters
-  tMaxGapDistance?: number; // timestamp
-
-  gain?: number; // total elevation gain
-  loss?: number; // total elevation loss
-
-  // bounds
-  latMax?: number;
-  latMin?: number;
-  lonMax?: number;
-  lonMin?: number;
+export interface Activity extends ActivityData, Realm.Object {
 }
 export type Activities = Activity[];
 
