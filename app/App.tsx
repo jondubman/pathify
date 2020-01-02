@@ -45,7 +45,7 @@ export default class App extends Component {
           level,
           items: [...args].map((arg: any) => JSON.stringify(arg)),
         }
-        setTimeout(() => {
+        setTimeout(() => { // avoid blocking
           database.appendLogMessage(message);
         }, 0);
       })
@@ -53,12 +53,8 @@ export default class App extends Component {
       log.info('windowSize', utils.windowSize());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       store.create(); // proactively create Redux store instance
-      store.dispatch(newAction(AppAction.startupActions));
-      this.handleAppStateChange('startup'); // initialize
       RNAppState.addEventListener('change', this.handleAppStateChange);
-      if (RNAppState.currentState === 'active') {
-        this.handleAppStateChange('active');
-      }
+      store.dispatch(newAction(AppAction.startupActions));
       const interval = setInterval(() => {
         const { flags } = store.getState();
         if (flags.appActive && flags.ticksEnabled) {
@@ -66,7 +62,7 @@ export default class App extends Component {
         }
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
-      setTimeout(pollServer, 0); // attempt to stay in contact with server
+      setTimeout(pollServer, 0); // attempt to stay in contact with server TODO always do this in the background?
     } catch (err) {
       log.warn('App componentDidMount err', err);
     }
@@ -79,9 +75,7 @@ export default class App extends Component {
 
   handleAppStateChange(newState: string) {
     log.debug('app state change:', newState);
-    store.dispatch(newAction(AppAction.appStateChange,
-      { newState: mapNewStateToAppStateChange[newState] }
-    ))
+    store.dispatch(newAction(AppAction.appStateChange, { newState: mapNewStateToAppStateChange[newState] }));
   }
 
   render() {

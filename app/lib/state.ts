@@ -37,7 +37,6 @@ export const initialAppState = {
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     allowMapStyleNone: false, // really only useful for debugging / perf
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
-    backgroundGeolocation: false, // until enabled
     clockMenuOpen: false,
     flag1: false, // for experimentation
     flag2: false, // for experimentation
@@ -76,7 +75,7 @@ export const initialAppState = {
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
   options: { // non-boolean
-    appState: AppStateChange,
+    appState: AppStateChange.STARTUP as AppStateChange,
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: '', // while tracking Activity
     decelerationRate: 0, // for ScrolLViews

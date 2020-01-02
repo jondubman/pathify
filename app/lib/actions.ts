@@ -76,7 +76,6 @@ export enum AppAction {
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',
   'startActivity' = 'startActivity',
-  'startOrStopActivity' = 'startOrStopActivity',
   'startupActions' = 'startupActions',
   'stopActivity' = 'stopActivity',
   'timelineZoomed' = 'timelineZoomed',
@@ -134,6 +133,7 @@ export interface AddEventsParams {
 
 export interface AppStateChangeParams {
   newState: AppStateChange;
+  manual?: boolean;
 }
 
 export interface CenterMapParams {

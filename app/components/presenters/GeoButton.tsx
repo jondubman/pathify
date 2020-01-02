@@ -46,7 +46,7 @@ const GeoButton = (props: GeoButtonProps) => (
       bottom: props.bottomOffset,
       left: leftOffset,
     }]}
-    onPress={props.onPress}
+    onPress={props.enabled ? props.onStop : props.onStart}
     underlayColor={props.enabled ? colors.enabledUnderlay : colors.disabledUnderlay}
   >
     {props.enabled ? (

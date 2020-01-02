@@ -14,7 +14,6 @@ export interface AppQueryDescriptor {
   limit?: number; // applies to events
   pageSize: number; // applies to logs, works with startIndex
   since: number; // timestamp, applies to events
-  sinceLastStartup?: boolean; // applies to events
   startIndex?: number; // applies to logs and events
   timeRange?: TimeRange; // applies to events
 }

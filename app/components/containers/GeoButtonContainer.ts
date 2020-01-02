@@ -15,7 +15,8 @@ interface GeoButtonStateProps {
 }
 
 interface GeoButtonDispatchProps {
-  onPress: (event: GestureResponderEvent) => void;
+  onStart: (event: GestureResponderEvent) => void;
+  onStop: (event: GestureResponderEvent) => void;
 }
 
 export type GeoButtonProps = GeoButtonStateProps & GeoButtonDispatchProps;
@@ -28,12 +29,17 @@ const mapStateToProps = (state: AppState): GeoButtonStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): GeoButtonDispatchProps => {
-  const onPress = () => {
-    log.debug('GeoButton press');
-    dispatch(newAction(AppAction.startOrStopActivity));
+  const onStart = () => {
+    log.debug('GeoButton press START');
+    dispatch(newAction(AppAction.startActivity));
+  }
+  const onStop = () => {
+    log.debug('GeoButton press STOP');
+    dispatch(newAction(AppAction.stopActivity));
   }
   const dispatchers = {
-    onPress,
+    onStart,
+    onStop,
   }
   return dispatchers;
 }

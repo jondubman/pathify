@@ -27,6 +27,9 @@ import {
   AlertButton,
 } from 'react-native';
 import { Polygon } from '@turf/helpers';
+import {
+  AppState as RNAppState,
+} from 'react-native';
 import RNRestart from 'react-native-restart';
 import {
   call,
@@ -95,7 +98,6 @@ import {
   loggableActivity,
 } from 'shared/activities';
 import {
-  lastStartupTime,
   AppUserActionEvent,
   AppStateChange,
   AppStateChangeEvent,
@@ -337,9 +339,7 @@ const sagas = {
         case 'events': {
           const events = yield call(database.events);
           let timeRange = query.timeRange || [0, Infinity];
-          if (query.sinceLastStartup) {
-            timeRange = [lastStartupTime(events) || timeRange[0], Math.min(timeRange[1], Infinity)];
-          } else if (query.since) {
+          if (query.since) {
             timeRange[0] = query.since;
           }
           let eventsFiltered = timeRange ? timeseries.filterByTime(events, timeRange) : events;
@@ -361,10 +361,6 @@ const sagas = {
         }
         case 'eventCount': { // quick count of the total, no overhead
           response = (yield call(database.events)).length;
-          break;
-        }
-        case 'lastStartupTime': {
-          response = lastStartupTime(yield call(database.events));
           break;
         }
         case 'logs': {
@@ -425,11 +421,16 @@ const sagas = {
 
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
-    const { newState } = params;
-    yield call(log.info, `appStateChange saga: ${newState}`);
+    const { manual, newState } = params;
+    const stillStartingUp = yield select((state: AppState) => state.options.appState === AppStateChange.STARTUP);
+    if (!manual && stillStartingUp) {
+      yield call(log.info, `appStateChange saga: ${newState} but still starting up, ignoring`);
+      return;
+    }
+    yield call(log.info, `appStateChange saga: ${newState}${manual ? ', invoked manually' : ''}`);
     yield call(Geo.countLocations);
-    const activeNow = (newState === AppStateChange.ACTIVE);
-    yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
+    const activating = (newState === AppStateChange.ACTIVE);
+    yield put(newAction(activating ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     yield put(newAction(AppAction.setAppOption, { appState: newState }));
     const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
       t: utils.now(),
@@ -437,8 +438,9 @@ const sagas = {
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const { recoveryMode } = yield select((state: AppState) => state.flags);
-    if (activeNow) { // Don't do this in the background... might take too long
+    const { recoveryMode, trackingActivity } = yield select((state: AppState) => state.flags);
+    if (activating) { // Don't do this in the background... might take too long
+      yield call(Geo.setConfig, trackingActivity, false); // background false, meaning foreground
       if (!recoveryMode) {
         yield call(Geo.processSavedLocations);
       }
@@ -446,6 +448,10 @@ const sagas = {
       yield call(log.debug, 'cache has been populated:', populated);
       if (!populated) { // Populate the cache for the first time
         yield put(newAction(AppAction.refreshCache));
+      }
+    } else {
+      if (newState === AppStateChange.BACKGROUND) {
+        yield call(Geo.setConfig, trackingActivity, true); // background true
       }
     }
   },
@@ -667,20 +673,19 @@ const sagas = {
         yield call(database.changeSettings, { [flagName]: enabledNow });
       }
     }
-    if (flagName === 'backgroundGeolocation') {
-      yield call(Geo.enableBackgroundGeolocation, enabledNow);
-      if (flags.setPaceAfterStart && enabledNow) {
-        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
-        yield call(Geo.changePace, true, () => {
-          log.debug('BackgroundGeolocation pace manually set to moving');
-        })
-      }
-    }
     if (flagName === 'timelineNow') {
       if (enabledNow) {
         const pausedTime = yield select((state: AppState) => state.options.viewTime); // current pos of timeline
         yield put(newAction(AppAction.setAppOption, { pausedTime })); // remember prior position of timeline
         yield put(newAction(AppAction.timerTick, utils.now()));
+      }
+    }
+    if (flagName === 'trackingActivity') {
+      if (flags.setPaceAfterStart && enabledNow) {
+        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
+        yield call(Geo.changePace, true, () => {
+          log.debug('BackgroundGeolocation pace manually set to moving');
+        })
       }
     }
   },
@@ -1103,8 +1108,9 @@ const sagas = {
       const continueActivityId = params.continueActivityId || undefined;
       const trackingActivity = yield select(state => state.flags.trackingActivity);
       if (!trackingActivity) {
-        yield put(newAction(AppAction.flagEnable, 'backgroundGeolocation'));
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
+        const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
+        yield call(Geo.setConfig, true, background);
         yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield put(newAction(AppAction.startFollowingUser));
         yield put(newAction(AppAction.centerMap, {
@@ -1145,20 +1151,6 @@ const sagas = {
     }
   },
 
-  // Toggle
-  startOrStopActivity: function* () {
-    try {
-      const trackingActivity = yield select(state => state.flags.trackingActivity);
-      if (trackingActivity) {
-        yield put(newAction(AppAction.stopActivity));
-      } else {
-        yield put(newAction(AppAction.startActivity));
-      }
-    } catch (err) {
-      yield call(log.error, 'saga startOrStopActivity', err);
-    }
-  },
-
   startupActions: function* () {
     try {
       yield call(log.debug, 'saga startupActions');
@@ -1195,9 +1187,12 @@ const sagas = {
           viewTime: pausedTime,
         }))
       }
-      yield call(Geo.initializeGeolocation, store, !!currentActivityId); // use highPower if have currentActivityId
+      const tracking = !!currentActivityId;
+      const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
+      yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
+      yield call(Geo.startBackgroundGeolocation); // start this right away
       if (!recoveryMode) {
-        if (currentActivityId) {
+        if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
           yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
         } else {
@@ -1209,10 +1204,14 @@ const sagas = {
               yield put(newAction(AppAction.zoomToActivity, { id: activity.id })); // in startupActions
             }
           } else {
-            yield put(newAction(AppAction.startFollowingUser));
+            yield put(newAction(AppAction.startFollowingUser)); // TODO keep?
           }
         }
       }
+      // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
+      const runningInBackgroundNow = !(RNAppState.currentState === 'active');
+      const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
+      yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
     }
@@ -1222,7 +1221,6 @@ const sagas = {
     try {
       const trackingActivity = yield select(state => state.flags.trackingActivity);
       if (trackingActivity) {
-        yield put(newAction(AppAction.flagDisable, 'backgroundGeolocation'));
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
         const activityId = yield select(state => state.options.currentActivityId);
         const now = utils.now();
@@ -1260,12 +1258,11 @@ const sagas = {
     }
   },
 
-  // Follow the user, recentering map right away, kicking off background geolocation if needed.
+  // Follow the user, recentering map right away.
   startFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga startFollowingUser');
       yield put(newAction(AppAction.flagEnable, 'followingUser'));
-      yield call(Geo.startBackgroundGeolocation, 'navigating');
       const map = MapUtils();
       if (map) {
         yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
@@ -1281,8 +1278,6 @@ const sagas = {
     try {
       yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(AppAction.flagDisable, 'followingUser'));
-      // TODO leave background geolocation running in 'navigating' mode.
-      // yield call(Geo.stopBackgroundGeolocation, 'navigating');
     } catch (err) {
       yield call(log.error, 'saga stopFollowingUser', err);
     }

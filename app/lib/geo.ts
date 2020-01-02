@@ -40,27 +40,21 @@ import timeseries, { EventType } from 'shared/timeseries';
 
 // pausesLocationUpdatesAutomatically: true, (sets disableStopDetection: true and prevents preventSuspend from working)
 
-const geolocationOptions: Config = {
-  autoSync: true, // TODO3
+const geoconfig_default: Config = {
   // --------------
   // Common Options
   // --------------
-  // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
-  // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
-  // desiredAccuracy: 0,
-  // distanceFilter: 10, // meters device must move to generate update event, default 10
+  distanceFilter: 10, // meters device must move to generate update event, default 10
 
   // set true to disable automatic speed-based #distanceFilter elasticity
   // (device moving at highway speeds -> locations returned at ~1/km)
   disableElasticity: true, // default false
   // stopAfterElapsedMinutes: 30,
-  persistMode: BackgroundGeolocation.PERSIST_MODE_ALL, // PERSIST_MODE_ALL is the default
   stopOnStationary: false, // default false
 
   // ----------------------------
   // Activity Recognition Options
   // ----------------------------
-
   // number of minutes to wait before turning off location-services after the
   // ActivityRecognition System (ARS) detects the device is STILL.
   // stopTimeout: 3, // minutes
@@ -73,13 +67,11 @@ const geolocationOptions: Config = {
   // If 0, stop-detection system engages when device is stationary.
   // stopDetectionDelay: 1, // minutes
 
-  // Location accuracy threshold in meters for odometer calculations. Default 100m.
-  // desiredOdometerAccuracy: 10,
-
   // -------------------
   // Application Options
   // -------------------
-  stopOnTerminate: true, // set false to continue tracking after user terminates the app
+  // stopOnTerminate: true, // set false to continue tracking after user terminates the app
+  stopOnTerminate: false, // TODO
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
   heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
 
@@ -87,7 +79,6 @@ const geolocationOptions: Config = {
   // Geofencing Options
   // ------------------
   // https://github.com/transistorsoft/react-native-background-geolocation/blob/master/docs/geofencing.md
-
   // Radius to query for geofences within proximity. Default 1000m.
   // When using Geofences, the plugin activates only those in proximity.
   // Only 20 geofences can be simultaneously monitored on iOS, and 100 on Android.
@@ -101,7 +92,6 @@ const geolocationOptions: Config = {
   // -----------------------
   // Logging & Debug options
   // -----------------------
-
   // https://github.com/transistorsoft/react-native-background-geolocation/wiki/Debug-Sounds
   debug: false, // with debug sounds, default false
   // iOS NOTE: In addition, you must manually enable the Audio and Airplay background mode
@@ -110,11 +100,9 @@ const geolocationOptions: Config = {
   // ----------------
   // iOS-only options
   // ----------------
-
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   // stationaryRadius: 1,
-
   useSignificantChangesOnly: false, // default false
   locationAuthorizationRequest: 'Always', // either Always or WhenInUse
   // locationAuthorizationAlert: {}, // default {}
@@ -134,52 +122,39 @@ const geolocationOptions: Config = {
   // If the device is not currently moving, the stop detection system will still engage.
   // After stopTimeout minutes without movement, the plugin will enter the stationary state, as usual.
   isMoving: true,
-}
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION, // higher than DESIRED_ACCURACY_HIGH, on iOS
+  desiredOdometerAccuracy: 30, // Location accuracy threshold in meters for odometer calculations (plugin default 100m)
 
-// stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
-// TODO4 restore this
-const geolocationOptions_lowPower: Config = {
-  ...geolocationOptions,
-
-  // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
-  // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
-  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
-
-  desiredOdometerAccuracy: 30, // Location accuracy threshold in meters for odometer calculations.
-
-  distanceFilter: 10, // meters device must move to generate update event, default 10
-  // heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
-  persistMode: BackgroundGeolocation.PERSIST_MODE_NONE, // TODO
-  preventSuspend: false, // default false TODO
+  persistMode: BackgroundGeolocation.PERSIST_MODE_NONE,
+  // preventSuspend: false, // default false TODO
+  preventSuspend: true, // default false TODO
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 10, // meters
 
+  // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
   stopDetectionDelay: 1, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  // stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
+  stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
-const geolocationOptions_highPower: Config = {
-  ...geolocationOptions,
+const geoconfig_tracking: Config = {
+  ...geoconfig_default,
+
   // desired time between activity detections.
   // Larger values will result in fewer activity detections while improving battery life.
   // A value of 0 will result in activity detections at the fastest possible rate.
   activityRecognitionInterval: 1000, // msec
-  // Specify the desired-accuracy of the geolocation system with 1 of 4 values, 0, 10, 100, 1000 where
-  // 0 means HIGHEST POWER, HIGHEST ACCURACY and 1000 means LOWEST POWER, LOWEST ACCURACY
-  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION,
-  desiredOdometerAccuracy: 30, // Location accuracy threshold in meters for odometer calculations.
-  disableStopDetection: false,
+  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION, // higher than DESIRED_ACCURACY_HIGH, on iOS
+  disableStopDetection: false, // using false is vastly more power-efficient!
   distanceFilter: 1, // meters device must move to generate update event, default 10
-  forceReloadOnBoot: true, // TODO
-  // heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
-  // logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE, // TODO3
-  logLevel: BackgroundGeolocation.LOG_LEVEL_ERROR, // TODO3
+  forceReloadOnBoot: true,
+  // logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+  logLevel: BackgroundGeolocation.LOG_LEVEL_ERROR,
   preventSuspend: true, // default false (note true has major battery impact!)
   maxDaysToPersist: 14,
-  persistMode: BackgroundGeolocation.PERSIST_MODE_NONE, // TODO
-  // when stopped, the minimum distance (meters) the device must move beyond the stationary location
+  persistMode: BackgroundGeolocation.PERSIST_MODE_NONE, // note geoconfig_tracking_background below
+  // stationaryRadius: when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
@@ -187,7 +162,7 @@ const geolocationOptions_highPower: Config = {
   stopOnTerminate: false,
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
 
-  // TODO3 for diagnosis via HTTP POST
+  // TODO for diagnosis via HTTP POST
   // batchSync: true,
   // params: BackgroundGeolocation.transistorTrackerParams(DeviceInfo),
   // params: {
@@ -204,16 +179,10 @@ const geolocationOptions_highPower: Config = {
   // url: 'http://tracker.transistorsoft.com/locations/jondubman',
 }
 
-const geolocationOptions_background_tracking: Config = {
-  ...geolocationOptions_highPower,
-  persistMode: BackgroundGeolocation.PERSIST_MODE_ALL, // TODO
+const geoconfig_tracking_background: Config = {
+  ...geoconfig_tracking,
+  persistMode: BackgroundGeolocation.PERSIST_MODE_ALL,
 }
-
-const geolocationOptions_default: Config = geolocationOptions_lowPower; // TODO
-
-const reasons = {}; // to enable backgroundGeolocation (see startBackgroundGeolocation)
-const haveReason = () => Object.values(reasons).includes(true); // do we have a reason for backgroundGeolocation?
-// const haveReasonBesides = (reason: string) => Object.values(utils.objectWithoutKey(reasons, reason)).includes(true);
 
 const newLocationEvent = (info: Location, activityId: string | undefined): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
@@ -267,9 +236,10 @@ const newModeChangeEvent = (activity: string, confidence: number, activityId: st
 
 export const Geo = {
 
-  initializeGeolocation: async (store: Store, highPower: boolean = false) => {
+  // resolve to true if launched in background
+  initializeGeolocation: async (store: Store, tracking: boolean = false) => {
     try {
-      log.debug('initializeGeolocation: highPower', highPower);
+      log.debug('initializeGeolocation: tracking', tracking);
 
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
@@ -290,14 +260,14 @@ export const Geo = {
         // (iOS requires preventSuspend: true as well).
         try {
           log.debug('onHeartbeat', event.location.timestamp);
-          await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO3
+          await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO helpful? needed?
         } catch(err) {
           log.warn('onHeartbeat error', err);
         }
       }
-      // const onHttp = (response: HttpEvent) => {
-      //   // log.trace('BackgroundGeolocation onHttp', response);
-      // }
+      const onHttp = (response: HttpEvent) => {
+        log.trace('BackgroundGeolocation onHttp', response);
+      }
       const onLocationError = (error: LocationError) => {
         let errorMessage;
         if (error === 0) errorMessage = 'Location unknown';
@@ -318,23 +288,21 @@ export const Geo = {
       BackgroundGeolocation.onGeofence(onGeofence);
       BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
       BackgroundGeolocation.onHeartbeat(onHeartbeat);
-      // BackgroundGeolocation.onHttp(onHttp);
+      BackgroundGeolocation.onHttp(onHttp);
       BackgroundGeolocation.onLocation(Geo.onLocation, onLocationError);
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       // Now, ready the plugin (required, once, at startup, before calling start)
-      BackgroundGeolocation.ready(highPower ? geolocationOptions_highPower : geolocationOptions_default,
+      BackgroundGeolocation.ready(tracking ? geoconfig_tracking : geoconfig_default,
       pluginState => {
         if (pluginState.enabled) {
           log.trace('BackgroundGeolocation configured and ready', pluginState);
         }
-        if (pluginState.didLaunchInBackground) {
-          // TODO4
-          // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
-          log.trace('BackgroundGeolocation didLaunchInBackground');
-        }
+        // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
+        log.trace(`BackgroundGeolocation didLaunchInBackground ${pluginState.didLaunchInBackground}`);
         Geo.countLocations();
         // BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
+        return pluginState.didLaunchInBackground;
       }, err => {
         log.error('BackgroundGeolocation failed to configure', err);
       })
@@ -388,30 +356,13 @@ export const Geo = {
     }
   },
 
-  enableBackgroundGeolocation: async (enable: boolean) => {
-    try {
-      log.debug('enableBackgroundGeolocation', enable);
-      if (enable) {
-        await BackgroundGeolocation.setConfig(geolocationOptions_highPower);
-        await Geo.startBackgroundGeolocation('tracking');
-        log.debug('using geolocationOptions_highPower');
-      } else {
-        // disable
-        await BackgroundGeolocation.setConfig(geolocationOptions_default);
-        await Geo.stopBackgroundGeolocation('tracking');
-        log.debug('using geolocationOptions_default');
-      }
-    } catch (err) {
-      log.error('geo enableBackgroundGeolocation', err);
-    }
+  // Set configuration for background geolocation as appropriate given current app state. This should be idempotent.
+  // This is required to receive locations in the foreground and background.
+  setConfig: async (tracking: boolean = false, background: boolean = false) => {
+    const config = tracking ? (background ? geoconfig_tracking_background : geoconfig_tracking) : geoconfig_default;
+    log.trace(`Geo.setConfig tracking: ${tracking}, background: ${background}`);
+    await BackgroundGeolocation.setConfig(config);
   },
-
-  // TODO
-  // setConfig: async (runningInBackground: boolean) => { // TODO
-  //   Config config = runningInBackground ? geolocationOptions_background_tracking :
-  //      (
-  //   await BackgroundGeolocation.setConfig(config);
-  // },
 
   // Event handlers for background geolocation
   // https://github.com/transistorsoft/react-native-background-geolocation/wiki/Location-Data-Schema
@@ -448,10 +399,11 @@ export const Geo = {
       const state = store.getState();
       const activityId = state.options.currentActivityId;
       if (!state.flags.receiveLocations) {
-        log.trace('onLocation: ignoring location', location.timestamp);
+        log.trace('onLocation: ignoring, as receiveLocations is false', location.timestamp);
         return;
       }
-      if (state.flags.appActive) { // TODO
+      if (state.flags.appActive) {
+        log.trace(`onLocation: appActive ${location.timestamp}, tracking ${state.flags.trackingActivity}`);
         const locationEvent = newLocationEvent(location, activityId);
         if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
@@ -463,17 +415,15 @@ export const Geo = {
         store.dispatch(newAction(AppAction.geolocation, geolocationParams));
       } else {
         // App is running (obviously!) but it is doing so in the background (appActive is false.)
-        if (state.flags.backgroundGeolocation) { // else do not save it
+        if (state.flags.trackingActivity) { // else do not save it
           // Add the raw location to the plugin's SQLite DB so they will be included in processSavedLocations
           // in addition to the locations that come in when the RN JS thread is asleep.
           // Note: Could await insertLocation as it returns a promise, or check for errors if needed.
-
-          // log.trace('onLocation: inserting location in background', location.timestamp);
-          // BackgroundGeolocation.insertLocation(location);
-          // TODO
-          log.trace('onLocation: ignoring location in background (while tracking activity!)', location.timestamp);
+          BackgroundGeolocation.insertLocation(location);
+          // TODO It seems that merely logging here can consume enough CPU for app to get killed in the background!
+          // log.trace(`onLocation: inserting location in background ${location.timestamp}`);
         } else {
-          log.trace('onLocation: ignoring location in background (not tracking activity)', location.timestamp);
+          // log.trace(`onLocation: in background, not tracking ${location.timestamp}`);
         }
       }
     } catch (err) {
@@ -529,56 +479,14 @@ export const Geo = {
   //   }
   // },
 
-  // Geolocation may be needed for multiple reasons.
-  // Client who starts geolocation should specify a reason string, e.g. 'tracking' or 'navigating'.
-  // Client should then pass the same reason when requesting to stopBackgroundGeolocation.
-  // If any reasons still apply on stopBackgroundGeolocation, we leave geolocation on.
-  // Resolves to true if background geolocation was started as a result of this request.
-  startBackgroundGeolocation: async (reason: string) => {
-    log.debug(`startBackgroundGeolocation: reason: ${reason}`);
-    if (reasons[reason]) {
-      log.debug(`BackgroundGeolocation already active for ${reason} in startBackgroundGeolocation`);
-      log.trace('BackgroundGeolocation reasons', reasons);
-      return Promise.resolve(false);
-    }
-    reasons[reason] = true;
-    return new Promise((resolve, reject) => {
-      const started = () => {
-        if (reason === 'tracking') {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-      }
-      BackgroundGeolocation.start(started, err => {
-        log.error('BackgroundGeolocation.start', err);
-        reject(err);
-      })
-    })
+  startBackgroundGeolocation: async () => {
+    log.debug('startBackgroundGeolocation');
+    return await BackgroundGeolocation.start();
   },
 
-  // Resolves to true if background geolocation was stopped as a result of this request
-  // (It is left running if any reasons remain.)
-  stopBackgroundGeolocation: async (reason: string) => {
-    if (!reasons[reason]) {
-      log.debug(`BackgroundGeolocation already inactive for ${reason} in stopBackgroundGeolocation`);
-      log.trace('BackgroundGeolocation reasons', reasons);
-      return Promise.resolve(false);
-    }
-    reasons[reason] = false;
-    if (haveReason()) { // still
-      log.debug(`BackgroundGeolocation no longer needed for ${reason}, but still running`);
-      log.trace('BackgroundGeolocation reasons', reasons);
-      return Promise.resolve(false);
-    }
-    // return Promise.resolve(false); // TODO3 don't ever stop!
-    return new Promise((resolve, reject) => {
-      const done = () => {
-        log.debug(`BackgroundGeolocation stopped, was running for ${reason}`);
-        resolve(true);
-      }
-      BackgroundGeolocation.stop(done, err => { reject(err); }); // TODO3 probably don't ever want to stop!
-    })
+  // TODO not currently needed!
+  stopBackgroundGeolocation: async () => {
+    return await BackgroundGeolocation.stop();
   },
 }
 
