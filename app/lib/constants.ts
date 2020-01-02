@@ -433,7 +433,7 @@ const constants = {
     rectHeight: 0,
     pointLength: 30,
   },
-  maxLogsToTransmit: 100,
+  maxLogsToTransmit: 1000,
   maxTimeGapForContinuousTrack: interval.seconds(5),
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'

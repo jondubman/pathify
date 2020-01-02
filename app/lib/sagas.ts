@@ -212,7 +212,7 @@ const sagas = {
         // The typical case of simply appending one or more events to an Activity is handled here with little work.
         // We simply append to the path and avoid reformulating it entirely.
         // The case of inserting events in the middle of an existing Activity is handled by the else block below.
-        const appending: boolean = !!(!firstNewLoc || firstNewLoc.t > activity.tLastUpdate);
+        const appending: boolean = !!(!firstNewLoc || (activity.tLastUpdate && firstNewLoc.t > activity.tLastUpdate));
         if (appending) {
           // odoStart
           if (firstNewOdo) {
@@ -368,8 +368,14 @@ const sagas = {
           break;
         }
         case 'logs': {
-          const logs = (yield call(database.logs)).slice(0, constants.maxLogsToTransmit);
-          response = logs.map((message: LogMessage) => (
+          const level = query.level || 0;
+          const timeRange = query.timeRange || [0, Infinity];
+          const pageSize = query.pageSize || Infinity;
+          const logs = (yield call(database.logs))
+            .filtered('t >= $0 AND t <= $1', timeRange[0], timeRange[1]);
+          const leveledLogs = (level ? logs.filtered('level != "trace"') : logs)
+            .slice(query.startIndex || 0, Math.min(pageSize, constants.maxLogsToTransmit));
+          response = leveledLogs.map((message: LogMessage) => (
             {
               t: message.t,
               level: message.level,
@@ -420,7 +426,8 @@ const sagas = {
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { newState } = params;
-    yield call(log.info, 'appStateChange saga:', newState);
+    yield call(log.info, `appStateChange saga: ${newState}`);
+    yield call(Geo.countLocations);
     const activeNow = (newState === AppStateChange.ACTIVE);
     yield put(newAction(activeNow ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     yield put(newAction(AppAction.setAppOption, { appState: newState }));
@@ -774,20 +781,24 @@ const sagas = {
 
   modeChange: function* (action: Action) {
     const modeChangeEvent = action.params as ModeChangeEvent;
-    yield call(log.debug, 'saga modeChange', modeChangeEvent);
     const appActive = yield select((state: AppState) => state.flags.appActive);
     if (appActive) {
-      yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent]}));
-    } // else TODO
+      yield call(log.trace, 'saga modeChange - adding event', modeChangeEvent);
+      yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent] }));
+    } else {
+      yield call(log.trace, 'saga modeChange - ignoring event in background', modeChangeEvent);
+    }
   },
 
   motionChange: function* (action: Action) {
     const motionEvent = action.params as MotionEvent;
-    yield call(log.debug, 'saga motionChange', motionEvent);
     const appActive = yield select((state: AppState) => state.flags.appActive);
     if (appActive) {
-        yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
-    } // else TODO
+      yield call(log.trace, 'saga motionChange - adding event', motionEvent);
+      yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
+    } else {
+      yield call(log.trace, 'saga motionChange - ignoring event in background', motionEvent);
+    }
   },
 
   // Refresh (recreate) existing Activity/Path from the raw Events in the database (given an existing Activity id.)
@@ -1088,6 +1099,7 @@ const sagas = {
   startActivity: function* (action: Action) {
     try {
       const params = action.params as StartActivityParams || {};
+      yield call(log.info, 'saga startActivity', params);
       const continueActivityId = params.continueActivityId || undefined;
       const trackingActivity = yield select(state => state.flags.trackingActivity);
       if (!trackingActivity) {
@@ -1100,7 +1112,6 @@ const sagas = {
           option: 'relative',
           zoom: constants.map.default.zoomStartActivity,
         } as CenterMapParams));
-
         const now = utils.now();
         let activityId: string;
         if (continueActivityId) {

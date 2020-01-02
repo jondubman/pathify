@@ -10,10 +10,12 @@ export interface AppQueryDescriptor {
   exclude?: boolean;
   events: boolean; // applies to activity (true: include events)
   filterTypes?: string[]; // applies to events
+  level?: number; // applies to logs (default 0)
   limit?: number; // applies to events
+  pageSize: number; // applies to logs, works with startIndex
   since: number; // timestamp, applies to events
   sinceLastStartup?: boolean; // applies to events
-  startIndex?: number; // applies to events
+  startIndex?: number; // applies to logs and events
   timeRange?: TimeRange; // applies to events
 }
 

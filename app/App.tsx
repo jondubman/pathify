@@ -53,7 +53,6 @@ export default class App extends Component {
       log.info('windowSize', utils.windowSize());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       store.create(); // proactively create Redux store instance
-
       store.dispatch(newAction(AppAction.startupActions));
       this.handleAppStateChange('startup'); // initialize
       RNAppState.addEventListener('change', this.handleAppStateChange);
@@ -67,7 +66,6 @@ export default class App extends Component {
         }
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
-
       setTimeout(pollServer, 0); // attempt to stay in contact with server
     } catch (err) {
       log.warn('App componentDidMount err', err);
