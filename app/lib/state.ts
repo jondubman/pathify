@@ -56,9 +56,9 @@ export const initialAppState = {
     settingsOpen: false, // settings panel visible state
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     showActivityDetails: false,
+    showActivityInfo: true,
     showActivityList: true,
     showAppStateTimespans: false,
-    showActivityInfo: true,
     showDebugInfo: false,
     showPathsOnMap: true,
     showPriorLocation: true,
