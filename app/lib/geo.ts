@@ -241,6 +241,7 @@ export const Geo = {
     try {
       log.debug('initializeGeolocation: tracking', tracking);
 
+      // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app...
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
         if (state.flags.appActive) {
@@ -258,27 +259,33 @@ export const Geo = {
       const onHeartbeat = async (event: HeartbeatEvent) => {
         // Executed for each heartbeatInterval while the device is in stationary state
         // (iOS requires preventSuspend: true as well).
-        try {
-          log.debug('onHeartbeat', event.location.timestamp);
-          await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO helpful? needed?
-        } catch(err) {
-          log.warn('onHeartbeat error', err);
-        }
+        // try {
+        //   log.debug('onHeartbeat', event.location.timestamp);
+        //   await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO helpful? needed?
+        // } catch(err) {
+        //   log.warn('onHeartbeat error', err);
+        // }
       }
       const onHttp = (response: HttpEvent) => {
-        log.trace('BackgroundGeolocation onHttp', response);
+        const state = store.getState();
+        if (state.flags.appActive) {
+          log.trace('BackgroundGeolocation onHttp', response);
+        }
       }
       const onLocationError = (error: LocationError) => {
-        let errorMessage;
-        if (error === 0) errorMessage = 'Location unknown';
-        if (error === 1) errorMessage = 'Location permission denied';
-        if (error === 2) errorMessage = 'Location network error';
-        if (error === 408) errorMessage = 'Location timeout';
-        log.info('LocationError', errorMessage || error);
+        const state = store.getState();
+        if (state.flags.appActive) {
+          let errorMessage;
+          if (error === 0) errorMessage = 'Location unknown';
+          if (error === 1) errorMessage = 'Location permission denied';
+          if (error === 2) errorMessage = 'Location network error';
+          if (error === 408) errorMessage = 'Location timeout';
+          log.info('LocationError', errorMessage || error);
+        }
       }
       const onMotionChange = (event: MotionChangeEvent) => {
         const state = store.getState();
-        if (state.flags.appActive) { // TODO
+        if (state.flags.appActive) {
           const activityId = state.options.currentActivityId;
           store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving, activityId)));
         }
@@ -346,6 +353,7 @@ export const Geo = {
     }
   },
 
+  // for debugging
   emailLog: async () => {
     try {
       if (EMAIL_ADDRESS) {
@@ -398,11 +406,11 @@ export const Geo = {
       }
       const state = store.getState();
       const activityId = state.options.currentActivityId;
-      if (!state.flags.receiveLocations) {
-        log.trace('onLocation: ignoring, as receiveLocations is false', location.timestamp);
-        return;
-      }
       if (state.flags.appActive) {
+        if (!state.flags.receiveLocations) {
+          log.trace('onLocation: ignoring, as receiveLocations is false', location.timestamp);
+          return;
+        }
         log.trace(`onLocation: appActive ${location.timestamp}, tracking ${state.flags.trackingActivity}`);
         const locationEvent = newLocationEvent(location, activityId);
         if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
@@ -484,10 +492,10 @@ export const Geo = {
     return await BackgroundGeolocation.start();
   },
 
-  // TODO not currently needed!
-  stopBackgroundGeolocation: async () => {
-    return await BackgroundGeolocation.stop();
-  },
+  // TODO not currently needed
+  // stopBackgroundGeolocation: async () => {
+  //   return await BackgroundGeolocation.stop();
+  // },
 }
 
 // On heading vs course:

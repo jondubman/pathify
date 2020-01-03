@@ -8,6 +8,7 @@ const debugMode = !productionMode;
 
 type LogMethod = (level: string, ...args) => void;
 let _callback: LogMethod;
+let _enabled = debugMode; // enabled in debug mode, disabled in production by default. see setEnabled.
 
 const log = {
   levels: ['trace', 'debug', 'info', 'warn', 'error', 'fatalError'], // from low to high
@@ -15,6 +16,9 @@ const log = {
   // Note this is the only place in the app where console.log is used directly.
   // This is the lower-level function. Normally, use one of log.trace, log.debug, log.info, log.warn, log.error.
   inner: (level = 'info', ...args) => {
+    if (!_enabled) {
+      return;
+    }
     if (!log.levels.includes(level)) {
       log.log('warn', 'app', `....pathify: Invalid log level ${level}`); // recurse one level deep
       level = 'warn'; // assume warn level if level unknown
@@ -91,6 +95,10 @@ const log = {
   registerCallback: (callback: LogMethod) => {
     _callback = callback;
   },
+
+  setEnabled: (enabled: boolean) => {
+    _enabled = enabled;
+  }
 }
 
 // Handle debug output: Omit logging the include property, which may contain a large volume of data.

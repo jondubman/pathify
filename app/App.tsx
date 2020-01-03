@@ -57,7 +57,7 @@ export default class App extends Component {
       store.dispatch(newAction(AppAction.startupActions));
       const interval = setInterval(() => {
         const { flags } = store.getState();
-        if (flags.appActive && flags.ticksEnabled) {
+        if (flags.appActive && flags.ticksEnabled) { // no need for timer ticks in the background
           store.dispatch(newAction(AppAction.timerTick, utils.now()));
         }
       }, store.getState().options.timerTickIntervalMsec);

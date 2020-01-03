@@ -482,26 +482,24 @@ const sagas = {
         yield call(log.trace, 'saga centerMap', params);
         const { center, option, zoom } = params;
         if (center) {
-          if (center[0] || center[1]) {
-            let newCenter = center;
-            if (option === AbsoluteRelativeOption.relative) {
-              const currentCenter = yield call(map.getCenter as any);
-              yield call(log.trace, 'saga centerMap: currentCenter', currentCenter);
-              newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
+          let newCenter = center;
+          if (option === AbsoluteRelativeOption.relative) {
+            const currentCenter = yield call(map.getCenter as any);
+            yield call(log.trace, 'saga centerMap: currentCenter', currentCenter);
+            newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
+          }
+          if ((center[0] || center[1]) && haveUserLocation) {
+            yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
+          }
+          if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
+            const config = {
+              animationDuration: constants.map.centerMapDuration,
+              centerCoordinate: newCenter,
+              zoomLevel: zoom,
             }
-            if ((center[0] || center[1]) && haveUserLocation) {
-              yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
-            }
-            if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
-              const config = {
-                animationDuration: constants.map.centerMapDuration,
-                centerCoordinate: newCenter,
-                zoomLevel: zoom,
-              }
-              yield call(map.setCamera as any, config);
-            } else {
-              yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
-            }
+            yield call(map.setCamera as any, config);
+          } else {
+            yield call(map.moveTo as any, newCenter); // moveTo is less visually jarring than flyTo in the general case
           }
         }
       } else {
