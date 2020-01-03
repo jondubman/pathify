@@ -3,7 +3,7 @@ const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
 // @ts-ignore
-const productionMode = !(__DEV__); // __DEV__ is quite possibly undefined
+const productionMode = (typeof __DEV__ === 'undefined'); // __DEV__ is quite possibly undefined
 const debugMode = !productionMode;
 
 type LogMethod = (level: string, ...args) => void;
@@ -96,9 +96,9 @@ const log = {
     _callback = callback;
   },
 
-  setEnabled: (enabled: boolean) => {
-    _enabled = enabled;
-  }
+  // setEnabled: (enabled: boolean) => {
+  //   _enabled = enabled;
+  // },
 }
 
 // Handle debug output: Omit logging the include property, which may contain a large volume of data.
