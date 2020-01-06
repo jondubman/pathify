@@ -5,7 +5,7 @@
 // import distance from '@turf/distance';
 
 // For posting to tracker.transistorsoft.com
-import DeviceInfo from 'react-native-device-info';
+// import DeviceInfo from 'react-native-device-info';
 
 import { EMAIL_ADDRESS } from 'react-native-dotenv'; // deliberately omitted from repo
 
@@ -181,6 +181,7 @@ const geoconfig_tracking: Config = {
 
 const geoconfig_tracking_background: Config = {
   ...geoconfig_tracking,
+  activityRecognitionInterval: 5000, // msec. Let's use a little less power in the background to avoid CPU watchdog.
   persistMode: BackgroundGeolocation.PERSIST_MODE_ALL,
 }
 

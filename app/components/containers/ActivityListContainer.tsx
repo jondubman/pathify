@@ -20,6 +20,7 @@ import {
 import log from 'shared/log';
 
 interface ActivityListStateProps {
+  animated: boolean;
   list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string;
@@ -36,6 +37,7 @@ export type ActivityListProps = ActivityListStateProps & ActivityListDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
+    animated: state.flags.timelineScrolling,
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
     selectedActivityId: state.options.selectedActivityId,

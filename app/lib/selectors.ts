@@ -41,13 +41,13 @@ export const selectedActivityIndex = (state: AppState) => (
 )
 
 export const activityIndex = (state: AppState) => (
-  state.cache.activities ?
+  state.cache.activities && state.cache.activities.length?
     selectedActivityIndex(state) > -1 ?
       `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}`
       :
       `${state.cache.activities.length}`
     :
-    0
+    '' // don't bother showing 0
 )
 
 // Each activityTimespan shows one Activity

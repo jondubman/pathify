@@ -601,7 +601,7 @@ const sagas = {
       const mapRendered = yield select((state: AppState) => state.flags.mapRendered);
       if (!mapRendered) {
         yield call(log.warn, 'mapRendered false in continueActivity');
-        yield take(AppAction.mapRendered);
+        yield take(AppAction.mapRendered); // This may take some time... a couple of seconds max?
         yield delay(100); // TODO - fudge
         const mapRenderedNow = yield select((state: AppState) => state.flags.mapRendered);
         yield call(log.info, 'mapRenderedNow', mapRenderedNow);
@@ -1149,6 +1149,11 @@ const sagas = {
     }
   },
 
+  // This saga is run when the app first starts up, and also when it is restarted after being suspended/terminated.
+  // The app may be restarted in the background if tracking an activity and the user has moved beyond a geofence around
+  // the last location before the app was terminated. The app may also be restarted manually after having been
+  // terminated. If the app is restarted while tracking an activity, continueActivity is invoked. This is its own saga
+  // but is essentially an option to startActivity.
   startupActions: function* () {
     try {
       yield call(log.debug, 'saga startupActions');

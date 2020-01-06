@@ -68,7 +68,7 @@ const backgroundColor = (props: TopButtonProps) => (props.selected ? (props.curr
 
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <Fragment>
-    <View
+    {props.activityCount.length ? (<View
       style={[Styles.bubble, {
         backgroundColor: props.selected ? (props.current ? colors.bubbleNow : colors.bubblePast) : colors.bubble,
         left: bubbleLeft,
@@ -76,7 +76,7 @@ const TopButton = (props: TopButtonProps) => (props.visible ? (
         width: sizeBase + expansion(props.activityCount),
       }]}
     >
-    </View>
+    </View>) : null}
     <Text style={[Styles.count, {
       top: props.topOffset,
       left: bubbleLeft,

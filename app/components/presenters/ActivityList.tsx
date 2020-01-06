@@ -221,7 +221,7 @@ class ActivityList extends Component<ActivityListProps> {
             viewOffset = -activityWidth / 2;
           }
           const params = {
-            animated: true,
+            animated: this.props.animated,
             index,
             viewOffset,
             viewPosition: 0.5, // 0.5 tells scrollToIndex to scroll the center point (use 0 for left, 1 for right)
