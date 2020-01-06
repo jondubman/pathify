@@ -26,7 +26,6 @@ import {
   Alert,
   AlertButton,
 } from 'react-native';
-import { Polygon } from '@turf/helpers';
 import {
   AppState as RNAppState,
 } from 'react-native';
@@ -84,6 +83,7 @@ import { postToServer } from 'lib/server';
 import {
   AppState,
   CacheInfo,
+  MapRegionUpdate,
   persistedFlags,
   persistedOptions,
 } from 'lib/state';
@@ -109,7 +109,6 @@ import {
 } from 'shared/appQuery';
 import locations, {
   LocationEvent,
-  LonLat,
   ModeChangeEvent,
   MotionEvent,
 } from 'shared/locations';
@@ -119,7 +118,6 @@ import {
   MarkType
 } from 'shared/marks';
 import {
-  Path,
   PathUpdate,
 } from 'shared/paths';
 import timeseries, {
@@ -281,7 +279,7 @@ const sagas = {
       yield call(log.debug, 'appQuery', params);
       const { query, uuid } = params;
       const queryType = query ? query.type : null;
-      const state = store.getState();
+      const state = (yield select((state: AppState) => state)) as AppState;
       let response: any = `response to uuid ${uuid}`; // generic fallback response
       switch (queryType) {
 
@@ -297,7 +295,6 @@ const sagas = {
           break;
         }
         case 'activity': { // default to current or selected if activityId not specified
-          const state = yield select(state => state);
           const activity = query.activityId ? database.activityById(query.activityId)
                                             : currentActivity(state) || selectedActivity(state);
           let results = [] as any;
@@ -312,8 +309,14 @@ const sagas = {
           }
           break;
         }
+        case 'bounds': {
+          const bounds = state.mapBounds;
+          const heading = state.mapHeading;
+          response = { bounds, heading };
+          break;
+        }
         case 'cache': {
-          const cache: CacheInfo = yield select(state => state.cache);
+          const cache: CacheInfo = state.cache;
           response = {
             activityCount: cache.activities ? cache.activities.length : 0,
             populated: cache.populated || false,
@@ -324,7 +327,7 @@ const sagas = {
         case 'counts': {
           response = {
             activities: (yield call(database.activities)).length,
-            counts: (yield select((state: AppState) => state.counts)),
+            counts: state.counts,
             events: (yield call(database.events)).length,
             logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
@@ -393,7 +396,6 @@ const sagas = {
           break;
         }
         case 'selectedActivity': {
-          const state = yield select(state => state);
           let activity = selectedActivity(state);
           let results = [] as any;
           if (activity) {
@@ -598,14 +600,6 @@ const sagas = {
       const { activityId } = params;
       yield call(log.info, 'saga continueActivity', activityId);
       yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
-      const mapRendered = yield select((state: AppState) => state.flags.mapRendered);
-      if (!mapRendered) {
-        yield call(log.warn, 'mapRendered false in continueActivity');
-        yield take(AppAction.mapRendered); // This may take some time... a couple of seconds max?
-        yield delay(100); // TODO - fudge
-        const mapRenderedNow = yield select((state: AppState) => state.flags.mapRendered);
-        yield call(log.info, 'mapRenderedNow', mapRenderedNow);
-      }
       yield put(newAction(AppAction.zoomToActivity, { id: activityId })); // in continueActivity
       // const scrollTime = yield select((state: AppState) => state.options.scrollTime);
       // yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in continueActivity
@@ -626,7 +620,7 @@ const sagas = {
 
   // TODO paint this activity red on the ActivityList while on the chopping block so it's clear which it is.
   // TODO consider an option to avoid the confirmation alert, at least for testing.
-  // TODO delete path?
+  // TODO delete path? underlying events?
   deleteActivity: function* (action: Action) {
     try {
       const params = action.params as DeleteActivityParams;
@@ -666,9 +660,10 @@ const sagas = {
     const flags = yield select((state: AppState) => state.flags);
     const enabledNow = flags[flagName];
     const appState = yield select((state: AppState) => state.options.appState);
-    if (appState !== AppStateChange.STARTUP) {
+    if (appState !== AppStateChange.STARTUP) { // avoid changing settings during startup (instead, we apply previous)
+      // In general, persist persistedFlags in Settings
       if (persistedFlags.includes(flagName)) {
-        yield call(database.changeSettings, { [flagName]: enabledNow });
+        yield call(database.changeSettings, { [flagName]: enabledNow }); // note usage of computed property name
       }
     }
     if (flagName === 'timelineNow') {
@@ -725,7 +720,7 @@ const sagas = {
               keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
               loc: locations.lonLat(state.userLocation!),
             }))
-            const bounds = yield call(map.getVisibleBounds as any);
+            const bounds = yield call(map.getVisibleBounds);
             if (followingUser) {
               const outOfBounds = keepMapCenteredWhenFollowing || (loc && bounds && !utils.locWellBounded(loc, bounds));
               if (!priorLocation || outOfBounds) {
@@ -762,14 +757,20 @@ const sagas = {
 
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
-    yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
+    const mapRegionUpdate = action.params as MapRegionUpdate;
+    yield put(newAction(ReducerAction.MAP_REGION, mapRegionUpdate));
     yield put(newAction(AppAction.flagDisable, 'mapMoving'));
     yield put(newAction(AppAction.flagDisable, 'mapReorienting'));
+    const { bounds } = mapRegionUpdate;
+    const latMax = bounds[0][1];
+    const latMin = bounds[1][1];
+    const lonMax = bounds[0][0];
+    const lonMin = bounds[1][0];
+    yield call(database.changeSettings, { latMax, latMin, lonMax, lonMin });
   },
 
   // Triggered by Mapbox
   mapRegionChanging: function* (action: Action) {
-    yield put(newAction(ReducerAction.MAP_REGION, action.params as Polygon));
     yield put(newAction(AppAction.flagEnable, 'mapMoving'));
   },
 
@@ -1110,18 +1111,22 @@ const sagas = {
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
         yield call(Geo.setConfig, true, background);
         yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-        yield put(newAction(AppAction.startFollowingUser));
-        yield put(newAction(AppAction.centerMap, {
-          center: [0, 0],
-          option: 'relative',
-          zoom: constants.map.default.zoomStartActivity,
-        } as CenterMapParams));
         const now = utils.now();
         let activityId: string;
         if (continueActivityId) {
           // should already have the AppUserActionEvent and MarkEvent from before; just set currentActivityId.
           activityId = continueActivityId;
         } else {
+          const folllowingNow = yield select((state: AppState) => state.flags.followingUser);
+          if (folllowingNow) {
+            yield put(newAction(AppAction.centerMap, {
+              center: [0, 0],
+              option: 'relative',
+              zoom: constants.map.default.zoomStartActivity,
+            } as CenterMapParams));
+          } else {
+            yield put(newAction(AppAction.startFollowingUser));
+          }
           const newActivity = yield call(database.createActivity, now);
           activityId = newActivity.id;
           const startEvent: AppUserActionEvent = {
@@ -1203,7 +1208,6 @@ const sagas = {
             const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
             if (activity && activity.id) {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
-              yield delay(2000); // TODO this gives map time to load, but shouldn't be needed
               yield put(newAction(AppAction.zoomToActivity, { id: activity.id })); // in startupActions
             }
           } else {
@@ -1335,18 +1339,24 @@ const sagas = {
 
   zoomToActivity: function* (action: Action) {
     const { id } = action.params as ZoomToActivityParams;
-    const state = yield select((state: AppState) => state);
+    const state = (yield select((state: AppState) => state)) as AppState;
+    if (!state.cache.populated) {
+      yield call(log.info, 'saga zoomToActivity: cache not populated yet');
+      yield take(AppAction.refreshCacheDone);
+    }
     const activity = cachedActivity(state, id);
     if (activity) {
-      yield call(log.debug, 'saga zoomToActivity', activity.id);
+      yield call(log.debug, `saga zoomToActivity activityId: ${activity.id}`);
       if (!state.flags.mapRendered) {
-        yield call(log.info, 'mapRendered false in zoomToActivity');
+        yield call(log.info, 'saga zoomToActivity: mapRendered false');
+        yield take(AppAction.mapRendered);
       }
       // Fit map bounds to bounds of activity (with padding)
       const { duration } = constants.map.fitBounds;
       const map = MapUtils();
       if (map && map.fitBounds) {
         const { latMax, latMin, lonMax, lonMin } = activity;
+        yield call(log.trace, 'saga zoomToActivity', { latMax, latMin, lonMax, lonMin });
         if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
           map.fitBounds([lonMax, latMax], [lonMin, latMin], mapFitBounds(state), duration);
         }

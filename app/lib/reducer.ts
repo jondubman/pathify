@@ -11,6 +11,7 @@ import {
   CountUpdate,
   CacheInfo,
   initialAppState,
+  MapRegionUpdate,
 } from 'lib/state';
 import { LocationEvent, LocationEvents } from 'shared/locations';
 import log from 'shared/log';
@@ -71,8 +72,9 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
 
       case ReducerAction.MAP_REGION:
         {
-          const mapRegion = params as Polygon;
-          newState.mapRegion = mapRegion;
+          const mapRegionUpdate = params as MapRegionUpdate;
+          newState.mapBounds = mapRegionUpdate.bounds;
+          newState.mapHeading = mapRegionUpdate.heading;
         }
         break;
 

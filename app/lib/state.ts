@@ -7,7 +7,7 @@ import constants from 'lib/constants';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
 import { AppStateChange } from 'shared/appEvents';
-import { LocationEvent } from 'shared/locations';
+import { LocationEvent, LonLat } from 'shared/locations';
 
 const now = utils.now();
 
@@ -21,6 +21,11 @@ export interface CacheInfo {
 
 export interface CountUpdate {
   refreshedActivities?: number;
+}
+
+export interface MapRegionUpdate {
+  bounds: LonLat[];
+  heading: number;
 }
 
 export const initialAppState = {
@@ -97,7 +102,8 @@ export const initialAppState = {
 // Canonical interface for AppState, the contents of the Redux store
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
-  mapRegion?: Polygon;
+  mapBounds?: LonLat[];
+  mapHeading?: number;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
   userLocation?: LocationEvent;
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { AppAction, newAction } from 'lib/actions';
 import { LocationEvent } from 'shared/locations';
 import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
-import { AppState } from 'lib/state';
+import { AppState, MapRegionUpdate } from 'lib/state';
 import utils from 'lib/utils';
 import MapArea from 'presenters/MapArea';
 
@@ -17,11 +17,11 @@ interface MapAreaStateProps {
 
 interface MapAreaDispatchProps {
   backgroundTapped: (args: any) => void;
-  mapRegionChanged: (args: any) => void;
-  mapRegionChanging: (args: any) => void;
-  mapRendered: (args: any) => void;
+  mapRegionChanged: (MapRegionUpdate) => void;
+  mapRegionChanging: () => void;
+  mapRendered: () => void;
   mapTapped: (args: any) => void;
-  userMovedMap: (args: any) => void;
+  userMovedMap: () => void;
 }
 
 export type MapAreaProps = MapAreaStateProps & MapAreaDispatchProps;
@@ -45,17 +45,17 @@ const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
     mapTapped: (args: any) => {
       dispatch(newAction(AppAction.mapTapped, args));
     },
-    mapRegionChanged: (args: any) => {
-      dispatch(newAction(AppAction.mapRegionChanged, args));
+    mapRegionChanged: (mapRegionUpdate: MapRegionUpdate) => {
+      dispatch(newAction(AppAction.mapRegionChanged, mapRegionUpdate));
     },
-    mapRendered: (args: any) => {
-      dispatch(newAction(AppAction.mapRendered, args));
+    mapRegionChanging: () => {
+      dispatch(newAction(AppAction.mapRegionChanging));
     },
-    mapRegionChanging: (args: any) => {
-      dispatch(newAction(AppAction.mapRegionChanging, args));
+    mapRendered: () => {
+      dispatch(newAction(AppAction.mapRendered));
     },
-    userMovedMap: (args: any) => {
-      dispatch(newAction(AppAction.userMovedMap, args));
+    userMovedMap: () => {
+      dispatch(newAction(AppAction.userMovedMap));
     },
   }
   return dispatchers;

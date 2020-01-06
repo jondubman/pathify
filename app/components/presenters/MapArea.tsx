@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 // https://github.com/react-native-mapbox-gl/maps/blob/master/docs/MapView.md
-import Mapbox from '@react-native-mapbox-gl/maps';
+import Mapbox, { RegionPayload } from '@react-native-mapbox-gl/maps';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
@@ -212,18 +212,21 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  onRegionWillChange(...args) {
-    // log.trace('onRegionWillChange', args);
-    // Detect if user panned the map, as in https://github.com/mapbox/react-native-mapbox-gl/issues/1079
-    if (args[0].properties.isUserInteraction) {
-      this.props.userMovedMap(args);
+  onRegionWillChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+    const { heading, isUserInteraction } = args.properties;
+    const { visibleBounds } = args.properties as any; // TODO: note TS definition is off
+    log.trace(`onRegionWillChange bounds: ${visibleBounds} heading: ${heading} isUserInteraction: ${isUserInteraction}`);
+    if (isUserInteraction) {
+      this.props.userMovedMap();
     }
-    this.props.mapRegionChanging(args[0]);
+    this.props.mapRegionChanging();
   }
 
-  onRegionDidChange(...args) {
-    // log.trace('onRegionDidChange');
-    this.props.mapRegionChanged(args[0]);
+  onRegionDidChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+    const { heading } = args.properties;
+    const { visibleBounds } = args.properties as any; // TODO: TS definition is off
+    log.trace(`onRegionWillChange bounds: ${visibleBounds} heading: ${heading}`);
+    this.props.mapRegionChanged({ bounds: visibleBounds, heading });
   }
 
   onDidFinishRenderingMapFully(...args) {
