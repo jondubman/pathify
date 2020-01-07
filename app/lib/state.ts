@@ -26,6 +26,7 @@ export interface CountUpdate {
 export interface MapRegionUpdate {
   bounds: LonLat[];
   heading: number;
+  zoomLevel: number;
 }
 
 export const initialAppState = {
@@ -50,8 +51,8 @@ export const initialAppState = {
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel
     logToDatabase: true, // TODO debug only
-    mapDisable: false, // if true, map will not be shown at all
-    mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
+    mapEnable: false, // if false, map will not be shown at all. Hold off at startup until we know the initialBounds.
+    mapFullScreen: true, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
@@ -79,6 +80,12 @@ export const initialAppState = {
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
+  mapHeading: constants.map.default.heading,
+  mapHeadingInitial: null as number | null, // once set, never changes
+  mapBounds: constants.map.default.bounds,
+  mapBoundsInitial: null as LonLat[] | null, // once set, never changes
+  mapZoom: null as number | null,
+  mapZoomInitial: null as number | null, // once set, never changes
   options: { // non-boolean
     appState: AppStateChange.STARTUP as AppStateChange,
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
@@ -102,8 +109,6 @@ export const initialAppState = {
 // Canonical interface for AppState, the contents of the Redux store
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
-  mapBounds?: LonLat[];
-  mapHeading?: number;
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
   userLocation?: LocationEvent;
 }

@@ -27,11 +27,7 @@ interface CompassButtonDispatchProps {
 export type CompassButtonProps = CompassButtonStateProps & CompassButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): CompassButtonStateProps => {
-  let heading = null;
-  if (state.mapRegion) {
-    const r = state.mapRegion as any;
-    heading = r.properties!.heading;
-  }
+  const heading = state.mapHeading || 0;
   const reorienting = state.flags.mapMoving && state.flags.mapReorienting;
   return {
     bottomOffset: dynamicLowerButtonBase(state),

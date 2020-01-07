@@ -73,7 +73,7 @@ const colorThemes = {
 }
 
 // For Realm database
-const schemaVersion = 16;
+const schemaVersion = 21;
 
 const buttonOffset = 6;
 const buttonSize = 50;
@@ -406,9 +406,14 @@ const constants = {
   map: {
     centerMapDuration: 500, // TODO not honored on iOS https://github.com/nitaliano/react-native-mapbox-gl/issues/1411
     default: {
+      bounds: [ // TODO this is basically North America
+        [68.45269397608266, -0.16697147646779342],
+        [-66.41460411107224, -132.09348845123324],
+      ],
+      heading: 0,
       opacity: 0.5,
       style: 'Satellite', // e.g. None, Trails, Topo, Satellite. See mapStyles.name
-      zoom: 10,
+      zoom: 10, // TODO still needed?
       zoomStartActivity: 16,
     },
     fitBounds: {

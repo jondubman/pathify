@@ -23,6 +23,7 @@ import log from 'shared/log';
 // Public interface to singleton underlying Mapbox component
 import { LonLat } from 'shared/locations';
 export type Bounds = [LonLat, LonLat] | null; // NE, SW
+export type BoundsWithHeading = [LonLat, LonLat, number] | null; // NE, SW, heading
 
 // For now this is intended to be a singleton component. TODO enforce via ref function.
 
@@ -41,7 +42,7 @@ class MapArea extends Component<MapAreaProps> {
     this.getZoom = this.getZoom.bind(this);
     this.moveTo = this.moveTo.bind(this);
     this.fitBounds = this.fitBounds.bind(this);
-    this.onRegionWillChange = this.onRegionWillChange.bind(this);
+    this.onRegionIsChanging = this.onRegionIsChanging.bind(this);
     this.onRegionDidChange = this.onRegionDidChange.bind(this);
     this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
     this.onPress = this.onPress.bind(this);
@@ -65,6 +66,9 @@ class MapArea extends Component<MapAreaProps> {
     const {
       backgroundTapped,
       height,
+      initialBounds,
+      initialHeading,
+      initialZoomLevel,
       mapHidden,
       mapStyleURL,
       width,
@@ -94,7 +98,10 @@ class MapArea extends Component<MapAreaProps> {
           </TouchableWithoutFeedback>
         </View>
       )
-    }
+   }
+    const toRadians = (heading: number): number => (
+      heading * (Math.PI / 180)
+    )
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>
@@ -106,7 +113,7 @@ class MapArea extends Component<MapAreaProps> {
             onDidFinishRenderingMapFully={this.onDidFinishRenderingMapFully}
             onPress={this.onPress}
             onRegionDidChange={this.onRegionDidChange}
-            onRegionWillChange={this.onRegionWillChange}
+            onRegionIsChanging={this.onRegionIsChanging}
             pitchEnabled={false}
             ref={map => {
               this._map = map as Mapbox.MapView;
@@ -121,9 +128,16 @@ class MapArea extends Component<MapAreaProps> {
             <Mapbox.Camera
               animationDuration={0}
               followUserLocation={false}
-              heading={0}
+              bounds={{
+                ne: initialBounds[0], sw: initialBounds[1],
+                paddingLeft: 0,
+                paddingRight: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+              heading={initialHeading}
+              zoomLevel={initialZoomLevel}
               ref={camera => { this._camera = camera }}
-              zoomLevel={constants.map.default.zoom}
             />
             <MapDimmerContainer />
             <PathsContainer />
@@ -135,6 +149,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   fitBounds(neCoords: LonLat, swCoords: LonLat, paddingVerticalHorizontal: [number, number], duration: number) {
+    log.trace('MapArea fitBounds', { neCoords, swCoords, paddingVerticalHorizontal, duration });
     if (this._camera) {
       if (!(neCoords[0] === 0 && neCoords[1] === 0 && swCoords[0] === 0 && swCoords[1] === 0)) {
         const camera = this._camera!;
@@ -177,12 +192,13 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   // return the coordinate bounds [NE LonLat, SW LonLat] visible in the users’s viewport.
-  async getVisibleBounds(): Promise<Bounds> {
+  async getVisibleBounds(): Promise<BoundsWithHeading> {
     try {
       if (this._map) {
         const mapView = this._map;
         // TODO double casting types until index.d.ts TypeScript declaration is fixed
-        const bounds = await mapView.getVisibleBounds() as unknown as Bounds;
+        const bounds = await mapView.getVisibleBounds() as unknown as BoundsWithHeading;
+        log.trace('getVisibleBounds', bounds);
         return bounds;
       }
       return null;
@@ -212,26 +228,28 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  onRegionWillChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
-    const { heading, isUserInteraction } = args.properties;
+  onRegionIsChanging(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+    const { heading, isUserInteraction, zoomLevel } = args.properties;
     const { visibleBounds } = args.properties as any; // TODO: note TS definition is off
-    log.trace(`onRegionWillChange bounds: ${visibleBounds} heading: ${heading} isUserInteraction: ${isUserInteraction}`);
+    log.trace(`onRegionIsChanging bounds: ${visibleBounds} heading: ${heading} isUserInteraction: ${isUserInteraction} zoomLevel: ${zoomLevel}`);
     if (isUserInteraction) {
       this.props.userMovedMap();
     }
     this.props.mapRegionChanging();
+    this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel }); // TODO
   }
 
+  // TODO why is this not called?
   onRegionDidChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
-    const { heading } = args.properties;
+    const { heading, zoomLevel } = args.properties;
     const { visibleBounds } = args.properties as any; // TODO: TS definition is off
-    log.trace(`onRegionWillChange bounds: ${visibleBounds} heading: ${heading}`);
-    this.props.mapRegionChanged({ bounds: visibleBounds, heading });
+    log.trace(`onRegionIsChanging bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+    // this.props.mapRegionChanged({ bounds: visibleBounds, heading });
   }
 
   onDidFinishRenderingMapFully(...args) {
     log.trace('onDidFinishRenderingMapFully --> mapRendered', args);
-    this.props.mapRendered(true);
+    this.props.mapRendered();
   }
 
   async onPress(...args) {
@@ -254,7 +272,7 @@ export interface IMapUtils {
   moveTo: (coordinates: LonLat, duration: number) => void;
   getCenter: () => Promise<LonLat>
   getMap: () => IMapUtils;
-  getVisibleBounds: () => Promise<Bounds>;
+  getVisibleBounds: () => Promise<BoundsWithHeading>;
   getZoom: () => Promise<number>;
   setCamera: (config: object) => void;
 }

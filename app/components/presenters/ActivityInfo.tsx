@@ -1,3 +1,4 @@
+// This component contains the activity list and/or activity details.
 import * as React from 'react';
 
 import {

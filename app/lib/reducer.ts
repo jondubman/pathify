@@ -73,8 +73,21 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       case ReducerAction.MAP_REGION:
         {
           const mapRegionUpdate = params as MapRegionUpdate;
+          log.debug('ReducerAction.MAP_REGION', mapRegionUpdate);
+          // Set 'initial' values (which should never change, lest map will be re-rendered)
+          if (state.mapBoundsInitial === null) {
+            newState.mapBoundsInitial = mapRegionUpdate.bounds;
+          }
+          if (state.mapHeadingInitial === null) {
+            newState.mapHeadingInitial = mapRegionUpdate.heading;
+          }
+          if (state.mapZoomInitial === null) {
+            newState.mapZoomInitial = mapRegionUpdate.zoomLevel;
+          }
+          // Set these every time.
           newState.mapBounds = mapRegionUpdate.bounds;
           newState.mapHeading = mapRegionUpdate.heading;
+          newState.mapZoom = mapRegionUpdate.zoomLevel;
         }
         break;
 

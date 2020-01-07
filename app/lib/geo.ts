@@ -409,10 +409,10 @@ export const Geo = {
       const activityId = state.options.currentActivityId;
       if (state.flags.appActive) {
         if (!state.flags.receiveLocations) {
-          log.trace('onLocation: ignoring, as receiveLocations is false', location.timestamp);
+          // log.trace('onLocation: ignoring, as receiveLocations is false', location.timestamp);
           return;
         }
-        log.trace(`onLocation: appActive ${location.timestamp}, tracking ${state.flags.trackingActivity}`);
+        // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${state.flags.trackingActivity}`);
         const locationEvent = newLocationEvent(location, activityId);
         if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));

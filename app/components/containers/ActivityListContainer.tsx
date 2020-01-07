@@ -70,7 +70,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
       }
       log.debug('onPressActivity appOptions', appOptions);
       dispatch(newAction(AppAction.setAppOption, appOptions));
-      dispatch(newAction(AppAction.zoomToActivity, { id: activity.id })); // in onPressActivity
+      dispatch(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in onPressActivity
     }
   }
   const register = (component) => {

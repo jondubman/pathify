@@ -75,7 +75,7 @@ import { Geo } from 'lib/geo';
 import {
   cachedActivity,
   currentActivity,
-  mapFitBounds,
+  mapPadding,
   selectedActivity,
   timelineZoomValue,
 } from 'lib/selectors';
@@ -310,9 +310,8 @@ const sagas = {
           break;
         }
         case 'bounds': {
-          const bounds = state.mapBounds;
-          const heading = state.mapHeading;
-          response = { bounds, heading };
+          const { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
+          response = { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial };
           break;
         }
         case 'cache': {
@@ -600,7 +599,7 @@ const sagas = {
       const { activityId } = params;
       yield call(log.info, 'saga continueActivity', activityId);
       yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
-      yield put(newAction(AppAction.zoomToActivity, { id: activityId })); // in continueActivity
+      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomMap: false, zoomTimeline: true })); // in continueActivity
       // const scrollTime = yield select((state: AppState) => state.options.scrollTime);
       // yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in continueActivity
     } catch (err) {
@@ -761,12 +760,22 @@ const sagas = {
     yield put(newAction(ReducerAction.MAP_REGION, mapRegionUpdate));
     yield put(newAction(AppAction.flagDisable, 'mapMoving'));
     yield put(newAction(AppAction.flagDisable, 'mapReorienting'));
-    const { bounds } = mapRegionUpdate;
+    const { bounds, heading, zoomLevel } = mapRegionUpdate;
     const latMax = bounds[0][1];
     const latMin = bounds[1][1];
     const lonMax = bounds[0][0];
     const lonMin = bounds[1][0];
-    yield call(database.changeSettings, { latMax, latMin, lonMax, lonMin });
+    const appState = yield select((state: AppState) => state.options.appState);
+    if (appState === AppStateChange.STARTUP) {
+      yield call(log.trace, 'Skipping database.changeSettings on mapRegionChanged during app startup');
+    } else {
+      yield call(log.trace, 'database.changeSettings on mapRegionChanged');
+      yield call(database.changeSettings, {
+        latMax, latMin, lonMax, lonMin,
+        mapHeading: heading,
+        mapZoomLevel: zoomLevel,
+      })
+    }
   },
 
   // Triggered by Mapbox
@@ -1169,12 +1178,14 @@ const sagas = {
       }
       const settings = (yield call(database.settings)) as SettingsObject;
       yield call(log.info, 'Saved App settings', settings);
+      // restore app flags from settings
       for (let propName of persistedFlags) {
         if (settings[propName] !== undefined) {
           const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
           yield put(newAction(actionType, propName));
         }
       }
+      // restore app options from settings
       const newSettings = {} as any;
       for (let propName of persistedOptions) {
         if (settings[propName] !== undefined) {
@@ -1185,7 +1196,11 @@ const sagas = {
         yield call(log.debug, 'Reading settings from database', newSettings);
         yield put(newAction(AppAction.setAppOption, newSettings));
       }
-      const { currentActivityId, pausedTime } = settings;
+      const { currentActivityId, pausedTime, latMax, latMin, lonMax, lonMin, mapHeading, mapZoomLevel } = settings;
+      const bounds = [[lonMax, latMax], [lonMin, latMin]];
+      yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
+      yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
+      yield put(newAction(AppAction.flagEnable, 'mapEnable'));
       if (pausedTime) {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
         yield put(newAction(AppAction.setAppOption, { // TODO review
@@ -1199,6 +1214,16 @@ const sagas = {
       const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
       yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
       yield call(Geo.startBackgroundGeolocation); // start this right away
+      // const map = MapUtils();
+      // if (map && latMax && latMin && lonMax && lonMin) { // TODO what if any of these are legitimately zero? (unlikely)
+      //   const mapRendered = yield select((state: AppState) => state.flags.mapRendered);
+      //   if (!mapRendered) {
+      //     yield take(AppAction.mapRendered); // wait for it TODO fork the saga to parallelize when using yield take?
+      //   }
+      //   const duration = 0;
+      //   const padding = [0, 0] as [number, number];
+      //   map.fitBounds([lonMax, latMax], [lonMin, latMin], padding, duration);
+      // }
       if (!recoveryMode) {
         if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
@@ -1208,7 +1233,7 @@ const sagas = {
             const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
             if (activity && activity.id) {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
-              yield put(newAction(AppAction.zoomToActivity, { id: activity.id })); // in startupActions
+              yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: false, zoomTimeline: true })); // in startupActions
             }
           } else {
             yield put(newAction(AppAction.startFollowingUser)); // TODO keep?
@@ -1257,7 +1282,7 @@ const sagas = {
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,
           { currentActivityId: null, selectedActivityId: activityId, scrollTime: halfTime, viewTime: halfTime }));
-        yield put(newAction(AppAction.zoomToActivity, { id: activityId })); // in stopActivity
+        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in stopActivity
         yield put(newAction(AppAction.scrollActivityList, { scrollTime: halfTime })); // in stopActivity
       }
     } catch (err) {
@@ -1337,41 +1362,40 @@ const sagas = {
     }
   },
 
+  // Zoom the map and/or timeline to the duration/bounds of the (cached) Activity.
   zoomToActivity: function* (action: Action) {
-    const { id } = action.params as ZoomToActivityParams;
+    const { id, zoomMap, zoomTimeline } = action.params as ZoomToActivityParams;
     const state = (yield select((state: AppState) => state)) as AppState;
     if (!state.cache.populated) {
       yield call(log.info, 'saga zoomToActivity: cache not populated yet');
-      yield take(AppAction.refreshCacheDone);
+      yield take(AppAction.refreshCacheDone); // TODO really we only need the specified activity to be cached
     }
     const activity = cachedActivity(state, id);
     if (activity) {
       yield call(log.debug, `saga zoomToActivity activityId: ${activity.id}`);
-      if (!state.flags.mapRendered) {
-        yield call(log.info, 'saga zoomToActivity: mapRendered false');
-        yield take(AppAction.mapRendered);
-      }
       // Fit map bounds to bounds of activity (with padding)
       const { duration } = constants.map.fitBounds;
       const map = MapUtils();
-      if (map && map.fitBounds) {
+      if (zoomMap && map && map.fitBounds) {
         const { latMax, latMin, lonMax, lonMin } = activity;
         yield call(log.trace, 'saga zoomToActivity', { latMax, latMin, lonMax, lonMin });
-        if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
-          map.fitBounds([lonMax, latMax], [lonMin, latMin], mapFitBounds(state), duration);
+        if (!state.flags.mapRendered) {
+          yield call(log.info, 'saga zoomToActivity: waiting for mapRendered');
+          yield take(AppAction.mapRendered);
         }
-        if (id === state.options.currentActivityId) { // zooming to currentActivity automatically engages following
-          yield put(newAction(AppAction.startFollowingUser));
-        } else {
-          yield put(newAction(AppAction.stopFollowingUser));
+        if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
+          map.fitBounds([lonMax, latMax], [lonMin, latMin], mapPadding(state), duration);
         }
       }
-      // Zoom Timeline to show the entire activity, in context. Note we are not resetting its viewTime, just zooming.
-      const tTotal = activity.tTotal || (utils.now() - activity.tStart!);
-      if (activity.tTotal) {
-        const newTimelineZoomValue = yield call(timelineZoomValue, tTotal);
-        yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
-        yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
+      if (zoomTimeline) {
+        // Zoom Timeline to show the entire activity, in context. Note we are not resetting its viewTime, just zooming.
+        // If there is no tTotal yet (which is the case for a currentActivity), we use the current now time as the end.
+        const tTotal = activity.tTotal || (utils.now() - activity.tStart!);
+        if (activity.tTotal) {
+          const newTimelineZoomValue = yield call(timelineZoomValue, tTotal);
+          yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
+          yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
+        }
       }
     }
   },

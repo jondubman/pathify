@@ -190,7 +190,11 @@ export const dynamicTopBelowButtons = (state: AppState): number => (
   dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
 
-export const mapFitBounds = (state: AppState): [number, number] => {
+export const mapHidden = (state: AppState): boolean => (
+  (dynamicMapStyle(state).url === '' || !state.flags.mapEnable)
+)
+
+export const mapPadding = (state: AppState): [number, number] => {
   const horizontal = constants.map.fitBounds.minHorizontalPadding;
   const { showActivityList, showTimeline } = state.flags;
   const topClearZone = dynamicTopBelowButtons(state)
@@ -199,10 +203,6 @@ export const mapFitBounds = (state: AppState): [number, number] => {
   const vertical = Math.max(topClearZone, bottomClearZone);
   return [vertical + constants.map.fitBounds.minVerticalPadding, horizontal];
 }
-
-export const mapHidden = (state: AppState): boolean => (
-  (dynamicMapStyle(state).url === '' || state.flags.mapDisable)
-)
 
 export const mapStyles = (state: AppState): MapStyle[] => (
   constants.mapStyles.filter((mapStyle: MapStyle) => state.flags.allowMapStyleNone || (mapStyle.name !== 'None'))

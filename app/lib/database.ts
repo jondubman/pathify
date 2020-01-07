@@ -58,8 +58,10 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     lonMax: 'double',
     lonMin: 'double',
     mapFullScreen: 'bool',
+    mapHeading: 'double',
     mapOpacity: 'double',
     mapStyle: 'string',
+    mapZoomLevel: 'double',
     pausedTime: 'int',
     showTimeline: 'bool',
     timelineNow: 'bool',
@@ -76,8 +78,10 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   lonMax: number,
   lonMin: number,
   mapFullScreen: boolean,
+  mapHeading: number;
   mapOpacity: number,
   mapStyle: string,
+  mapZoomLevel: number;
   pausedTime: number,
   showTimeline: boolean,
   timelineNow: boolean,
@@ -96,18 +100,21 @@ const schemaList = [
 // oldRealm and newRealm, each of which has a schemaVersion property. It's possible that multiple upgrades will need
 // to be performed in sequence during the migration.
 const { schemaVersion } = constants.database;
+const { bounds, heading } = constants.map.default;
 
 const defaultSettings = {
   id: 1,
   currentActivityId: undefined,
   followingUser: false,
-  latMax: 68.45269397608266, // TODO this is basically North America
-  latMin: -66.41460411107224,
-  lonMax: -0.16697147646779342,
-  lonMin: -132.09348845123324,
+  latMax: bounds[0][0],
+  latMin: bounds[1][1],
+  lonMax: bounds[0][0],
+  lonMin: bounds[1][0],
   mapFullScreen: false,
+  mapHeading: heading,
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
+  mapZoomLevel: 0,
   pausedTime: 0,
   showTimeline: true,
   timelineNow: true,

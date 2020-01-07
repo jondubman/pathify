@@ -218,4 +218,6 @@ export interface StartActivityParams {
 
 export interface ZoomToActivityParams {
   id: string,
+  zoomMap: boolean,
+  zoomTimeline: boolean;
 }
