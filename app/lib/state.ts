@@ -48,9 +48,9 @@ export const initialAppState = {
     mapEnable: false, // if false, map will not be shown at all. Hold off at startup until we know the initialBounds.
     mapFullScreen: true, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
-    mapRendered: false, // set when map has been fully rendered
+    mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    recoveryMode: false, // debug only
+    recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // settings panel visible state
@@ -58,15 +58,15 @@ export const initialAppState = {
     showActivityDetails: false,
     showActivityInfo: true,
     showActivityList: true,
-    showAppStateTimespans: false,
-    showDebugInfo: false,
+    showAppStateTimespans: false, // for debugging
+    showDebugInfo: false, // for debugging, obviously
     showPathsOnMap: true,
-    showPriorLocation: true,
+    showPriorLocation: true, // as a Pulsar on the map
     showTimeline: true,
     showTimelineMarks: false,
     showTimelineSpans: true,
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking?
-    ticksEnabled: true, // normally true, set false only for testing to disable actions that occur every second
+    ticksEnabled: true, // normally true, set false only for testing/profiling to disable actions repeated every second.
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
@@ -80,19 +80,20 @@ export const initialAppState = {
   mapBoundsInitial: null as LonLat[] | null, // once set, never changes
   mapZoom: null as number | null,
   mapZoomInitial: null as number | null, // once set, never changes
-  options: { // non-boolean
+  // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
+  options: { // Like the flags, these are not necessarily user-configurable.
     appState: AppStateChange.STARTUP as AppStateChange,
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
-    currentActivityId: '', // while tracking Activity
-    decelerationRate: 0, // for ScrolLViews
-    mapOpacity: constants.map.default.opacity,
-    mapOpacityPreview: null as number | null, // while adjusting
-    mapStyle: constants.map.default.style,
-    nowTime: now,
-    pulsars: {} as OptionalPulsars,
+    currentActivityId: null as string | null, // while tracking Activity
+    decelerationRate: 0, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
+    mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
+    mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
+    mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
+    nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick.  future.
+    pulsars: {} as OptionalPulsars, // pulsing colored dots to indicate location on the map
     pausedTime: now, // timepoint where timeline was last paused
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline
-    selectedActivityId: '', // for now, no more than one Activity is 'selected' at a time
+    selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
     startupTime: now, // not persisted, never changed once set
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.

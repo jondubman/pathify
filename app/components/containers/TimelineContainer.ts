@@ -43,6 +43,7 @@ export type TimelineProps = TimelineStateProps & TimelineDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   const { yDomain } = constants.timeline;
+  const { timelineNow } = state.flags;
   const { viewTime } = state.options;
   const pinchZoom = state.flags.timelinePinchToZoom;
   const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
@@ -53,19 +54,20 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
     x: [viewTime - scrollableAreaTime / 2, viewTime + scrollableAreaTime / 2], // half on either side
     y: yDomain,
   }
+  const zoomLevel = timelineZoomLevel(state.options.timelineZoomValue);
   const showMarks = state.flags.showTimelineMarks;
   const showSpans = state.flags.showTimelineSpans;
   return {
     pinchZoom,
     showMarks,
     showSpans,
-    timelineNow: state.flags.timelineNow,
-    viewTime,
+    timelineNow,
     timelineWidth,
+    viewTime,
     visibleTime,
     visibleWidth,
     zoomDomain,
-    zoomLevel: timelineZoomLevel(state.options.timelineZoomValue),
+    zoomLevel,
   }
 }
 

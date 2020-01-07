@@ -125,6 +125,9 @@ import timeseries, {
   GenericEvent,
   TimeRange,
 } from 'shared/timeseries';
+import {
+  msecToString,
+} from 'shared/units';
 
 const sagas = {
 
@@ -331,6 +334,7 @@ const sagas = {
             logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
             schemaVersion: constants.database.schemaVersion,
+            timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
           }
           break;
         }
