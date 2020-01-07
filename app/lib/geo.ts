@@ -144,7 +144,7 @@ const geoconfig_tracking: Config = {
   // desired time between activity detections.
   // Larger values will result in fewer activity detections while improving battery life.
   // A value of 0 will result in activity detections at the fastest possible rate.
-  activityRecognitionInterval: 1000, // msec
+  activityRecognitionInterval: 5000,
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION, // higher than DESIRED_ACCURACY_HIGH, on iOS
   disableStopDetection: false, // using false is vastly more power-efficient!
   distanceFilter: 1, // meters device must move to generate update event, default 10
@@ -181,7 +181,6 @@ const geoconfig_tracking: Config = {
 
 const geoconfig_tracking_background: Config = {
   ...geoconfig_tracking,
-  activityRecognitionInterval: 5000, // msec. Let's use a little less power in the background to avoid CPU watchdog.
   persistMode: BackgroundGeolocation.PERSIST_MODE_ALL,
 }
 

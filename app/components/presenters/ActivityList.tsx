@@ -141,6 +141,7 @@ class ActivityList extends Component<ActivityListProps> {
   }
 
   render() {
+    utils.addToCount('renderActivityList');
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
     return (
       <Fragment>

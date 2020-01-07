@@ -4,6 +4,7 @@ import * as Victory from 'victory-native';
 const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
 import constants, { TimespanKind } from 'lib/constants';
+import utils from 'lib/utils';
 import { Timespan } from 'containers/TimelineContainer';
 
 interface TimelineSpanProps {
@@ -22,6 +23,7 @@ class TimelineSpan extends React.Component<TimelineSpanProps> {
   // }
 
   render() {
+    utils.addToCount('renderTimelineSpan');
     const { scale, ts } = this.props;
     const { timeline } = constants;
     const yBase = timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars;

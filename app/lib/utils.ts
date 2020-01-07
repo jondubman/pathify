@@ -6,7 +6,22 @@ import { LonLat } from 'shared/locations';
 
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
 
+// Counts (e.g. render counts) are stored here privately rather than in the Redux store for simplicity/efficiency.
+// It would be unhelpful for counting to yield any additional chatter between react-redux and the stuff we're measuring.
+const _counts: any = {};
+
 const utils = {
+
+  addToCount: (prop: string, increment: number = 1): void => {
+    if (!_counts[prop]) {
+      _counts[prop] = 0;
+    }
+    _counts[prop] += increment;
+  },
+
+  counts: (): any => {
+    return _counts;
+  },
 
   deepCopy: (obj: Object): Object => (
     JSON.parse(JSON.stringify(obj))

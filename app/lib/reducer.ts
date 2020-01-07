@@ -39,15 +39,6 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         }
         break;
 
-      case ReducerAction.COUNT:
-        {
-          const countUpdate = params as CountUpdate;
-          for (let [name, increment] of Object.entries(countUpdate)) {
-            newState.counts[name] += increment;
-          }
-        }
-        break;
-
       // Set newState.userLocation to be the most recent locationEvent
       case ReducerAction.GEOLOCATION:
         {

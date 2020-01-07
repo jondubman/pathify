@@ -17,7 +17,7 @@ import { MapAreaProps } from 'containers/MapContainer';
 import MapDimmerContainer from 'containers/MapDimmerContainer';
 import PathsContainer from 'components/containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
-import constants from 'lib/constants';
+import utils from 'lib/utils';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
@@ -63,6 +63,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   render() {
+    utils.addToCount('renderMap');
     const {
       backgroundTapped,
       height,

@@ -3,14 +3,13 @@ import React, {
 
 import {
   StyleSheet,
-  Text,
-  TouchableHighlight,
   View,
 } from 'react-native';
 
 import TopButtonContainer from 'containers/TopButtonContainer';
 import { TopMenuProps } from 'containers/TopMenuContainer';
 import constants from 'lib/constants';
+import utils from 'lib/utils';
 import { centerline } from 'lib/selectors';
 
 const colors = constants.colors.topMenu;
@@ -64,6 +63,7 @@ class TopMenu extends React.Component<TopMenuProps> {
   }
 
   render() {
+    utils.addToCount('renderTopMenu');
     const { props } = this;
     return (
       <React.Fragment>

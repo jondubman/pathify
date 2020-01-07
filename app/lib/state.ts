@@ -1,7 +1,5 @@
 // Interfaces and constants related to the AppState used by the Redux reducer
 
-import { Polygon } from "@turf/helpers";
-
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
@@ -17,10 +15,6 @@ export interface CacheInfo {
   activities?: ActivityDataExtended[];
   populated: boolean;
   refreshCount: number;
-}
-
-export interface CountUpdate {
-  refreshedActivities?: number;
 }
 
 export interface MapRegionUpdate {
@@ -50,7 +44,7 @@ export const initialAppState = {
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel
-    logToDatabase: true, // TODO debug only
+    logToDatabase: false, // TODO debug only
     mapEnable: false, // if false, map will not be shown at all. Hold off at startup until we know the initialBounds.
     mapFullScreen: true, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)

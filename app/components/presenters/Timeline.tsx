@@ -18,10 +18,11 @@ import {
   VictoryZoomContainer,
 } from 'victory-native';
 
-import constants from 'lib/constants';
 import { TimelineProps } from 'containers/TimelineContainer';
 import TimelineSpansContainer from 'containers/TimelineSpansContainer';
 import TimelineMarksContainer from 'containers/TimelineMarksContainer';
+import constants from 'lib/constants';
+import utils from 'lib/utils';
 import timeseries, { interval } from 'shared/timeseries';
 
 const initialState = {
@@ -50,6 +51,7 @@ class Timeline extends Component<TimelineProps> {
   }
 
   render() {
+    utils.addToCount('renderTimeline');
     const {
       pinchZoom,
       showMarks,

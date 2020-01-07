@@ -326,7 +326,7 @@ const sagas = {
         case 'counts': {
           response = {
             activities: (yield call(database.activities)).length,
-            counts: state.counts,
+            counts: utils.counts(),
             events: (yield call(database.events)).length,
             logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
@@ -877,7 +877,7 @@ const sagas = {
       }
     }
     yield call(database.updateActivity, activityUpdate, pathUpdate);
-    yield put(newAction(ReducerAction.COUNT, { refreshedActivities: 1 }));
+    yield call(utils.addToCount, 'refreshedActivities');
     yield put(newAction(AppAction.refreshActivityDone));
   },
 
@@ -1170,9 +1170,12 @@ const sagas = {
   // but is essentially an option to startActivity.
   startupActions: function* () {
     try {
-      yield call(log.debug, 'saga startupActions');
       yield call(database.completeAnyMigration);
-      const { recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
+      const { logToDatabase, recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
+      if (!logToDatabase) {
+        log.setEnabled(false);
+      }
+      yield call(log.debug, 'saga startupActions');
       if (startupAction_clearStorage) {
         yield put(newAction(AppAction.clearStorage));
       }
@@ -1235,8 +1238,6 @@ const sagas = {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
               yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: false, zoomTimeline: true })); // in startupActions
             }
-          } else {
-            yield put(newAction(AppAction.startFollowingUser)); // TODO keep?
           }
         }
       }

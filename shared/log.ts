@@ -96,9 +96,9 @@ const log = {
     _callback = callback;
   },
 
-  // setEnabled: (enabled: boolean) => {
-  //   _enabled = enabled;
-  // },
+  setEnabled: (enabled: boolean) => {
+    _enabled = enabled;
+  },
 }
 
 // Handle debug output: Omit logging the include property, which may contain a large volume of data.
