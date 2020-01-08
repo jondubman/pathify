@@ -40,10 +40,11 @@ class AppUI extends Component<AppUIProps> {
 
   render() {
     const {
+      mapFullScreen,
       showActivityInfo,
       showDebugInfo,
       showTimeline,
-      timelineHeight
+      timelineHeight,
     } = this.props;
     const width = utils.windowSize().width;
     return (
@@ -58,15 +59,15 @@ class AppUI extends Component<AppUIProps> {
           {showActivityInfo ? <ActivityInfoContainer /> : null}
           {showDebugInfo ? <DebugInfoContainer /> : null}
           <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-            <ClockMenuContainer />
+            {mapFullScreen ? null : <ClockMenuContainer />}
             <CompassButtonContainer />
             <FollowMeButtonContainer />
             <GeoButtonContainer />
           </View>
-          <TimelineControlsContainer />
+          {mapFullScreen ? null : <TimelineControlsContainer />}
           <View style={{ position: 'absolute', width }}>
             <HelpPanelContainer />
-            <TopMenuContainer />
+            {mapFullScreen ? null : <TopMenuContainer />}
             <SettingsPanelContainer />
           </View>
         </View>

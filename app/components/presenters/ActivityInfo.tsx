@@ -30,7 +30,7 @@ const Styles = StyleSheet.create({
 
 const ActivityInfo = (props: ActivityInfoProps) => (
   <React.Fragment>
-    <View style={Styles.box} />
+    <View pointerEvents="none" style={Styles.box} />
     {props.showActivityList ? <ActivityListContainer /> : null}
   </React.Fragment>
 )

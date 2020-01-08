@@ -196,7 +196,8 @@ export const mapHidden = (state: AppState): boolean => (
 
 export const mapPadding = (state: AppState): [number, number] => {
   const horizontal = constants.map.fitBounds.minHorizontalPadding;
-  const { showActivityList, showTimeline } = state.flags;
+  const showActivityList = state.flags.showActivityList && !state.flags.mapFullScreen;
+  const showTimeline = state.flags.showTimeline && !state.flags.mapFullScreen;
   const topClearZone = dynamicTopBelowButtons(state)
     + (showActivityList ? 1 : 0) * constants.activityList.height;
   const bottomClearZone = (showTimeline ? 1 : 0) * constants.timeline.default.height;

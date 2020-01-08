@@ -88,6 +88,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
   }
 
   render() {
+    utils.addToCount('renderTimelineScroll');
     const {
       decelerationRate,
       scrollableWidth,
