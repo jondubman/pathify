@@ -480,6 +480,7 @@ const constants = {
   timing: { // msec
     activityListAnimationCompletion: 600,
     activityRefreshDelay: 1000, // TODO
+    menuFade: 300,
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2

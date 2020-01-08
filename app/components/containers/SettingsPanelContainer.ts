@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import { MapStyle } from 'lib/constants';
+import constants, { MapStyle } from 'lib/constants';
 import {
   dynamicMapStyle,
   mapStyles,
@@ -42,6 +42,7 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
     log.debug('SettingsPanel onSelectMapStyle', mapStyle);
     dispatch(newAction(AppAction.setAppOption, { mapStyle }));
   }
+  // Unlike full screen switch, the Settings panel stays open while adjusting the opacity, style settings.
   const onSetMapOpacity = (mapOpacity: number) => {
     dispatch(newAction(AppAction.setAppOption, { mapOpacity }));
   }
@@ -52,6 +53,11 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
     log.debug('SettingsPanel onSetMapFullScreen', value);
     dispatch(newAction(value ? AppAction.flagEnable : AppAction.flagDisable, 'mapFullScreen'));
     dispatch(newAction(AppAction.flagDisable, 'mapTapped'));
+    // Close this panel. User could re-open it with one tap. This is probably what is preferred now.
+    // The whole point of full screening the map is to have less clutter on top... including this panel.
+    setTimeout(() => {
+      dispatch(newAction(AppAction.flagDisable, 'settingsOpen'));
+    }, constants.timing.menuFade) // TODO animate the fade
   }
   const dispatchers = {
     onSelectMapStyle,

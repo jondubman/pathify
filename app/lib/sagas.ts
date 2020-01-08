@@ -1378,6 +1378,7 @@ const sagas = {
       const { duration } = constants.map.fitBounds;
       const map = MapUtils();
       if (zoomMap && map && map.fitBounds) {
+        yield put(newAction(AppAction.stopFollowingUser));
         const { latMax, latMin, lonMax, lonMin } = activity;
         yield call(log.trace, 'saga zoomToActivity', { latMax, latMin, lonMax, lonMin });
         if (!state.flags.mapRendered) {
