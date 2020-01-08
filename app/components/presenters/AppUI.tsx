@@ -1,5 +1,6 @@
 import React, {
   Component,
+  Fragment,
 } from 'react';
 
 import {
@@ -41,6 +42,7 @@ class AppUI extends Component<AppUIProps> {
   render() {
     const {
       mapFullScreen,
+      mapTapped,
       showActivityInfo,
       showDebugInfo,
       showTimeline,
@@ -55,21 +57,23 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapContainer />
-          {showTimeline ? <TimelineScrollContainer /> : null}
-          {showActivityInfo ? <ActivityInfoContainer /> : null}
-          {showDebugInfo ? <DebugInfoContainer /> : null}
-          <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-            {mapFullScreen ? null : <ClockMenuContainer />}
-            <CompassButtonContainer />
-            <FollowMeButtonContainer />
-            <GeoButtonContainer />
-          </View>
-          {mapFullScreen ? null : <TimelineControlsContainer />}
-          <View style={{ position: 'absolute', width }}>
-            <HelpPanelContainer />
-            {mapFullScreen ? null : <TopMenuContainer />}
-            <SettingsPanelContainer />
-          </View>
+          {mapFullScreen && mapTapped ? null : (<Fragment>
+            {showTimeline ? <TimelineScrollContainer /> : null}
+            {showActivityInfo ? <ActivityInfoContainer /> : null}
+            {showDebugInfo ? <DebugInfoContainer /> : null}
+            <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+              {mapFullScreen ? null : <ClockMenuContainer />}
+              <CompassButtonContainer />
+              <FollowMeButtonContainer />
+              <GeoButtonContainer />
+            </View>
+            {mapFullScreen ? null : <TimelineControlsContainer />}
+            <View style={{ position: 'absolute', width }}>
+              <HelpPanelContainer />
+              {mapFullScreen ? null : <TopMenuContainer />}
+              <SettingsPanelContainer />
+            </View>
+          </Fragment>)}
         </View>
       </View>
     )

@@ -49,6 +49,7 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
+    mapTapped: false,
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation

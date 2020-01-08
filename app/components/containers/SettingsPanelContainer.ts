@@ -51,6 +51,7 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   const onSetMapFullScreen = (value: boolean) => {
     log.debug('SettingsPanel onSetMapFullScreen', value);
     dispatch(newAction(value ? AppAction.flagEnable : AppAction.flagDisable, 'mapFullScreen'));
+    dispatch(newAction(AppAction.flagDisable, 'mapTapped'));
   }
   const dispatchers = {
     onSelectMapStyle,

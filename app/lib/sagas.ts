@@ -76,6 +76,7 @@ import {
   cachedActivity,
   currentActivity,
   mapPadding,
+  menuOpen,
   selectedActivity,
   timelineZoomValue,
 } from 'lib/selectors';
@@ -793,7 +794,12 @@ const sagas = {
 
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
-    yield put(newAction(AppAction.closePanels));
+    const state = yield select(state => state);
+    if (menuOpen(state)) {
+      yield put(newAction(AppAction.closePanels));
+    } else {
+      yield put(newAction(AppAction.flagToggle, 'mapTapped'));
+    }
   },
 
   modeChange: function* (action: Action) {

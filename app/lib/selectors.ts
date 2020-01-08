@@ -214,17 +214,17 @@ export const menuOpen = (state: AppState): boolean => (
 )
 
 export const pulsars = (state: AppState): OptionalPulsars => {
+  const { followingUser, mapFullScreen, mapTapped, showPriorLocation, timelineNow } = state.flags;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
-  if (state.userLocation) {
+  if (state.userLocation && (!mapFullScreen || !mapTapped)) { // hide user location in mapFullScreen when mapTapped
     pulsars.userLocation = {
       loc: locations.lonLat(state.userLocation),
       color: colors.pulsars.userLocation,
       visible: true,
     }
   }
-  const { mapFullScreen, showPriorLocation, timelineNow } = state.flags;
-  if (showPriorLocation && !mapFullScreen && !timelineNow) {
+  if (showPriorLocation && !mapFullScreen && !timelineNow) { // always hide prior location in mapFullScreen
     const { nearTimeThreshold } = constants.timeline;
     const { scrollTime } = state.options;
     const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
