@@ -136,7 +136,7 @@ const sagas = {
     // Avoid boilerplate by automatically yielding takeEvery for each AppAction
     for (let action in AppAction) {
       if (AppAction[action]) {
-        yield call(log.debug, 'configuring saga for AppAction', action);
+        // yield call(log.trace, 'configuring saga for AppAction', action);
         if (action === AppAction.setAppOptionASAP) { // special case
           // With this action, *any* prior call to setAppOptionASAP not yet processed is ignored, so use with care!
           // This is really only appropriate for isolated rapid event sources like a slider that is being dragged.
@@ -1130,8 +1130,8 @@ const sagas = {
           // should already have the AppUserActionEvent and MarkEvent from before; just set currentActivityId.
           activityId = continueActivityId;
         } else {
-          const folllowingNow = yield select((state: AppState) => state.flags.followingUser);
-          if (folllowingNow) {
+          const followingNow = yield select((state: AppState) => state.flags.followingUser);
+          if (followingNow) {
             yield put(newAction(AppAction.centerMap, {
               center: [0, 0],
               option: 'relative',
@@ -1175,10 +1175,7 @@ const sagas = {
   startupActions: function* () {
     try {
       yield call(database.completeAnyMigration);
-      const { logToDatabase, recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
-      if (!logToDatabase) {
-        log.setEnabled(false);
-      }
+      const { recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
       yield call(log.debug, 'saga startupActions');
       if (startupAction_clearStorage) {
         yield put(newAction(AppAction.clearStorage));
@@ -1210,7 +1207,7 @@ const sagas = {
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
       if (pausedTime) {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
-        yield put(newAction(AppAction.setAppOption, { // TODO review
+        yield put(newAction(AppAction.setAppOption, { // Note all these timestamps are aligned on startup.
           pausedTime,
           scrollTime: pausedTime,
           timelineRefTime: pausedTime,
@@ -1220,21 +1217,11 @@ const sagas = {
       const tracking = !!currentActivityId;
       const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
       yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
-      yield call(Geo.startBackgroundGeolocation); // start this right away
-      // const map = MapUtils();
-      // if (map && latMax && latMin && lonMax && lonMin) { // TODO what if any of these are legitimately zero? (unlikely)
-      //   const mapRendered = yield select((state: AppState) => state.flags.mapRendered);
-      //   if (!mapRendered) {
-      //     yield take(AppAction.mapRendered); // wait for it TODO fork the saga to parallelize when using yield take?
-      //   }
-      //   const duration = 0;
-      //   const padding = [0, 0] as [number, number];
-      //   map.fitBounds([lonMax, latMax], [lonMin, latMin], padding, duration);
-      // }
+      yield call(Geo.startBackgroundGeolocation);
       if (!recoveryMode) {
         if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
-          yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId }));
+          yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId })); // this will follow user
         } else {
           if (pausedTime) {
             const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
@@ -1360,8 +1347,11 @@ const sagas = {
   // Stop following user after panning the map.
   userMovedMap: function* (action: Action) {
     try {
-      yield call(log.debug, 'saga userMovedMap');
-      yield put(newAction(AppAction.stopFollowingUser));
+      // yield call(log.trace, 'saga userMovedMap');
+      const followingUser = yield select((state: AppState) => state.flags.followingUser);
+      if (followingUser) {
+        yield put(newAction(AppAction.stopFollowingUser));
+      }
     } catch (err) {
       yield call(log.error, 'userMovedMap', err);
     }

@@ -38,13 +38,12 @@ export const initialAppState = {
     allowMapStyleNone: false, // really only useful for debugging / perf
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     clockMenuOpen: false,
-    flag1: false, // for experimentation
-    flag2: false, // for experimentation
-    flag3: false, // for experimentation
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel
-    logToDatabase: false, // TODO debug only
+    logInDebugVersion: true,
+    logInProductionVersion: false,
+    logToDatabase: false, // applies only if logs are enabled in general (see logInDebugVersion, logInProductionVersion)
     mapEnable: false, // if false, map will not be shown at all. Hold off at startup until we know the initialBounds.
     mapFullScreen: true, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)

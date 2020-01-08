@@ -223,7 +223,8 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       visible: true,
     }
   }
-  if (!state.flags.timelineNow && state.flags.showPriorLocation) {
+  const { mapFullScreen, showPriorLocation, timelineNow } = state.flags;
+  if (showPriorLocation && !mapFullScreen && !timelineNow) {
     const { nearTimeThreshold } = constants.timeline;
     const { scrollTime } = state.options;
     const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level

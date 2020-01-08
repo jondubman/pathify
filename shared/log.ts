@@ -3,12 +3,12 @@ const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
 // @ts-ignore
-const productionMode = (typeof __DEV__ === 'undefined'); // __DEV__ is quite possibly undefined
-const debugMode = !productionMode;
+const productionVersion = (typeof __DEV__ === 'undefined'); // __DEV__ is quite possibly undefined
+const debugVersion = !productionVersion;
 
 type LogMethod = (level: string, ...args) => void;
 let _callback: LogMethod;
-let _enabled = debugMode; // enabled in debug mode, disabled in production by default. see setEnabled.
+let _enabled = debugVersion; // enabled in debug version, disabled in production by default. see setEnabled.
 
 const log = {
   levels: ['trace', 'debug', 'info', 'warn', 'error', 'fatalError'], // from low to high
@@ -26,7 +26,7 @@ const log = {
     try {
       logCount++;
       const logPrefix = `${logCount}${log.dotsFor(level)}${appName} ${level}`;
-      if (debugMode) {
+      if (debugVersion) {
         console.log(logPrefix, ...args); // prefix enables easy filtering in Console
       }
       if (_callback) {
@@ -34,7 +34,7 @@ const log = {
       }
       // Now write to database if logging is enabled
     } catch (err) {
-      if (debugMode) {
+      if (debugVersion) {
         console.log(`${appName} log err ${err}`);
       }
     }
@@ -96,8 +96,13 @@ const log = {
     _callback = callback;
   },
 
-  setEnabled: (enabled: boolean) => {
-    _enabled = enabled;
+  setEnabled: (inDebugVersion: boolean, inProductionVersion: boolean) => {
+    if (debugVersion) {
+      _enabled = inDebugVersion;
+    }
+    if (productionVersion) {
+      _enabled = inProductionVersion;
+    }
   },
 }
 

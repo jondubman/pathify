@@ -39,20 +39,24 @@ export default class App extends Component {
 
   componentDidMount() {
     try {
-      log.registerCallback((level: string, ...args) => {
-        const message: LogMessageData = {
-          t: utils.now(),
-          level,
-          items: [...args].map((arg: any) => JSON.stringify(arg)),
-        }
-        setTimeout(() => { // avoid blocking
-          database.appendLogMessage(message);
-        }, 0);
-      })
+      store.create(); // proactively create Redux store instance
+      const { flags } = store.getState();
+      log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
+      if (flags.logToDatabase) {
+        log.registerCallback((level: string, ...args) => {
+          const message: LogMessageData = {
+            t: utils.now(),
+            level,
+            items: [...args].map((arg: any) => JSON.stringify(arg)),
+          }
+          setTimeout(() => { // avoid blocking
+            database.appendLogMessage(message);
+          }, 0);
+        })
+      }
       log.info('----- App starting up! (device log)');
       log.info('windowSize', utils.windowSize());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
-      store.create(); // proactively create Redux store instance
       RNAppState.addEventListener('change', this.handleAppStateChange);
       store.dispatch(newAction(AppAction.startupActions));
       const interval = setInterval(() => {

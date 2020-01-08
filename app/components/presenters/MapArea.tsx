@@ -199,7 +199,6 @@ class MapArea extends Component<MapAreaProps> {
         const mapView = this._map;
         // TODO double casting types until index.d.ts TypeScript declaration is fixed
         const bounds = await mapView.getVisibleBounds() as unknown as BoundsWithHeading;
-        log.trace('getVisibleBounds', bounds);
         return bounds;
       }
       return null;
@@ -230,22 +229,18 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   onRegionIsChanging(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
-    const { heading, isUserInteraction, zoomLevel } = args.properties;
-    const { visibleBounds } = args.properties as any; // TODO: note TS definition is off
-    log.trace(`onRegionIsChanging bounds: ${visibleBounds} heading: ${heading} isUserInteraction: ${isUserInteraction} zoomLevel: ${zoomLevel}`);
+    const { isUserInteraction } = args.properties;
     if (isUserInteraction) {
       this.props.userMovedMap();
     }
     this.props.mapRegionChanging();
-    this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel }); // TODO
   }
 
-  // TODO why is this not called?
   onRegionDidChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
     const { heading, zoomLevel } = args.properties;
     const { visibleBounds } = args.properties as any; // TODO: TS definition is off
-    log.trace(`onRegionIsChanging bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
-    // this.props.mapRegionChanged({ bounds: visibleBounds, heading });
+    // log.trace(`onRegionDidChange bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+    this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel });
   }
 
   onDidFinishRenderingMapFully(...args) {
