@@ -37,6 +37,25 @@ const TimelineStyles = StyleSheet.create({
   },
 })
 
+const axisStyle = {
+  axis: { stroke: constants.colors.timeline.axis },
+  grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
+  // ticks: { stroke: 'gray', size: 5 }, // appears below axis, not needed
+  tickLabels: {
+    fontSize: constants.timeline.tickLabelFontSize,
+    padding: 0,
+    stroke: constants.colors.timeline.axis
+  },
+}
+const axisLabelStyle = {
+  fontFamily: constants.fonts.family,
+  fontSize: 10,
+  letterSpacing: 'normal',
+  padding: 0,
+  fill: constants.colors.timeline.axisLabels,
+  style: { strokeWidth: 0 },
+}
+
 class Timeline extends Component<TimelineProps> {
 
   readonly state: State = initialState;
@@ -44,30 +63,21 @@ class Timeline extends Component<TimelineProps> {
   constructor(props: any) {
     super(props);
     this.handleZoom = this.handleZoom.bind(this);
+    this.axisTickValues = this.axisTickValues.bind(this);
+
   }
 
   // This responds to user zoom interaction (which won't be happening if allowZoom is false)
   handleZoom(domain: DomainPropType, props: any) {
   }
 
-  render() {
-    utils.addToCount('renderTimeline');
+  axisTickValues(): number[] {
     const {
-      pinchZoom,
-      showMarks,
-      showSpans,
       viewTime,
-      timelineWidth,
-      zoomDomain,
       zoomLevel,
     } = this.props;
-
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
-    const { tickInterval, tickFormat } = zoomInfo;
-    const tickFormatFn = (t: Date) => {
-      // TODO could customize string here to highlight special times/dates, e.g. 'noon'
-      return d3.timeFormat(tickFormat)(t);
-    }
+    const { tickInterval } = zoomInfo;
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
       timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(viewTime), interval.hours(1))
@@ -79,31 +89,32 @@ class Timeline extends Component<TimelineProps> {
     const tickValues: number[] = [];
     const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // 12 is not magic per se, just about right.
     for (let i = -maxTicksPerScreenWidth / 2; i < maxTicksPerScreenWidth / 2; i++) {
-       // Any outside the visible range will be clipped.
+      // Any outside the visible range will be clipped.
       tickValues.push(timeRoundDown + tickInterval * i);
     }
-    const axisStyle = {
-      axis: { stroke: constants.colors.timeline.axis },
-      grid: { stroke: (t: Date) => constants.colors.timeline.axis } as any,
-      // ticks: { stroke: 'gray', size: 5 }, // appears below axis, not needed
-      tickLabels: {
-        fontSize: constants.timeline.tickLabelFontSize,
-        padding: 0,
-        stroke: constants.colors.timeline.axis
-      },
+    return tickValues;
+  }
+
+  render() {
+    utils.addToCount('renderTimeline');
+    const {
+      pinchZoom,
+      showMarks,
+      showSpans,
+      timelineWidth,
+      zoomDomain,
+      zoomLevel,
+    } = this.props;
+    const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
+    const { tickFormat } = zoomInfo;
+    const tickFormatFn = (t: Date) => {
+      // TODO could customize string here to highlight special times/dates, e.g. 'noon'
+      return d3.timeFormat(tickFormat)(t);
     }
-    const axisLabelStyle = {
-      fontFamily: constants.fonts.family,
-      fontSize: 10,
-      letterSpacing: 'normal',
-      padding: 0,
-      fill: constants.colors.timeline.axisLabels,
-      style: { strokeWidth: 0 },
-    }
+    const tickValues = this.axisTickValues();
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
     // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
-
     // TODO future?
     // animate={{ duration: 0, onExit: { duration: 0 }, onEnter: { duration: 0 }, onLoad: { duration: 0 }}}
     return (
