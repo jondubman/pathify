@@ -49,7 +49,7 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    mapTapped: false,
+    mapTapped: false, // tapping the map in mapFullScreen mode hides even the minimal UI, leaving nothing but map/path
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
@@ -60,7 +60,7 @@ export const initialAppState = {
     showActivityList: true,
     showAppStateTimespans: false, // for debugging
     showDebugInfo: false, // for debugging, obviously
-    showPathsOnMap: true,
+    showPathsOnMap: true, // generally true
     showPriorLocation: true, // as a Pulsar on the map
     showTimeline: true,
     showTimelineMarks: false,

@@ -214,11 +214,11 @@ export const menuOpen = (state: AppState): boolean => (
 )
 
 export const pulsars = (state: AppState): OptionalPulsars => {
-  const { mapFullScreen, mapTapped, showPriorLocation, timelineNow } = state.flags;
+  const { followingUser,  mapFullScreen, mapTapped, showPriorLocation, timelineNow, trackingActivity } = state.flags;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
-  if (state.userLocation && (!mapFullScreen || !mapTapped)) { // hide user location in mapFullScreen when mapTapped
-    pulsars.userLocation = {
+  if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
+    pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
       loc: locations.lonLat(state.userLocation),
       color: colors.pulsars.userLocation,
       visible: true,
