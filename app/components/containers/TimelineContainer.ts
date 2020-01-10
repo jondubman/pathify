@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 
 import {
   DomainPropType,
+  DomainTuple,
 } from 'victory-native';
 
 import constants, { TimespanKind } from 'lib/constants';
@@ -24,15 +25,15 @@ export interface Timespan {
 export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
+  centerTime: number;
   pinchZoom: boolean;
   showMarks: boolean;
   showSpans: boolean;
   timelineNow: boolean;
   timelineWidth: number;
-  viewTime: number;
   visibleTime: number;
   visibleWidth: number;
-  zoomDomain: DomainPropType;
+  zoomDomain: DomainPropType; // Note this prop is the only one that isn't a simple value, hence getZoomDomain.
   zoomLevel: number;
 }
 
@@ -41,29 +42,42 @@ export interface TimelineDispatchProps {
 
 export type TimelineProps = TimelineStateProps & TimelineDispatchProps;
 
-const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const { yDomain } = constants.timeline;
-  const { timelineNow } = state.flags;
-  const { viewTime } = state.options;
-  const pinchZoom = state.flags.timelinePinchToZoom;
-  const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
-  const visibleTime = timelineVisibleTime(state.options.timelineZoomValue);
-  const visibleWidth = dynamicTimelineWidth(state);
+let _zoomDomain: { x: [number, number], y: DomainTuple }; // most recently used visible domain of the Timeline
+
+// TODO should probably use reselect library, as that solves the general case.
+const getZoomDomain = (state: AppState) => {
+  const { centerTime, timelineZoomValue } = state.options;
+  const visibleTime = timelineVisibleTime(timelineZoomValue);
   const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
-  const zoomDomain: DomainPropType = { // the visible domain of the Timeline
-    x: [viewTime - scrollableAreaTime / 2, viewTime + scrollableAreaTime / 2], // half on either side
-    y: yDomain,
+  const xMin = centerTime - scrollableAreaTime / 2;
+  const xMax = centerTime + scrollableAreaTime / 2;
+  const { yDomain } = constants.timeline;
+  if (_zoomDomain && _zoomDomain.x[0] === xMin && _zoomDomain.x[1] === xMax) {
+    return _zoomDomain; // reuse the cached object as means of avoiding unnecessary re-rendering of Timeline
   }
-  const zoomLevel = timelineZoomLevel(state.options.timelineZoomValue);
-  const showMarks = state.flags.showTimelineMarks;
-  const showSpans = state.flags.showTimelineSpans;
+  // Make a new _zoomDomain
+  _zoomDomain = { // the visible domain of the Timeline
+    x: [xMin, xMax], // half on either side
+    y: yDomain, // this never changes
+  }
+  return _zoomDomain;
+}
+
+const mapStateToProps = (state: AppState): TimelineStateProps => {
+  const { timelinePinchToZoom, showTimelineMarks, showTimelineSpans, timelineNow } = state.flags;
+  const { centerTime, timelineZoomValue } = state.options;
+  const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
+  const visibleTime = timelineVisibleTime(timelineZoomValue);
+  const visibleWidth = dynamicTimelineWidth(state);
+  const zoomDomain = getZoomDomain(state);
+  const zoomLevel = timelineZoomLevel(timelineZoomValue);
   return {
-    pinchZoom,
-    showMarks,
-    showSpans,
+    centerTime,
+    pinchZoom: timelinePinchToZoom,
+    showMarks: showTimelineMarks,
+    showSpans: showTimelineSpans,
     timelineNow,
     timelineWidth,
-    viewTime,
     visibleTime,
     visibleWidth,
     zoomDomain,

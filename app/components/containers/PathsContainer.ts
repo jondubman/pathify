@@ -8,9 +8,9 @@ import { ActivityDataExtended } from 'shared/activities';
 import { Path } from 'shared/paths';
 
 interface PathsStateProps {
-  currentActivityId?: string;
+  currentActivityId: string | null;
   paths: Path[];
-  selectedActivityId?: string;
+  selectedActivityId: string | null;
 }
 
 interface PathsDispatchProps {

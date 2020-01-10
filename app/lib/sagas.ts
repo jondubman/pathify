@@ -78,6 +78,7 @@ import {
   mapPadding,
   menuOpen,
   selectedActivity,
+  timelineVisibleTime,
   timelineZoomValue,
 } from 'lib/selectors';
 import { postToServer } from 'lib/server';
@@ -666,7 +667,8 @@ const sagas = {
   flag_sideEffects: function* (flagName: string) {
     const flags = yield select((state: AppState) => state.flags);
     const enabledNow = flags[flagName];
-    const appState = yield select((state: AppState) => state.options.appState);
+    const options = yield select((state: AppState) => state.options);
+    const { appState, viewTime } = options;
     if (appState !== AppStateChange.STARTUP) { // avoid changing settings during startup (instead, we apply previous)
       // In general, persist persistedFlags in Settings
       if (persistedFlags.includes(flagName)) {
@@ -675,9 +677,15 @@ const sagas = {
     }
     if (flagName === 'timelineNow') {
       if (enabledNow) {
-        const pausedTime = yield select((state: AppState) => state.options.viewTime); // current pos of timeline
-        yield put(newAction(AppAction.setAppOption, { pausedTime })); // remember prior position of timeline
-        yield put(newAction(AppAction.timerTick, utils.now()));
+        const now = utils.now();
+        const pausedTime = viewTime; // the current viewTime (which is about to be changed)
+        yield put(newAction(AppAction.setAppOption, {
+          pausedTime,
+          centerTime: now,
+          scrollTime: now,
+          viewTime: now,
+        }))
+        yield put(newAction(AppAction.timerTick, now));
       }
     }
     if (flagName === 'trackingActivity') {
@@ -985,6 +993,7 @@ const sagas = {
     yield call(RNRestart.Restart);
   },
 
+  // TODO review/remove forceUpdate
   scrollActivityList: function* (action: Action) {
     yield call(log.trace, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
@@ -1052,25 +1061,37 @@ const sagas = {
   },
 
   setAppOption: function* (action: Action) {
-
-    // Actually set the options:
+    // First, actually set the options!
     const { params } = action;
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
-
-    // Then, handle side effects of setting app options:
-
+    // Next, handle side effects:
+    const state: AppState = yield select(state => state);
     // An important side effect: Whenever viewTime is set, pausedTime and selectedActivityId may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
     if (params.viewTime !== undefined) {
-      const timelineNow = yield select(state => state.flags.timelineNow);
+      const { timelineNow } = state.flags;
       const t = params.viewTime;
       if (!timelineNow) {
         // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
       }
+      // If viewTime is too far from the current timeline center, re-center timeline around viewTime.
+      const { centerTime, timelineZoomValue } = state.options;
+      const visibleTime = yield call(timelineVisibleTime, timelineZoomValue);
+      const timeGap = Math.abs(centerTime - t);
+      const recenterThreshold = visibleTime * (constants.timeline.widthMultiplier / 3);
+      const ratio = timeGap / recenterThreshold;
+      yield call(log.trace, `timeline centerTime-viewTime gap ${timeGap} threshold ${recenterThreshold} ratio ${ratio}`);
+      if (timeGap > recenterThreshold) {
+        yield put(newAction(AppAction.setAppOption, { centerTime: t }));
+        yield call(log.trace, `setAppOption reset centerTime ${t}`);
+      }
+      // Set selectedActivityId as appropriate:
+      // TODO could avoid this database call in many cases. Usually selectedActivityId does not change.
       const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
+      // TODO avoid this setAppOption cascade when it is not needed
       if (!activity || !activity.id) {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
       } else if (activity) {
@@ -1078,15 +1099,15 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id }));
       }
     }
-    const timelineScrolling = yield select((state: AppState) => state.flags.timelineScrolling);
+    const { timelineScrolling } = state.flags;
     if (timelineScrolling && params.scrollTime !== undefined) {
       yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // during timelineScrolling
       yield call(log.trace, 'setAppOption saga scrollTime:', params.scrollTime);
     }
     // Write through to settings in database, if needed
-    const options = yield select((state: AppState) => state.options);
+    const options = yield select((state: AppState) => state.options); // ensure we have the latest
     const { appState } = options;
-    if (appState !== AppStateChange.STARTUP) { // If starting up, avoid writing the same settings that were just read.
+    if (appState !== AppStateChange.STARTUP) { // If starting up, avoid writing the same settings we just read.
       const newSettings = {} as any;
       for (let propName of persistedOptions) {
         if (params[propName] !== undefined) {
@@ -1100,7 +1121,8 @@ const sagas = {
     }
   },
 
-  // This is a wrapper that looks like a pass-through, but uses takeLatest in the root saga. Use with care!
+  // This is a wrapper that looks like a pass-through, but uses takeLatest (not take) in the root saga. Use with care!
+  // takeLatest should only be used when intermediate values are redundant.
   setAppOptionASAP: function* (action: Action) {
     yield put(newAction(AppAction.setAppOption, action.params));
   },
@@ -1169,7 +1191,7 @@ const sagas = {
         yield put(newAction(AppAction.refreshCachedActivity, { activityId }));
         yield delay(0); // TODO seems required to allow ActivityList to get itself ready to scroll... race condition?
         const scrollTime = utils.now();
-        yield put(newAction(AppAction.scrollActivityList, { forceUpdate: true, scrollTime })); // in startActivity
+        yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startActivity
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);
@@ -1205,9 +1227,15 @@ const sagas = {
           newSettings[propName] = settings[propName];
         }
       }
+      const propagatedSettings = {} as any; // TODO really mean type of AppState options
+      if (newSettings.pausedTime) {
+        propagatedSettings.centerTime = newSettings.pausedTime;
+        propagatedSettings.scrollTime = newSettings.pausedTime;
+        propagatedSettings.viewTime = newSettings.pausedTime;
+      }
       if (Object.entries(newSettings).length) {
         yield call(log.debug, 'Reading settings from database', newSettings);
-        yield put(newAction(AppAction.setAppOption, newSettings));
+        yield put(newAction(AppAction.setAppOption, { ...newSettings, ...propagatedSettings }));
       }
       const { currentActivityId, pausedTime, latMax, latMin, lonMax, lonMin, mapHeading, mapZoomLevel } = settings;
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
@@ -1218,8 +1246,8 @@ const sagas = {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
         yield put(newAction(AppAction.setAppOption, { // Note all these timestamps are aligned on startup.
           pausedTime,
+          centerTime: pausedTime,
           scrollTime: pausedTime,
-          timelineRefTime: pausedTime,
           viewTime: pausedTime,
         }))
       }
@@ -1318,19 +1346,21 @@ const sagas = {
 
   // Respond to timeline pan/zoom. x is in the time domain.
   // viewTime changes here only after scrolling, whereas scrollTime changes during scrolling too.
-  timelineZoomed: function* (action: Action) {
+  timelineZoomed: function* (action: Action) { // see also: timelineZooming
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const scrollTime = (x[0] + x[1]) / 2;
     yield put(newAction(AppAction.flagDisable, 'timelineScrolling'));
     yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
+    yield call(log.trace, 'timelineZoomed', scrollTime);
   },
 
-  timelineZooming: function* (action: Action) {
+  timelineZooming: function* (action: Action) { // see also: timelineZoomed
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const scrollTime = (x[0] + x[1]) / 2;
-    yield put(newAction(AppAction.setAppOptionASAP, { scrollTime })); // note: not changing viewTime! see timelineZoomed
+    // Note use of "ASAP" version of setAppOption here to take the latest when we get a flurry of scroll events:
+    yield put(newAction(AppAction.setAppOptionASAP, { scrollTime })); // note: not changing viewTime or centerTime!
     yield call(log.trace, 'timelineZooming', scrollTime);
   },
 
@@ -1338,14 +1368,13 @@ const sagas = {
   // One second is the approximate frequency of location updates
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
-    const appActive = yield select((state: AppState) => state.flags.appActive);
+    const { appActive, timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
     if (appActive) { // avoid ticking the timer in the background
-      const now = action.params as number;
-      const { timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
+      const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const options = { nowTime: now } as any; // always update nowTime
       if (timelineNow) {
         options.scrollTime = now;
-        if (!timelineScrolling) {
+        if (!timelineScrolling) { // because if timelineScrolling, user's actions are more important
           options.viewTime = now;
         }
       }

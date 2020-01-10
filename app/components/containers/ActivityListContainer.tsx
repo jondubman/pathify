@@ -7,7 +7,6 @@ import {
   AppAction,
   newAction,
 } from 'lib/actions';
-import constants from 'lib/constants';
 import {
   dynamicTopBelowButtons,
 } from 'lib/selectors';
@@ -23,7 +22,7 @@ interface ActivityListStateProps {
   animated: boolean;
   list: ActivityDataExtended[];
   refreshCount: number;
-  selectedActivityId: string;
+  selectedActivityId: string | null;
   timelineScrolling: boolean;
   top: number;
 }
@@ -64,6 +63,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
         dispatch(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() })); // in onPressActivity
       }
       const appOptions = {
+        centerTime: newTime,
         scrollTime: newTime,
         selectedActivityId: activity.id,
         viewTime: newTime,

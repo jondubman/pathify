@@ -73,18 +73,18 @@ class Timeline extends Component<TimelineProps> {
 
   axisTickValues(): number[] {
     const {
-      viewTime,
+      centerTime,
       zoomLevel,
     } = this.props;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickInterval } = zoomInfo;
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
-      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(viewTime), interval.hours(1))
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownToMidnight(centerTime), interval.hours(1))
     } else if (tickInterval >= interval.hours(12)) {
-      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(viewTime), interval.hours(1))
+      timeRoundDown = timeseries.timeRoundDown(timeseries.timeRoundDownHours(centerTime), interval.hours(1))
     } else {
-      timeRoundDown = timeseries.timeRoundDown(viewTime, tickInterval);
+      timeRoundDown = timeseries.timeRoundDown(centerTime, tickInterval);
     }
     const tickValues: number[] = [];
     const maxTicksPerScreenWidth = 12 * constants.timeline.widthMultiplier; // 12 is not magic per se, just about right.

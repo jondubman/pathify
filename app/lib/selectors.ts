@@ -41,7 +41,7 @@ export const selectedActivityIndex = (state: AppState) => (
 )
 
 export const activityIndex = (state: AppState) => (
-  state.cache.activities && state.cache.activities.length?
+  (state.cache.activities && state.cache.activities.length) ?
     selectedActivityIndex(state) > -1 ?
       `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}`
       :
@@ -214,7 +214,15 @@ export const menuOpen = (state: AppState): boolean => (
 )
 
 export const pulsars = (state: AppState): OptionalPulsars => {
-  const { followingUser,  mapFullScreen, mapTapped, showPriorLocation, timelineNow, trackingActivity } = state.flags;
+  const {
+    followingUser,
+    mapFullScreen,
+    mapTapped,
+    showAllPastLocations,
+    showPriorLocation,
+    timelineNow,
+    trackingActivity,
+  } = state.flags;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
   if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
@@ -224,7 +232,8 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       visible: true,
     }
   }
-  if (showPriorLocation && !mapFullScreen && !timelineNow) { // always hide prior location in mapFullScreen
+  // always hide prior location in mapFullScreen
+  if (showPriorLocation && !mapFullScreen && !timelineNow && (trackingActivity || showAllPastLocations)) {
     const { nearTimeThreshold } = constants.timeline;
     const { scrollTime } = state.options;
     const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
@@ -264,7 +273,7 @@ export const timelineTimespans = (state: AppState): Timespans => {
   return timespans;
 }
 
-// value (from logarithmic timeline zoom slider) should be between 0 and 1.
+// value (logarithmic) should be between 0 and 1.
 // Returned visibleTime is the number of msec to show on the timeline.
 export const timelineVisibleTime = (value: number): number => {
   const { zoomLevels } = constants.timeline;
@@ -276,7 +285,7 @@ export const timelineVisibleTime = (value: number): number => {
   return visibleTime;
 }
 
-// value (from logarithmic timeline zoom slider) is between 0 and 1.
+// value (logarithmic) should be between 0 and 1.
 // returned number is index for one of the constants.timeline.zoomLevels that's the best fit given this slider value.
 export const timelineZoomLevel = (value: number): number => {
   const { zoomLevels } = constants.timeline;

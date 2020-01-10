@@ -11,10 +11,10 @@ import { AppState } from 'lib/state';
 import TimelineScroll from 'presenters/TimelineScroll';
 
 export interface TimelineScrollStateProps {
+  centerTime: number;
   decelerationRate: number;
   scrollableWidth: number;
   scrollToX: number;
-  viewTime: number;
   visibleTime: number;
 }
 
@@ -28,15 +28,18 @@ export interface TimelineScrollDispatchProps {
 export type TimelineScrollProps = TimelineScrollStateProps & TimelineScrollDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
-  const { decelerationRate, viewTime } = state.options;
+  const { decelerationRate, centerTime, timelineZoomValue } = state.options;
+  // scrollPositionAtCenter: scroll position of the left edge of the scrollArea.
+  // To calculate, start at the center of the scrollable area, then back up half the width of the visible area:
+  const scrollPositionAtCenter = (dynamicTimelineScrollWidth(state) / 2) - (dynamicTimelineWidth(state) / 2);
+  const visibleTime = timelineVisibleTime(timelineZoomValue);
+  const scrollableWidth = dynamicTimelineScrollWidth(state); // scrollable width
   return {
+    centerTime,
     decelerationRate,
-    scrollableWidth: dynamicTimelineScrollWidth(state), // scrollable width
-    // To calc scrollToX: start at the center of the scrollable area, then back up half the width of the visible area,
-    // yielding the desired scroll position of the left edge of the scrollArea.
-    scrollToX: (dynamicTimelineScrollWidth(state) / 2) - (dynamicTimelineWidth(state) / 2),
-    viewTime,
-    visibleTime: timelineVisibleTime(state.options.timelineZoomValue),
+    scrollableWidth,
+    scrollToX: scrollPositionAtCenter,
+    visibleTime,
   }
 }
 

@@ -58,7 +58,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
     // if (nextProps.scrollToX !== this.props.scrollToX) {
     // }
-    if (nextProps.viewTime !== this.props.viewTime) {
+    if (nextProps.centerTime !== this.props.centerTime) {
       return true;
     }
     if (nextProps.visibleTime !== this.props.visibleTime) {
@@ -90,12 +90,12 @@ class TimelineScroll extends Component<TimelineScrollProps> {
   render() {
     utils.addToCount('renderTimelineScroll');
     const {
+      centerTime,
       decelerationRate,
       scrollableWidth,
       scrollToX,
       setTimelineScrolling,
       setTimelineNow,
-      viewTime,
       visibleTime,
       zoomDomainChanged,
       zoomDomainChanging,
@@ -103,7 +103,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
 
     const { yDomain } = constants.timeline;
     const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
-    const logScrollEvents = true;
+    const logScrollEvents = false;
 
     const setZoomDomainWhileScrolling = (domain: DomainPropType) => {
       log.trace('setZoomDomainWhileScrolling', domain);
@@ -139,7 +139,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, viewTime + timeDelta);
+      const newTime = Math.min(rightNow, centerTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -149,7 +149,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     }
 
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      logScrollEvents && log.trace('onScroll', viewTime);
+      logScrollEvents && log.trace('onScroll', centerTime);
       const { x } = event.nativeEvent.contentOffset;
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
@@ -158,7 +158,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
           Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
       }
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, viewTime + timeDelta);
+      const newTime = Math.min(rightNow, centerTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,
@@ -185,7 +185,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       const movedX = x - scrollToX;
       const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
       const rightNow = utils.now();
-      const newTime = Math.min(rightNow, viewTime + timeDelta);
+      const newTime = Math.min(rightNow, centerTime + timeDelta);
       const domain: DomainPropType = {
         x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
         y: yDomain,

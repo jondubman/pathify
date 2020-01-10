@@ -55,17 +55,18 @@ export const initialAppState = {
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // settings panel visible state
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
-    showActivityDetails: false,
-    showActivityInfo: true,
-    showActivityList: true,
+    showActivityDetails: false, // generally false
+    showActivityInfo: true, // generally true
+    showActivityList: true, // generally true
+    showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
     showAppStateTimespans: false, // for debugging
     showDebugInfo: false, // for debugging, obviously
     showPathsOnMap: true, // generally true
     showPriorLocation: true, // as a Pulsar on the map
-    showTimeline: true,
-    showTimelineMarks: false,
-    showTimelineSpans: true,
-    storeAllLocationEvents: false, // should the app store location events outside of activity tracking?
+    showTimeline: true, // generally true
+    showTimelineMarks: false, // generally true
+    showTimelineSpans: false, // generally true
+    storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
     ticksEnabled: true, // normally true, set false only for testing/profiling to disable actions repeated every second.
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
@@ -83,13 +84,14 @@ export const initialAppState = {
   // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
   options: { // Like the flags, these are not necessarily user-configurable.
     appState: AppStateChange.STARTUP as AppStateChange,
+    centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: null as string | null, // while tracking Activity
     decelerationRate: 0, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
-    nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick.  future.
+    nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
     pulsars: {} as OptionalPulsars, // pulsing colored dots to indicate location on the map
     pausedTime: now, // timepoint where timeline was last paused
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline
@@ -108,7 +110,7 @@ export interface AppState extends InitialAppState {
   userLocation?: LocationEvent;
 }
 
-// TODO keep in sync with database.SettingsSchema
+// TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema.
 
 export const persistedFlags = [
   'followingUser',

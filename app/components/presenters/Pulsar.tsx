@@ -4,7 +4,7 @@
 import * as turf from '@turf/helpers';
 
 import React, {
-  PureComponent,
+  Component,
 } from 'react';
 
 import {
@@ -32,7 +32,7 @@ interface PulsarState {
   pulse: Animated.Value;
 }
 
-class Pulsar extends PureComponent<PulsarProps, PulsarState> {
+class Pulsar extends Component<PulsarProps, PulsarState> {
 
   readonly state: PulsarState = {
     pulse: new Animated.Value(pulseMin),
@@ -57,6 +57,10 @@ class Pulsar extends PureComponent<PulsarProps, PulsarState> {
       Animated.sequence([pulseOutAnimation, pulseInAnimation]),
     )
     this._pulseAnimation.start();
+  }
+
+  shouldComponentUpdate(nextProps: PulsarProps, nextState: any) {
+    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO quick & dirty approach for now
   }
 
   render() {
