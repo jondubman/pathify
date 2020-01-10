@@ -75,7 +75,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   }
   const register = (component) => {
     setTimeout(() => {
-      dispatch(newAction(AppAction.setCallback, { activityList: component }));
+      dispatch(newAction(AppAction.setRef, { activityList: component }));
     }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the ActivityList.
   }
   const dispatchers = {

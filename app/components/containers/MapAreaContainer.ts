@@ -1,4 +1,3 @@
-// Note this is the container for MapArea but for brevity, it's called MapContainer instead of MapAreaContainer.
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
@@ -67,9 +66,9 @@ const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
   return dispatchers;
 }
 
-const MapContainer = connect<MapAreaStateProps, MapAreaDispatchProps>(
+const MapAreaContainer = connect<MapAreaStateProps, MapAreaDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(MapArea as any);
 
-export default MapContainer;
+export default MapAreaContainer;

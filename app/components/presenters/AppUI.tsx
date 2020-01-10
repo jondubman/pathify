@@ -20,7 +20,7 @@ import DebugInfoContainer from 'containers/DebugInfoContainer';
 import FollowMeButtonContainer from 'containers/FollowMeButtonContainer';
 import GeoButtonContainer from 'containers/GeoButtonContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
-import MapContainer from 'containers/MapContainer';
+import MapAreaContainer from 'containers/MapAreaContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 import TimelineScrollContainer from 'containers/TimelineScrollContainer';
@@ -56,7 +56,7 @@ class AppUI extends Component<AppUIProps> {
           barStyle="light-content"
         />
         <View style={AppStyles.mainAppView}>
-          <MapContainer />
+          <MapAreaContainer />
           {mapFullScreen && mapTapped ? null : (<Fragment>
             {showTimeline ? <TimelineScrollContainer /> : null}
             {showActivityInfo ? <ActivityInfoContainer /> : null}

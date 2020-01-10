@@ -11,7 +11,6 @@ import {
 import { ClockMenuProps } from 'containers/ClockMenuContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
-// import log from 'shared/log';
 
 const colors = constants.colors.clockMenu;
 const {

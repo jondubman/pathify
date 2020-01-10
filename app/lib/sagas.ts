@@ -997,11 +997,11 @@ const sagas = {
   scrollActivityList: function* (action: Action) {
     yield call(log.trace, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
-    const callbacks = yield select((state: AppState) => state.callbacks);
-    if (callbacks.activityList !== undefined && callbacks.activityList.scrollToTime) {
+    const refs = yield select((state: AppState) => state.refs);
+    if (refs.activityList !== undefined && refs.activityList.scrollToTime) {
       yield call(log.trace, 'scrollActivityList:', params.scrollTime);
-      yield call(params.forceUpdate ? callbacks.activityList.autoScrollAfterForcedUpdate :
-                                      callbacks.activityList.scrollToTime,
+      yield call(params.forceUpdate ? refs.activityList.autoScrollAfterForcedUpdate :
+                                      refs.activityList.scrollToTime,
                  params.scrollTime);
     }
   },
@@ -1127,11 +1127,11 @@ const sagas = {
     yield put(newAction(AppAction.setAppOption, action.params));
   },
 
-  setCallback: function* (action: Action) {
+  setRef: function* (action: Action) {
     try {
-      yield put(newAction(ReducerAction.SET_CALLBACK, action.params));
+      yield put(newAction(ReducerAction.SET_REF, action.params));
     } catch (err) {
-      yield call(log.error, 'saga setCallback', err);
+      yield call(log.error, 'saga setRef', err);
     }
   },
 

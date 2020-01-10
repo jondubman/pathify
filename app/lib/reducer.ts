@@ -91,10 +91,10 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         }
         break;
 
-      case ReducerAction.SET_CALLBACK:
+      case ReducerAction.SET_REF:
         {
-          newState.callbacks = {
-            ...state.callbacks,
+          newState.refs = {
+            ...state.refs,
             ...params, // TODO watch out; zero validation of incoming params!
           }
         }

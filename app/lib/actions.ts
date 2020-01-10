@@ -16,7 +16,7 @@ export enum ReducerAction {
   'GEOLOCATION' = 'GEOLOCATION',
   'MAP_REGION' = 'MAP_REGION', // tracks map region as it changes, whether user moved it or not
   'SET_APP_OPTION' = 'SET_APP_OPTION',
-  'SET_CALLBACK' = 'SET_CALLBACK',
+  'SET_REF' = 'SET_REF',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
   'FLAG_DISABLE' = 'FLAG_DISABLE',
   'FLAG_ENABLE' = 'FLAG_ENABLE',
@@ -70,7 +70,7 @@ export enum AppAction {
   'sequence' = 'sequence',
   'setAppOption' = 'setAppOption',
   'setAppOptionASAP' = 'setAppOptionASAP',
-  'setCallback' = 'setCallback',
+  'setRef' = 'setRef',
   'sleep' = 'sleep',
   'startFollowingUser' = 'startFollowingUser',
   'stopFollowingUser' = 'stopFollowingUser',

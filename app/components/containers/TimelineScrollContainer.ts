@@ -1,3 +1,6 @@
+import React, {
+  Component,
+} from 'react';
 import { connect } from 'react-redux';
 import { DomainPropType } from 'victory-native';
 
@@ -19,6 +22,7 @@ export interface TimelineScrollStateProps {
 }
 
 export interface TimelineScrollDispatchProps {
+  register: (component: Component) => void;
   setTimelineNow: (enabled: boolean) => void;
   setTimelineScrolling: (enabled: boolean) => void;
   zoomDomainChanged: (domain: DomainPropType) => void; // used only in response to user actions
@@ -44,6 +48,11 @@ const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): TimelineScrollDispatchProps => {
+  const register = (component) => {
+    setTimeout(() => {
+      dispatch(newAction(AppAction.setRef, { timelineScroll: component }));
+    }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the TimelineScroll.
+  }
   const setTimelineNow = (enabled: boolean) => {
     dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'timelineNow'));
   }
@@ -60,6 +69,7 @@ const mapDispatchToProps = (dispatch: Function): TimelineScrollDispatchProps => 
     dispatch(newAction(AppAction.timelineZooming, domain));
   }
   const dispatchers = {
+    register,
     setTimelineNow,
     setTimelineScrolling,
     zoomDomainChanged,

@@ -1,5 +1,5 @@
 import React, {
-  Component,
+  PureComponent,
 } from 'react';
 
 import {
@@ -34,7 +34,7 @@ const TimelineStyles = StyleSheet.create({
   },
 })
 
-class TimelineScroll extends Component<TimelineScrollProps> {
+class TimelineScroll extends PureComponent<TimelineScrollProps> {
 
   readonly state: State = initialState;
   _scrollView: any;
@@ -59,21 +59,6 @@ class TimelineScroll extends Component<TimelineScrollProps> {
       clearTimeout(this._timer);
       this._timer = undefined;
     }
-  }
-
-  shouldComponentUpdate(nextProps: TimelineScrollProps, nextState: any) {
-    if (this._scrolling) {
-      return false; // defer all updates to the timeline while it is being interactively scrolled
-    }
-    // if (nextProps.scrollToX !== this.props.scrollToX) {
-    // }
-    if (nextProps.centerTime !== this.props.centerTime) {
-      return true;
-    }
-    if (nextProps.visibleTime !== this.props.visibleTime) {
-      return true;
-    }
-    return false;
   }
 
   // Auto-scroll to the correct spot after component is updated.
@@ -228,6 +213,7 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     utils.addToCount('renderTimelineScroll');
     const {
       decelerationRate,
+      register,
     } = this.props;
     return (
       <ScrollView
@@ -244,7 +230,10 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         onScrollEndDrag={this.onScrollEndDrag}
         overScrollMode='never'
         pinchGestureEnabled={false}
-        ref={_scrollView => { this._scrollView = _scrollView }}
+        ref={_scrollView => {
+          this._scrollView = _scrollView;
+          register(_scrollView!);
+        }}
         scrollEventThrottle={16 /* msec >= 16. default 0 means event sent only once each time view is scrolled. */}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}

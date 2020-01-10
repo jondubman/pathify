@@ -13,7 +13,7 @@ import Mapbox, { RegionPayload } from '@react-native-mapbox-gl/maps';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
-import { MapAreaProps } from 'containers/MapContainer';
+import { MapAreaProps } from 'containers/MapAreaContainer';
 import MapDimmerContainer from 'containers/MapDimmerContainer';
 import PathsContainer from 'components/containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
