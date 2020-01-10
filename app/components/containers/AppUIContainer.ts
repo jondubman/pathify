@@ -23,13 +23,13 @@ interface AppUIDispatchProps {
 export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
-  const { appActive, mapFullScreen, mapTapped, showActivityInfo, showDebugInfo, showTimeline } = state.flags;
+  const { mapFullScreen, mapTapped, showActivityInfo, showDebugInfo, showTimeline } = state.flags;
   return {
     mapFullScreen,
     mapTapped,
-    showActivityInfo: showActivityInfo && appActive,
-    showDebugInfo: showDebugInfo && !!selectedOrCurrentActivity(state) && !menuOpen(state) && appActive,
-    showTimeline: showTimeline && !mapFullScreen && appActive,
+    showActivityInfo: showActivityInfo,
+    showDebugInfo: showDebugInfo && !!selectedOrCurrentActivity(state) && !menuOpen(state),
+    showTimeline: showTimeline && !mapFullScreen,
     timelineHeight: dynamicTimelineHeight(state),
   }
 }

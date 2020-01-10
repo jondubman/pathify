@@ -18,6 +18,7 @@ import { TimelineScrollProps } from 'containers/TimelineScrollContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 import log from 'shared/log';
+const logScrollEvents = false;
 
 const initialState = {
   zoomDomain: null as any,
@@ -43,6 +44,14 @@ class TimelineScroll extends Component<TimelineScrollProps> {
   constructor(props: any) {
     super(props);
     this.clearTimer = this.clearTimer.bind(this);
+    this.setZoomDomainWhileScrolling = this.setZoomDomainWhileScrolling.bind(this);
+    this.onContentSizeChange = this.onContentSizeChange.bind(this);
+    this.onFinishScrolling = this.onFinishScrolling.bind(this);
+    this.onMomentumScrollBegin = this.onMomentumScrollBegin.bind(this);
+    this.onMomentumScrollEnd = this.onMomentumScrollEnd.bind(this);
+    this.onScroll = this.onScroll.bind(this);
+    this.onScrollBeginDrag = this.onScrollBeginDrag.bind(this);
+    this.onScrollEndDrag = this.onScrollEndDrag.bind(this);
   }
 
   private clearTimer() {
@@ -87,118 +96,139 @@ class TimelineScroll extends Component<TimelineScrollProps> {
     this.props.setTimelineScrolling(false);
   }
 
+  setZoomDomainWhileScrolling(domain: DomainPropType) {
+    log.trace('setZoomDomainWhileScrolling', domain);
+    this.props.zoomDomainChanging(domain);
+  }
+
+  onContentSizeChange(contentWidth, contentHeight) {
+    log.debug('onContentSizeChange', contentWidth, contentHeight);
+  }
+
+  onFinishScrolling(domain: DomainPropType) {
+    const {
+      setTimelineNow,
+      setTimelineScrolling,
+      zoomDomainChanged,
+    } = this.props;
+    this.clearTimer();
+    this._scrolling = false;
+    logScrollEvents && log.trace('onFinishScrolling', domain);
+    const x = (domain as any).x as [number, number];
+    const newTime = Math.min(utils.now(), (x[0] + x[1]) / 2);
+    const rightNow = utils.now();
+    setTimelineNow(newTime >= rightNow - constants.timing.timelineCloseToNow);
+    setTimelineScrolling(false);
+    zoomDomainChanged(domain);
+  }
+
+   onMomentumScrollBegin(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    this._scrolling = true;
+    // The timer was only around to finish scrolling in case we are not momentum scrolling.
+    this.clearTimer();
+    logScrollEvents && log.trace('onMomentumScrollBegin');
+     this.props.setTimelineScrolling(true);
+  }
+
+  onMomentumScrollEnd(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { yDomain } = constants.timeline;
+    const {
+      centerTime,
+      scrollableWidth,
+      scrollToX,
+      visibleTime,
+    } = this.props;
+    const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
+    const { x } = event.nativeEvent.contentOffset;
+    const movedX = x - scrollToX;
+    const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
+    const rightNow = utils.now();
+    const newTime = Math.min(rightNow, centerTime + timeDelta);
+    const domain: DomainPropType = {
+      x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
+      y: yDomain,
+    }
+    logScrollEvents && log.trace('onMomentumScrollEnd', newTime, rightNow, newTime - rightNow);
+    this.onFinishScrolling(domain);
+  }
+
+  onScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { yDomain } = constants.timeline;
+    const {
+      centerTime,
+      scrollableWidth,
+      scrollToX,
+      visibleTime,
+    } = this.props;
+    const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
+    logScrollEvents && log.trace('onScroll', centerTime);
+    const { x } = event.nativeEvent.contentOffset;
+    const movedX = x - scrollToX;
+    const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
+    if (logScrollEvents) {
+      log.debug('movedX', movedX, 'scrollableAreaTime', Math.round(scrollableAreaTime) / 60000, 'scrollableWidth',
+        Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
+    }
+    const rightNow = utils.now();
+    const newTime = Math.min(rightNow, centerTime + timeDelta);
+    const domain: DomainPropType = {
+      x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
+      y: yDomain,
+    }
+    logScrollEvents && log.debug('domain', domain);
+    if (!this._scrolling) {
+      logScrollEvents && log.trace('onScroll called when not scrolling - avoiding setZoomDomainWhileScrolling');
+      return;
+    }
+    this.setZoomDomainWhileScrolling(domain);
+  }
+
+  onScrollBeginDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const {
+      setTimelineScrolling,
+    } = this.props;
+    this.clearTimer();
+    this._scrolling = true;
+    logScrollEvents && log.trace('onScrollBeginDrag');
+    setTimelineScrolling(true);
+  }
+
+  onScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { yDomain } = constants.timeline;
+    const {
+      visibleTime,
+    } = this.props;
+    const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
+    const {
+      centerTime,
+      scrollableWidth,
+      scrollToX,
+    } = this.props;
+    logScrollEvents && log.trace('onScrollEndDrag');
+    this.clearTimer();
+    const { x } = event.nativeEvent.contentOffset;
+    const movedX = x - scrollToX;
+    const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
+    const rightNow = utils.now();
+    const newTime = Math.min(rightNow, centerTime + timeDelta);
+    const domain: DomainPropType = {
+      x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
+      y: yDomain,
+    }
+    log.debug('domain', domain);
+    this.setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
+    this._timer = setTimeout(() => {
+      log.trace('timer!', domain);
+      this.onFinishScrolling(domain);
+      this._timer = undefined;
+    }, constants.timing.scrollViewWaitForMomentumScroll)
+  }
+
   render() {
     utils.addToCount('renderTimelineScroll');
     const {
-      centerTime,
       decelerationRate,
-      scrollableWidth,
-      scrollToX,
-      setTimelineScrolling,
-      setTimelineNow,
-      visibleTime,
-      zoomDomainChanged,
-      zoomDomainChanging,
     } = this.props;
-
-    const { yDomain } = constants.timeline;
-    const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
-    const logScrollEvents = false;
-
-    const setZoomDomainWhileScrolling = (domain: DomainPropType) => {
-      log.trace('setZoomDomainWhileScrolling', domain);
-      zoomDomainChanging(domain);
-    }
-
-    const onContentSizeChange = (contentWidth, contentHeight) => {
-      log.debug('onContentSizeChange', contentWidth, contentHeight);
-    }
-
-    const onFinishScrolling = (domain: DomainPropType) => {
-      this.clearTimer();
-      this._scrolling = false;
-      logScrollEvents && log.trace('onFinishScrolling', domain);
-      const x = (domain as any).x as [number, number];
-      const newTime = Math.min(utils.now(), (x[0] + x[1]) / 2);
-      const rightNow = utils.now();
-      setTimelineNow(newTime >= rightNow - constants.timing.timelineCloseToNow);
-      setTimelineScrolling(false);
-      zoomDomainChanged(domain);
-    }
-
-    const onMomentumScrollBegin = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      this._scrolling = true;
-      // The timer was only around to finish scrolling in case we are not momentum scrolling.
-      this.clearTimer();
-      logScrollEvents && log.trace('onMomentumScrollBegin');
-      setTimelineScrolling(true);
-    }
-
-    const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const { x } = event.nativeEvent.contentOffset;
-      const movedX = x - scrollToX;
-      const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
-      const rightNow = utils.now();
-      const newTime = Math.min(rightNow, centerTime + timeDelta);
-      const domain: DomainPropType = {
-        x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
-        y: yDomain,
-      }
-      logScrollEvents && log.trace('onMomentumScrollEnd', newTime, rightNow, newTime - rightNow);
-      onFinishScrolling(domain);
-    }
-
-    const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      logScrollEvents && log.trace('onScroll', centerTime);
-      const { x } = event.nativeEvent.contentOffset;
-      const movedX = x - scrollToX;
-      const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
-      if (logScrollEvents) {
-        log.debug('movedX', movedX, 'scrollableAreaTime', Math.round(scrollableAreaTime) / 60000, 'scrollableWidth',
-          Math.round(scrollableWidth), 'timeDelta', Math.round(timeDelta) / 60000);
-      }
-      const rightNow = utils.now();
-      const newTime = Math.min(rightNow, centerTime + timeDelta);
-      const domain: DomainPropType = {
-        x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
-        y: yDomain,
-      }
-      logScrollEvents && log.debug('domain', domain);
-      if (!this._scrolling) {
-        logScrollEvents && log.trace('onScroll called when not scrolling - avoiding setZoomDomainWhileScrolling');
-        return;
-      }
-      setZoomDomainWhileScrolling(domain);
-    }
-
-    const onScrollBeginDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      this.clearTimer();
-      this._scrolling = true;
-      logScrollEvents && log.trace('onScrollBeginDrag');
-      setTimelineScrolling(true);
-    }
-
-    const onScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      logScrollEvents && log.trace('onScrollEndDrag');
-      this.clearTimer();
-      const { x } = event.nativeEvent.contentOffset;
-      const movedX = x - scrollToX;
-      const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
-      const rightNow = utils.now();
-      const newTime = Math.min(rightNow, centerTime + timeDelta);
-      const domain: DomainPropType = {
-        x: [newTime - scrollableAreaTime / 2, newTime + scrollableAreaTime / 2], // half on either side
-        y: yDomain,
-      }
-      log.debug('domain', domain);
-      setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
-      this._timer = setTimeout(() => {
-        log.trace('timer!', domain);
-        onFinishScrolling(domain);
-        this._timer = undefined;
-      }, constants.timing.scrollViewWaitForMomentumScroll)
-    }
-
     return (
       <ScrollView
         centerContent={false}
@@ -206,12 +236,12 @@ class TimelineScroll extends Component<TimelineScrollProps> {
         horizontal={true}
         decelerationRate={decelerationRate}
         disableIntervalMomentum={true}
-        onContentSizeChange={onContentSizeChange}
-        onMomentumScrollBegin={onMomentumScrollBegin}
-        onMomentumScrollEnd={onMomentumScrollEnd}
-        onScroll={onScroll}
-        onScrollBeginDrag={onScrollBeginDrag}
-        onScrollEndDrag={onScrollEndDrag}
+        onContentSizeChange={this.onContentSizeChange}
+        onMomentumScrollBegin={this.onMomentumScrollBegin}
+        onMomentumScrollEnd={this.onMomentumScrollEnd}
+        onScroll={this.onScroll}
+        onScrollBeginDrag={this.onScrollBeginDrag}
+        onScrollEndDrag={this.onScrollEndDrag}
         overScrollMode='never'
         pinchGestureEnabled={false}
         ref={_scrollView => { this._scrollView = _scrollView }}

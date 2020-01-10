@@ -87,7 +87,7 @@ export const initialAppState = {
     centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: null as string | null, // while tracking Activity
-    decelerationRate: 0, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
+    decelerationRate: 1, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
