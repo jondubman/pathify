@@ -439,6 +439,7 @@ const sagas = {
               timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
             },
             flags: state.flags,
+            isDebugVersion: utils.isDebugVersion,
             options: loggableOptions(state),
             pulsars: yield call(pulsars, state),
             userLocation: state.userLocation,
@@ -580,9 +581,14 @@ const sagas = {
   // Caution: clearStorage is highly destructive, without warning or confirmation!
   clearStorage: function* () {
     try {
-      yield call(database.reset);
-      yield call(Geo.destroyLocations);
-      yield call(Geo.destroyLog);
+      if (utils.isDebugVersion) { // No way should we do this on production version. With confirmation, if ever...
+        yield call(log.warn, 'saga clearStorage on debug version of app - deleting all persisted data!');
+        yield call(database.reset); // including Settings
+        yield call(Geo.destroyLocations);
+        yield call(Geo.destroyLog);
+      } else {
+        yield call(log.warn, 'saga clearStorage - taking no action, production version!');
+      }
     } catch (err) {
       yield call(log.error, 'saga clearStorage', err);
     }
@@ -767,7 +773,7 @@ const sagas = {
             const bounds = yield call(map.getVisibleBounds);
             if (followingUser) {
               const loc = [lon, lat] as LonLat;
-              const outOfBounds = keepMapCenteredWhenFollowing || (loc && bounds && !utils.locWellBounded(loc, bounds));
+              const outOfBounds = keepMapCenteredWhenFollowing || (bounds && !utils.locWellBounded(loc, bounds));
               if (!priorLocation || outOfBounds) {
                   yield put(newAction(AppAction.centerMapOnUser));
               }
@@ -1046,9 +1052,7 @@ const sagas = {
     if (timelineScroll !== undefined && timelineScroll.scrollToTime) {
       yield call(log.trace, 'saga scrollTimeline:', scrollTime);
       yield call(timelineScroll.scrollToTime, scrollTime);
-    } else {
-      yield call(log.trace, 'problem:', timelineScroll);
-    }
+    } // else nothing to scroll
   },
 
   // TODO not yet used
