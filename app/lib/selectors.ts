@@ -1,6 +1,6 @@
 // Selector functions for Redux reducer, plus some other derived quantities not necessarily dependent on Redux state.
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import { createSelector } from 'reselect'
+// import { createSelector } from 'reselect'
 
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
@@ -192,6 +192,17 @@ export const dynamicTopBelowButtons = (state: AppState): number => (
   dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
 
+export const loggableOptions = (state: AppState) => {
+  const options = { ...state.options } as any;
+  const { displayTimestamp } = utils;
+  options.centerTime_ = displayTimestamp(options.centerTime);
+  options.nowTime_ = displayTimestamp(options.nowTime);
+  options.pausedTime_ = displayTimestamp(options.pausedTime);
+  options.scrollTime_ = displayTimestamp(options.scrollTime);
+  options.viewTime_ = displayTimestamp(options.viewTime);
+  return options;
+}
+
 export const mapHidden = (state: AppState): boolean => (
   (dynamicMapStyle(state).url === '' || !state.flags.mapEnable)
 )
@@ -220,7 +231,6 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     followingUser,
     mapFullScreen,
     mapTapped,
-    showAllPastLocations,
     showPriorLocation,
     timelineNow,
     trackingActivity,
@@ -235,7 +245,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     }
   }
   // always hide prior location in mapFullScreen
-  if (showPriorLocation && !mapFullScreen && !timelineNow && (trackingActivity || showAllPastLocations)) {
+  if (showPriorLocation && !mapFullScreen && !timelineNow) {
     const { nearTimeThreshold } = constants.timeline;
     const { scrollTime } = state.options;
     const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
@@ -271,7 +281,9 @@ export const timelineTimespans = (state: AppState): Timespans => {
   if (state.flags.showAppStateTimespans) {
     timespans.push(...appStateTimespans(state));
   }
-  timespans.push(...futureTimespan(state));
+  if (state.flags.showFutureTimespan) {
+    timespans.push(...futureTimespan(state));
+  }
   return timespans;
 }
 

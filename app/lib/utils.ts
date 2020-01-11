@@ -27,6 +27,11 @@ const utils = {
     JSON.parse(JSON.stringify(obj))
   ),
 
+  displayTimestamp: (t: number) => (
+    `${(new Date(t)).toDateString()} ` +
+    `${(new Date(t)).toTimeString().split(' ')[0]}:${t.toString().slice(t.toString().length - 4, t.toString().length)}`
+  ),
+
   // return true if loc is inside bounds.
   // lonInset and latInset of 0 is the simple test.
   // lonInset or latInset > 0 shrinks the range that is considered inside the bounds.

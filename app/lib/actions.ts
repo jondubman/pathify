@@ -115,7 +115,7 @@ export const newAction = (type: ActionType, params: any = null) => ({
 
 // From here on: types related to params for actions
 
-import { LocationEvents, LonLat } from 'shared/locations';
+import { LonLat } from 'shared/locations';
 import { AppStateChange } from 'shared/appEvents';
 import { GenericEvents } from 'shared/timeseries';
 
@@ -164,8 +164,10 @@ export interface DeleteActivityParams {
 }
 
 export interface GeolocationParams {
-  locationEvents: LocationEvents;
+  lat: number;
+  lon: number;
   recheckMapBounds: boolean; // applies only when app is active
+  t: number;
 }
 
 export interface ImportEventsParams {

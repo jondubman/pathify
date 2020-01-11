@@ -500,7 +500,7 @@ const constants = {
     },
     miniBarHeight: 15,
     minimumZoomMsec: 1000, // 1 second
-    nearTimeThreshold: interval.minute, // TODO
+    nearTimeThreshold: interval.minutes(5), // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     widthMultiplier: 10, // >1, important for smooth panning of the timeline. Larger means harder to reach the edge.

@@ -401,26 +401,24 @@ export const Geo = {
 
   onLocation: async (location: Location) => {
     try {
-      if (location.sample) {
+      const state = store.getState();
+      if (location.sample || !state.flags.receiveLocations) {
         return;
       }
-      const state = store.getState();
-      const activityId = state.options.currentActivityId;
+      const geoloc: GeolocationParams = {
+        lat: location.coords.latitude,
+        lon: location.coords.longitude,
+        t: new Date(location.timestamp).getTime(),
+        recheckMapBounds: true,
+      }
+      store.dispatch(newAction(AppAction.geolocation, geoloc));
+      const activityId = state.options.currentActivityId || '';
       if (state.flags.appActive) {
-        if (!state.flags.receiveLocations) {
-          // log.trace('onLocation: ignoring, as receiveLocations is false', location.timestamp);
-          return;
-        }
         // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${state.flags.trackingActivity}`);
         const locationEvent = newLocationEvent(location, activityId);
         if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         }
-        const geolocationParams: GeolocationParams = {
-          locationEvents: [locationEvent],
-          recheckMapBounds: true,
-        }
-        store.dispatch(newAction(AppAction.geolocation, geolocationParams));
       } else {
         // App is running (obviously!) but it is doing so in the background (appActive is false.)
         if (state.flags.trackingActivity) { // else do not save it

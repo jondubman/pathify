@@ -76,8 +76,10 @@ import { Geo } from 'lib/geo';
 import {
   cachedActivity,
   currentActivity,
+  loggableOptions,
   mapPadding,
   menuOpen,
+  pulsars,
   selectedActivity,
   timelineVisibleTime,
   timelineZoomValue,
@@ -112,6 +114,7 @@ import {
 } from 'shared/appQuery';
 import locations, {
   LocationEvent,
+  LonLat,
   ModeChangeEvent,
   MotionEvent,
 } from 'shared/locations';
@@ -128,9 +131,7 @@ import timeseries, {
   GenericEvent,
   TimeRange,
 } from 'shared/timeseries';
-import {
-  msecToString,
-} from 'shared/units';
+import { msecToString } from 'shared/units';
 
 const sagas = {
 
@@ -372,6 +373,10 @@ const sagas = {
           response = (yield call(database.events)).length;
           break;
         }
+        case 'flags': { // quick count of the total, no overhead
+          response = state.flags;
+          break;
+        }
         case 'logs': {
           const level = query.level || 0;
           const timeRange = query.timeRange || [0, Infinity];
@@ -390,22 +395,22 @@ const sagas = {
           break;
         }
         case 'options': {
-          response = { // include this slice of state
-            flags: state.flags,
-            options: state.options,
-            userLocation: state.userLocation,
-          }
+          response = loggableOptions(state);
           break;
         }
         case 'ping': {
           response = 'pong';
           break;
         }
+        case 'pulsars': {
+          response = yield call(pulsars, state);
+          break;
+        }
         case 'selectedActivity': {
-          let activity = selectedActivity(state);
+          let activity = yield call(selectedActivity, state);
           let results = [] as any;
           if (activity) {
-            let modified = loggableActivity(activity);
+            let modified = yield call(loggableActivity, activity);
             results.push(modified);
             response = { results };
           }
@@ -413,6 +418,31 @@ const sagas = {
         }
         case 'settings': {
           response = yield call(database.settings);
+          break;
+        }
+        case 'status': {
+          const { cache, mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
+          response = {
+            bounds: { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial },
+            cache: {
+              activityCount: cache.activities ? cache.activities.length : 0,
+              populated: cache.populated || false,
+              refreshCount: cache.refreshCount,
+            },
+            counts: {
+              activities: (yield call(database.activities)).length,
+              counts: utils.counts(),
+              events: (yield call(database.events)).length,
+              logs: (yield call(database.logs)).length,
+              paths: (yield call(database.paths)).length,
+              schemaVersion: constants.database.schemaVersion,
+              timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
+            },
+            flags: state.flags,
+            options: loggableOptions(state),
+            pulsars: yield call(pulsars, state),
+            userLocation: state.userLocation,
+          }
           break;
         }
         case 'userLocation': {
@@ -722,22 +752,21 @@ const sagas = {
   // Note it is not the responsibility of this saga to add events when locations comes in. See addEvents.
   geolocation: function* (action: Action) {
     try {
-      const { locationEvents, recheckMapBounds } = action.params as GeolocationParams;
+      const geoloc = action.params as GeolocationParams;
+      yield call(log.trace, 'saga geolocation', geoloc);
+      const { lat, lon, recheckMapBounds } = geoloc;
       const priorLocation = yield select(state => state.userLocation);
-      yield put(newAction(ReducerAction.GEOLOCATION, locationEvents)); // this sets state.userLocation
+      yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
       if (recheckMapBounds) {
         const appActive = yield select(state => state.flags.appActive);
         if (appActive) {
           // Potential cascading AppAction.centerMapOnUser:
           const map = MapUtils();
           if (map) {
-            const { followingUser, keepMapCenteredWhenFollowing, loc } = yield select((state: AppState) => ({
-              followingUser: state.flags.followingUser,
-              keepMapCenteredWhenFollowing: state.flags.keepMapCenteredWhenFollowing,
-              loc: locations.lonLat(state.userLocation!),
-            }))
+            const { followingUser, keepMapCenteredWhenFollowing } = yield select((state: AppState) => state.flags);
             const bounds = yield call(map.getVisibleBounds);
             if (followingUser) {
+              const loc = [lon, lat] as LonLat;
               const outOfBounds = keepMapCenteredWhenFollowing || (loc && bounds && !utils.locWellBounded(loc, bounds));
               if (!priorLocation || outOfBounds) {
                   yield put(newAction(AppAction.centerMapOnUser));

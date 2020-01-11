@@ -3,6 +3,7 @@
 import ActivityList from 'presenters/ActivityList'
 import TimelineScroll from 'presenters/TimelineScroll'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
+import { GeolocationParams } from 'lib/actions';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
@@ -60,17 +61,18 @@ export const initialAppState = {
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
     showAppStateTimespans: false, // for debugging
     showDebugInfo: false, // for debugging, obviously
+    showFutureTimespan: false,
     showPathsOnMap: true, // generally true
     showPriorLocation: true, // as a Pulsar on the map
     showTimeline: true, // generally true
     showTimelineMarks: false, // generally true
-    showTimelineSpans: false, // generally true
+    showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
     ticksEnabled: true, // normally true, set false only for testing/profiling to disable actions repeated every second.
     timelineNow: true, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
-    timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
+    // timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
@@ -110,7 +112,7 @@ export const initialAppState = {
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
-  userLocation?: LocationEvent;
+  userLocation?: GeolocationParams;
 }
 
 // TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema.

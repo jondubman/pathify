@@ -15,15 +15,19 @@ class TimelineSpans extends React.Component<TimelineSpansProps> {
     super(props);
   }
 
-  // shouldComponentUpdate(nextProps: TimelineSpansProps, nextState: any) {
-  //   return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO upgrade quick & dirty approach
-  // }
-
+  // TODO have scale here, need to apply it and pass in scaled X as prop to TimelineSpan, and not pass scale as a prop.
+  // Then, turn TimelineSpan into a PureComponent. No biggie if this component is updated; it's TimelineSpan we want
+  // to minimize updating.
   render() {
-    const data = this.props.data;
+    const { data } = this.props;
     const { scale } = this.props as any;
     return data.map((ts: Timespan, index: number) => (
-      <TimelineSpan key={`${ts.tr[0]}-${ts.tr[1]}`} scale={scale} ts={ts} />
+      <TimelineSpan key={`${scale.x(ts.tr[0])}-${scale.x(ts.tr[1])}`}
+                    color={ts.color}
+                    kind={ts.kind}
+                    xStart={scale.x(ts.tr[0])}
+                    xEnd={scale.x(ts.tr[1])}
+      />
     ))
   }
 }

@@ -146,7 +146,7 @@ class Timeline extends Component<TimelineProps> {
             tickValues={tickValues}
           />
           {showSpans ?
-            <TimelineSpansContainer  />
+            <TimelineSpansContainer />
             : null}
           {showMarks ?
             <TimelineMarksContainer />

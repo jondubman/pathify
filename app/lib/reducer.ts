@@ -1,21 +1,17 @@
 // Redux reducer for the app
-import { Polygon } from "@turf/helpers";
-
 import {
   Action,
+  GeolocationParams,
   ReducerAction,
 } from 'lib/actions';
 
 import {
   AppState,
-  CountUpdate,
   CacheInfo,
   initialAppState,
   MapRegionUpdate,
 } from 'lib/state';
-import { LocationEvent, LocationEvents } from 'shared/locations';
 import log from 'shared/log';
-import { EventType } from 'shared/timeseries';
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.
 // Expressions like { ...state, modifiedProp: newValue } help to form newState, which is returned at the end.
@@ -42,21 +38,11 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
       // Set newState.userLocation to be the most recent locationEvent
       case ReducerAction.GEOLOCATION:
         {
+          newState.userLocation = params;
           // Ignore a redundant locationEvent, one with the same timepoint as userLocation.
-          const locationEvents = params as LocationEvents;
-          if (locationEvents) {
-            for (let i = locationEvents.length - 1; i >= 0; i--) {
-              const event = locationEvents[i];
-              if (event.type === EventType.LOC) { // TODO if not, input is invalid
-                const locationEvent = event as LocationEvent;
-                // Ignore redundant locationEvent with same timepoint as what we already have
-                if (locationEvent && locationEvent.lon && locationEvent.lat &&
-                  (!state.userLocation || locationEvent.t > state.userLocation.t)) {
-                  newState.userLocation = { ...locationEvent };
-                  break;
-                }
-              }
-            }
+          const geoloc = params as GeolocationParams;
+          if (!state.userLocation || geoloc.t > state.userLocation.t) {
+            newState.userLocation = { ...geoloc };
           }
         }
         break;
