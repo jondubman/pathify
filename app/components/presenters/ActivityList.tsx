@@ -98,7 +98,6 @@ class ActivityList extends Component<ActivityListProps> {
 
   constructor(props: ActivityListProps) {
     super(props);
-    this.autoScrollAfterForcedUpdate = this.autoScrollAfterForcedUpdate.bind(this);
     this.autoScroll = this.autoScroll.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.renderItem = this.renderItem.bind(this);
@@ -113,12 +112,6 @@ class ActivityList extends Component<ActivityListProps> {
         'length', this.props.list.length);
       this.scrollToTime(scrollTime);
     }
-  }
-
-  autoScrollAfterForcedUpdate() {
-    this.forceUpdate(() => {
-      this.autoScroll();
-    })
   }
 
   componentDidUpdate(prevProps: ActivityListProps) {

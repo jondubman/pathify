@@ -1029,18 +1029,15 @@ const sagas = {
     yield call(RNRestart.Restart);
   },
 
-  // TODO review/remove forceUpdate
   scrollActivityList: function* (action: Action) {
     yield call(log.trace, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
-    const { forceUpdate, scrollTime } = params;
+    const { scrollTime } = params;
     const refs = yield select((state: AppState) => state.refs);
     const { activityList } = refs;
     if (activityList !== undefined && activityList.scrollToTime) {
       yield call(log.trace, 'scrollActivityList:', scrollTime);
-      yield call(forceUpdate ? activityList.autoScrollAfterForcedUpdate :
-                               activityList.scrollToTime,
-                 scrollTime);
+      yield call(activityList.scrollToTime, scrollTime);
     }
   },
 

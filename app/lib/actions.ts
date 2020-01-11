@@ -194,7 +194,6 @@ export interface RepeatedActionParams {
 }
 
 export interface ScrollActivityListParams {
-  forceUpdate: boolean;
   scrollTime: number;
 }
 
