@@ -1,5 +1,7 @@
 // Interfaces and constants related to the AppState used by the Redux reducer
 
+import ActivityList from 'presenters/ActivityList'
+import TimelineScroll from 'presenters/TimelineScroll'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
@@ -99,8 +101,8 @@ export const initialAppState = {
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)
   },
   refs: {
-    activityList: undefined as any,
-    timelineScroll: undefined as any,
+    activityList: undefined as ActivityList | undefined,
+    timelineScroll: undefined as TimelineScroll | undefined,
   },
 }
 

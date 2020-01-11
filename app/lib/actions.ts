@@ -197,8 +197,7 @@ export interface ScrollActivityListParams {
 }
 
 export interface ScrollTimelineParams {
-  offset?: number;
-  index?: number;
+  scrollTime: number;
 }
 
 export interface SelectActivityParams {

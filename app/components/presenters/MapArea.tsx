@@ -15,7 +15,7 @@ Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 import { MapAreaProps } from 'containers/MapAreaContainer';
 import MapDimmerContainer from 'containers/MapDimmerContainer';
-import PathsContainer from 'components/containers/PathsContainer';
+import PathsContainer from 'containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -100,9 +100,6 @@ class MapArea extends Component<MapAreaProps> {
         </View>
       )
    }
-    const toRadians = (heading: number): number => (
-      heading * (Math.PI / 180)
-    )
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>

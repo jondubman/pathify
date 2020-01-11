@@ -37,13 +37,14 @@ const TimelineStyles = StyleSheet.create({
 class TimelineScroll extends PureComponent<TimelineScrollProps> {
 
   readonly state: State = initialState;
-  _scrollView: any;
+  _scrollView: ScrollView | null = null;
   _scrolling: boolean = false;
   _timer: any;
 
   constructor(props: any) {
     super(props);
     this.clearTimer = this.clearTimer.bind(this);
+    this.scrollToTime = this.scrollToTime.bind(this);
     this.setZoomDomainWhileScrolling = this.setZoomDomainWhileScrolling.bind(this);
     this.onContentSizeChange = this.onContentSizeChange.bind(this);
     this.onFinishScrolling = this.onFinishScrolling.bind(this);
@@ -71,7 +72,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       log.debug('componentDidUpdate during scrolling?');
     } else {
       const x = this.props.scrollToX;
-      this._scrollView.scrollTo({ x, y: 0, animated: false });
+      this._scrollView!.scrollTo({ x, y: 0, animated: false });
     }
   }
 
@@ -138,6 +139,9 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   }
 
   onScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    if (!this._scrolling) {
+      return;
+    }
     const { yDomain } = constants.timeline;
     const {
       centerTime,
@@ -161,10 +165,6 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       y: yDomain,
     }
     logScrollEvents && log.debug('domain', domain);
-    if (!this._scrolling) {
-      logScrollEvents && log.trace('onScroll called when not scrolling - avoiding setZoomDomainWhileScrolling');
-      return;
-    }
     this.setZoomDomainWhileScrolling(domain);
   }
 
@@ -214,11 +214,12 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     const {
       decelerationRate,
       register,
+      scrollToX,
     } = this.props;
     return (
       <ScrollView
         centerContent={false}
-        contentOffset={{ x: this.props.scrollToX, y: 0 }}
+        contentOffset={{ x: scrollToX, y: 0 }}
         horizontal={true}
         decelerationRate={decelerationRate}
         disableIntervalMomentum={true}
@@ -230,9 +231,9 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         onScrollEndDrag={this.onScrollEndDrag}
         overScrollMode='never'
         pinchGestureEnabled={false}
-        ref={_scrollView => {
+        ref={(_scrollView: ScrollView) => {
           this._scrollView = _scrollView;
-          register(_scrollView!);
+          register(this);
         }}
         scrollEventThrottle={16 /* msec >= 16. default 0 means event sent only once each time view is scrolled. */}
         showsHorizontalScrollIndicator={false}
@@ -243,6 +244,20 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         <TimelineContainer />
       </ScrollView>
     )
+  }
+
+  scrollToTime(scrollTime: number) {
+    log.trace('TimelineScroll scrollToTime', scrollTime);
+    if (this._scrollView) {
+      const { centerTime, scrollableWidth, visibleWidth, visibleTime } = this.props;
+      const scrollToX = (visibleWidth * ((scrollTime - centerTime) / visibleTime)) + (scrollableWidth / 2) - (visibleWidth / 2);
+      const options = {
+        x: scrollToX,
+        animated: false,
+      }
+      // log.trace(`scrollToTime centerTime ${centerTime} scrollTime ${scrollTime} visibleTime ${visibleTime} visibleWidth ${visibleWidth} scrollToX ${scrollToX}`);
+      this._scrollView.scrollTo(options);
+    }
   }
 }
 

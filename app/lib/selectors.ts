@@ -1,6 +1,6 @@
 // Selector functions for Redux reducer, plus some other derived quantities not necessarily dependent on Redux state.
-
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { createSelector } from 'reselect'
 
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
@@ -172,6 +172,7 @@ export const dynamicTimelineHeight = (state: AppState): number => (
     constants.timeline.default.height
 )
 
+// pixel width of entire of timeline including off-screen portion
 export const dynamicTimelineScrollWidth = (state: AppState): number => (
   state.flags.mapFullScreen ?
     0
@@ -179,6 +180,7 @@ export const dynamicTimelineScrollWidth = (state: AppState): number => (
     utils.windowSize().width * constants.timeline.widthMultiplier
 )
 
+// pixel width of on-screen portion of timeline
 export const dynamicTimelineWidth = (state: AppState): number => (
   state.flags.mapFullScreen ?
     0

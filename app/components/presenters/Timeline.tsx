@@ -56,6 +56,13 @@ const axisLabelStyle = {
   style: { strokeWidth: 0 },
 }
 
+const getTickFormatFn = (tickFormat: string) => (
+  // TODO could customize string here to highlight special times/dates, e.g. 'noon'
+  (t: Date) => (
+    d3.timeFormat(tickFormat)(t)
+  )
+)
+
 class Timeline extends Component<TimelineProps> {
 
   readonly state: State = initialState;
@@ -64,7 +71,6 @@ class Timeline extends Component<TimelineProps> {
     super(props);
     this.handleZoom = this.handleZoom.bind(this);
     this.axisTickValues = this.axisTickValues.bind(this);
-
   }
 
   // This responds to user zoom interaction (which won't be happening if allowZoom is false)
@@ -107,10 +113,7 @@ class Timeline extends Component<TimelineProps> {
     } = this.props;
     const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
     const { tickFormat } = zoomInfo;
-    const tickFormatFn = (t: Date) => {
-      // TODO could customize string here to highlight special times/dates, e.g. 'noon'
-      return d3.timeFormat(tickFormat)(t);
-    }
+    const tickFormatFn = getTickFormatFn(tickFormat);
     const tickValues = this.axisTickValues();
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.

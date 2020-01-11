@@ -63,6 +63,7 @@ import {
   RefreshCachedActivityParams,
   RepeatedActionParams,
   ScrollActivityListParams,
+  ScrollTimelineParams,
   SelectActivityParams,
   SequenceParams,
   SleepParams,
@@ -997,21 +998,33 @@ const sagas = {
   scrollActivityList: function* (action: Action) {
     yield call(log.trace, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
+    const { forceUpdate, scrollTime } = params;
     const refs = yield select((state: AppState) => state.refs);
-    if (refs.activityList !== undefined && refs.activityList.scrollToTime) {
-      yield call(log.trace, 'scrollActivityList:', params.scrollTime);
-      yield call(params.forceUpdate ? refs.activityList.autoScrollAfterForcedUpdate :
-                                      refs.activityList.scrollToTime,
-                 params.scrollTime);
+    const { activityList } = refs;
+    if (activityList !== undefined && activityList.scrollToTime) {
+      yield call(log.trace, 'scrollActivityList:', scrollTime);
+      yield call(forceUpdate ? activityList.autoScrollAfterForcedUpdate :
+                               activityList.scrollToTime,
+                 scrollTime);
     }
   },
 
   scrollTimeline: function* (action: Action) {
-    yield call(log.trace, 'saga scroll TODO');
+    const params = action.params as ScrollTimelineParams;
+    const { scrollTime } = params;
+    const refs = yield select((state: AppState) => state.refs);
+    const { timelineScroll } = refs;
+    if (timelineScroll !== undefined && timelineScroll.scrollToTime) {
+      yield call(log.trace, 'saga scrollTimeline:', scrollTime);
+      yield call(timelineScroll.scrollToTime, scrollTime);
+    } else {
+      yield call(log.trace, 'problem:', timelineScroll);
+    }
   },
 
+  // TODO not yet used
   selectActivity: function* (action: Action) {
-    yield call(log.trace, 'saga ');
+    yield call(log.trace, 'saga selectActivity');
     try {
       const params = action.params as SelectActivityParams;
       const id = params.id;
@@ -1087,9 +1100,12 @@ const sagas = {
       if (timeGap > recenterThreshold) {
         yield put(newAction(AppAction.setAppOption, { centerTime: t }));
         yield call(log.trace, `setAppOption reset centerTime ${t}`);
+      } else {
+        // viewTime is in range on the timeline, so just scroll timeline to it.
+        yield put(newAction(AppAction.scrollTimeline, { scrollTime: t }));
       }
       // Set selectedActivityId as appropriate:
-      // TODO could avoid this database call in many cases. Usually selectedActivityId does not change.
+      // TODO could avoid this database call in many cases. Usually selectedActivityId does not change. Use cache!
       const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
       // TODO avoid this setAppOption cascade when it is not needed
       if (!activity || !activity.id) {
