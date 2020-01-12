@@ -1042,14 +1042,19 @@ const sagas = {
   },
 
   scrollTimeline: function* (action: Action) {
-    const params = action.params as ScrollTimelineParams;
-    const { scrollTime } = params;
-    const refs = yield select((state: AppState) => state.refs);
-    const { timelineScroll } = refs;
-    if (timelineScroll !== undefined && timelineScroll.scrollToTime) {
-      yield call(log.trace, 'saga scrollTimeline:', scrollTime);
-      yield call(timelineScroll.scrollToTime, scrollTime);
-    } // else nothing to scroll
+    const { timelineScrolling } = yield select((state: AppState) => state.flags);
+    if (timelineScrolling) {
+      yield call(log.trace, 'saga scrollTimeline: timelineScrolling already');
+    } else {
+      const params = action.params as ScrollTimelineParams;
+      const { scrollTime } = params;
+      const refs = yield select((state: AppState) => state.refs);
+      const { timelineScroll } = refs;
+      if (timelineScroll !== undefined && timelineScroll.scrollToTime) {
+        yield call(log.trace, 'saga scrollTimeline:', scrollTime);
+        yield call(timelineScroll.scrollToTime, scrollTime);
+      } // else nothing to scroll (like if Timeline is hidden) TODO hmm, can refs to go stale when component unmounted?
+    }
   },
 
   // TODO not yet used
@@ -1146,9 +1151,9 @@ const sagas = {
       }
     }
     const { timelineScrolling } = state.flags;
-    if (timelineScrolling && params.scrollTime !== undefined) {
-      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // during timelineScrolling
-      yield call(log.trace, 'setAppOption saga scrollTime:', params.scrollTime);
+    if (timelineScrolling && params.scrollTime !== undefined) { // if setting scrollTime during timelineScrolling:
+      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime }));
+      yield call(log.trace, 'scrollTime:', params.scrollTime);
     }
     // Write through to settings in database, if needed
     const options = yield select((state: AppState) => state.options); // ensure we have the latest

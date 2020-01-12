@@ -3,8 +3,8 @@ const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
 // @ts-ignore
-const productionVersion = (typeof __DEV__ === 'undefined'); // __DEV__ is quite possibly undefined
-const debugVersion = !productionVersion;
+const debugVersion = (__DEV__ === true);
+const productionVersion = !debugVersion;
 
 type LogMethod = (level: string, ...args) => void;
 let _callback: LogMethod;

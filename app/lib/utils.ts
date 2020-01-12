@@ -32,7 +32,7 @@ const utils = {
     `${(new Date(t)).toTimeString().split(' ')[0]}:${t.toString().slice(t.toString().length - 4, t.toString().length)}`
   ),
 
-  isDebugVersion: (typeof __DEV__ !== 'undefined'),
+  isDebugVersion: __DEV__,
 
   // return true if loc is inside bounds.
   // lonInset and latInset of 0 is the simple test.

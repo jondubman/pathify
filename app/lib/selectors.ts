@@ -239,7 +239,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   const { colors } = constants;
   if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
     pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
-      loc: locations.lonLat(state.userLocation),
+      loc: [state.userLocation.lon, state.userLocation.lat],
       color: colors.pulsars.userLocation,
       visible: true,
     }

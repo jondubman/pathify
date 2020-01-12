@@ -106,6 +106,7 @@ const colors = {
   },
   activityList: {
     background: 'transparent',
+    backgroundMargin: withOpacity(namedColors.white, 0.3),
     current: {
       background: withOpacity(colorThemes.now, 0.3),
       border: withOpacity(colorThemes.now, 1),
@@ -294,7 +295,7 @@ const constants = {
     borderRadius: 0,
     borderWidth: 1,
     height: initialTimelineHeight + scrollbarHeight,
-    marginHorizontal: buttonOffset + 2,
+    marginHorizontal: (buttonOffset + 2) * 2,
     scrollbarHeight,
   },
   appName: 'Pathify',

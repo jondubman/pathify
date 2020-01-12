@@ -23,12 +23,12 @@ interface ActivityListStateProps {
   list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string | null;
-  timelineScrolling: boolean;
   top: number;
 }
 
 interface ActivityListDispatchProps {
   onPressActivity: (activity: ActivityDataExtended) => void;
+  onScroll: (x: number) => void;
   register: (component: Component) => void;
 }
 
@@ -40,7 +40,6 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
     selectedActivityId: state.options.selectedActivityId,
-    timelineScrolling: state.flags.timelineScrolling,
     top: dynamicTopBelowButtons(state),
   }
 }
@@ -73,6 +72,9 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
       dispatch(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in onPressActivity
     }
   }
+  const onScroll = (x: number) => {
+    // dispatch(newAction(AppAction.scrollTimeline, { scrollTime: t }));
+  }
   const register = (component) => {
     setTimeout(() => {
       dispatch(newAction(AppAction.setRef, { activityList: component }));
@@ -80,6 +82,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   }
   const dispatchers = {
     onPressActivity,
+    onScroll,
     register,
   }
   return dispatchers;

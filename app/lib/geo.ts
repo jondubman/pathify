@@ -159,7 +159,7 @@ const geoconfig_tracking: Config = {
   stationaryRadius: 1, // meters
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  stopOnTerminate: false,
+  // stopOnTerminate: false, // TODO
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
 
   // TODO for diagnosis via HTTP POST
@@ -243,12 +243,13 @@ export const Geo = {
 
       // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app...
       const onActivityChange = (event: MotionActivityEvent) => {
-        const state = store.getState();
-        if (state.flags.appActive) {
-          const activityId = state.options.currentActivityId;
-          store.dispatch(newAction(AppAction.modeChange,
-            newModeChangeEvent(event.activity, event.confidence, activityId)));
-        }
+        // TODO
+        // const state = store.getState();
+        // if (state.flags.appActive) {
+        //   const activityId = state.options.currentActivityId;
+        //   store.dispatch(newAction(AppAction.modeChange,
+        //     newModeChangeEvent(event.activity, event.confidence, activityId)));
+        // }
       }
       const onEnabledChange = (isEnabled: boolean) => {
       }
@@ -284,11 +285,12 @@ export const Geo = {
         }
       }
       const onMotionChange = (event: MotionChangeEvent) => {
-        const state = store.getState();
-        if (state.flags.appActive) {
-          const activityId = state.options.currentActivityId;
-          store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving, activityId)));
-        }
+        // TODO
+        // const state = store.getState();
+        // if (state.flags.appActive) {
+        //   const activityId = state.options.currentActivityId;
+        //   store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving, activityId)));
+        // }
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);

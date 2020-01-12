@@ -8,7 +8,7 @@ import constants from 'lib/constants';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
 import { AppStateChange } from 'shared/appEvents';
-import { LocationEvent, LonLat } from 'shared/locations';
+import { LonLat } from 'shared/locations';
 
 const now = utils.now();
 

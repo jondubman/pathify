@@ -72,27 +72,23 @@ const Styles = StyleSheet.create({
     color: colors.textSelected,
   },
   touchableActivity: {
-    marginHorizontal,
     height: activityHeight,
+    marginLeft: marginHorizontal,
   },
 })
 
-// marginLeft allows scrolling so left margin of leftmost activity is centered
 const marginLeft = centerline();
-
-// marginRight allows scrolling to right margin of rightmost activity is centered
-const marginRight = marginLeft + marginHorizontal + (0.5 * activityWidth);
+const marginRight = marginLeft;
 
 const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
   {
     index,
-    length: ((marginHorizontal * 2) + activityWidth),
-    offset: marginLeft + (index * (marginHorizontal + activityWidth + marginHorizontal)),
+    length: (marginHorizontal + activityWidth),
+    offset: marginLeft + (index * (marginHorizontal + activityWidth)),
   }
 )
 
 let _ref: FlatList<ActivityDataExtended>;
-let _lastAutoScrollTime: number = 0;
 
 class ActivityList extends Component<ActivityListProps> {
 
@@ -124,18 +120,16 @@ class ActivityList extends Component<ActivityListProps> {
   // Handle a scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const offset = event.nativeEvent.contentOffset.x;
-    const timeGap = utils.now() - _lastAutoScrollTime;
-    if (timeGap > constants.timing.activityListAnimationCompletion) {
-      log.trace('handleScroll (ActivityList --> Timeline)', offset, _lastAutoScrollTime, timeGap);
-      // TODO
-    } else {
-      log.trace('handleScroll (ignoring)', offset, this.props.timelineScrolling, _lastAutoScrollTime, timeGap);
-    }
+    log.trace('ActivityList handleScroll', offset);
+    this.props.onScroll(offset);
   }
 
   render() {
     utils.addToCount('renderActivityList');
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
+    const backgroundColor = constants.colors.activityList.backgroundMargin;
+    const listHeaderStyle = { backgroundColor, width: marginLeft, height: activityHeight };
+    const listFooterStyle = { backgroundColor, marginLeft: marginHorizontal, width: marginRight, height: activityHeight };
     return (
       <Fragment>
         <View style={[Styles.box, { top: this.props.top }]}>
@@ -144,7 +138,9 @@ class ActivityList extends Component<ActivityListProps> {
             extraData={this.props}
             getItemLayout={getItemLayout}
             horizontal
-            initialScrollIndex={Math.min(0, this.props.list.length - 1) /* TODO no effect? */}
+            initialScrollIndex={Math.max(0, this.props.list.length - 1)}
+            ListHeaderComponent={<View style={listHeaderStyle} />}
+            ListFooterComponent={<View style={listFooterStyle} />}
             onLayout={this.autoScroll}
             onScroll={this.handleScroll}
             ref={(ref) => {
@@ -178,13 +174,7 @@ class ActivityList extends Component<ActivityListProps> {
     return (
       <TouchableHighlight
         onPress={() => { this.props.onPressActivity(item) }}
-        style={[
-          Styles.touchableActivity,
-          isCurrent || index === this.props.list.length - 1 ? { marginRight } : {},
-          (index === 0) ?
-            { marginLeft: marginLeft + marginHorizontal } :
-            { marginLeft: marginHorizontal },
-        ]}
+        style={Styles.touchableActivity}
         underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
       >
         <View style={activityStyle}>
@@ -195,38 +185,41 @@ class ActivityList extends Component<ActivityListProps> {
     )
   }
 
+  // Scroll the ActivityList as appropriate such that the actvity for the given scrollTime aligns with the centerline.
+  // If scrollTime is within an activity, center the activity under the TopButton, adjusting it so the centerline
+  // delineates the elapsed and future portions of the activity, proportionally (with each activity having equal width.)
+  // If scrollTime is before / between / after an activity, the list is scrolled to the space adjacent to the
+  // closest activity.
   scrollToTime(scrollTime: number) {
     log.trace('ActivityList scrollToTime', scrollTime);
-    const { list, selectedActivityId } = this.props;
+    const { animated, list, selectedActivityId } = this.props;
     const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
     if (index >= 0) {
       if (_ref) {
         const activity = list[index];
-        let viewOffset = 0;
         if (activity.tStart) {
-          if (activity.tEnd && activity.tTotal) {
-            const tMiddle = activity.tStart + (activity.tEnd - activity.tStart) / 2;
-            viewOffset = ((tMiddle - scrollTime) / (activity.tTotal / 2)) * (activityWidth / 2);
-            log.trace('tStart', activity.tStart, 'tMiddle', tMiddle, 'tEnd', activity.tEnd, 'tTotal', activity.tTotal,
-              'scrollTime', scrollTime, '%', (100 * (scrollTime - activity.tStart) / activity.tTotal).toFixed(0),
-              'viewOffset', viewOffset);
-          } else {
-            // currentActivity
-            viewOffset = -activityWidth / 2;
-          }
+          const activityElapsedTime = scrollTime - activity.tStart;
+          let offset = marginHorizontal;
+          // first, offset for the index
+          offset += index * (marginHorizontal + activityWidth);
+          // now offset for the elapsed portion within the activity
+          const now = utils.now();
+          const tTotal = (activity.tEnd && activity.tTotal) ? activity.tTotal : (now - activity.tStart);
+          const increment = (activityElapsedTime / tTotal) * activityWidth;
+          offset += increment;
           const params = {
-            animated: this.props.animated,
-            index,
-            viewOffset,
-            viewPosition: 0.5, // 0.5 tells scrollToIndex to scroll the center point (use 0 for left, 1 for right)
+            animated,
+            offset,
           }
-          log.trace('scrollToTime scrollToIndex', params);
-          _lastAutoScrollTime = utils.now();
-          _ref.scrollToIndex(params);
+          log.trace('ActivityList scrollToTime scrollToOffset', params);
+          if (!_ref.scrollToOffset) {
+            log.warn('missing scrollToOffset!');
+          }
+          _ref.scrollToOffset(params);
         }
       }
     } else {
-      log.trace('scrollToTime index', index, 'length', list.length, 'selectedActivityId', selectedActivityId);
+      log.trace('index', index, 'length', list.length, 'selectedActivityId', selectedActivityId);
     }
   }
 }
