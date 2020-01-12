@@ -28,11 +28,11 @@ import {
 const colors = constants.colors.activityList;
 const {
   activityHeight,
+  activityMarginLeft,
   activityWidth,
   borderRadius,
   borderWidth,
   height,
-  marginHorizontal,
 } = constants.activityList;
 
 const Styles = StyleSheet.create({
@@ -73,18 +73,20 @@ const Styles = StyleSheet.create({
   },
   touchableActivity: {
     height: activityHeight,
-    marginLeft: marginHorizontal,
+    marginLeft: activityMarginLeft,
   },
 })
 
-const marginLeft = centerline();
-const marginRight = marginLeft;
+const marginLeft = centerline(); // allows list to be positioned such that left edge of real content is centered.
+const marginRight = centerline(); // allows list to be positioned such that right edge of real content is centered.
 
+// The basic layout of this horizontal list is simple: margins flanking N boxes, each with activityMarginLeft.
+// marginLeft (activityMarginLeft activityWidth)* marginRight
 const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
   {
     index,
-    length: (marginHorizontal + activityWidth),
-    offset: marginLeft + (index * (marginHorizontal + activityWidth)),
+    length: (activityMarginLeft + activityWidth),
+    offset: marginLeft + (index * (activityMarginLeft + activityWidth)),
   }
 )
 
@@ -128,8 +130,9 @@ class ActivityList extends Component<ActivityListProps> {
     utils.addToCount('renderActivityList');
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
     const backgroundColor = constants.colors.activityList.backgroundMargin;
+    // the left margin of the first activity is effectively the right margin of listHeaderStyle
     const listHeaderStyle = { backgroundColor, width: marginLeft, height: activityHeight };
-    const listFooterStyle = { backgroundColor, marginLeft: marginHorizontal, width: marginRight, height: activityHeight };
+    const listFooterStyle = { ...listHeaderStyle, marginLeft: activityMarginLeft }; // whereas this needs a marginLeft
     return (
       <Fragment>
         <View style={[Styles.box, { top: this.props.top }]}>
@@ -192,19 +195,33 @@ class ActivityList extends Component<ActivityListProps> {
   // closest activity.
   scrollToTime(scrollTime: number) {
     log.trace('ActivityList scrollToTime', scrollTime);
-    const { animated, list, selectedActivityId } = this.props;
-    const index = list.findIndex((activity: ActivityDataExtended) => activity.id === selectedActivityId);
+    const { animated, list } = this.props;
+    const index = list.findIndex((activity: ActivityDataExtended) => {
+      if (!activity.tStart) {
+        return false;
+      }
+      const start = activity.tStart;
+      if (!activity.tEnd && !activity.tLastUpdate) {
+        return false;
+      }
+      const end = activity.tEnd ? activity.tEnd : activity.tLastUpdate!;
+      if (start <= scrollTime && scrollTime <= end) {
+        return true;
+      }
+      return false;
+    })
     if (index >= 0) {
       if (_ref) {
         const activity = list[index];
+        const end = activity.tEnd || activity.tLastUpdate!;
         if (activity.tStart) {
           const activityElapsedTime = scrollTime - activity.tStart;
-          let offset = marginHorizontal;
+          let offset = activityMarginLeft;
           // first, offset for the index
-          offset += index * (marginHorizontal + activityWidth);
+          offset += index * (activityMarginLeft + activityWidth);
           // now offset for the elapsed portion within the activity
           const now = utils.now();
-          const tTotal = (activity.tEnd && activity.tTotal) ? activity.tTotal : (now - activity.tStart);
+          const tTotal = (end && activity.tTotal) ? activity.tTotal : (now - activity.tStart);
           const increment = (activityElapsedTime / tTotal) * activityWidth;
           offset += increment;
           const params = {
@@ -219,7 +236,7 @@ class ActivityList extends Component<ActivityListProps> {
         }
       }
     } else {
-      log.trace('index', index, 'length', list.length, 'selectedActivityId', selectedActivityId);
+      log.trace('index', index, 'length', list.length);
     }
   }
 }

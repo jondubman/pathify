@@ -73,6 +73,13 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     }
   }
   const onScroll = (x: number) => {
+    // ActivityList has been scrolled to position x. We convert to a scrollTime for the timeline and auto-scroll that.
+    // First, determine if x is before all activities, between two activities, after all activities, or on an activity.
+    // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
+    // Between activities, it is interpolated. Before all activities, it's just the start of the first activity, and
+    // after all activities, it is the end of the last one.
+
+
     // dispatch(newAction(AppAction.scrollTimeline, { scrollTime: t }));
   }
   const register = (component) => {

@@ -291,11 +291,11 @@ const constants = {
   },
   activityList: {
     activityHeight: initialTimelineHeight,
+    activityMarginLeft: (buttonOffset + 2) * 2,
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderRadius: 0,
     borderWidth: 1,
     height: initialTimelineHeight + scrollbarHeight,
-    marginHorizontal: (buttonOffset + 2) * 2,
     scrollbarHeight,
   },
   appName: 'Pathify',
