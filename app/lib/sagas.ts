@@ -1114,7 +1114,7 @@ const sagas = {
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
     // Next, handle side effects:
     const state: AppState = yield select(state => state);
-    // An important side effect: Whenever viewTime is set, pausedTime and selectedActivityId may also be updated.
+    // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
     if (params.viewTime !== undefined) {
@@ -1150,10 +1150,12 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id }));
       }
     }
-    const { timelineScrolling } = state.flags;
-    if (timelineScrolling && params.scrollTime !== undefined) { // if setting scrollTime during timelineScrolling:
-      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // while timelineScrolling
-      yield call(log.trace, 'scrollTime:', params.scrollTime);
+    if (params.scrollTime !== undefined) { // if setting scrollTime:
+      const { activityListScrolling, timelineScrolling } = state.flags;
+      if (timelineScrolling && !activityListScrolling) {
+        yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime }));
+        yield call(log.trace, 'scrollTime:', params.scrollTime);
+      }
     }
     // Write through to settings in database, if needed
     const options = yield select((state: AppState) => state.options); // ensure we have the latest

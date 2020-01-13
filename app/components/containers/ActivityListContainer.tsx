@@ -17,6 +17,7 @@ import {
   ActivityDataExtended,
 } from 'shared/activities';
 import log from 'shared/log';
+import { Timepoint } from 'shared/timeseries';
 
 interface ActivityListStateProps {
   animated: boolean;
@@ -29,7 +30,7 @@ interface ActivityListStateProps {
 
 interface ActivityListDispatchProps {
   onPressActivity: (activity: ActivityDataExtended) => void;
-  onScroll: (x: number) => void;
+  onScrollTimeline: (t: Timepoint) => void;
   register: (component: Component) => void;
 }
 
@@ -74,16 +75,10 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
       dispatch(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in onPressActivity
     }
   }
-  const onScroll = (x: number) => {
-    // ActivityList has been scrolled to position x. We convert to a scrollTime for the timeline and auto-scroll that.
-    // First, determine if x is before all activities, between two activities, after all activities, or on an activity.
-    // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
-    // Before all activities maps to the start of the first activity
-    // After all activities maps to the end of the last one.
-    // Between activities, no scroll is propagated to the timeline.
-
-    // TODO
-    // dispatch(newAction(AppAction.scrollTimeline, { scrollTime: t }));
+  const onScrollTimeline = (t: Timepoint) => {
+    dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
+    dispatch(newAction(AppAction.setAppOption, { scrollTime: t, viewTime: t }));
+    dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
   }
   const register = (component) => {
     setTimeout(() => {
@@ -92,7 +87,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   }
   const dispatchers = {
     onPressActivity,
-    onScroll,
+    onScrollTimeline,
     register,
   }
   return dispatchers;

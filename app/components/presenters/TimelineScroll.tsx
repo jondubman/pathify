@@ -247,7 +247,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   }
 
   scrollToTime(scrollTime: number) {
-    log.trace('TimelineScroll scrollToTime', scrollTime);
+    log.trace('TimelineScroll scrollToTime', scrollTime, utils.displayTimestamp(scrollTime));
     if (this._scrollView) {
       const { centerTime, scrollableWidth, visibleWidth, visibleTime } = this.props;
       const scrollToX = (visibleWidth * ((scrollTime - centerTime) / visibleTime)) + (scrollableWidth / 2) - (visibleWidth / 2);

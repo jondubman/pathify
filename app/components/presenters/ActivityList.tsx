@@ -20,6 +20,7 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
+import { Timepoint } from 'shared/timeseries';
 import {
   metersToMilesText,
   msecToString,
@@ -140,9 +141,28 @@ class ActivityList extends Component<ActivityListProps> {
 
   // Handle a scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    const offset = event.nativeEvent.contentOffset.x;
-    log.trace('ActivityList handleScroll', offset);
-    this.props.onScroll(offset);
+    const { x } = event.nativeEvent.contentOffset;
+    log.trace('ActivityList handleScroll', x);
+    const { list } = this.props;
+
+    // ActivityList has been scrolled to position x. Convert to Timepoint and pass to onScroll.
+    // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
+    // Before all activities maps to the start of the first activity
+    // After all activities maps to the end of the last one.
+    // Between activities, no scroll is propagated to the timeline.
+    const totalWidthPerActivity = activityMargin + activityWidth;
+    const baseX = x - activityMargin;
+    const ratio = baseX / totalWidthPerActivity;
+    const index = Math.floor(ratio);
+    const remainder = baseX - (index * totalWidthPerActivity);
+    const proportion = remainder / activityWidth;
+    const activity = list[index];
+    if (activity && activity.tTotal && proportion <= 1) {
+      const timeWithinActivity = proportion * activity.tTotal;
+      const t: Timepoint = activity.tStart + timeWithinActivity;
+      log.trace('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
+      this.props.onScrollTimeline(t);
+    }
   }
 
   render() {

@@ -296,7 +296,7 @@ const constants = {
   },
   activityList: {
     activityHeight: initialTimelineHeight,
-    activityMargin: (buttonOffset + 2) * 2, // applied on left
+    activityMargin: 16, // applied on left
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderLineHeight: 1,
     borderRadius: 5,
