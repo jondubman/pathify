@@ -38,7 +38,8 @@ export type ActivityListProps = ActivityListStateProps & ActivityListDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
-    animated: state.flags.timelineScrolling,
+    // animated: state.flags.timelineScrolling,
+    animated: false, // TODO
     betweenActivities: !state.options.selectedActivityId,
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
@@ -77,7 +78,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   }
   const onScrollTimeline = (t: Timepoint) => {
     dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
-    dispatch(newAction(AppAction.setAppOption, { scrollTime: t, viewTime: t }));
+    dispatch(newAction(AppAction.activityListScrolled, { t }));
     dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
   }
   const register = (component) => {

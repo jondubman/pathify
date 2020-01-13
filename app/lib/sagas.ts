@@ -48,6 +48,7 @@ import {
   newAction,
   ReducerAction,
 
+  ActivityListScrolledParams,
   AddEventsParams,
   AppStateChangeParams,
   CenterMapParams,
@@ -162,6 +163,16 @@ const sagas = {
   },
 
   // From here on, functions are alphabetized:
+
+  activityListScrolled: function* (action: Action) {
+    const params = action.params as ActivityListScrolledParams;
+    const { t } = params;
+    const { timelineScrolling } = yield select((state: AppState) => state.flags);
+    yield call(log.trace, 'activityListScrolled', timelineScrolling, t);
+    if (!timelineScrolling) {
+      yield put(newAction(AppAction.setAppOption, { scrollTime: t, viewTime: t }));
+    }
+  },
 
   // Note: To keep this simple it's currently required that added events be sorted by t and consistent in activityId.
   addEvents: function* (action: Action) {
@@ -1115,6 +1126,7 @@ const sagas = {
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
     // Next, handle side effects:
     const state: AppState = yield select(state => state);
+    const { activityListScrolling, timelineScrolling } = state.flags;
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
@@ -1140,22 +1152,21 @@ const sagas = {
         // viewTime is in range on the timeline, so just scroll timeline to it.
         yield put(newAction(AppAction.scrollTimeline, { scrollTime: t }));
       }
+    }
+    if (params.scrollTime !== undefined) { // if setting scrollTime:
       // Set selectedActivityId as appropriate:
-      // TODO could avoid this database call in many cases. Usually selectedActivityId does not change. Use cache!
-      const activity: Activity = yield call(cachedActivityForTimepoint, state, t);
-      // TODO avoid this setAppOption cascade when it is not needed
+      const activity: Activity = yield call(cachedActivityForTimepoint, state, params.scrollTime);
       if (!activity || !activity.id) {
-        yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
-      } else if (activity) {
+        if (state.options.selectedActivityId) {
+          yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));
+        }
+      } else if (activity && activity.id !== state.options.selectedActivityId) {
         // This is where selectedActivity is set to the activity for the new viewTime.
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: activity.id }));
       }
-    }
-    if (params.scrollTime !== undefined) { // if setting scrollTime:
-      const { activityListScrolling, timelineScrolling } = state.flags;
       if (timelineScrolling && !activityListScrolling) {
-        yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime }));
-        yield call(log.trace, 'scrollTime:', params.scrollTime);
+        yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // in setAppOption
+        yield call(log.trace, 'setAppOption: scrollActivityList to scrollTime:', params.scrollTime);
       }
     }
     // Write through to settings in database, if needed
@@ -1401,21 +1412,27 @@ const sagas = {
   // Respond to timeline pan/zoom. x is in the time domain.
   // viewTime changes here only after scrolling, whereas scrollTime changes during scrolling too.
   timelineZoomed: function* (action: Action) { // see also: timelineZooming
+    const { activityListScrolling, timelineScrolling } = yield select((state: AppState) => state.flags);
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const scrollTime = (x[0] + x[1]) / 2;
     yield put(newAction(AppAction.flagDisable, 'timelineScrolling'));
-    yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
-    yield call(log.trace, 'timelineZoomed', scrollTime);
+    if (timelineScrolling && !activityListScrolling) {
+      yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
+    }
+    yield call(log.trace, 'timelineZoomed', scrollTime, activityListScrolling, timelineScrolling);
   },
 
   timelineZooming: function* (action: Action) { // see also: timelineZoomed
+    const { activityListScrolling, timelineScrolling } = yield select((state: AppState) => state.flags);
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const scrollTime = (x[0] + x[1]) / 2;
     // Note use of "ASAP" version of setAppOption here to take the latest when we get a flurry of scroll events:
-    yield put(newAction(AppAction.setAppOptionASAP, { scrollTime })); // note: not changing viewTime or centerTime!
-    yield call(log.trace, 'timelineZooming', scrollTime);
+    if (timelineScrolling && !activityListScrolling) {
+      yield put(newAction(AppAction.setAppOptionASAP, { scrollTime })); // note: not changing viewTime or centerTime!
+    }
+    yield call(log.trace, 'timelineZooming', scrollTime, activityListScrolling, timelineScrolling);
   },
 
   // This goes off once a second like the tick of a mechanical watch.

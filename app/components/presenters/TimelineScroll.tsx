@@ -104,8 +104,8 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     const newTime = Math.min(utils.now(), (x[0] + x[1]) / 2);
     const rightNow = utils.now();
     setTimelineNow(newTime >= rightNow - constants.timing.timelineCloseToNow);
-    setTimelineScrolling(false);
     zoomDomainChanged(domain);
+    setTimelineScrolling(false);
   }
 
    onMomentumScrollBegin(event: NativeSyntheticEvent<NativeScrollEvent>) {
@@ -113,7 +113,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     // The timer was only around to finish scrolling in case we are not momentum scrolling.
     this.clearTimer();
     logScrollEvents && log.trace('onMomentumScrollBegin');
-     this.props.setTimelineScrolling(true);
+    this.props.setTimelineScrolling(true);
   }
 
   onMomentumScrollEnd(event: NativeSyntheticEvent<NativeScrollEvent>) {
