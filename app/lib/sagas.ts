@@ -75,6 +75,7 @@ import database, { LogMessage, SettingsObject } from 'lib/database';
 import { Geo } from 'lib/geo';
 import {
   cachedActivity,
+  cachedActivityForTimepoint,
   currentActivity,
   loggableOptions,
   mapPadding,
@@ -1141,7 +1142,7 @@ const sagas = {
       }
       // Set selectedActivityId as appropriate:
       // TODO could avoid this database call in many cases. Usually selectedActivityId does not change. Use cache!
-      const activity: Activity = yield call(database.activityForTimepoint, t); // may be null (which is ok)
+      const activity: Activity = yield call(cachedActivityForTimepoint, state, t);
       // TODO avoid this setAppOption cascade when it is not needed
       if (!activity || !activity.id) {
         yield put(newAction(AppAction.setAppOption, { selectedActivityId: null }));

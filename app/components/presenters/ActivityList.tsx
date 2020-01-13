@@ -132,13 +132,6 @@ class ActivityList extends Component<ActivityListProps> {
     }
   }
 
-  componentDidUpdate(prevProps: ActivityListProps) {
-    if (prevProps.list.length !== this.props.list.length ||
-        prevProps.selectedActivityId != this.props.selectedActivityId) {
-      this.autoScroll();
-    }
-  }
-
   // Handle a scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;

@@ -109,7 +109,7 @@ const colors = {
     background: 'transparent',
     backgroundMargin: withOpacity(namedColors.gray, 0.25),
     borderLine: withOpacity(namedColors.gray, 0.5),
-    centerLine: withOpacity(namedColors.white, 0.5),
+    centerLine: withOpacity(namedColors.white, 0.35),
     centerLineBright: withOpacity(namedColors.white, 0.65),
     centerLineSelected: withOpacity(colorThemes.past, 0.75),
     current: {
