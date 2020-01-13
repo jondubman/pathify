@@ -32,7 +32,11 @@ const {
   activityWidth,
   borderRadius,
   borderWidth,
+  centerLineShortWidth,
+  centerLineTop,
+  centerLineWidth,
   height,
+  topBottomBorderHeight
 } = constants.activityList;
 
 const Styles = StyleSheet.create({
@@ -75,6 +79,21 @@ const Styles = StyleSheet.create({
     height: activityHeight,
     marginLeft: activityMargin,
   },
+  borderLine: {
+    backgroundColor: colors.borderLine,
+    position: 'absolute',
+    width: utils.windowSize().width,
+    height: constants.activityList.borderLineHeight,
+  },
+  centerLine: {
+    backgroundColor: colors.centerLine,
+  },
+  centerLineBright: {
+    backgroundColor: colors.centerLineBright,
+  },
+  centerLineSelected:{
+    backgroundColor: colors.centerLineSelected,
+  }
 })
 
 const marginLeft = centerline(); // allows list to be positioned such that left edge of real content is centered.
@@ -133,19 +152,36 @@ class ActivityList extends Component<ActivityListProps> {
     // the left margin of the first activity is effectively the right margin of listHeaderStyle
     const listHeaderStyle = { backgroundColor, width: marginLeft, height: activityHeight };
     const listFooterStyle = { ...listHeaderStyle, marginLeft: activityMargin, width: marginRight };
+    const { betweenActivities, list, top } = this.props;
+
+    // make centerLineBase style
+    const centerLineLeft = centerline() - centerLineWidth / 2;
+    const centerLineRight = centerline() - centerLineWidth / 2;
+    const centerLineShortLeft = centerline() - centerLineShortWidth / 2;
+    const centerLineShortRight = centerline() - centerLineShortWidth / 2;
+    const centerLineBase = {
+      left: centerLineLeft,
+      right: centerLineRight,
+      height,
+      position: 'absolute',
+      top: centerLineTop,
+    } as any;
+    const shortHeight = -centerLineTop + topBottomBorderHeight;
+
     return (
       <Fragment>
-        <View style={[Styles.box, { top: this.props.top }]}>
+        <View style={[Styles.box, { top }]}>
           <FlatList<ActivityDataExtended>
-            data={this.props.list}
+            data={list}
             extraData={this.props}
             getItemLayout={getItemLayout}
             horizontal
-            initialScrollIndex={Math.max(0, this.props.list.length - 1)}
+            initialScrollIndex={Math.max(0, list.length - 1)}
             ListHeaderComponent={<View style={listHeaderStyle} />}
             ListFooterComponent={<View style={listFooterStyle} />}
             onLayout={this.autoScroll}
             onScroll={this.handleScroll}
+            style={{ marginTop: topBottomBorderHeight }}
             ref={(ref) => {
               if (ref) {
                 _ref = ref;
@@ -154,7 +190,28 @@ class ActivityList extends Component<ActivityListProps> {
             }}
             renderItem={this.renderItem}
             scrollIndicatorInsets={scrollInsets}
-        />
+          />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
+          {betweenActivities ?
+            <View pointerEvents="none" style={[centerLineBase, Styles.centerLineBright]} />
+            :
+            <Fragment>
+              <View pointerEvents="none" style={[
+                centerLineBase,
+                Styles.centerLineSelected,
+                {
+                  height: shortHeight,
+                  width: centerLineShortWidth,
+                  left: centerLineShortLeft,
+                  right: centerLineShortRight,
+                },
+              ]} />
+              <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
+            </Fragment>
+          }
         </View>
       </Fragment>
     )

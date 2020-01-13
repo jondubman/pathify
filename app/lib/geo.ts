@@ -70,8 +70,7 @@ const geoconfig_default: Config = {
   // -------------------
   // Application Options
   // -------------------
-  // stopOnTerminate: true, // set false to continue tracking after user terminates the app
-  stopOnTerminate: false, // TODO
+  stopOnTerminate: false, // set false to continue tracking after user terminates the app
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
   heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
 

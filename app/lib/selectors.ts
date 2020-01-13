@@ -10,6 +10,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import { Timespan, Timespans } from 'containers/TimelineContainer';
 import locations from 'shared/locations';
 import { Activity, ActivityDataExtended } from 'shared/activities';
+import log from 'shared/log';
 import { MarkEvent } from 'shared/marks';
 import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
@@ -104,6 +105,16 @@ export const cachedActivity = (state: AppState, id: string): ActivityDataExtende
   const cache = state.cache;
   if (id && cache.activities) {
     return cache.activities.find(activity => activity.id === id);
+  }
+  return undefined;
+}
+
+export const cachedActivityForTimepoint = (state: AppState, t: Timepoint): ActivityDataExtended | undefined => {
+  const cache = state.cache;
+  if (cache.activities) {
+    const result = cache.activities.find(activity => activity.tStart <= t && t <= activity.tLast);
+    log.trace('cachedActivityForTimepoint', result);
+    return result;
   }
   return undefined;
 }

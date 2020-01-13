@@ -3,7 +3,7 @@ const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
 // @ts-ignore
-const debugVersion = (__DEV__ === true);
+const debugVersion = (typeof __DEV__ == undefined) || (__DEV__ === true);
 const productionVersion = !debugVersion;
 
 type LogMethod = (level: string, ...args) => void;

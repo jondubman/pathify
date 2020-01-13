@@ -38,7 +38,7 @@ export const initialAppState = {
     allowMapStyleNone: false, // really only useful for debugging / perf
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     clockMenuOpen: false,
-    closeSettingsAfterFullScreenSwitch: true, // might be good for prefs
+    closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel

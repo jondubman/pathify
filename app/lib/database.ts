@@ -238,6 +238,13 @@ const database = {
     let newActivity;
     realm.write(() => {
       newActivity = realm.create('Activity', newActivityTemplate);
+      const pathUpdate: PathUpdate = {
+        id: newActivityTemplate.id,
+        lats: [],
+        lons: [],
+      }
+      // create Path right away
+      const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
     })
     return newActivity;
   },
@@ -348,6 +355,7 @@ const database = {
 
   // paths
 
+  // TODO is this guaranteed to work? Can path not exist yet?
   appendToPath: (update: PathUpdate) => {
     const path = database.pathById(update.id);
     if (path && update.lats && update.lons && update.lats.length === update.lons.length) {

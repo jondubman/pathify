@@ -46,7 +46,7 @@ const pollServerOnce = async () => {
     const message = await response.json();
     handleServerPush(message);
   } catch (err) {
-    log.info('pollServerOnce', err);
+    log.info('pollServerOnce', url, err);
 
     // take a brief nap and then try again
     try {

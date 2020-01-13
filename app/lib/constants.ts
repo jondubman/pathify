@@ -75,6 +75,7 @@ const colorThemes = {
 // For Realm database
 const schemaVersion = 21;
 
+const activityTopBottomBorderHeight = 5;
 const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
@@ -106,7 +107,11 @@ const colors = {
   },
   activityList: {
     background: 'transparent',
-    backgroundMargin: withOpacity(namedColors.white, 0.3),
+    backgroundMargin: withOpacity(namedColors.gray, 0.25),
+    borderLine: withOpacity(namedColors.gray, 0.5),
+    centerLine: withOpacity(namedColors.white, 0.5),
+    centerLineBright: withOpacity(namedColors.white, 0.65),
+    centerLineSelected: withOpacity(colorThemes.past, 0.75),
     current: {
       background: withOpacity(colorThemes.now, 0.3),
       border: withOpacity(colorThemes.now, 1),
@@ -293,10 +298,15 @@ const constants = {
     activityHeight: initialTimelineHeight,
     activityMargin: (buttonOffset + 2) * 2, // applied on left
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
-    borderRadius: 0,
+    borderLineHeight: 1,
+    borderRadius: 5,
     borderWidth: 1,
-    height: initialTimelineHeight + scrollbarHeight,
+    centerLineShortWidth: 4,
+    centerLineTop: -buttonOffset,
+    centerLineWidth: 2,
+    height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight,
     scrollbarHeight,
+    topBottomBorderHeight: activityTopBottomBorderHeight,
   },
   appName: 'Pathify',
   buttonOffset,

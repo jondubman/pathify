@@ -20,6 +20,7 @@ import log from 'shared/log';
 
 interface ActivityListStateProps {
   animated: boolean;
+  betweenActivities: boolean;
   list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string | null;
@@ -37,6 +38,7 @@ export type ActivityListProps = ActivityListStateProps & ActivityListDispatchPro
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
     animated: state.flags.timelineScrolling,
+    betweenActivities: !state.options.selectedActivityId,
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
     selectedActivityId: state.options.selectedActivityId,
@@ -76,10 +78,11 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     // ActivityList has been scrolled to position x. We convert to a scrollTime for the timeline and auto-scroll that.
     // First, determine if x is before all activities, between two activities, after all activities, or on an activity.
     // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
-    // Between activities, it is interpolated. Before all activities, it's just the start of the first activity, and
-    // after all activities, it is the end of the last one.
+    // Before all activities maps to the start of the first activity
+    // After all activities maps to the end of the last one.
+    // Between activities, no scroll is propagated to the timeline.
 
-
+    // TODO
     // dispatch(newAction(AppAction.scrollTimeline, { scrollTime: t }));
   }
   const register = (component) => {
