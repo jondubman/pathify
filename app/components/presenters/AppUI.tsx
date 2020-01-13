@@ -67,7 +67,7 @@ class AppUI extends Component<AppUIProps> {
               <FollowMeButtonContainer />
               <GeoButtonContainer />
             </View>
-            {mapFullScreen ? null : <TimelineControlsContainer />}
+            {showTimeline ? <TimelineControlsContainer /> : null}
             <View style={{ position: 'absolute', width }}>
               <HelpPanelContainer />
               {mapFullScreen ? null : <TopMenuContainer />}

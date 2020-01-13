@@ -157,7 +157,7 @@ const colors = {
   },
   geolocationButton: {
     background: 'white',
-    opacity: 0.75, // TODO use withOpacity
+    opacity: 0.75,
     disabledBackground: namedColors.green,
     disabledUnderlay: namedColors.brightGreen, // in transition
     enabledBackground: namedColors.darkRed,
