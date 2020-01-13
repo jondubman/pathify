@@ -47,7 +47,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   // TODO move most of this to selectActivity saga so it can be triggered independently
   const onPressActivity = (activity: ActivityDataExtended): void => {
-    if (activity && activity.tStart) {
+    if (activity) {
       log.debug('onPressActivity', activity.id);
       const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
         (activity.tStart + (activity.tLastUpdate || activity.tStart)) / 2;

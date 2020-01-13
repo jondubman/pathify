@@ -1037,7 +1037,7 @@ const sagas = {
     const { activityList } = refs;
     if (activityList !== undefined && activityList.scrollToTime) {
       yield call(log.trace, 'scrollActivityList:', scrollTime);
-      yield call(activityList.scrollToTime, scrollTime);
+      yield call(activityList.scrollToTime, scrollTime); // in saga scrollActivityList
     }
   },
 
@@ -1052,7 +1052,7 @@ const sagas = {
       const { timelineScroll } = refs;
       if (timelineScroll !== undefined && timelineScroll.scrollToTime) {
         yield call(log.trace, 'saga scrollTimeline:', scrollTime);
-        yield call(timelineScroll.scrollToTime, scrollTime);
+        yield call(timelineScroll.scrollToTime, scrollTime); // in saga scrollTimeline
       } // else nothing to scroll (like if Timeline is hidden) TODO hmm, can refs to go stale when component unmounted?
     }
   },
@@ -1152,7 +1152,7 @@ const sagas = {
     }
     const { timelineScrolling } = state.flags;
     if (timelineScrolling && params.scrollTime !== undefined) { // if setting scrollTime during timelineScrolling:
-      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime }));
+      yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // while timelineScrolling
       yield call(log.trace, 'scrollTime:', params.scrollTime);
     }
     // Write through to settings in database, if needed
@@ -1358,7 +1358,7 @@ const sagas = {
           })
         }
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-        const halfTime = activity.tStart + (now - activity.tStart!) / 2;
+        const halfTime = activity.tStart + (now - activity.tStart) / 2;
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,
           { currentActivityId: null, selectedActivityId: activityId, scrollTime: halfTime, viewTime: halfTime }));
@@ -1475,7 +1475,7 @@ const sagas = {
       if (zoomTimeline) {
         // Zoom Timeline to show the entire activity, in context. Note we are not resetting its viewTime, just zooming.
         // If there is no tTotal yet (which is the case for a currentActivity), we use the current now time as the end.
-        const tTotal = activity.tTotal || (utils.now() - activity.tStart!);
+        const tTotal = activity.tTotal || (utils.now() - activity.tStart);
         if (activity.tTotal) {
           const newTimelineZoomValue = yield call(timelineZoomValue, tTotal);
           yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);

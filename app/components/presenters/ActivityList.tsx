@@ -28,7 +28,7 @@ import {
 const colors = constants.colors.activityList;
 const {
   activityHeight,
-  activityMarginLeft,
+  activityMargin,
   activityWidth,
   borderRadius,
   borderWidth,
@@ -73,20 +73,20 @@ const Styles = StyleSheet.create({
   },
   touchableActivity: {
     height: activityHeight,
-    marginLeft: activityMarginLeft,
+    marginLeft: activityMargin,
   },
 })
 
 const marginLeft = centerline(); // allows list to be positioned such that left edge of real content is centered.
 const marginRight = centerline(); // allows list to be positioned such that right edge of real content is centered.
 
-// The basic layout of this horizontal list is simple: margins flanking N boxes, each with activityMarginLeft.
-// marginLeft (activityMarginLeft activityWidth)* marginRight
+// The basic layout of this horizontal list is simple: margins flanking N boxes, each with activityMargin.
+// marginLeft (activityMargin activityWidth)* marginRight
 const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
   {
     index,
-    length: (activityMarginLeft + activityWidth),
-    offset: marginLeft + (index * (activityMarginLeft + activityWidth)),
+    length: (activityMargin + activityWidth),
+    offset: marginLeft + (index * (activityMargin + activityWidth)),
   }
 )
 
@@ -103,8 +103,8 @@ class ActivityList extends Component<ActivityListProps> {
   }
 
   autoScroll() {
-    const state = store.getState(); // TODO not great form to grab state straight from here, but it's expedient.
-    const scrollTime = state.options.scrollTime; // This may change rapidly and we just want the latest we can get.
+    const state = store.getState(); // TODO not great form to grab state straight from here but
+    const scrollTime = state.options.scrollTime; // this may change rapidly and we just want the latest we can get.
     if (scrollTime) {
       log.trace('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
         'length', this.props.list.length);
@@ -132,7 +132,7 @@ class ActivityList extends Component<ActivityListProps> {
     const backgroundColor = constants.colors.activityList.backgroundMargin;
     // the left margin of the first activity is effectively the right margin of listHeaderStyle
     const listHeaderStyle = { backgroundColor, width: marginLeft, height: activityHeight };
-    const listFooterStyle = { ...listHeaderStyle, marginLeft: activityMarginLeft }; // whereas this needs a marginLeft
+    const listFooterStyle = { ...listHeaderStyle, marginLeft: activityMargin, width: marginRight };
     return (
       <Fragment>
         <View style={[Styles.box, { top: this.props.top }]}>
@@ -196,48 +196,66 @@ class ActivityList extends Component<ActivityListProps> {
   scrollToTime(scrollTime: number) {
     log.trace('ActivityList scrollToTime', scrollTime);
     const { animated, list } = this.props;
-    const index = list.findIndex((activity: ActivityDataExtended) => {
-      if (!activity.tStart) {
+    let offset = activityMargin;
+    if (list && list.length) {
+      const index = list.findIndex((activity: ActivityDataExtended) => {
+        const start = activity.tStart;
+        if (!activity.tEnd && !activity.tLastUpdate) {
+          return false;
+        }
+        const end = activity.tEnd ? activity.tEnd : activity.tLastUpdate!;
+        if (start <= scrollTime && scrollTime <= end) {
+          return true;
+        }
         return false;
-      }
-      const start = activity.tStart;
-      if (!activity.tEnd && !activity.tLastUpdate) {
-        return false;
-      }
-      const end = activity.tEnd ? activity.tEnd : activity.tLastUpdate!;
-      if (start <= scrollTime && scrollTime <= end) {
-        return true;
-      }
-      return false;
-    })
-    if (index >= 0) {
-      if (_ref) {
-        const activity = list[index];
-        const end = activity.tEnd || activity.tLastUpdate!;
-        if (activity.tStart) {
+      }); // findIndex
+      if (index >= 0) { // found matching activity
+        if (_ref) {
+          const activity = list[index];
+          const end = activity.tEnd || activity.tLastUpdate!;
           const activityElapsedTime = scrollTime - activity.tStart;
-          let offset = activityMarginLeft;
           // first, offset for the index
-          offset += index * (activityMarginLeft + activityWidth);
+          offset += index * (activityMargin + activityWidth);
           // now offset for the elapsed portion within the activity
           const now = utils.now();
           const tTotal = (end && activity.tTotal) ? activity.tTotal : (now - activity.tStart);
           const increment = (activityElapsedTime / tTotal) * activityWidth;
           offset += increment;
-          const params = {
-            animated,
-            offset,
+        }
+      } else { // no match for activity
+        if (scrollTime > list[list.length - 1].tLast) {
+          // after the last activity
+          offset = list.length * (activityMargin + activityWidth) + activityMargin / 2;
+        } else {
+          for (let index = 0; index < list.length; index++) {
+            const activity = list[index];
+            if (scrollTime < activity.tStart) {
+              // before some activity
+              if (index) {
+                // between two activities
+                offset = index * (activityMargin + activityWidth) + activityMargin / 2;
+                // TODO further finesse offset so it appears closer to the activity it is closer to in time
+              } else {
+                // before the first activity
+                offset -= activityMargin / 2;
+              }
+              break;
+            }
           }
-          log.trace('ActivityList scrollToTime scrollToOffset', params);
-          if (!_ref.scrollToOffset) {
-            log.warn('missing scrollToOffset!');
-          }
-          _ref.scrollToOffset(params);
         }
       }
-    } else {
-      log.trace('index', index, 'length', list.length);
+    } else { // empty list
+      log.trace('empty list');
     }
+    const params = {
+      animated,
+      offset,
+    }
+    log.trace('ActivityList scrollToTime scrollToOffset', params);
+    if (!_ref.scrollToOffset) {
+      log.warn('missing scrollToOffset!');
+    }
+    _ref.scrollToOffset(params);
   }
 }
 

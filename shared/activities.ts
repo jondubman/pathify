@@ -79,7 +79,9 @@ export interface ActivityData {
 export interface ActivityDataExtended extends ActivityData { // these are the 'Extended' properties:
   distance?: number;
   distanceMiles?: number;
+  tLast: number; // like tEnd, but works for currentActivity as well as a completed one with a tEnd
   tStartText?: string;
+  tStart: number; // non-optional here, overrides optional tStart? above
   tTotal?: number;
   tTotalText?: string;
 }
@@ -99,6 +101,7 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
       a.tStartText = new Date(a.tStart).toLocaleString()
       const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
       if (tEnd) {
+        a.tLast = tEnd;
         a.tTotal = tEnd - a.tStart;
         a.tTotalText = msecToString(a.tTotal);
       }
