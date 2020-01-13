@@ -164,6 +164,13 @@ const sagas = {
 
   // From here on, functions are alphabetized:
 
+  activityListReachedEnd: function* (action: Action) {
+    const flags = yield select((state: AppState) => state.flags);
+    if (!flags.timelineScrolling && !flags.timelineNow) {
+      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+    }
+  },
+
   activityListScrolled: function* (action: Action) {
     const params = action.params as ActivityListScrolledParams;
     const { t } = params;
@@ -725,16 +732,18 @@ const sagas = {
       }
     }
     if (flagName === 'timelineNow') {
-      if (enabledNow) {
+      if (enabledNow) { // this means we just enabled it
         const now = utils.now();
         const pausedTime = viewTime; // the current viewTime (which is about to be changed)
-        yield put(newAction(AppAction.setAppOption, {
-          pausedTime,
-          centerTime: now,
-          scrollTime: now,
-          viewTime: now,
-        }))
-        yield put(newAction(AppAction.timerTick, now));
+        if (!flags.activityListScrolling && !flags.timelineScrolling) {
+          yield put(newAction(AppAction.setAppOption, {
+            pausedTime,
+            centerTime: now,
+            scrollTime: now,
+            viewTime: now,
+          }))
+          yield put(newAction(AppAction.timerTick, now));
+        }
       }
     }
     if (flagName === 'trackingActivity') {
@@ -749,14 +758,20 @@ const sagas = {
 
   flagDisable: function* (action: Action) {
     const flagName: string = action.params;
-    yield put(newAction(ReducerAction.FLAG_DISABLE, flagName));
-    yield sagas.flag_sideEffects(flagName);
+    const flags = yield select((state: AppState) => state.flags);
+    if (flags[flagName]) {
+      yield put(newAction(ReducerAction.FLAG_DISABLE, flagName));
+      yield sagas.flag_sideEffects(flagName);
+    }
   },
 
   flagEnable: function* (action: Action) {
     const flagName: string = action.params;
-    yield put(newAction(ReducerAction.FLAG_ENABLE, flagName));
-    yield sagas.flag_sideEffects(flagName);
+    const flags = yield select((state: AppState) => state.flags);
+    if (!flags[flagName]) {
+      yield put(newAction(ReducerAction.FLAG_ENABLE, flagName));
+      yield sagas.flag_sideEffects(flagName);
+    }
   },
 
   flagToggle: function* (action: Action) {
@@ -1131,8 +1146,12 @@ const sagas = {
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
     if (params.viewTime !== undefined) {
-      const { timelineNow } = state.flags;
       const t = params.viewTime;
+      if (t < utils.now() - constants.timing.timelineCloseToNow) {
+        yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+        yield call(log.trace, 'setAppOption: disabled timelineNow as side effect of setting params.viewtime');
+      }
+      const { timelineNow } = state.flags;
       if (!timelineNow) {
         // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.

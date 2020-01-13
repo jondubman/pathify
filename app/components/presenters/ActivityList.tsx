@@ -156,6 +156,9 @@ class ActivityList extends Component<ActivityListProps> {
       log.trace('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
       this.props.onScrollTimeline(t);
     }
+    if (index >= list.length || (index === list.length - 1 && proportion > 1)) { // after the last activity
+      this.props.reachedEnd();
+    }
   }
 
   render() {
@@ -270,10 +273,11 @@ class ActivityList extends Component<ActivityListProps> {
     if (list && list.length) {
       const index = list.findIndex((activity: ActivityDataExtended) => {
         const start = activity.tStart;
-        if (!activity.tEnd && !activity.tLastUpdate) {
+        if (!activity.tEnd && !activity.tLast) {
           return false;
         }
-        const end = activity.tEnd ? activity.tEnd : activity.tLastUpdate!;
+        // Note we use now time here to optimize scrolling the currentActivity, which lacks tEnd.
+        const end = activity.tEnd ? activity.tEnd : Math.max(activity.tLast || 0, utils.now());
         if (start <= scrollTime && scrollTime <= end) {
           return true;
         }
@@ -296,6 +300,7 @@ class ActivityList extends Component<ActivityListProps> {
         if (scrollTime > list[list.length - 1].tLast) {
           // after the last activity
           offset = list.length * (activityMargin + activityWidth) + activityMargin / 2;
+          log.trace('activityList.scrollToTime: after the last activity');
         } else {
           for (let index = 0; index < list.length; index++) {
             const activity = list[index];
@@ -304,7 +309,6 @@ class ActivityList extends Component<ActivityListProps> {
               if (index) {
                 // between two activities
                 offset = index * (activityMargin + activityWidth) + activityMargin / 2;
-                // TODO further finesse offset so it appears closer to the activity it is closer to in time
               } else {
                 // before the first activity
                 offset -= activityMargin / 2;

@@ -32,6 +32,7 @@ interface ActivityListDispatchProps {
   onPressActivity: (activity: ActivityDataExtended) => void;
   onScrollTimeline: (t: Timepoint) => void;
   register: (component: Component) => void;
+  reachedEnd: () => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
@@ -81,6 +82,9 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     dispatch(newAction(AppAction.activityListScrolled, { t }));
     dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
   }
+  const reachedEnd = () => {
+    dispatch(newAction(AppAction.activityListReachedEnd));
+  }
   const register = (component) => {
     setTimeout(() => {
       dispatch(newAction(AppAction.setRef, { activityList: component }));
@@ -89,6 +93,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const dispatchers = {
     onPressActivity,
     onScrollTimeline,
+    reachedEnd,
     register,
   }
   return dispatchers;

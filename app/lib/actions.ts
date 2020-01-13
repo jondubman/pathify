@@ -29,6 +29,7 @@ export enum ReducerAction {
 // Some appActions and reducerActions have similar names (e.g. geolocation, GEOLOCATION).
 // In these cases the AppAction is a wrapper that triggers the corresponding ReducerAction while handling side effects.
 export enum AppAction {
+  'activityListReachedEnd' = 'activityListReachedEnd',
   'activityListScrolled' = 'activityListScrolled',
   'addEvents' = 'addEvents',
   'appStateChange' = 'appStateChange',
