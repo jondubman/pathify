@@ -111,6 +111,7 @@ const colors = {
     borderLine: withOpacity(namedColors.gray, 0.5),
     centerLine: withOpacity(namedColors.white, 0.35),
     centerLineBright: withOpacity(namedColors.white, 0.65),
+    centerLineCurrent: withOpacity(colorThemes.now, 0.75),
     centerLineSelected: withOpacity(colorThemes.past, 0.75),
     current: {
       background: withOpacity(colorThemes.now, 0.3),
@@ -301,7 +302,7 @@ const constants = {
     borderLineHeight: 1,
     borderRadius: 5,
     borderWidth: 1,
-    centerLineShortWidth: 4,
+    centerLineShortWidth: 2,
     centerLineTop: -buttonOffset,
     centerLineWidth: 2,
     height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight,

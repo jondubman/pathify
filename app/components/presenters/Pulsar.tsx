@@ -59,10 +59,6 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
     this._pulseAnimation.start();
   }
 
-  shouldComponentUpdate(nextProps: PulsarProps, nextState: any) {
-    return (JSON.stringify(this.props) !== JSON.stringify(nextProps)); // TODO quick & dirty approach for now
-  }
-
   render() {
     const { id, loc } = this.props;
     const circleShape: turf.Point = { // Point is a type of GeoJSON geometry object having only coordinates.

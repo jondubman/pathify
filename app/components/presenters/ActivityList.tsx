@@ -92,6 +92,9 @@ const Styles = StyleSheet.create({
   centerLineBright: {
     backgroundColor: colors.centerLineBright,
   },
+  centerLineCurrent: {
+    backgroundColor: colors.centerLineCurrent,
+  },
   centerLineSelected:{
     backgroundColor: colors.centerLineSelected,
   }
@@ -112,7 +115,12 @@ const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
 
 let _ref: FlatList<ActivityDataExtended>;
 
-class ActivityList extends Component<ActivityListProps> {
+interface ActivityListState {
+  scrolledBetweenActivities: boolean; // note it's possible to scroll between activities without deselecting an activity
+  // and in that case this will ensure we draw the vertical line as appropriate when between activities.
+}
+
+class ActivityList extends Component<ActivityListProps, ActivityListState> {
 
   constructor(props: ActivityListProps) {
     super(props);
@@ -120,6 +128,9 @@ class ActivityList extends Component<ActivityListProps> {
     this.handleScroll = this.handleScroll.bind(this);
     this.renderItem = this.renderItem.bind(this);
     this.scrollToTime = this.scrollToTime.bind(this);
+    this.state = {
+      scrolledBetweenActivities: false,
+    } as ActivityListState;
   }
 
   autoScroll() {
@@ -155,9 +166,13 @@ class ActivityList extends Component<ActivityListProps> {
       const t: Timepoint = activity.tStart + timeWithinActivity;
       log.trace('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
       this.props.onScrollTimeline(t);
+      this.setState({ scrolledBetweenActivities: false });
     }
-    if (index >= list.length || (index === list.length - 1 && proportion > 1)) { // after the last activity
-      this.props.reachedEnd();
+    if (index >= list.length || (index === list.length - 1 && proportion > 1)) { // if after the last activity
+      this.props.reachedEnd(); // should enable timelineNow mode
+      this.setState({ scrolledBetweenActivities: false });
+    } else if (proportion > 1) {
+      this.setState({ scrolledBetweenActivities: true });
     }
   }
 
@@ -168,8 +183,9 @@ class ActivityList extends Component<ActivityListProps> {
     // the left margin of the first activity is effectively the right margin of listHeaderStyle
     const listHeaderStyle = { backgroundColor, width: marginLeft, height: activityHeight };
     const listFooterStyle = { ...listHeaderStyle, marginLeft: activityMargin, width: marginRight };
-    const { betweenActivities, list, top } = this.props;
-
+    const { currentActivityId, list, selectedActivityId, top } = this.props;
+    const { scrolledBetweenActivities } = this.state;
+    const selectedIsCurrent = (selectedActivityId === currentActivityId);
     // make centerLineBase style
     const centerLineLeft = centerline() - centerLineWidth / 2;
     const centerLineRight = centerline() - centerLineWidth / 2;
@@ -183,7 +199,7 @@ class ActivityList extends Component<ActivityListProps> {
       top: centerLineTop,
     } as any;
     const shortHeight = -centerLineTop + topBottomBorderHeight;
-
+    const { timelineNow } = this.props;
     return (
       <Fragment>
         <View style={[Styles.box, { top }]}>
@@ -211,20 +227,26 @@ class ActivityList extends Component<ActivityListProps> {
           <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
           <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
           <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
-          {betweenActivities ?
-            <View pointerEvents="none" style={[centerLineBase, Styles.centerLineBright]} />
+          {!selectedActivityId || scrolledBetweenActivities || timelineNow ?
+            <View
+              pointerEvents="none"
+              style={[centerLineBase, timelineNow ? Styles.centerLineCurrent : Styles.centerLineBright]}
+            />
             :
             <Fragment>
-              <View pointerEvents="none" style={[
-                centerLineBase,
-                Styles.centerLineSelected,
-                {
-                  height: shortHeight,
-                  width: centerLineShortWidth,
-                  left: centerLineShortLeft,
-                  right: centerLineShortRight,
-                },
-              ]} />
+              <View
+                pointerEvents="none"
+                style={[
+                  centerLineBase,
+                  selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
+                  {
+                    height: shortHeight,
+                    width: centerLineShortWidth,
+                    left: centerLineShortLeft,
+                    right: centerLineShortRight,
+                  },
+                ]}
+              />
               <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
             </Fragment>
           }
@@ -271,7 +293,7 @@ class ActivityList extends Component<ActivityListProps> {
     const { animated, list } = this.props;
     let offset = activityMargin;
     if (list && list.length) {
-      const index = list.findIndex((activity: ActivityDataExtended) => {
+      const index = list.findIndex((activity: ActivityDataExtended) => { // look for the activity we are scrolling to
         const start = activity.tStart;
         if (!activity.tEnd && !activity.tLast) {
           return false;

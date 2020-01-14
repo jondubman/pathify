@@ -900,71 +900,81 @@ const sagas = {
 
   // Refresh (recreate) existing Activity/Path from the raw Events in the database (given an existing Activity id.)
   refreshActivity: function* (action: Action) {
-    const params = action.params as RefreshActivityParams;
-    const { id } = params;
-    // yield call(log.trace, 'saga refreshActivity', id);
-    const eventsForActivity = yield call(database.eventsForActivity, id);
-    const { currentActivityId } = yield select((state: AppState) => state.options);
-    const { schemaVersion } = constants.database;
-    const activityUpdate: ActivityData = { id, schemaVersion };
-    const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
-    activityUpdate.count = eventsForActivity.length;
-    let prevLocEvent: LocationEvent | null = null;
-    for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
-      const event = e as any as GenericEvent;
-      if (event.type === EventType.LOC) {
-        const locEvent = event as LocationEvent;
-        const { accuracy, lon, lat, t } = locEvent;
-        if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
-          // lats
-          pathUpdate.lats.push(lat);
-          activityUpdate.latMax = Math.max(activityUpdate.latMax || -Infinity, lat);
-          activityUpdate.latMin = Math.min(activityUpdate.latMin || Infinity, lat);
-          // lons
-          pathUpdate.lons.push(lon);
-          activityUpdate.lonMax = Math.max(activityUpdate.lonMax || -Infinity, lon);
-          activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
-        }
-        activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max is redundant when events sorted by t
-        activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
-
-        // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
-        if (prevLocEvent !== null) {
-          const gapTime = locEvent.t - prevLocEvent.t;
-          if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
-            if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
-              activityUpdate.maxGapTime = gapTime;
-              activityUpdate.tMaxGapTime = prevLocEvent.t;
-            }
+    try {
+      const params = action.params as RefreshActivityParams;
+      let { id } = params;
+      if (id === 'selectedActivityId') { // TODO experiment
+        id  = yield select((state: AppState) => state.options.selectedActivityId);
+      }
+      yield call(log.trace, 'saga refreshActivity', id);
+      const eventsForActivity = yield call(database.eventsForActivity, id);
+      const { currentActivityId } = yield select((state: AppState) => state.options);
+      const { schemaVersion } = constants.database;
+      const activityUpdate: ActivityData = { id, schemaVersion };
+      const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
+      activityUpdate.count = eventsForActivity.length;
+      let prevLocEvent: LocationEvent | null = null;
+      for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+        const event = e as any as GenericEvent;
+        if (event.type === EventType.LOC) {
+          const locEvent = event as LocationEvent;
+          const { accuracy, lon, lat, t } = locEvent;
+          if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+            // lats
+            pathUpdate.lats.push(lat);
+            activityUpdate.latMax = Math.max(activityUpdate.latMax || -Infinity, lat);
+            activityUpdate.latMin = Math.min(activityUpdate.latMin || Infinity, lat);
+            // lons
+            pathUpdate.lons.push(lon);
+            activityUpdate.lonMax = Math.max(activityUpdate.lonMax || -Infinity, lon);
+            activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
           }
-          if (locEvent.odo && prevLocEvent.odo) {
-            const gapDistance = locEvent.odo - prevLocEvent.odo;
-            if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
+          activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max is redundant when events sorted by t
+          activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
+
+          // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
+          if (prevLocEvent !== null) {
+            const gapTime = locEvent.t - prevLocEvent.t;
+            if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
+              if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
+                activityUpdate.maxGapTime = gapTime;
+                activityUpdate.tMaxGapTime = prevLocEvent.t;
+              }
+            }
+            if (locEvent.odo && prevLocEvent.odo) {
+              const gapDistance = locEvent.odo - prevLocEvent.odo;
               if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
-                activityUpdate.maxGapDistance = gapDistance;
-                activityUpdate.tMaxGapDistance = prevLocEvent.t;
+                if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
+                  activityUpdate.maxGapDistance = gapDistance;
+                  activityUpdate.tMaxGapDistance = prevLocEvent.t;
+                }
               }
             }
           }
+          prevLocEvent = { ...locEvent };
+        } else if (event.type == EventType.MARK) {
+          const markEvent = event as MarkEvent;
+          if (markEvent.subtype === MarkType.END) {
+            activityUpdate.tEnd = markEvent.t;
+          }
         }
-        prevLocEvent = { ...locEvent };
-      } else if (event.type == EventType.MARK) {
-        const markEvent = event as MarkEvent;
-        if (markEvent.subtype === MarkType.END) {
-          activityUpdate.tEnd = markEvent.t;
+        activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastLoc || 0, activityUpdate.tEnd || 0);
+        if (id !== currentActivityId && !activityUpdate.tEnd) {
+          // This only happens if the END MARK event did not get properly inserted.
+          activityUpdate.tEnd = activityUpdate.tLastUpdate;
         }
       }
-      activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastLoc || 0, activityUpdate.tEnd || 0);
-      if (id !== currentActivityId && !activityUpdate.tEnd) {
-        // This only happens if the END MARK event did not get properly inserted.
-        activityUpdate.tEnd = activityUpdate.tLastUpdate;
-      }
+      yield call(database.updateActivity, activityUpdate, pathUpdate);
+      yield call(utils.addToCount, 'refreshedActivities');
+    } catch(err) {
+      yield call(log.error, 'saga refreshActivity', err);
+    } finally {
+      yield put(newAction(AppAction.refreshActivityDone));
     }
-    yield call(database.updateActivity, activityUpdate, pathUpdate);
-    yield call(utils.addToCount, 'refreshedActivities');
-    yield put(newAction(AppAction.refreshActivityDone));
   },
 
+  // This looks a no-op, but the AppAction.refreshActivityDone is used with yield take in refreshAllActivities and
+  // every AppAction gets a corresponding saga.
   refreshActivityDone: function* (action: Action) {
     // yield call(log.trace, 'refreshActivityDone');
   },

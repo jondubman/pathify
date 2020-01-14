@@ -21,10 +21,11 @@ import { Timepoint } from 'shared/timeseries';
 
 interface ActivityListStateProps {
   animated: boolean;
-  betweenActivities: boolean;
+  currentActivityId: string | null;
   list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string | null;
+  timelineNow: boolean;
   top: number;
 }
 
@@ -38,13 +39,15 @@ interface ActivityListDispatchProps {
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
+  const { currentActivityId, selectedActivityId } = state.options;
   return {
     // animated: state.flags.timelineScrolling,
     animated: false, // TODO
-    betweenActivities: !state.options.selectedActivityId,
+    currentActivityId: currentActivityId,
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
-    selectedActivityId: state.options.selectedActivityId,
+    selectedActivityId: selectedActivityId,
+    timelineNow: state.flags.timelineNow,
     top: dynamicTopBelowButtons(state),
   }
 }
@@ -55,19 +58,18 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     if (activity) {
       log.debug('onPressActivity', activity.id);
       const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
-        (activity.tStart + (activity.tLastUpdate || activity.tStart)) / 2;
+        (activity.tStart + utils.now()) / 2;
       if (activity.tEnd) {
         // Pressing some prior activity.
         dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
         dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in onPressActivity
       } else {
         // Pressing the currentActivity.
-        dispatch(newAction(AppAction.flagEnable, 'timelineNow'));
-        dispatch(newAction(AppAction.startFollowingUser));
-        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() })); // in onPressActivity
+        log.debug('onPressActivity: Pressing the currentActivity', new Date(newTime).toString());
+        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in onPressActivity
       }
       const appOptions = {
-        centerTime: newTime,
+        centerTime: newTime, // TODO is it necessary to set this here?
         scrollTime: newTime,
         selectedActivityId: activity.id,
         viewTime: newTime,
