@@ -294,7 +294,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
           <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
           <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
-          {!selectedActivityId || scrolledBetweenActivities || timelineNow ?
+          {!selectedActivityId || (!selectedActivityId && scrolledBetweenActivities) || timelineNow ?
             <View
               pointerEvents="none"
               style={[centerLineBase, timelineNow ? Styles.centerLineCurrent : Styles.centerLineBright]}
