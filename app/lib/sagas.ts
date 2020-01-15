@@ -786,7 +786,7 @@ const sagas = {
   geolocation: function* (action: Action) {
     try {
       const geoloc = action.params as GeolocationParams;
-      yield call(log.trace, 'saga geolocation', geoloc);
+      // yield call(log.trace, 'saga geolocation', geoloc);
       const { lat, lon, recheckMapBounds } = geoloc;
       const priorLocation = yield select(state => state.userLocation);
       yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
@@ -993,7 +993,7 @@ const sagas = {
 
   refreshCache: function* (action: Action) {
     try {
-      yield call(log.debug, 'saga refreshCache');
+      yield call(log.trace, 'saga refreshCache');
       const timestamp = yield call(utils.now);
       const realmActivities = yield call(database.activities);
       const activitiesAsArray = Array.from(realmActivities) as ActivityData[]

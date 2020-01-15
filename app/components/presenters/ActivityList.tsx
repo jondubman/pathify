@@ -171,6 +171,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     }
     if (index >= list.length || (index === list.length - 1 && proportion > 1)) { // if after the last activity
       this.props.reachedEnd(); // should enable timelineNow mode
+      log.trace('reachedEnd');
       this.setState({ scrolledBetweenActivities: false });
     } else if (proportion > 1) {
       this.setState({ scrolledBetweenActivities: true });
@@ -194,10 +195,14 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       marginLeft: activityMargin,
       width: marginRight,
     }
-    const listFooterNowStyle = {
+    const listFooterNowNotTrackingStyle = {
       ...listFooterBaseStyle,
-      width: activityMargin + marginRight,
-      marginLeft: 0,
+      marginLeft: activityMargin / 2,
+    }
+    const listFooterTrackingStyle = {
+      ...listHeaderStyle,
+      backgroundColor: colors.backgroundMarginFuture,
+      width: marginRight,
     }
     const { currentActivityId, list, selectedActivityId, timelineNow, top, trackingActivity } = this.props;
     const { scrolledBetweenActivities } = this.state;
@@ -229,7 +234,10 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
               <View style={listHeaderStyle} />}
             ListFooterComponent={/* Right edge of ActivityList */
               <TouchableHighlight
-                style={trackingActivity ? listFooterNowStyle : listFooterBaseStyle}
+                style={trackingActivity ?
+                  listFooterTrackingStyle
+                  :
+                  (timelineNow ? listFooterNowNotTrackingStyle : listFooterBaseStyle) }
                 onPress={() => { this.props.onPressFutureZone() }}
                 underlayColor={colors.futureZoneUnderlay}
               >
