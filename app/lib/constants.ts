@@ -72,9 +72,11 @@ const colorThemes = {
   topMenu: namedColors.darkerGray,
 }
 
-// For Realm database
+// For Realm database. Very meaningful to Realm!
 const schemaVersion = 21;
 
+// constants that are reused when defining other constants:
+const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
 const buttonOffset = 6;
 const buttonSize = 50;
@@ -107,7 +109,8 @@ const colors = {
   },
   activityList: {
     background: 'transparent',
-    backgroundMargin: withOpacity(namedColors.gray, 0.25),
+    backgroundMarginPast: withOpacity(namedColors.gray, 0.25),
+    backgroundMarginFuture: withOpacity(namedColors.green, 0.25),
     borderLine: withOpacity(namedColors.gray, 0.5),
     centerLine: withOpacity(namedColors.white, 0.35),
     centerLineBright: withOpacity(namedColors.white, 0.65),
@@ -118,6 +121,7 @@ const colors = {
       border: withOpacity(colorThemes.now, 1),
       underlay: withOpacity(colorThemes.now, 0.35),
     },
+    futureZoneUnderlay: withOpacity(colorThemes.now, 0.35),
     past: {
       background: withOpacity(namedColors.darkerGray, 0.25),
       backgroundSelected: withOpacity(colorThemes.past, 0.75),
@@ -146,9 +150,9 @@ const colors = {
     border: namedColors.darkerGray,
   },
   compassButton: {
-    background: withOpacity(namedColors.purple, 0.75),
+    background: withOpacity(namedColors.white, defaultOpacity),
     icon: 'black',
-    underlay: withOpacity(namedColors.purple, 0.75),
+    underlay: withOpacity(namedColors.purple, defaultOpacity),
   },
   debugInfo: {
     backgroundColor: withOpacity(namedColors.black, 0.65),
@@ -297,7 +301,7 @@ const constants = {
   },
   activityList: {
     activityHeight: initialTimelineHeight,
-    activityMargin: 16, // applied on left
+    activityMargin: activityListMargin, // applied on left
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderLineHeight: 1,
     borderRadius: 5,
@@ -306,6 +310,7 @@ const constants = {
     centerLineTop: -buttonOffset,
     centerLineWidth: 2,
     height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight,
+    nowClockMarginLeft: activityListMargin,
     scrollbarHeight,
     topBottomBorderHeight: activityTopBottomBorderHeight,
   },

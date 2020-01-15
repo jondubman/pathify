@@ -28,6 +28,7 @@ export interface ClockStateProps {
   seconds: number,
   stopped: boolean;
   nowMode: boolean;
+  interactive: boolean; // comes from OwnProps
 }
 
 export interface ClockDispatchProps {
@@ -59,6 +60,12 @@ const Styles = StyleSheet.create({
     marginRight: margin,
     height: diameter,
     width: diameter,
+  },
+  inertClock: {
+    alignSelf: 'flex-start',
+    marginTop: (constants.activityList.activityHeight - diameter) / 2,
+    marginLeft: constants.activityList.nowClockMarginLeft,
+    opacity: 0.85,
   },
   hourHand: {
     position: 'absolute',
@@ -183,21 +190,32 @@ const clockBackgroundStyle = (props: ClockProps): Object => (
                 : (props.stopped ? Styles.stoppedPast : Styles.past)
 )
 
-const Clock = (props: ClockProps) => (
+const ClockMechanics = (props: ClockProps) => (
+  <View>
+    <ClockTicks />
+    <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
+    <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes)]} />
+    <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds)]} />
+    <View style={Styles.centerCircle} />
+  </View>
+)
+
+const Clock = (props: ClockProps) => props.interactive ? (
   <TouchableHighlight
     style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
     onLongPress={props.onLongPress}
     onPress={props.onPress}
     underlayColor={colors.underlay}
   >
-    <View>
-      <ClockTicks />
-      <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
-      <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes)]} />
-      <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds)]} />
-      <View style={Styles.centerCircle} />
-    </View>
+    {ClockMechanics(props)}
   </TouchableHighlight>
+) : (
+  <View
+    style={{ ...Styles.clock, ...Styles.inertClock, ...clockBackgroundStyle(props) }}
+  >
+    {ClockMechanics(props)}
+  </View>
 )
+
 
 export default Clock; // Note Clock is not a pure functional component (thus cannot use React.memo)

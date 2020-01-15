@@ -8,7 +8,11 @@ import utils from 'lib/utils';
 
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
-const mapStateToProps = (state: AppState): ClockStateProps => {
+interface OwnProps { // matching those of PausedClockContainer
+  interactive: boolean;
+}
+
+const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
   const d = new Date(utils.now());
   return {
     hours: d.getHours(),
@@ -16,15 +20,20 @@ const mapStateToProps = (state: AppState): ClockStateProps => {
     seconds: d.getSeconds(),
     stopped: !state.flags.ticksEnabled,
     nowMode: true,
+    interactive: !!ownProps && ownProps.interactive,
   }
 }
 
-const mapDispatchToProps = (dispatch: Function): ClockDispatchProps => {
+const mapDispatchToProps = (dispatch: Function, ownProps?: OwnProps): ClockDispatchProps => {
   const onLongPress = () => {
-    dispatch(newAction(AppAction.clockPress, { long: true, nowClock: true }));
+    if (ownProps && ownProps.interactive) {
+      dispatch(newAction(AppAction.clockPress, { long: true, nowClock: true }));
+    }
   }
   const onPress = () => {
-    dispatch(newAction(AppAction.clockPress, { long: false, nowClock: true }));
+    if (ownProps && ownProps.interactive) {
+      dispatch(newAction(AppAction.clockPress, { long: false, nowClock: true }));
+    }
   }
   const dispatchers = {
     onLongPress,
@@ -33,7 +42,7 @@ const mapDispatchToProps = (dispatch: Function): ClockDispatchProps => {
   return dispatchers;
 }
 
-const NowClockContainer = connect<ClockStateProps, ClockDispatchProps>(
+const NowClockContainer = connect<ClockStateProps, ClockDispatchProps, OwnProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(Clock as any);

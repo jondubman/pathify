@@ -26,11 +26,13 @@ interface ActivityListStateProps {
   refreshCount: number;
   selectedActivityId: string | null;
   timelineNow: boolean;
+  trackingActivity: boolean;
   top: number;
 }
 
 interface ActivityListDispatchProps {
   onPressActivity: (activity: ActivityDataExtended) => void;
+  onPressFutureZone: () => void;
   onScrollTimeline: (t: Timepoint) => void;
   register: (component: Component) => void;
   reachedEnd: () => void;
@@ -42,12 +44,13 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
   return {
     // animated: state.flags.timelineScrolling,
-    animated: false, // TODO
+    animated: false, // TODO disabled for now
     currentActivityId: currentActivityId,
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
     selectedActivityId: selectedActivityId,
     timelineNow: state.flags.timelineNow,
+    trackingActivity: state.flags.trackingActivity,
     top: dynamicTopBelowButtons(state),
   }
 }
@@ -79,6 +82,11 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
       dispatch(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in onPressActivity
     }
   }
+  const onPressFutureZone = (): void => {
+    dispatch(newAction(AppAction.activityListReachedEnd));
+    const now = utils.now();
+    dispatch(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in onPressFutureZone
+  }
   const onScrollTimeline = (t: Timepoint) => {
     dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
     dispatch(newAction(AppAction.activityListScrolled, { t }));
@@ -94,6 +102,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   }
   const dispatchers = {
     onPressActivity,
+    onPressFutureZone,
     onScrollTimeline,
     reachedEnd,
     register,

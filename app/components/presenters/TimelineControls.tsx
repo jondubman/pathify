@@ -39,7 +39,7 @@ const Styles = StyleSheet.create({
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
     <View style={[Styles.clockCenter, { bottom: props.bottom }]}>
-      {props.nowMode ? <NowClockContainer /> : <PausedClockContainer />}
+      {props.nowMode ? <NowClockContainer interactive={true} /> : <PausedClockContainer interactive={true} />}
     </View>
     <RefTimeContainer />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />

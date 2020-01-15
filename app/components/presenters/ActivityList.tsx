@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { ActivityListProps } from 'containers/ActivityListContainer';
+import NowClockContainer from 'containers/NowClockContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
 import store from 'lib/store';
@@ -178,12 +179,27 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
 
   render() {
     utils.addToCount('renderActivityList');
+    const colors = constants.colors.activityList;
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
-    const backgroundColor = constants.colors.activityList.backgroundMargin;
     // the left margin of the first activity is effectively the right margin of listHeaderStyle
-    const listHeaderStyle = { backgroundColor, width: marginLeft, height: activityHeight };
-    const listFooterStyle = { ...listHeaderStyle, marginLeft: activityMargin, width: marginRight };
-    const { currentActivityId, list, selectedActivityId, top } = this.props;
+    const listHeaderStyle = {
+      backgroundColor: colors.backgroundMarginPast,
+      borderRadius: 0,
+      width: marginLeft,
+      height: activityHeight,
+    }
+    const listFooterBaseStyle = {
+      ...listHeaderStyle,
+      backgroundColor: colors.backgroundMarginFuture,
+      marginLeft: activityMargin,
+      width: marginRight,
+    }
+    const listFooterNowStyle = {
+      ...listFooterBaseStyle,
+      width: activityMargin + marginRight,
+      marginLeft: 0,
+    }
+    const { currentActivityId, list, selectedActivityId, timelineNow, top, trackingActivity } = this.props;
     const { scrolledBetweenActivities } = this.state;
     const selectedIsCurrent = (selectedActivityId === currentActivityId);
     // make centerLineBase style
@@ -199,7 +215,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       top: centerLineTop,
     } as any;
     const shortHeight = -centerLineTop + topBottomBorderHeight;
-    const { timelineNow } = this.props;
+
     return (
       <Fragment>
         <View style={[Styles.box, { top }]}>
@@ -209,8 +225,19 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             getItemLayout={getItemLayout}
             horizontal
             initialScrollIndex={Math.max(0, list.length - 1)}
-            ListHeaderComponent={<View style={listHeaderStyle} />}
-            ListFooterComponent={<View style={listFooterStyle} />}
+            ListHeaderComponent={/* Left edge of ActivityList */
+              <View style={listHeaderStyle} />}
+            ListFooterComponent={/* Right edge of ActivityList */
+              <TouchableHighlight
+                style={trackingActivity ? listFooterNowStyle : listFooterBaseStyle}
+                onPress={() => { this.props.onPressFutureZone() }}
+                underlayColor={colors.futureZoneUnderlay}
+              >
+                <View>
+                  <NowClockContainer interactive={false} />
+                </View>
+              </TouchableHighlight>
+            }
             onLayout={this.autoScroll}
             onScroll={this.handleScroll}
             style={{ marginTop: topBottomBorderHeight }}
@@ -290,7 +317,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // closest activity.
   scrollToTime(scrollTime: number) {
     log.scrollEvent('ActivityList scrollToTime', scrollTime);
-    const { animated, list } = this.props;
+    const { animated, list, trackingActivity } = this.props;
     let offset = activityMargin;
     if (list && list.length) {
       const index = list.findIndex((activity: ActivityDataExtended) => { // look for the activity we are scrolling to
@@ -321,7 +348,8 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       } else { // no match for activity
         if (scrollTime > list[list.length - 1].tLast) {
           // after the last activity
-          offset = list.length * (activityMargin + activityWidth) + activityMargin / 2;
+          offset = list.length * (activityMargin + activityWidth) +
+            (trackingActivity ? 0 : activityMargin / 2);
           log.scrollEvent('activityList.scrollToTime: after the last activity');
         } else {
           for (let index = 0; index < list.length; index++) {
