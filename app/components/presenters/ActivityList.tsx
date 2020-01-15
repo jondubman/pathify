@@ -34,7 +34,6 @@ const {
   activityWidth,
   borderRadius,
   borderWidth,
-  centerLineShortWidth,
   centerLineTop,
   centerLineWidth,
   height,
@@ -98,11 +97,34 @@ const Styles = StyleSheet.create({
   },
   centerLineSelected:{
     backgroundColor: colors.centerLineSelected,
-  }
+  },
 })
 
 const marginLeft = centerline(); // allows list to be positioned such that left edge of real content is centered.
 const marginRight = centerline(); // allows list to be positioned such that right edge of real content is centered.
+
+// note the left margin of the first activity is effectively the right margin of listHeaderStyle
+const listHeaderStyle = {
+  backgroundColor: colors.backgroundMarginPast,
+  borderRadius: 0,
+  width: marginLeft,
+  height: activityHeight,
+}
+const listFooterBaseStyle = {
+  ...listHeaderStyle,
+  backgroundColor: colors.backgroundMarginFuture,
+  marginLeft: activityMargin,
+  width: marginRight,
+}
+const listFooterNowNotTrackingStyle = {
+  ...listFooterBaseStyle,
+  marginLeft: activityMargin / 2,
+}
+const listFooterTrackingStyle = {
+  ...listHeaderStyle,
+  backgroundColor: colors.backgroundMarginFuture,
+  width: marginRight,
+}
 
 // The basic layout of this horizontal list is simple: margins flanking N boxes, each with activityMargin.
 // marginLeft (activityMargin activityWidth)* marginRight
@@ -144,7 +166,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     }
   }
 
-  // Handle a scroll event
+  // Handle ActivityList scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;
     log.scrollEvent('ActivityList handleScroll', x);
@@ -169,49 +191,60 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       this.props.onScrollTimeline(t);
       this.setState({ scrolledBetweenActivities: false });
     }
-    if (index >= list.length || (index === list.length - 1 && proportion > 1)) { // if after the last activity
+    const xScrolledAfterActivity = remainder - activityWidth;
+    // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
+    const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start
+    const xRightSelectEnd = (activityMargin / 2 + 1); // amount right of an activity you can scroll to select end
+
+    if (index >= list.length || (index === list.length - 1 &&
+                                 proportion > 1 &&
+                                 xScrolledAfterActivity > xLeftSelectStart)) { // if after the last activity...
       this.props.reachedEnd(); // should enable timelineNow mode
-      log.trace('reachedEnd');
       this.setState({ scrolledBetweenActivities: false });
     } else if (proportion > 1) {
-      this.setState({ scrolledBetweenActivities: true });
+      log.scrollEvent('ActivityList handleScroll: proportion', proportion,
+        'amountScrolledAfterActivity', xScrolledAfterActivity, 'index', index, 'remainder', remainder);
+      if (activity && xScrolledAfterActivity <= xLeftSelectStart) {
+        const { tLast } = activity;
+        if (tLast) {
+          this.props.onScrollTimeline(tLast); // This may change selectedActivityId.
+          this.setState({ scrolledBetweenActivities: false });
+        }
+      } else if ((activity || index === -1) && xScrolledAfterActivity >= xRightSelectEnd) {
+        // Note the -1 case above handles the margin just to the left of the first activity.
+        if (list.length) {
+          const nextActivity = list[index + 1];
+          if (nextActivity) {
+            const tStart = nextActivity.tStart;
+            if (tStart) {
+              this.props.onScrollTimeline(tStart); // This may change selectedActivityId.
+              this.setState({ scrolledBetweenActivities: false });
+            }
+          }
+        }
+      } else {
+        // Exactly in the center - which is where you will get put if you scroll the Timeline out of activity bounds.
+        // This is the only scenario where this gets enabled.
+        this.setState({ scrolledBetweenActivities: true });
+      }
     }
   }
 
+  // Note the layout of this component currently assumes each activity (with the possible exception of currentActivity)
+  // is of equal width, height, etc., and all activities are flanked on the left by a header component and on the right
+  // by a footer component. There are pairs of fixed borderLines and a centerLine that has slight variations in color
+  // to match past and current activities, or neutral color if there is no selected activity. The interaction between
+  // this component and the Timeline is complex as it happens two ways: through ordinary React component updates, and
+  // through scroll events propagated between the two controls so they remain in sync regarding the selected timepoint.
+
   render() {
     utils.addToCount('renderActivityList');
-    const colors = constants.colors.activityList;
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
-    // the left margin of the first activity is effectively the right margin of listHeaderStyle
-    const listHeaderStyle = {
-      backgroundColor: colors.backgroundMarginPast,
-      borderRadius: 0,
-      width: marginLeft,
-      height: activityHeight,
-    }
-    const listFooterBaseStyle = {
-      ...listHeaderStyle,
-      backgroundColor: colors.backgroundMarginFuture,
-      marginLeft: activityMargin,
-      width: marginRight,
-    }
-    const listFooterNowNotTrackingStyle = {
-      ...listFooterBaseStyle,
-      marginLeft: activityMargin / 2,
-    }
-    const listFooterTrackingStyle = {
-      ...listHeaderStyle,
-      backgroundColor: colors.backgroundMarginFuture,
-      width: marginRight,
-    }
     const { currentActivityId, list, selectedActivityId, timelineNow, top, trackingActivity } = this.props;
     const { scrolledBetweenActivities } = this.state;
     const selectedIsCurrent = (selectedActivityId === currentActivityId);
-    // make centerLineBase style
     const centerLineLeft = centerline() - centerLineWidth / 2;
-    const centerLineRight = centerline() - centerLineWidth / 2;
-    const centerLineShortLeft = centerline() - centerLineShortWidth / 2;
-    const centerLineShortRight = centerline() - centerLineShortWidth / 2;
+    const centerLineRight = centerLineLeft; // these are offsets from the edges, not absolute positions.
     const centerLineBase = {
       left: centerLineLeft,
       right: centerLineRight,
@@ -219,7 +252,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       position: 'absolute',
       top: centerLineTop,
     } as any;
-    const shortHeight = -centerLineTop + topBottomBorderHeight;
 
     return (
       <Fragment>
@@ -229,16 +261,16 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             extraData={this.props}
             getItemLayout={getItemLayout}
             horizontal
-            initialScrollIndex={Math.max(0, list.length - 1)}
-            ListHeaderComponent={/* Left edge of ActivityList */
+            initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
+            ListHeaderComponent={/* on far left of ActivityList */
               <View style={listHeaderStyle} />}
-            ListFooterComponent={/* Right edge of ActivityList */
+            ListFooterComponent={/* on far right of ActivityList */
               <TouchableHighlight
                 style={trackingActivity ?
                   listFooterTrackingStyle
                   :
                   (timelineNow ? listFooterNowNotTrackingStyle : listFooterBaseStyle) }
-                onPress={() => { this.props.onPressFutureZone() }}
+                onPress={() => { this.props.onPressFutureZone() /* which will enable timelineNow mode */ }}
                 underlayColor={colors.futureZoneUnderlay}
               >
                 <View>
@@ -274,12 +306,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
                 style={[
                   centerLineBase,
                   selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
-                  {
-                    height: shortHeight,
-                    width: centerLineShortWidth,
-                    left: centerLineShortLeft,
-                    right: centerLineShortRight,
-                  },
                 ]}
               />
               <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />

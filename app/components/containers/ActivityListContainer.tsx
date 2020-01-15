@@ -41,16 +41,16 @@ interface ActivityListDispatchProps {
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
+  const { timelineNow, trackingActivity } = state.flags;
   const { currentActivityId, selectedActivityId } = state.options;
   return {
-    // animated: state.flags.timelineScrolling,
-    animated: false, // TODO disabled for now
-    currentActivityId: currentActivityId,
+    animated: false,
+    currentActivityId,
     list: state.cache.activities || [],
     refreshCount: state.cache.refreshCount,
-    selectedActivityId: selectedActivityId,
-    timelineNow: state.flags.timelineNow,
-    trackingActivity: state.flags.trackingActivity,
+    selectedActivityId,
+    timelineNow,
+    trackingActivity,
     top: dynamicTopBelowButtons(state),
   }
 }

@@ -306,7 +306,6 @@ const constants = {
     borderLineHeight: 1,
     borderRadius: 5,
     borderWidth: 1,
-    centerLineShortWidth: 2,
     centerLineTop: -buttonOffset,
     centerLineWidth: 2,
     height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight,
