@@ -199,7 +199,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     if (index >= list.length || (index === list.length - 1 &&
                                  proportion > 1 &&
                                  xScrolledAfterActivity > xLeftSelectStart)) { // if after the last activity...
-      this.props.reachedEnd(); // should enable timelineNow mode
+      this.props.reachedEnd();
       this.setState({ scrolledBetweenActivities: false });
     } else if (proportion > 1) {
       log.scrollEvent('ActivityList handleScroll: proportion', proportion,

@@ -93,7 +93,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
   }
   const reachedEnd = () => {
-    dispatch(newAction(AppAction.activityListReachedEnd));
+    onPressFutureZone(); // same effect is needed here
   }
   const register = (component) => {
     setTimeout(() => {
