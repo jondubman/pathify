@@ -429,8 +429,8 @@ export const Geo = {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         }
       } else {
-        // App is running (obviously!) but it is doing so in the background (appActive is false.)
-        if (trackingActivity) { // else do not save it
+        // App is running (obviously!) but in the BACKGROUND.
+        if (trackingActivity) {
           // Add the raw location to the plugin's SQLite DB so they will be included in processSavedLocations
           // in addition to the locations that come in when the RN JS thread is asleep.
           // Note: Could await insertLocation as it returns a promise, or check for errors if needed.
@@ -438,6 +438,8 @@ export const Geo = {
           // TODO It seems that merely logging here can consume enough CPU for app to get killed in the background!
           // log.trace(`onLocation: inserting location in background ${location.timestamp}`);
         } else {
+          // trackingActivity in the background.
+          // BackgroundGeolocation.insertLocation(location); // TODO These should be persisted by the plug-in.
           // log.trace(`onLocation: in background, not tracking ${location.timestamp}`);
         }
       }
@@ -484,6 +486,7 @@ export const Geo = {
         }
         locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
         store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
+        // TODO is there any possibility the above might not have worked and we might be at risk of losing data here?
         await Geo.destroyLocations();
         log.debug(`processSavedLocations added: ${locationEvents.length}`);
 

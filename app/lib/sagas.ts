@@ -498,12 +498,12 @@ const sagas = {
     const { recoveryMode, setPaceAfterStart, trackingActivity } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
       yield call(Geo.countLocations);
+      if (!recoveryMode) {
+        yield call(Geo.processSavedLocations); // Let's get this started ASAP.
+      }
       yield call(Geo.setConfig, trackingActivity, false); // background false, meaning foreground
       if (setPaceAfterStart && trackingActivity) {
         yield call(Geo.changePace, true, () => {}); // manually set pace to moving when activating TODO
-      }
-      if (!recoveryMode) {
-        yield call(Geo.processSavedLocations);
       }
       const populated = yield select(state => state.cache.populated);
       yield call(log.debug, 'cache has been populated:', populated);
