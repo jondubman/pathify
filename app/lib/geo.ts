@@ -244,7 +244,7 @@ export const Geo = {
       // In the app, it's a tracking session with associated metadata. Here, it is walking, bicycling,
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
-        if (!state.flags.receiveLocations) {
+        if (!state.flags.receiveActivityChangeEvents) {
           return;
         }
         if (state.flags.appActive) {
@@ -263,6 +263,10 @@ export const Geo = {
       }
       const onHeartbeat = async (event: HeartbeatEvent) => {
         try {
+          const state = store.getState();
+          if (!state.flags.receiveHeartbeatEvents) {
+            return;
+          }
           const { location } = event;
           log.debug('onHeartbeat', location.timestamp);
           Geo.onLocation(location);
@@ -278,7 +282,7 @@ export const Geo = {
       }
       const onMotionChange = (event: MotionChangeEvent) => {
         const state = store.getState();
-        if (!state.flags.receiveLocations) {
+        if (!state.flags.receiveMotionChangeEvents) {
           return;
         }
         if (state.flags.appActive) {
@@ -409,6 +413,7 @@ export const Geo = {
       if (location.sample || !state.flags.receiveLocations) {
         return;
       }
+      const { appActive, storeAllLocationEvents, trackingActivity } = state.flags;
       const geoloc: GeolocationParams = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
@@ -417,15 +422,15 @@ export const Geo = {
       }
       store.dispatch(newAction(AppAction.geolocation, geoloc));
       const activityId = state.options.currentActivityId || '';
-      if (state.flags.appActive) {
-        // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${state.flags.trackingActivity}`);
+      if (appActive) {
+        // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${trackingActivity}`);
         const locationEvent = newLocationEvent(location, activityId);
-        if ((activityId && activityId !== '') || state.flags.storeAllLocationEvents) {
+        if ((activityId && activityId !== '') || storeAllLocationEvents) {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         }
       } else {
         // App is running (obviously!) but it is doing so in the background (appActive is false.)
-        if (state.flags.trackingActivity) { // else do not save it
+        if (trackingActivity) { // else do not save it
           // Add the raw location to the plugin's SQLite DB so they will be included in processSavedLocations
           // in addition to the locations that come in when the RN JS thread is asleep.
           // Note: Could await insertLocation as it returns a promise, or check for errors if needed.

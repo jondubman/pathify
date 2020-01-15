@@ -467,7 +467,7 @@ const constants = {
   panelHeight,
   panelWidth,
   paths: {
-    metersAccuracyRequired: 30,
+    metersAccuracyRequired: 40, // TODO was 30
     width: 8,
   },
   refTime: {

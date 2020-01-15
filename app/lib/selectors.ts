@@ -351,9 +351,9 @@ export const timelineZoomValue = (visibleTime: number): number => {
 export const flavorText = (state: AppState): string[] => {
   try {
     const { timelineNow, trackingActivity } = state.flags;
-    const { currentActivityId, selectedActivityId } = state.options;
-
-    if (timelineNow) {
+    const { currentActivityId, scrollTime, selectedActivityId } = state.options;
+    // Check scrollTime in addition to timelineNow to cover scrolling timeline into the future zone.
+    if (timelineNow || scrollTime >= utils.now() - constants.timing.timelineCloseToNow) {
       if (trackingActivity) {
         return ['NOW', 'TRACKING', 'ACTIVITY'];
       } else {
@@ -370,15 +370,15 @@ export const flavorText = (state: AppState): string[] => {
     if (activity) {
       const { scrollTime } = state.options;
       if (scrollTime === activity.tStart) {
-        return ['PAST ACTIVITY', 'START'];
+        return ['PAST ACTIVITY', '@ START'];
       }
       if (scrollTime === activity.tLast && !currentActivitySelected) {
-        return ['PAST ACTIVITY', 'END'];
+        return ['PAST ACTIVITY', '@ END'];
       }
       if (activity.tStart && activity.tLast) {
         const midpoint = (activity.tStart + activity.tLast) / 2;
         if (scrollTime === midpoint) {
-          return ['PAST ACTIVITY', 'MIDPOINT'];
+          return ['PAST ACTIVITY', '@ MIDPOINT'];
         }
         if (activity.tTotal) {
           const elapsed = scrollTime - activity.tStart;
@@ -386,7 +386,7 @@ export const flavorText = (state: AppState): string[] => {
           const digits = (percentage < 2 || percentage > 98) ? 1 : 0; // bit of extra precision at the ends
           if (currentActivitySelected) {
             if (elapsed < interval.second) {
-              return ['ACTIVITY', 'START'];
+              return ['ACTIVITY', '@ START'];
             }
             return [
               'CURRENT ACTIVITY',

@@ -54,6 +54,9 @@ export const initialAppState = {
     mapTapped: false, // tapping the map in mapFullScreen mode hides even the minimal UI, leaving nothing but map/path
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
+    receiveActivityChangeEvents: false, // TODO
+    receiveHeartbeatEvents: false, // TODO
+    receiveMotionChangeEvents: false, // TODO
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // settings panel visible state
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
