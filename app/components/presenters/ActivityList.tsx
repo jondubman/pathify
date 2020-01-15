@@ -149,6 +149,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     super(props);
     this.autoScroll = this.autoScroll.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
+    this.handleScrollEndDrag = this.handleScrollEndDrag.bind(this);
     this.renderItem = this.renderItem.bind(this);
     this.scrollToTime = this.scrollToTime.bind(this);
     this.state = {
@@ -230,6 +231,27 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     }
   }
 
+  handleScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { x } = event.nativeEvent.contentOffset;
+    log.scrollEvent('ActivityList handleScrollEndDrag', x);
+    const { list } = this.props;
+    const totalWidthPerActivity = activityMargin + activityWidth;
+    const baseX = x - activityMargin;
+    const ratio = baseX / totalWidthPerActivity;
+    const index = Math.floor(ratio);
+    const remainder = baseX - (index * totalWidthPerActivity);
+    const proportion = remainder / activityWidth;
+    const activity = list[index];
+    const xScrolledAfterActivity = remainder - activityWidth;
+    // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
+    const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start
+    if (index >= list.length || (index === list.length - 1 &&
+      proportion > 1 &&
+      xScrolledAfterActivity > xLeftSelectStart)) { // if after the last activity...
+      this.props.onPressFutureZone();
+    }
+  }
+
   // Note the layout of this component currently assumes each activity (with the possible exception of currentActivity)
   // is of equal width, height, etc., and all activities are flanked on the left by a header component and on the right
   // by a footer component. There are pairs of fixed borderLines and a centerLine that has slight variations in color
@@ -280,6 +302,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             }
             onLayout={this.autoScroll}
             onScroll={this.handleScroll}
+            onScrollEndDrag={this.handleScrollEndDrag}
             style={{ marginTop: topBottomBorderHeight }}
             ref={(ref) => {
               if (ref) {
