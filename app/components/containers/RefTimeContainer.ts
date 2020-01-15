@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import { dynamicTimelineHeight } from 'lib/selectors';
+import {
+  dynamicTimelineHeight,
+  flavorText,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import RefTime from 'presenters/RefTime';
 import constants from 'lib/constants';
@@ -19,6 +22,11 @@ interface RefTimeStateProps {
   month: string,
   dayOfMonth: string,
   year: string,
+
+  // left side
+  flavorLine1: string,
+  flavorLine2: string,
+  flavorLine3: string,
 }
 
 interface RefTimeDispatchProps {
@@ -41,6 +49,10 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   const month = constants.months[d.getMonth()];
   const dayOfMonth = d.getDate().toString();
   const year = d.getFullYear().toString();
+  const flavorLines = flavorText(state);
+  const flavorLine1 = flavorLines[0];
+  const flavorLine2 = flavorLines[1];
+  const flavorLine3 = flavorLines[2];
 
   return {
     bottom: dynamicTimelineHeight(state),
@@ -54,6 +66,9 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
     month,
     dayOfMonth,
     year,
+    flavorLine1,
+    flavorLine2,
+    flavorLine3,
   }
 }
 

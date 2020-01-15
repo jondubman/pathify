@@ -16,27 +16,33 @@ const colors = constants.colors.scrollTime;
 const {
   height,
   leftContentsWidth,
-  width
+  width,
 } = constants.refTime;
 
 const Styles = StyleSheet.create({
   leftHalf: {
-    backgroundColor: 'transparent', // nothing to the left of the centerline, for now TODO
     flexDirection: 'row-reverse',
     width,
   },
-  leftContents: {
+  leftHighlight: {
+    // backgroundColor: 'orange', // TODO
     height,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start', // vertically
     width: leftContentsWidth,
+  },
+  leftText: {
+    alignSelf: 'flex-end',
+    marginRight: 5,
+  },
+  leftView: {
   },
   refTimeContainer: {
     alignSelf: 'center',
-    height,
+    // height,
     flexDirection: 'row',
-    justifyContent: 'center',
-    position: 'absolute',
-    width: width * 2,
+    // justifyContent: 'center',
+    // position: 'absolute',
+    // width: width * 2,
   },
   refTimeFull: {
     flexDirection: 'row',
@@ -47,8 +53,8 @@ const Styles = StyleSheet.create({
   },
   rightHalf: {
     height,
-    justifyContent: 'flex-start',
     paddingLeft: 5,
+    marginTop: -2, // lift it up slightly to align with left side
     width,
   },
   subText: {
@@ -72,10 +78,19 @@ const RefTime = (props: RefTimeProps) => (
     <View style={Styles.leftHalf}>
       <TouchableHighlight
         onPress={props.onPress}
-        style={Styles.leftContents}
+        style={Styles.leftHighlight}
         underlayColor={colors.underlay}
       >
-        <View>
+        <View style={Styles.leftView}>
+          <Text style={[Styles.subText, Styles.leftText, props.flavorLine2 ? {} : { marginTop: 2 }]}>
+            {props.flavorLine1}
+          </Text>
+          <Text style={[Styles.subText, Styles.leftText]}>
+            {props.flavorLine2}
+          </Text>
+          <Text style={[Styles.subText, Styles.leftText]}>
+            {props.flavorLine3}
+          </Text>
         </View>
       </TouchableHighlight>
     </View>

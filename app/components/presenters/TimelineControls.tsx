@@ -16,23 +16,26 @@ import RefTimeContainer from 'containers/RefTimeContainer';
 import { TimelineControlsProps } from 'containers/TimelineControlsContainer';
 import { centerline } from 'lib/selectors';
 
+const { refTime, timeline } = constants;
+const colors = constants.colors.timeline;
+
 const Styles = StyleSheet.create({
   centerLine: {
-    backgroundColor: constants.colors.timeline.centerLine,
-    bottom: constants.timeline.bottomPaddingForAxis,
-    left: centerline() - constants.timeline.centerLineWidth / 2,
+    backgroundColor: colors.centerLine,
+    bottom: timeline.bottomPaddingForAxis,
+    left: centerline() - timeline.centerLineWidth / 2,
     position: 'absolute',
-    width: constants.timeline.centerLineWidth,
+    width: timeline.centerLineWidth,
   },
   clockCenter: {
     left: centerline() - constants.clock.height / 2,
     position: 'absolute',
   },
   topLine: {
-    backgroundColor: constants.colors.timeline.topLine,
+    backgroundColor: colors.topLine,
     position: 'absolute',
     width: utils.windowSize().width,
-    height: constants.timeline.topLineHeight,
+    height: timeline.topLineHeight,
   },
 })
 
@@ -43,13 +46,13 @@ const TimelineControls = (props: TimelineControlsProps) => (
     </View>
     <RefTimeContainer />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
-    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * constants.timeline.topLineHeight }]} />
-    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * constants.timeline.topLineHeight }]} />
+    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
+    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.centerLine, {
       height: props.timelineHeight
-        + constants.refTime.height
-        + constants.refTime.bottomMargin
-        - constants.timeline.bottomPaddingForAxis
+        + refTime.height
+        + refTime.bottomMargin
+        - timeline.bottomPaddingForAxis
     }]} />
   </View>
 )

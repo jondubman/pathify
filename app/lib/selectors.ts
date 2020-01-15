@@ -15,6 +15,9 @@ import { MarkEvent } from 'shared/marks';
 import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
+import {
+  msecToString,
+} from 'shared/units';
 
 // TODO review
 export const activityIncludesMark = (activityId: string, mark: MarkEvent): boolean => {
@@ -282,6 +285,13 @@ export const selectedActivity = (state: AppState): Activity | undefined => {
   return undefined;
 }
 
+export const selectedActivityFromCache = (state: AppState): ActivityDataExtended | undefined => {
+  if (state.options.selectedActivityId) {
+    return cachedActivity(state, state.options.selectedActivityId);
+  }
+  return undefined;
+}
+
 export const selectedOrCurrentActivity = (state: AppState): Activity | undefined => {
   return selectedActivity(state) || currentActivity(state);
 }
@@ -335,4 +345,34 @@ export const timelineZoomValue = (visibleTime: number): number => {
   // And now, calculate zoomValue, the inverse of the visibleTime calculation in timelineVisibleTime.
   const zoomValue = (logMax - Math.log2(boundedVisibleTime)) / (logMax - logMin);
   return zoomValue;
+}
+
+// flavorText goes in RefTime, left of center just under the clock, referring to the current timepoint.
+export const flavorText = (state: AppState): string[] => {
+  const { timelineNow } = state.flags;
+  if (timelineNow) {
+    return ['NOW'];
+  }
+  const activity = selectedActivityFromCache(state);
+  if (activity) {
+    const { scrollTime } = state.options;
+    if (scrollTime === activity.tStart) {
+      return ['ACTIVITY', 'START'];
+    }
+    if (scrollTime === activity.tLast) {
+      return ['ACTIVITY', 'END'];
+    }
+    if (activity.tStart && activity.tLast) {
+      const midpoint = (activity.tStart + activity.tLast) / 2;
+      if (scrollTime === midpoint) {
+        return ['ACTIVITY', 'MIDPOINT'];
+      }
+      if (activity.tTotal) {
+        const elapsed = scrollTime - activity.tStart;
+        const percentage = (elapsed / activity.tTotal) * 100;
+        return [percentage.toFixed(0).toString() + '%', 'ELAPSED', msecToString(elapsed)];
+      }
+    }
+  }
+  return ['PAST', ''];
 }
