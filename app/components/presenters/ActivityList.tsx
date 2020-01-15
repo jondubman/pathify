@@ -137,7 +137,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const state = store.getState(); // TODO not great form to grab state straight from here but
     const scrollTime = state.options.scrollTime; // this may change rapidly and we just want the latest we can get.
     if (scrollTime) {
-      log.trace('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
+      log.scrollEvent('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
         'length', this.props.list.length);
       this.scrollToTime(scrollTime);
     }
@@ -146,7 +146,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // Handle a scroll event
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;
-    log.trace('ActivityList handleScroll', x);
+    log.scrollEvent('ActivityList handleScroll', x);
     const { list } = this.props;
 
     // ActivityList has been scrolled to position x. Convert to Timepoint and pass to onScroll.
@@ -161,10 +161,10 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const remainder = baseX - (index * totalWidthPerActivity);
     const proportion = remainder / activityWidth;
     const activity = list[index];
-    if (activity && activity.tTotal && proportion <= 1) {
+    if (activity && activity.tTotal && proportion <= 1) { // if scrolled within an activity
       const timeWithinActivity = proportion * activity.tTotal;
       const t: Timepoint = activity.tStart + timeWithinActivity;
-      log.trace('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
+      log.scrollEvent('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
       this.props.onScrollTimeline(t);
       this.setState({ scrolledBetweenActivities: false });
     }
@@ -289,7 +289,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // If scrollTime is before / between / after an activity, the list is scrolled to the space adjacent to the
   // closest activity.
   scrollToTime(scrollTime: number) {
-    log.trace('ActivityList scrollToTime', scrollTime);
+    log.scrollEvent('ActivityList scrollToTime', scrollTime);
     const { animated, list } = this.props;
     let offset = activityMargin;
     if (list && list.length) {
@@ -322,7 +322,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
         if (scrollTime > list[list.length - 1].tLast) {
           // after the last activity
           offset = list.length * (activityMargin + activityWidth) + activityMargin / 2;
-          log.trace('activityList.scrollToTime: after the last activity');
+          log.scrollEvent('activityList.scrollToTime: after the last activity');
         } else {
           for (let index = 0; index < list.length; index++) {
             const activity = list[index];
@@ -347,7 +347,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       animated,
       offset,
     }
-    log.trace('ActivityList scrollToTime scrollToOffset', params);
+    log.scrollEvent('ActivityList scrollToTime scrollToOffset', params);
     if (!_ref.scrollToOffset) {
       log.warn('missing scrollToOffset!');
     }

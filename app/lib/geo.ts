@@ -44,7 +44,7 @@ const geoconfig_default: Config = {
   // --------------
   // Common Options
   // --------------
-  distanceFilter: 10, // meters device must move to generate update event, default 10
+  distanceFilter: 3, // meters device must move to generate update event, default 10
 
   // set true to disable automatic speed-based #distanceFilter elasticity
   // (device moving at highway speeds -> locations returned at ~1/km)
@@ -72,7 +72,7 @@ const geoconfig_default: Config = {
   // -------------------
   stopOnTerminate: false, // set false to continue tracking after user terminates the app
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
-  heartbeatInterval: 60, // rate in seconds to fire heartbeat events (default 60)
+  heartbeatInterval: 10, // rate in seconds to fire heartbeat events (default 60)
 
   // ------------------
   // Geofencing Options
@@ -106,13 +106,10 @@ const geoconfig_default: Config = {
   locationAuthorizationRequest: 'Always', // either Always or WhenInUse
   // locationAuthorizationAlert: {}, // default {}
 
-  // Enable to prevent iOS from suspending when stationary. Must be used with a heartbeatInterval.
-  // preventSuspend: false, // default false
-
   // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype
   // default 'Other'
   activityType: BackgroundGeolocation.ACTIVITY_TYPE_OTHER,
-
+  // activityType: BackgroundGeolocation.ACTIVITY_TYPE_FITNESS, // TODO
   // Note plugin is highly optimized for motion-activity-updates. Disabling these is not advised.
   disableMotionActivityUpdates: false, // default false
 
@@ -125,6 +122,9 @@ const geoconfig_default: Config = {
   desiredOdometerAccuracy: 30, // Location accuracy threshold in meters for odometer calculations (plugin default 100m)
 
   persistMode: BackgroundGeolocation.PERSIST_MODE_NONE,
+  // Enable to prevent iOS from suspending when stationary. Must be used with a heartbeatInterval.
+  // preventSuspend: false, // default false
+
   // preventSuspend: false, // default false TODO
   preventSuspend: true, // default false TODO
 
@@ -152,7 +152,7 @@ const geoconfig_tracking: Config = {
   logLevel: BackgroundGeolocation.LOG_LEVEL_ERROR,
   preventSuspend: true, // default false (note true has major battery impact!)
   maxDaysToPersist: 14,
-  persistMode: BackgroundGeolocation.PERSIST_MODE_NONE, // note geoconfig_tracking_background below
+  persistMode: BackgroundGeolocation.PERSIST_MODE_NONE, // NONE when appactive, vs. geoconfig_tracking_background below
   // stationaryRadius: when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
@@ -240,15 +240,20 @@ export const Geo = {
     try {
       log.debug('initializeGeolocation: tracking', tracking);
 
-      // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app...
+      // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app.
+      // In the app, it's a tracking session with associated metadata. Here, it is walking, bicycling,
       const onActivityChange = (event: MotionActivityEvent) => {
-        // TODO
-        // const state = store.getState();
-        // if (state.flags.appActive) {
-        //   const activityId = state.options.currentActivityId;
-        //   store.dispatch(newAction(AppAction.modeChange,
-        //     newModeChangeEvent(event.activity, event.confidence, activityId)));
-        // }
+        const state = store.getState();
+        if (!state.flags.receiveLocations) {
+          return;
+        }
+        if (state.flags.appActive) {
+          const activityId = state.options.currentActivityId;
+          if (activityId) {
+            const modeChangeEvent = newModeChangeEvent(event.activity, event.confidence, activityId);
+            store.dispatch(newAction(AppAction.modeChange, modeChangeEvent));
+          }
+        }
       }
       const onEnabledChange = (isEnabled: boolean) => {
       }
@@ -257,14 +262,13 @@ export const Geo = {
       const onGeofencesChange = (event: GeofencesChangeEvent) => {
       }
       const onHeartbeat = async (event: HeartbeatEvent) => {
-        // Executed for each heartbeatInterval while the device is in stationary state
-        // (iOS requires preventSuspend: true as well).
-        // try {
-        //   log.debug('onHeartbeat', event.location.timestamp);
-        //   await BackgroundGeolocation.getCurrentPosition({ persist: true }, Geo.onLocation); // TODO helpful? needed?
-        // } catch(err) {
-        //   log.warn('onHeartbeat error', err);
-        // }
+        try {
+          const { location } = event;
+          log.debug('onHeartbeat', location.timestamp);
+          Geo.onLocation(location);
+        } catch(err) {
+          log.warn('onHeartbeat error', err);
+        }
       }
       const onHttp = (response: HttpEvent) => {
         const state = store.getState();
@@ -272,24 +276,20 @@ export const Geo = {
           log.trace('BackgroundGeolocation onHttp', response);
         }
       }
-      const onLocationError = (error: LocationError) => {
-        const state = store.getState();
-        if (state.flags.appActive) {
-          let errorMessage;
-          if (error === 0) errorMessage = 'Location unknown';
-          if (error === 1) errorMessage = 'Location permission denied';
-          if (error === 2) errorMessage = 'Location network error';
-          if (error === 408) errorMessage = 'Location timeout';
-          log.info('LocationError', errorMessage || error);
-        }
-      }
       const onMotionChange = (event: MotionChangeEvent) => {
-        // TODO
-        // const state = store.getState();
-        // if (state.flags.appActive) {
-        //   const activityId = state.options.currentActivityId;
-        //   store.dispatch(newAction(AppAction.motionChange, newMotionEvent(event.location, event.isMoving, activityId)));
-        // }
+        const state = store.getState();
+        if (!state.flags.receiveLocations) {
+          return;
+        }
+        if (state.flags.appActive) {
+          const activityId = state.options.currentActivityId;
+          if (activityId) {
+            const motionEvent = newMotionEvent(event.location, event.isMoving, activityId);
+            store.dispatch(newAction(AppAction.motionChange, motionEvent));
+          }
+        } else if (state.flags.trackingActivity) {
+          BackgroundGeolocation.insertLocation(event.location);
+        }
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);
@@ -297,19 +297,22 @@ export const Geo = {
       BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
       BackgroundGeolocation.onHeartbeat(onHeartbeat);
       BackgroundGeolocation.onHttp(onHttp);
-      BackgroundGeolocation.onLocation(Geo.onLocation, onLocationError);
+      BackgroundGeolocation.onLocation(Geo.onLocation, Geo.onLocationError);
       BackgroundGeolocation.onMotionChange(onMotionChange);
 
       // Now, ready the plugin (required, once, at startup, before calling start)
-      BackgroundGeolocation.ready(tracking ? geoconfig_tracking : geoconfig_default,
+      let config: Config = tracking ? geoconfig_tracking : geoconfig_default;
+      if (utils.appInBackground()) {
+        config = geoconfig_tracking_background;
+      }
+      BackgroundGeolocation.ready(config,
       pluginState => {
         if (pluginState.enabled) {
           log.trace('BackgroundGeolocation configured and ready', pluginState);
         }
         // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
         log.trace(`BackgroundGeolocation didLaunchInBackground ${pluginState.didLaunchInBackground}`);
-        Geo.countLocations();
-        // BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
+        BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
         return pluginState.didLaunchInBackground;
       }, err => {
         log.error('BackgroundGeolocation failed to configure', err);
@@ -438,6 +441,18 @@ export const Geo = {
     }
   },
 
+  onLocationError: (error: LocationError) => {
+    const state = store.getState();
+    if (state.flags.appActive) {
+      let errorMessage;
+      if (error === 0) errorMessage = 'Location unknown';
+      if (error === 1) errorMessage = 'Location permission denied';
+      if (error === 2) errorMessage = 'Location network error';
+      if (error === 408) errorMessage = 'Location timeout';
+      log.info('LocationError', errorMessage || error);
+    }
+  },
+
   // This is called in one context only, when the app transitions to the ACTIVE state, for the purpose of processing
   // all locations saved by react-native-background-geolocation in its internal SQLite DB. The raw locations are
   // converted to Pathify events with the help of newLocationEvent. The resulting events are added at once via
@@ -452,7 +467,8 @@ export const Geo = {
       const activityId = state.options.currentActivityId;
       const locations = await BackgroundGeolocation.getLocations() as Location[];
       log.info(`processSavedLocations: count: ${locations.length}`);
-      if (locations.length) {
+      if (locations.length && activityId) {
+        // AppAction.addEvents
         const locationEvents: LocationEvents = [];
         for (let location of locations) {
           if (location.sample) {
@@ -465,8 +481,17 @@ export const Geo = {
         store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
         await Geo.destroyLocations();
         log.debug(`processSavedLocations added: ${locationEvents.length}`);
+
+        // AppAction.geolocation
+        const lastNewEvent = locationEvents[locationEvents.length - 1];
+        const geoloc: GeolocationParams = {
+          lat: lastNewEvent.lat,
+          lon: lastNewEvent.lon,
+          t: new Date(lastNewEvent.t).getTime(),
+          recheckMapBounds: true,
+        }
+        store.dispatch(newAction(AppAction.geolocation, geoloc));
       }
-      // TODO AppAction.geolocation?
     } catch (err) {
       log.error('processSavedLocations', err);
     }

@@ -1,8 +1,9 @@
-// TODO where does this belong?
-export type Optional<T> = T | null; // TODO This simple construct is very generally useful and belongs in shared code.
-import { interval } from './timeseries';
+// Handy Optional type definition
+export type Optional<T> = T | null;
 
+// constants that are "shared" between app and server code.
 const sharedConstants = {
+  logScrollEvents: false, // There are a lot of these in the app.
   maxAgeEvents: Infinity, // anything older than this will be ignored (for testing)
   // maxAgeEvents: interval.days(2),
   metrics: {

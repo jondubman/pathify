@@ -72,9 +72,10 @@ export default class App extends Component {
     }
   }
 
+  // TODO does this ever really happen, or need to?
   componentWillUnmount() {
     log.info('removing event listener for handleAppStateChange');
-    RNAppState.removeEventListener('change', this.handleAppStateChange);
+    // RNAppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   handleAppStateChange(newState: string) {

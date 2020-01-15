@@ -175,7 +175,7 @@ const sagas = {
     const params = action.params as ActivityListScrolledParams;
     const { t } = params;
     const { timelineScrolling } = yield select((state: AppState) => state.flags);
-    yield call(log.trace, 'activityListScrolled', timelineScrolling, t);
+    yield call(log.scrollEvent, 'activityListScrolled', timelineScrolling, t);
     if (!timelineScrolling) {
       yield put(newAction(AppAction.setAppOption, { scrollTime: t, viewTime: t }));
     }
@@ -486,7 +486,6 @@ const sagas = {
       return;
     }
     yield call(log.info, `appStateChange saga: ${newState}${manual ? ', invoked manually' : ''}`);
-    yield call(Geo.countLocations);
     const activating = (newState === AppStateChange.ACTIVE);
     yield put(newAction(activating ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     yield put(newAction(AppAction.setAppOption, { appState: newState }));
@@ -498,6 +497,7 @@ const sagas = {
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
     const { recoveryMode, setPaceAfterStart, trackingActivity } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
+      yield call(Geo.countLocations);
       yield call(Geo.setConfig, trackingActivity, false); // background false, meaning foreground
       if (setPaceAfterStart && trackingActivity) {
         yield call(Geo.changePace, true, () => {}); // manually set pace to moving when activating TODO
@@ -1067,13 +1067,13 @@ const sagas = {
   },
 
   scrollActivityList: function* (action: Action) {
-    yield call(log.trace, 'saga scroll scrollActivityList');
+    yield call(log.scrollEvent, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
     const { scrollTime } = params;
     const refs = yield select((state: AppState) => state.refs);
     const { activityList } = refs;
     if (activityList !== undefined && activityList.scrollToTime) {
-      yield call(log.trace, 'scrollActivityList:', scrollTime);
+      yield call(log.scrollEvent, 'scrollActivityList:', scrollTime);
       yield call(activityList.scrollToTime, scrollTime); // in saga scrollActivityList
     }
   },
@@ -1081,14 +1081,14 @@ const sagas = {
   scrollTimeline: function* (action: Action) {
     const { timelineScrolling } = yield select((state: AppState) => state.flags);
     if (timelineScrolling) {
-      yield call(log.trace, 'saga scrollTimeline: timelineScrolling already');
+      yield call(log.scrollEvent, 'saga scrollTimeline: timelineScrolling already');
     } else {
       const params = action.params as ScrollTimelineParams;
       const { scrollTime } = params;
       const refs = yield select((state: AppState) => state.refs);
       const { timelineScroll } = refs;
       if (timelineScroll !== undefined && timelineScroll.scrollToTime) {
-        yield call(log.trace, 'saga scrollTimeline:', scrollTime);
+        yield call(log.scrollEvent, 'saga scrollTimeline:', scrollTime);
         yield call(timelineScroll.scrollToTime, scrollTime); // in saga scrollTimeline
       } // else nothing to scroll (like if Timeline is hidden) TODO hmm, can refs to go stale when component unmounted?
     }
@@ -1151,18 +1151,18 @@ const sagas = {
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
     // Next, handle side effects:
     const state: AppState = yield select(state => state);
-    const { activityListScrolling, timelineScrolling } = state.flags;
+    const { activityListScrolling, timelineNow, timelineScrolling } = state.flags;
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
     if (params.viewTime !== undefined) {
       const t = params.viewTime;
-      if (t < utils.now() - constants.timing.timelineCloseToNow) {
-        yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-        yield call(log.trace, 'setAppOption: disabled timelineNow as side effect of setting params.viewtime');
-      }
-      const { timelineNow } = state.flags;
-      if (!timelineNow) {
+      if (timelineNow) {
+        if (t < utils.now() - constants.timing.timelineCloseToNow) {
+          yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+          yield call(log.scrollEvent, 'setAppOption: disabled timelineNow as side effect of setting params.viewtime');
+        }
+      } else {
         // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
@@ -1173,10 +1173,11 @@ const sagas = {
       const timeGap = Math.abs(centerTime - t);
       const recenterThreshold = visibleTime * (constants.timeline.widthMultiplier / 3);
       const ratio = timeGap / recenterThreshold;
-      yield call(log.trace, `timeline centerTime-viewTime gap ${timeGap} threshold ${recenterThreshold} ratio ${ratio}`);
+      yield call(log.scrollEvent,
+        `timeline centerTime-viewTime gap ${timeGap} threshold ${recenterThreshold} ratio ${ratio}`);
       if (timeGap > recenterThreshold) {
         yield put(newAction(AppAction.setAppOption, { centerTime: t }));
-        yield call(log.trace, `setAppOption reset centerTime ${t}`);
+        yield call(log.scrollEvent, `setAppOption reset centerTime ${t}`);
       } else {
         // viewTime is in range on the timeline, so just scroll timeline to it.
         yield put(newAction(AppAction.scrollTimeline, { scrollTime: t }));
@@ -1195,7 +1196,7 @@ const sagas = {
       }
       if (timelineScrolling && !activityListScrolling) {
         yield put(newAction(AppAction.scrollActivityList, { scrollTime: params.scrollTime })); // in setAppOption
-        yield call(log.trace, 'setAppOption: scrollActivityList to scrollTime:', params.scrollTime);
+        yield call(log.scrollEvent, 'setAppOption: scrollActivityList to scrollTime:', params.scrollTime);
       }
     }
     // Write through to settings in database, if needed
@@ -1364,7 +1365,7 @@ const sagas = {
         }
       }
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
-      const runningInBackgroundNow = !(RNAppState.currentState === 'active');
+      const runningInBackgroundNow = utils.appInBackground();
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
     } catch (err) {
@@ -1449,7 +1450,7 @@ const sagas = {
     if (timelineScrolling && !activityListScrolling) {
       yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
     }
-    yield call(log.trace, 'timelineZoomed', scrollTime, activityListScrolling, timelineScrolling);
+    yield call(log.scrollEvent, 'timelineZoomed', scrollTime, activityListScrolling, timelineScrolling);
   },
 
   timelineZooming: function* (action: Action) { // see also: timelineZoomed
@@ -1461,7 +1462,7 @@ const sagas = {
     if (timelineScrolling && !activityListScrolling) {
       yield put(newAction(AppAction.setAppOptionASAP, { scrollTime })); // note: not changing viewTime or centerTime!
     }
-    yield call(log.trace, 'timelineZooming', scrollTime, activityListScrolling, timelineScrolling);
+    yield call(log.scrollEvent, 'timelineZooming', scrollTime, activityListScrolling, timelineScrolling);
   },
 
   // This goes off once a second like the tick of a mechanical watch.
@@ -1527,7 +1528,7 @@ const sagas = {
         const tTotal = activity.tTotal || (utils.now() - activity.tStart);
         if (activity.tTotal) {
           const newTimelineZoomValue = yield call(timelineZoomValue, tTotal);
-          yield call(log.debug, 'newTimelineZoomValue', newTimelineZoomValue);
+          yield call(log.scrollEvent, 'newTimelineZoomValue', newTimelineZoomValue);
           yield put(newAction(AppAction.setAppOption, { timelineZoomValue: newTimelineZoomValue }));
         }
       }

@@ -1,4 +1,5 @@
 import {
+  AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
   Dimensions,
 } from 'react-native';
 
@@ -18,6 +19,10 @@ const utils = {
     }
     _counts[prop] += increment;
   },
+
+  appInBackground: (): boolean => (
+    !(RNAppState.currentState === 'active')
+  ),
 
   counts: (): any => {
     return _counts;

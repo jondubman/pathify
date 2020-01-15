@@ -1,4 +1,7 @@
 // Replacement for console that adds a prefix and handles exceptions.
+import sharedConstants from './sharedConstants';
+const { logScrollEvents } = sharedConstants;
+
 const appName = 'Pathify'; // TODO belongs in shared constants
 let logCount = 0;
 
@@ -80,6 +83,12 @@ const log = {
       let dots = dot;
       while (index--) dots += dot;
       return dots;
+    }
+  },
+
+  scrollEvent: (...args) => {
+    if (logScrollEvents) {
+      log.trace(...args);
     }
   },
 

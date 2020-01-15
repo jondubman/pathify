@@ -27,7 +27,7 @@ export interface LocationEvent extends GenericEvent {
   odo?: number; // meters
   speed?: number; // mph (converted from meters per second)
 
-  // properties derived from other events:
+  // properties derived from other events, but known at creation time of LocationEvent:
   gain?: number; // cumulative within activity
   loss?: number; // cumulative within activity
   mode?: string; // see ModeChangeEvent
