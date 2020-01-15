@@ -349,30 +349,64 @@ export const timelineZoomValue = (visibleTime: number): number => {
 
 // flavorText goes in RefTime, left of center just under the clock, referring to the current timepoint.
 export const flavorText = (state: AppState): string[] => {
-  const { timelineNow } = state.flags;
-  if (timelineNow) {
-    return ['NOW'];
-  }
-  const activity = selectedActivityFromCache(state);
-  if (activity) {
-    const { scrollTime } = state.options;
-    if (scrollTime === activity.tStart) {
-      return ['ACTIVITY', 'START'];
-    }
-    if (scrollTime === activity.tLast) {
-      return ['ACTIVITY', 'END'];
-    }
-    if (activity.tStart && activity.tLast) {
-      const midpoint = (activity.tStart + activity.tLast) / 2;
-      if (scrollTime === midpoint) {
-        return ['ACTIVITY', 'MIDPOINT'];
-      }
-      if (activity.tTotal) {
-        const elapsed = scrollTime - activity.tStart;
-        const percentage = (elapsed / activity.tTotal) * 100;
-        return [percentage.toFixed(0).toString() + '%', 'ELAPSED', msecToString(elapsed)];
+  try {
+    const { timelineNow, trackingActivity } = state.flags;
+    const { currentActivityId, selectedActivityId } = state.options;
+
+    if (timelineNow) {
+      if (trackingActivity) {
+        return ['NOW', 'TRACKING', 'ACTIVITY'];
+      } else {
+        return ['NOW'];
       }
     }
+    let currentActivitySelected = false;
+    if (trackingActivity) {
+      if (currentActivityId === selectedActivityId) {
+        currentActivitySelected = true;
+      }
+    }
+    const activity = selectedActivityFromCache(state);
+    if (activity) {
+      const { scrollTime } = state.options;
+      if (scrollTime === activity.tStart) {
+        return ['PAST ACTIVITY', 'START'];
+      }
+      if (scrollTime === activity.tLast && !currentActivitySelected) {
+        return ['PAST ACTIVITY', 'END'];
+      }
+      if (activity.tStart && activity.tLast) {
+        const midpoint = (activity.tStart + activity.tLast) / 2;
+        if (scrollTime === midpoint) {
+          return ['PAST ACTIVITY', 'MIDPOINT'];
+        }
+        if (activity.tTotal) {
+          const elapsed = scrollTime - activity.tStart;
+          const percentage = (elapsed / activity.tTotal) * 100;
+          const digits = (percentage < 2 || percentage > 98) ? 1 : 0; // bit of extra precision at the ends
+          if (currentActivitySelected) {
+            if (elapsed < interval.second) {
+              return ['ACTIVITY', 'START'];
+            }
+            return [
+              'CURRENT ACTIVITY',
+              'FROM START',
+              `${msecToString(elapsed)}`,
+            ]
+          } else {
+            return [
+              percentage.toFixed(digits).toString() + '%',
+              'ELAPSED',
+              msecToString(elapsed),
+            ]
+          }
+        }
+      }
+    }
+    // TODO could be more specific here. Like, "> 2 days ago"
+    return ['PAST'];
+  } catch(err) {
+    log.warn('flavorText error', err);
+    return [''];
   }
-  return ['PAST', ''];
 }
