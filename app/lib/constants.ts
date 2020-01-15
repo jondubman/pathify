@@ -146,9 +146,9 @@ const colors = {
     border: namedColors.darkerGray,
   },
   compassButton: {
-    background: 'white',
+    background: withOpacity(namedColors.purple, 0.75),
     icon: 'black',
-    underlay: withOpacity(namedColors.purple, 1),
+    underlay: withOpacity(namedColors.purple, 0.75),
   },
   debugInfo: {
     backgroundColor: withOpacity(namedColors.black, 0.65),
@@ -247,7 +247,7 @@ const colors = {
     timespans: {
       [TimespanKind.ACTIVITY]: withOpacity(namedColors.white, 0.4), // unselected state (selectedActivity color above)
       [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
-      [TimespanKind.FUTURE]: withOpacity(namedColors.silver, 0.15),
+      [TimespanKind.FUTURE]: withOpacity(namedColors.green, 0.25),
       [TimespanKind.LOCATIONS]: withOpacity(namedColors.blue, 0.35),
       [TimespanKind.OTHER]: withOpacity(namedColors.darkRed, 0.35),
       [TimespanKind.MODE]: withOpacity(namedColors.fuschia, 0.25), // TODO

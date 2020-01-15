@@ -127,7 +127,7 @@ export const futureTimespan = (state: AppState): Timespans => {
   const { nowTime } = state.options;
   const timespan: Timespan = {
     kind: TimespanKind.FUTURE,
-    tr: [nowTime, nowTime + interval.days(30)],
+    tr: [nowTime, nowTime + interval.days(365)], // a whole year should be sufficient
   }
   return [timespan];
 }
