@@ -10,23 +10,23 @@ import {
 
 import { ClockMenuProps } from 'containers/ClockMenuContainer';
 import constants from 'lib/constants';
-import { centerline } from 'lib/selectors';
+import utils from 'lib/utils';
 
 const colors = constants.colors.clockMenu;
 const {
   height,
-  width,
 } = constants.clockMenu;
+const width = utils.windowSize().width;
 
 const Styles = StyleSheet.create({
   panel: {
     backgroundColor: colors.background,
-    borderRadius: constants.buttonSize / 2,
+    borderTopLeftRadius: constants.buttonSize / 2,
+    borderTopRightRadius: constants.buttonSize / 2,
     borderColor: colors.border,
     borderWidth: 1,
     height,
     justifyContent: 'flex-start',
-    left: centerline() - width / 2,
     paddingRight: constants.buttonOffset,
     width,
   },

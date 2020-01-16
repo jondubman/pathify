@@ -360,8 +360,7 @@ const constants = {
     width: clockHeight, // Note this is not a typo. Width and height are identical because clock is round.
   },
   clockMenu: {
-    height: panelHeight,
-    width: minDeviceWidth - (buttonSize + buttonOffset) * 2 - buttonOffset,
+    height: 200, // TODO this is somewhat arbitrary at the moment
   },
   colors,
   colorThemes,

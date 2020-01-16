@@ -22,7 +22,7 @@ export type ClockMenuProps = ClockMenuStateProps & ClockMenuDispatchProps;
 
 const mapStateToProps = (state: AppState): ClockMenuStateProps => {
   return {
-    bottom: constants.refTime.height + 1,
+    bottom: 0,
     open: state.flags.clockMenuOpen,
   }
 }

@@ -63,6 +63,8 @@ class AppUI extends Component<AppUIProps> {
             {showDebugInfo ? <DebugInfoContainer /> : null}
             <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
               {mapFullScreen ? null : <ClockMenuContainer />}
+            </View>
+            <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
               <CompassButtonContainer />
               <FollowMeButtonContainer />
               <GeoButtonContainer />
