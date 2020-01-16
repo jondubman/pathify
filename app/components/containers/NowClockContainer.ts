@@ -3,6 +3,7 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import { currentActivityIsSelected } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 
@@ -13,9 +14,12 @@ interface OwnProps { // matching those of PausedClockContainer
 }
 
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
+  const { selectedActivityId } = state.options;
+  const selectedIsCurrent = currentActivityIsSelected(state);
   const d = new Date(utils.now());
   return {
-    current: false,
+    current: selectedIsCurrent,
+    selected: !!selectedActivityId,
     hours: d.getHours(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),

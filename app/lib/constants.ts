@@ -140,10 +140,11 @@ const colors = {
     background: withOpacity(namedColors.black, 0.7),
     border: withOpacity(namedColors.azure, 0.9),
     backgroundNow: withOpacity(colorThemes.nowDark, 0.65),
-    backgroundPast: withOpacity(namedColors.azure_dark, 0.75),
+    backgroundPast: withOpacity(namedColors.black, 0.75),
+    backgroundPastSelected: withOpacity(namedColors.azure_dark, 0.75),
     backgroundPastCurrent: withOpacity(namedColors.azure, 0.75),
-    backgroundStopped: withOpacity(namedColors.black, 0.7),
-    backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.7),
+    backgroundStopped: withOpacity(namedColors.yellow, 0.65), // debug-only
+    backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.65), // debug-only
     underlay: withOpacity(namedColors.black, 0.5),
   },
   clockMenu: {

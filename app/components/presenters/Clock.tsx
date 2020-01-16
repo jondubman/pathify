@@ -24,6 +24,7 @@ const {
 
 export interface ClockStateProps {
   current: boolean; // true means time on clock points to current activity, whether or not nowMode is enabled
+  selected: boolean; // true means time on clock points to a selected activity, whether or not nowMode is enabled
   hours: number,
   minutes: number,
   seconds: number,
@@ -133,6 +134,9 @@ const Styles = StyleSheet.create({
   pastButCurrent: {
     backgroundColor: colors.backgroundPastCurrent,
   },
+  pastSelected: {
+    backgroundColor: colors.backgroundPastSelected,
+  },
   stoppedNow: { // debug mode - clock not ticking
     backgroundColor: colors.backgroundStopped,
   },
@@ -189,10 +193,31 @@ const ClockTicks = () => {
   )
 }
 
-const clockBackgroundStyle = (props: ClockProps): Object => (
-  props.nowMode ? (props.stopped ? Styles.stoppedNow : Styles.now)
-    : (props.stopped ? Styles.stoppedPast : (props.current ? Styles.pastButCurrent : Styles.past))
-)
+const clockBackgroundStyle = (props: ClockProps): Object => {
+  const { current, nowMode, selected, stopped } = props;
+  // Note stopped is really just for debugging. It means the ticks are disbabled app-wide.
+  if (nowMode) {
+    if (stopped) {
+      return Styles.stoppedNow; // debug-only
+    } else {
+      return Styles.now;
+    }
+  } else {
+    if (stopped) {
+      return Styles.stoppedPast; // debug-only
+    } else {
+      if (current) {
+        return Styles.pastButCurrent;
+      } else {
+        if (selected) {
+          return Styles.pastSelected;
+        } else {
+          return Styles.past;
+        }
+      }
+    }
+  }
+}
 
 const ClockMechanics = (props: ClockProps) => (
   <View>

@@ -13,11 +13,12 @@ interface OwnProps { // matching those of NowClockContainer
 }
 
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
-  const { pausedTime, scrollTime } = state.options;
+  const { pausedTime, scrollTime, selectedActivityId } = state.options;
   const selectedIsCurrent = currentActivityIsSelected(state);
   const d = new Date(state.flags.timelineScrolling ? scrollTime : pausedTime);
   return {
     current: selectedIsCurrent,
+    selected: !!selectedActivityId,
     hours: d.getHours(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),
