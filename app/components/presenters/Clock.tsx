@@ -23,6 +23,7 @@ const {
 } = constants.clock;
 
 export interface ClockStateProps {
+  current: boolean; // true means time on clock points to current activity, whether or not nowMode is enabled
   hours: number,
   minutes: number,
   seconds: number,
@@ -129,10 +130,13 @@ const Styles = StyleSheet.create({
   past: {
     backgroundColor: colors.backgroundPast,
   },
-  stoppedNow: {
+  pastButCurrent: {
+    backgroundColor: colors.backgroundPastCurrent,
+  },
+  stoppedNow: { // debug mode - clock not ticking
     backgroundColor: colors.backgroundStopped,
   },
-  stoppedPast: {
+  stoppedPast: { // debug mode - clock not ticking
     backgroundColor: colors.backgroundStoppedPast,
   },
 })
@@ -187,7 +191,7 @@ const ClockTicks = () => {
 
 const clockBackgroundStyle = (props: ClockProps): Object => (
   props.nowMode ? (props.stopped ? Styles.stoppedNow : Styles.now)
-                : (props.stopped ? Styles.stoppedPast : Styles.past)
+    : (props.stopped ? Styles.stoppedPast : (props.current ? Styles.pastButCurrent : Styles.past))
 )
 
 const ClockMechanics = (props: ClockProps) => (

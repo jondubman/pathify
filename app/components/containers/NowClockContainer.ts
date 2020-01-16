@@ -15,6 +15,7 @@ interface OwnProps { // matching those of PausedClockContainer
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
   const d = new Date(utils.now());
   return {
+    current: false,
     hours: d.getHours(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),

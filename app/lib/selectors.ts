@@ -390,8 +390,8 @@ export const flavorText = (state: AppState): string[] => {
             }
             return [
               'CURRENT ACTIVITY',
-              'FROM START',
               `${msecToString(elapsed)}`,
+              'FROM START',
             ]
           } else {
             return [
