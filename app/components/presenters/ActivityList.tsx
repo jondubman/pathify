@@ -16,7 +16,7 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import constants from 'lib/constants';
-import { centerline } from 'lib/selectors';
+import { centerline, currentActivityIsSelected } from 'lib/selectors';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
@@ -241,7 +241,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const index = Math.floor(ratio);
     const remainder = baseX - (index * totalWidthPerActivity);
     const proportion = remainder / activityWidth;
-    const activity = list[index];
     const xScrolledAfterActivity = remainder - activityWidth;
     // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
     const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start

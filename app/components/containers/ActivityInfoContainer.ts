@@ -14,9 +14,7 @@ export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
   return {
-    showActivityList: state.flags.showActivityList &&
-                      !state.flags.mapFullScreen &&
-                      !!state.cache.activities && !!state.cache.activities.length,
+    showActivityList: state.flags.showActivityList && !state.flags.mapFullScreen,
   }
 }
 

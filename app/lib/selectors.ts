@@ -41,11 +41,11 @@ const colorForAppState = {
 
 // note this assumes activities exists
 export const selectedActivityIndex = (state: AppState) => (
-  state.cache.activities!.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
+  state.cache.activities.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
 )
 
 export const activityIndex = (state: AppState) => (
-  (state.cache.activities && state.cache.activities.length) ?
+  state.cache.activities.length ?
     selectedActivityIndex(state) > -1 ?
       `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}`
       :
@@ -106,7 +106,7 @@ const appStateTimespans = (state: AppState): Timespans => {
 // cachedActivity by id
 export const cachedActivity = (state: AppState, id: string): ActivityDataExtended | undefined => {
   const cache = state.cache;
-  if (id && cache.activities) {
+  if (id) {
     return cache.activities.find(activity => activity.id === id);
   }
   return undefined;
@@ -114,12 +114,9 @@ export const cachedActivity = (state: AppState, id: string): ActivityDataExtende
 
 export const cachedActivityForTimepoint = (state: AppState, t: Timepoint): ActivityDataExtended | undefined => {
   const cache = state.cache;
-  if (cache && cache.activities) {
-    const result = cache.activities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
-    // log.trace('cachedActivityForTimepoint', t, result);
-    return result;
-  }
-  return undefined;
+  const result = cache.activities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
+  // log.trace('cachedActivityForTimepoint', t, result);
+  return result;
 }
 
 export const centerline = () => {
@@ -292,6 +289,11 @@ export const selectedActivityFromCache = (state: AppState): ActivityDataExtended
   return undefined;
 }
 
+export const currentActivityIsSelected = (state: AppState): boolean => {
+  const { currentActivityId, selectedActivityId } = state.options;
+  return !!currentActivityId && !!selectedActivityId && (currentActivityId === selectedActivityId);
+}
+
 export const selectedOrCurrentActivity = (state: AppState): Activity | undefined => {
   return selectedActivity(state) || currentActivity(state);
 }
@@ -353,6 +355,7 @@ export const flavorText = (state: AppState): string[] => {
   try {
     const { timelineNow, trackingActivity } = state.flags;
     const { currentActivityId, scrollTime, selectedActivityId } = state.options;
+    const ago = utils.now() - scrollTime;
     // Check scrollTime in addition to timelineNow to cover scrolling timeline into the future zone.
     if (timelineNow || scrollTime >= utils.now() - constants.timing.timelineCloseToNow) {
       if (trackingActivity) {
@@ -369,7 +372,6 @@ export const flavorText = (state: AppState): string[] => {
     }
     const activity = selectedActivityFromCache(state);
     if (activity) {
-      const { scrollTime } = state.options;
       const currentOrPastActivity = currentActivitySelected ? 'CURRENT ACTIVITY' : 'PAST ACTIVITY';
       if (scrollTime === activity.tStart) {
         return [currentOrPastActivity, '@ START'];
@@ -392,21 +394,21 @@ export const flavorText = (state: AppState): string[] => {
             }
             return [
               currentOrPastActivity,
-              `${msecToString(elapsed)}`,
-              'FROM START',
+              `${msecToString(elapsed)} IN`,
+              `${msecToString(ago)} AGO`,
             ]
           } else {
+            const remaining = activity.tLast - scrollTime;
             return [
-              percentage.toFixed(digits).toString() + '% TIME',
-              'ELAPSED',
-              `(${msecToString(elapsed)})`,
+              percentage.toFixed(digits).toString() + '% ELAPSED',
+              `${msecToString(elapsed)} IN`,
+              `${msecToString(remaining)} TO END`,
             ]
           }
         }
       }
     }
     // TODO could be LESS specific, and in a way, more descriptive here. Like, "> 2 days ago"
-    const ago = utils.now() - scrollTime;
     return ['CLOCK STOPPED', `${msecToString(ago)}`, 'AGO'];
   } catch(err) {
     log.warn('flavorText error', err);

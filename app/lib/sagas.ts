@@ -343,7 +343,7 @@ const sagas = {
         case 'cache': {
           const cache: CacheInfo = state.cache;
           response = {
-            activityCount: cache.activities ? cache.activities.length : 0,
+            activityCount: cache.activities.length,
             populated: cache.populated || false,
             refreshCount: cache.refreshCount,
           }
@@ -444,7 +444,7 @@ const sagas = {
           response = {
             bounds: { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial },
             cache: {
-              activityCount: cache.activities ? cache.activities.length : 0,
+              activityCount: cache.activities.length,
               populated: cache.populated || false,
               refreshCount: cache.refreshCount,
             },

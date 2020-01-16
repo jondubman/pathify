@@ -15,7 +15,7 @@ const now = utils.now();
 // Note events and persistent settings are external to this (in Realm) - see database module
 
 export interface CacheInfo {
-  activities?: ActivityDataExtended[];
+  activities: ActivityDataExtended[];
   populated: boolean;
   refreshCount: number;
 }
@@ -28,6 +28,7 @@ export interface MapRegionUpdate {
 
 export const initialAppState = {
   cache: {
+    activities: [],
     populated: false,
     refreshCount: 0,
   } as CacheInfo,

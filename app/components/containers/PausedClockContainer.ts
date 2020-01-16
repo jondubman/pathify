@@ -3,6 +3,7 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import { currentActivityIsSelected } from 'lib/selectors';
 import { AppState } from 'lib/state';
 
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
@@ -12,8 +13,8 @@ interface OwnProps { // matching those of NowClockContainer
 }
 
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
-  const { currentActivityId, pausedTime, scrollTime, selectedActivityId } = state.options;
-  const selectedIsCurrent = (selectedActivityId === currentActivityId);
+  const { pausedTime, scrollTime } = state.options;
+  const selectedIsCurrent = currentActivityIsSelected(state);
   const d = new Date(state.flags.timelineScrolling ? scrollTime : pausedTime);
   return {
     current: selectedIsCurrent,
