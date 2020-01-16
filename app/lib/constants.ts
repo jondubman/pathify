@@ -207,14 +207,6 @@ const colors = {
     text: namedColors.black,
     underlay: namedColors.maroon,
   },
-  scrollTime: {
-    background: withOpacity(namedColors.navy, 0.75),
-    hoursMinutes: namedColors.white,
-    seconds: withOpacity(namedColors.white, 0.75),
-    msec: withOpacity(namedColors.white, 0), // TODO show sometimes?
-    subText: withOpacity(namedColors.white, 0.75),
-    underlay: 'transparent',
-  },
   paths: {
     transparent: 'transparent',
     current: withOpacity(colorThemes.now, 0.75),
@@ -223,6 +215,14 @@ const colors = {
   pulsars: {
     userLocation: withOpacity(colorThemes.now, 1),
     priorLocation: withOpacity(namedColors.blue, 1),
+  },
+  refTime: {
+    background: withOpacity(namedColors.navy, 0.75),
+    hoursMinutes: namedColors.white,
+    seconds: withOpacity(namedColors.white, 0.75),
+    msec: withOpacity(namedColors.white, 0), // TODO show sometimes?
+    subText: withOpacity(namedColors.white, 0.75),
+    underlay: 'transparent',
   },
   settingsButton: {
     background: 'white',

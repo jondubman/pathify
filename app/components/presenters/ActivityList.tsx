@@ -278,6 +278,27 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     return (
       <Fragment>
         <View style={[Styles.box, { top }]}>
+          <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
+          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
+          {!selectedActivityId || (!selectedActivityId && scrolledBetweenActivities) || timelineNow ?
+            <View
+              pointerEvents="none"
+              style={[centerLineBase, timelineNow ? Styles.centerLineCurrent : Styles.centerLineBright]}
+            />
+            :
+            <Fragment>
+              <View
+                pointerEvents="none"
+                style={[
+                  centerLineBase,
+                  selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
+                ]}
+              />
+              <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
+            </Fragment>
+          }
           <FlatList<ActivityDataExtended>
             data={list}
             extraData={this.props}
@@ -313,27 +334,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             renderItem={this.renderItem}
             scrollIndicatorInsets={scrollInsets}
           />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
-          {!selectedActivityId || (!selectedActivityId && scrolledBetweenActivities) || timelineNow ?
-            <View
-              pointerEvents="none"
-              style={[centerLineBase, timelineNow ? Styles.centerLineCurrent : Styles.centerLineBright]}
-            />
-            :
-            <Fragment>
-              <View
-                pointerEvents="none"
-                style={[
-                  centerLineBase,
-                  selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
-                ]}
-              />
-              <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
-            </Fragment>
-          }
         </View>
       </Fragment>
     )

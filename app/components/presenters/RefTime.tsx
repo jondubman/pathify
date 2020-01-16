@@ -12,7 +12,7 @@ import {
 import { RefTimeProps } from 'containers/RefTimeContainer';
 import constants from 'lib/constants';
 
-const colors = constants.colors.scrollTime;
+const colors = constants.colors.refTime;
 const {
   height,
   leftContentsWidth,
@@ -25,7 +25,6 @@ const Styles = StyleSheet.create({
     width,
   },
   leftHighlight: {
-    // backgroundColor: 'orange', // TODO
     height,
     justifyContent: 'flex-start', // vertically
     width: leftContentsWidth,
@@ -38,11 +37,7 @@ const Styles = StyleSheet.create({
   },
   refTimeContainer: {
     alignSelf: 'center',
-    // height,
     flexDirection: 'row',
-    // justifyContent: 'center',
-    // position: 'absolute',
-    // width: width * 2,
   },
   refTimeFull: {
     flexDirection: 'row',

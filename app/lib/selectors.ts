@@ -369,42 +369,44 @@ export const flavorText = (state: AppState): string[] => {
     const activity = selectedActivityFromCache(state);
     if (activity) {
       const { scrollTime } = state.options;
+      const currentOrPastActivity = currentActivitySelected ? 'CURRENT ACTIVITY' : 'PAST ACTIVITY';
       if (scrollTime === activity.tStart) {
-        return ['PAST ACTIVITY', '@ START'];
+        return [currentOrPastActivity, '@ START'];
       }
       if (scrollTime === activity.tLast && !currentActivitySelected) {
-        return ['PAST ACTIVITY', '@ END'];
+        return [currentOrPastActivity, '@ END'];
       }
       if (activity.tStart && activity.tLast) {
+        const elapsed = scrollTime - activity.tStart;
         const midpoint = (activity.tStart + activity.tLast) / 2;
         if (scrollTime === midpoint) {
-          return ['PAST ACTIVITY', '@ MIDPOINT'];
+          return [currentOrPastActivity, '@ MIDPOINT', `(${msecToString(elapsed)})`];
         }
         if (activity.tTotal) {
-          const elapsed = scrollTime - activity.tStart;
           const percentage = (elapsed / activity.tTotal) * 100;
           const digits = (percentage < 2 || percentage > 98) ? 1 : 0; // bit of extra precision at the ends
           if (currentActivitySelected) {
             if (elapsed < interval.second) {
-              return ['ACTIVITY', '@ START'];
+              return [currentOrPastActivity, '@ START'];
             }
             return [
-              'CURRENT ACTIVITY',
+              currentOrPastActivity,
               `${msecToString(elapsed)}`,
               'FROM START',
             ]
           } else {
             return [
-              percentage.toFixed(digits).toString() + '%',
+              percentage.toFixed(digits).toString() + '% TIME',
               'ELAPSED',
-              msecToString(elapsed),
+              `(${msecToString(elapsed)})`,
             ]
           }
         }
       }
     }
-    // TODO could be more specific here. Like, "> 2 days ago"
-    return ['PAST'];
+    // TODO could be LESS specific, and in a way, more descriptive here. Like, "> 2 days ago"
+    const ago = utils.now() - scrollTime;
+    return ['CLOCK STOPPED', `${msecToString(ago)}`, 'AGO'];
   } catch(err) {
     log.warn('flavorText error', err);
     return [''];
