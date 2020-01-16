@@ -311,9 +311,9 @@ export const timelineTimespans = (state: AppState): Timespans => {
 // value (logarithmic) should be between 0 and 1.
 // Returned visibleTime is the number of msec to show on the timeline.
 export const timelineVisibleTime = (value: number): number => {
-  const { zoomLevels } = constants.timeline;
-  const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
-  const minVisibleTime = zoomLevels[zoomLevels.length - 1].visibleTime; // a relatively small number (order 10K)
+  const { zoomRanges } = constants.timeline;
+  const maxVisibleTime = zoomRanges[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
+  const minVisibleTime = zoomRanges[zoomRanges.length - 1].visibleTime; // a relatively small number (order 10K)
   const logMax = Math.log2(maxVisibleTime); // larger
   const logMin = Math.log2(minVisibleTime); // smaller
   const visibleTime = Math.pow(2, logMax - (logMax - logMin) * value);
@@ -321,12 +321,12 @@ export const timelineVisibleTime = (value: number): number => {
 }
 
 // value (logarithmic) should be between 0 and 1.
-// returned number is index for one of the constants.timeline.zoomLevels that's the best fit given this slider value.
+// returned number is index for one of the constants.timeline.zoomRanges that's the best fit given this slider value.
 export const timelineZoomLevel = (value: number): number => {
-  const { zoomLevels } = constants.timeline;
+  const { zoomRanges } = constants.timeline;
   const visibleTime = timelineVisibleTime(value);
-  for (let level = 0; level < zoomLevels.length; level++) {
-    if (zoomLevels[level].visibleTime <= Math.round(visibleTime)) {
+  for (let level = 0; level < zoomRanges.length; level++) {
+    if (zoomRanges[level].visibleTime <= Math.round(visibleTime)) {
       return level;
     }
   }
@@ -334,10 +334,11 @@ export const timelineZoomLevel = (value: number): number => {
 }
 
 // This is the inverse function of timelineVisibleTime, to zoom timeline to show an entire selected activity in context.
+// TODO automated test of inverse function claim.
 export const timelineZoomValue = (visibleTime: number): number => {
-  const { activityZoomFactor, zoomLevels } = constants.timeline;
-  const maxVisibleTime = zoomLevels[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
-  const minVisibleTime = zoomLevels[zoomLevels.length - 1].visibleTime; // a relatively small number (order 10K)
+  const { activityZoomFactor, zoomRanges } = constants.timeline;
+  const maxVisibleTime = zoomRanges[0].visibleTime; // a very large number (billions of msec; ~2.4 billion = 1 month)
+  const minVisibleTime = zoomRanges[zoomRanges.length - 1].visibleTime; // a relatively small number (order 10K)
   const logMax = Math.log2(maxVisibleTime); // larger
   const logMin = Math.log2(minVisibleTime); // smaller
   // So far, this is like timelineVisibleTime above. Here we need to bounds check the incoming visibleTime.

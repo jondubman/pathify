@@ -572,7 +572,7 @@ const sagas = {
   },
 
   // This has the side effect of panning the map component imperatively. Note use of flyTo which makes it more fluid.
-  // Centering the map should not affect zoom.
+  // This should not affect zoom.
   centerMapOnUser: function* () {
     try {
       const map = MapUtils();

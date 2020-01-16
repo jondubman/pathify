@@ -82,7 +82,7 @@ class Timeline extends Component<TimelineProps> {
       centerTime,
       zoomLevel,
     } = this.props;
-    const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
+    const zoomInfo = constants.timeline.zoomRanges[zoomLevel];
     const { tickInterval } = zoomInfo;
     let timeRoundDown: number;
     if (tickInterval >= interval.day) {
@@ -111,13 +111,13 @@ class Timeline extends Component<TimelineProps> {
       zoomDomain,
       zoomLevel,
     } = this.props;
-    const zoomInfo = constants.timeline.zoomLevels[zoomLevel];
+    const zoomInfo = constants.timeline.zoomRanges[zoomLevel];
     const { tickFormat } = zoomInfo;
     const tickFormatFn = getTickFormatFn(tickFormat);
     const tickValues = this.axisTickValues();
     // Note allowZoom is false; direct zooming (with pinch-to-zoom) by the user is currently disabled, as it's too easy
     // to engage accidentally, which can be disorienting. With allowZoom false, onZoomDomainChange will not be called.
-    // Zoom is still allowed, indirectly, via constants.timeline.zoomLevels.
+    // Zoom is still allowed, indirectly, via constants.timeline.zoomRanges.
     // TODO future?
     // animate={{ duration: 0, onExit: { duration: 0 }, onEnter: { duration: 0 }, onLoad: { duration: 0 }}}
     return (
