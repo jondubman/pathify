@@ -74,7 +74,7 @@ const colorThemes = {
 }
 
 // For Realm database. Very meaningful to Realm!
-const schemaVersion = 21;
+const schemaVersion = 22;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;

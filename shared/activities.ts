@@ -34,6 +34,8 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     latMin: 'double?',
     lonMax: 'double?',
     lonMin: 'double?',
+
+    extra: 'string?', // added in schemaVersion 22
   },
 }
 
@@ -73,6 +75,9 @@ export interface ActivityData {
   latMin?: number;
   lonMax?: number;
   lonMin?: number;
+
+  // extra - anything that may not merit inclusion in the general schema, just yet. Might help enable future migrations.
+  extra?: string; // could, probably should, be JSON
 }
 
 // ActivityDataExtended populate the activities cache in Redux store, and appear on the ActivityList.

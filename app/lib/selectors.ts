@@ -417,7 +417,7 @@ export const flavorText = (state: AppState): string[] => {
             return [
               percentage.toFixed(digits).toString() + '% ELAPSED',
               `${msecToString(elapsed)} IN`,
-              `${msecToString(remaining)} TO END`,
+              `${msecToString(remaining)} LEFT`,
             ]
           }
         }
