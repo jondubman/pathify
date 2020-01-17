@@ -203,6 +203,21 @@ export const dynamicTopBelowButtons = (state: AppState): number => (
   dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
 
+export const timeGapBetweenActivities = (state: AppState, t: Timepoint): number => {
+  const { activities } = state.cache;
+  if (activities.length < 2) {
+    return 0;
+  }
+  for (let i = 0; i < activities.length - 1; i++) {
+    const prev = activities[i];
+    const next = activities[i+1];
+    if (prev.tLast <= t && t <= next.tStart) {
+      return (next.tStart - prev.tLast);
+    }
+  }
+  return 0;
+}
+
 export const loggableOptions = (state: AppState) => {
   const options = { ...state.options } as any;
   const { displayTimestamp } = utils;
@@ -409,7 +424,8 @@ export const flavorText = (state: AppState): string[] => {
       }
     }
     // TODO could be LESS specific, and in a way, more descriptive here. Like, "> 2 days ago"
-    return ['CLOCK STOPPED', `${msecToString(ago)}`, 'AGO'];
+    const gap = timeGapBetweenActivities(state, scrollTime);
+    return ['CLOCK STOPPED', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP` : ''];
   } catch(err) {
     log.warn('flavorText error', err);
     return [''];
