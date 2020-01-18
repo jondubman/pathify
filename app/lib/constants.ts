@@ -74,7 +74,7 @@ const colorThemes = {
 }
 
 // For Realm database. Very meaningful to Realm!
-const schemaVersion = 23;
+const schemaVersion = 24;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
@@ -163,7 +163,7 @@ const colors = {
     borderWidth: 2,
     text: 'white',
   },
-  FollowButtons: {
+  followButtons: {
     background: { active: colorThemes.nowDark, inactive: 'black' },
     icon: { active: 'black', inactive: colorThemes.now },
     underlay: colorThemes.now,

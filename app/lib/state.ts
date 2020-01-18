@@ -26,6 +26,9 @@ export interface MapRegionUpdate {
   zoomLevel: number;
 }
 
+// This is the default, initial Redux state before any saved Settings are restored from Realm.
+// See persistedFlags and persistedOptions below.
+
 export const initialAppState = {
   cache: {
     activities: [],
@@ -41,6 +44,7 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     clockMenuOpen: false,
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
+    followingPath: false, // is map following the former path of user?
     followingUser: false, // is map following user?
     keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
     helpOpen: false, // Help panel
@@ -124,8 +128,10 @@ export interface AppState extends InitialAppState {
 // TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema.
 
 export const persistedFlags = [
+  'followingPath',
   'followingUser',
   'mapFullScreen',
+  'showActivityList',
   'showTimeline',
   'timelineNow',
 ]

@@ -72,6 +72,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
 export interface SettingsObject extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
   id: number,
   currentActivityId?: string,
+  followingPath: boolean,
   followingUser: boolean,
   latMax: number,
   latMin: number,
@@ -105,6 +106,7 @@ const { bounds, heading } = constants.map.default;
 const defaultSettings = {
   id: 1,
   currentActivityId: undefined,
+  followingPath: false,
   followingUser: false,
   latMax: bounds[0][0],
   latMin: bounds[1][1],
