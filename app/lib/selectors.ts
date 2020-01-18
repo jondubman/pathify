@@ -203,21 +203,6 @@ export const dynamicTopBelowButtons = (state: AppState): number => (
   dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
 
-export const timeGapBetweenActivities = (state: AppState, t: Timepoint): number => {
-  const { activities } = state.cache;
-  if (activities.length < 2) {
-    return 0;
-  }
-  for (let i = 0; i < activities.length - 1; i++) {
-    const prev = activities[i];
-    const next = activities[i+1];
-    if (prev.tLast <= t && t <= next.tStart) {
-      return (next.tStart - prev.tLast);
-    }
-  }
-  return 0;
-}
-
 export const loggableOptions = (state: AppState) => {
   const options = { ...state.options } as any;
   const { displayTimestamp } = utils;
@@ -251,6 +236,50 @@ export const mapStyles = (state: AppState): MapStyle[] => (
 export const menuOpen = (state: AppState): boolean => (
   state.flags.clockMenuOpen || state.flags.helpOpen || state.flags.settingsOpen || state.flags.topMenuOpen
 )
+
+export const nextActivity = (state: AppState, t: Timepoint): (ActivityDataExtended | null) => {
+  const { activities } = state.cache;
+  const length = activities.length;
+  if (!activities.length) {
+    return null; // no activities
+  }
+  // if before the first activity
+  const firstActivity = activities[0];
+  if (firstActivity.tStart < t) {
+    return firstActivity;
+  }
+  // if between activities
+  for (let i = 0; i < length - 1; i++) {
+    const prev = activities[i];
+    const next = activities[i + 1];
+    if (prev.tLast <= t && t <= next.tStart) {
+      return (prev);
+    }
+  }
+  return null;
+}
+
+export const previousActivity = (state: AppState, t: Timepoint): (ActivityDataExtended | null) => {
+  const { activities } = state.cache;
+  const length = activities.length;
+  if (!activities.length) {
+    return null; // no activities
+  }
+  // if between activities
+  for (let i = 0; i < length - 1; i++) {
+    const prev = activities[i];
+    const next = activities[i + 1];
+    if (prev.tLast <= t && t <= next.tStart) {
+      return (prev);
+    }
+  }
+  // if after the last activity
+  const lastActivity = activities[length - 1];
+  if (lastActivity.tLast < t) {
+    return lastActivity;
+  }
+  return null;
+}
 
 export const pulsars = (state: AppState): OptionalPulsars => {
   const {
@@ -311,6 +340,21 @@ export const currentActivityIsSelected = (state: AppState): boolean => {
 
 export const selectedOrCurrentActivity = (state: AppState): Activity | undefined => {
   return selectedActivity(state) || currentActivity(state);
+}
+
+export const timeGapBetweenActivities = (state: AppState, t: Timepoint): number => {
+  const { activities } = state.cache;
+  if (activities.length < 2) {
+    return 0;
+  }
+  for (let i = 0; i < activities.length - 1; i++) {
+    const prev = activities[i];
+    const next = activities[i + 1];
+    if (prev.tLast <= t && t <= next.tStart) {
+      return (next.tStart - prev.tLast);
+    }
+  }
+  return 0;
 }
 
 export const timelineTimespans = (state: AppState): Timespans => {
@@ -425,7 +469,9 @@ export const flavorText = (state: AppState): string[] => {
     }
     // TODO could be LESS specific, and in a way, more descriptive here. Like, "> 2 days ago"
     const gap = timeGapBetweenActivities(state, scrollTime);
-    return ['CLOCK STOPPED', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP` : ''];
+    const previous = previousActivity(state, scrollTime);
+    const gapPercent = ((previous === null) ? '?' : (((scrollTime - previous.tLast) / gap) * 100).toFixed(0));
+    return ['CLOCK STOPPED', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
   } catch(err) {
     log.warn('flavorText error', err);
     return [''];

@@ -375,9 +375,13 @@ export const Geo = {
   // Set configuration for background geolocation as appropriate given current app state. This should be idempotent.
   // This is required to receive locations in the foreground and background.
   setConfig: async (tracking: boolean = false, background: boolean = false) => {
-    const config = tracking ? (background ? geoconfig_tracking_background : geoconfig_tracking) : geoconfig_default;
-    log.trace(`Geo.setConfig tracking: ${tracking}, background: ${background}`);
-    await BackgroundGeolocation.setConfig(config);
+    try {
+      const config = tracking ? (background ? geoconfig_tracking_background : geoconfig_tracking) : geoconfig_default;
+      log.trace(`Geo.setConfig tracking: ${tracking}, background: ${background}`);
+      await BackgroundGeolocation.setConfig(config);
+    } catch (err) {
+      log.error('geo setConfig', err);
+    }
   },
 
   // Event handlers for background geolocation
@@ -520,8 +524,13 @@ export const Geo = {
   // },
 
   startBackgroundGeolocation: async () => {
-    log.debug('startBackgroundGeolocation');
-    return await BackgroundGeolocation.start();
+    try {
+      log.debug('startBackgroundGeolocation');
+      return await BackgroundGeolocation.start();
+    } catch (err) {
+      log.error('startBackgroundGeolocation', err);
+      return;
+    }
   },
 
   // TODO not currently needed

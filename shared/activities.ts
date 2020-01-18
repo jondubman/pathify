@@ -4,6 +4,7 @@ import Realm from 'realm';
 import log from './log';
 import { Timepoint } from './timeseries';
 import { metersToMiles, msecToString } from './units';
+import utils from './sharedUtils';
 
 export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
   name: 'Activity',
@@ -35,7 +36,12 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     lonMax: 'double?',
     lonMin: 'double?',
 
-    extra: 'string?', // added in schemaVersion 22
+    // schemaVersion 22
+    extra: 'string?',
+
+    // schemaVersion 23
+    name: 'string',
+    rating: 'double?',
   },
 }
 
@@ -78,6 +84,8 @@ export interface ActivityData {
 
   // extra - anything that may not merit inclusion in the general schema, just yet. Might help enable future migrations.
   extra?: string; // could, probably should, be JSON
+  name?: string;
+  rating?: string;
 }
 
 // ActivityDataExtended populate the activities cache in Redux store, and appear on the ActivityList.
@@ -103,10 +111,10 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
       a.distanceMiles = metersToMiles(a.distance);
     }
     if (a.tStart) {
-      a.tStartText = new Date(a.tStart).toLocaleString()
+      a.tStartText = new Date(a.tStart).toLocaleString();
       const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
       if (tEnd) {
-        a.tLast = tEnd;
+        a.tLast = tEnd || utils.now();
         a.tTotal = tEnd - a.tStart;
         a.tTotalText = msecToString(a.tTotal);
       }

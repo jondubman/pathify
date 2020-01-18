@@ -11,6 +11,7 @@ import {
 
 import constants from 'lib/constants';
 import utils from 'lib/utils';
+import log from 'shared/log';
 
 import ActivityInfoContainer from 'containers/ActivityInfoContainer';
 import { AppUIProps } from 'containers/AppUIContainer';
@@ -38,6 +39,11 @@ const AppStyles = StyleSheet.create({
 })
 
 class AppUI extends Component<AppUIProps> {
+
+  // TODO is this helpful?
+  componentDidCatch(error: any, info: any) {
+    log.error('AppUI componentDidCatch', error, info);
+  }
 
   render() {
     const {
