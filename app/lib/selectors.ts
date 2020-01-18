@@ -409,7 +409,7 @@ export const timelineZoomValue = (visibleTime: number): number => {
   return zoomValue;
 }
 
-// flavorText goes in RefTime, left of center just under the clock, referring to the current timepoint.
+// flavorText goes in RefTime, left of center just under the clock, giving context to scrollTime.
 export const flavorText = (state: AppState): string[] => {
   try {
     const { timelineNow, trackingActivity } = state.flags;

@@ -12,8 +12,8 @@ import constants from 'lib/constants';
 const colors = constants.colors.compassButton;
 const {
   aboveDynamicBase,
+  leftOffset,
   opacity,
-  rightOffset,
   size
 } = constants.compassButton;
 
@@ -23,9 +23,9 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
     height: size,
     justifyContent: 'center',
+    left: leftOffset,
     paddingTop: size / 4,
     position: 'absolute',
-    right: rightOffset,
     opacity,
     width: size,
   },

@@ -368,7 +368,7 @@ const constants = {
   colorThemes,
   compassButton: {
     aboveDynamicBase: buttonSize + buttonOffset * 2,
-    rightOffset: buttonOffset,
+    leftOffset: buttonOffset,
     mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
     opacity: defaultOpacity,
     size: buttonSize,
