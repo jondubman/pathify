@@ -40,7 +40,7 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     extra: 'string?',
 
     // schemaVersion 23
-    name: 'string',
+    name: 'string?',
     rating: 'double?',
   },
 }
