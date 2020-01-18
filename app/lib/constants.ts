@@ -163,7 +163,7 @@ const colors = {
     borderWidth: 2,
     text: 'white',
   },
-  followMeButton: {
+  FollowButtons: {
     background: { active: colorThemes.nowDark, inactive: 'black' },
     icon: { active: 'black', inactive: colorThemes.now },
     underlay: colorThemes.now,
@@ -385,7 +385,7 @@ const constants = {
     padding: 5,
     width: 200,
   },
-  followMeButton: {
+  followButtons: {
     opacity: defaultOpacity,
     rightOffset: buttonOffset,
     size: buttonSize,

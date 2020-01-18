@@ -11,21 +11,21 @@ import {
 import { AppState } from 'lib/state';
 import store from 'lib/store';
 
-import FollowMeButton from 'presenters/FollowMeButton';
+import FollowButtons from 'presenters/FollowButtons';
 
-interface FollowMeButtonStateProps {
+interface FollowButtonsStateProps {
   active: boolean;
   bottomOffset: number;
   hidden: boolean;
 }
 
-interface FollowMeButtonDispatchProps {
+interface FollowButtonsDispatchProps {
   onPress: (event: GestureResponderEvent) => void;
 }
 
-export type FollowMeButtonProps = FollowMeButtonStateProps & FollowMeButtonDispatchProps;
+export type FollowButtonsProps = FollowButtonsStateProps & FollowButtonsDispatchProps;
 
-const mapStateToProps = (state: AppState): FollowMeButtonStateProps => {
+const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
   return {
     active: state.flags.followingUser,
     bottomOffset: dynamicLowerButtonBase(state),
@@ -33,7 +33,7 @@ const mapStateToProps = (state: AppState): FollowMeButtonStateProps => {
   }
 }
 
-const mapDispatchToProps = (dispatch: Function): FollowMeButtonDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
   const onPress = () => {
     const { followingUser } = store.getState().flags;
     if (followingUser) { // toggle the state
@@ -48,9 +48,9 @@ const mapDispatchToProps = (dispatch: Function): FollowMeButtonDispatchProps => 
   return dispatchers;
 }
 
-const FollowMeButtonContainer = connect<FollowMeButtonStateProps, FollowMeButtonDispatchProps>(
+const FollowButtonsContainer = connect<FollowButtonsStateProps, FollowButtonsDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(FollowMeButton as any);
+)(FollowButtons as any);
 
-export default FollowMeButtonContainer;
+export default FollowButtonsContainer;

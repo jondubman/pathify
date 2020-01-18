@@ -8,15 +8,15 @@ import {
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import { FollowMeButtonProps } from 'containers/FollowMeButtonContainer';
+import { FollowButtonsProps } from 'containers/FollowButtonsContainer';
 import constants from 'lib/constants';
 
-const colors = constants.colors.followMeButton;
+const colors = constants.colors.followButtons;
 const {
   rightOffset,
   opacity,
   size,
-} = constants.followMeButton;
+} = constants.followButtons;
 
 const Styles = StyleSheet.create({
   button: { // round
@@ -32,7 +32,7 @@ const Styles = StyleSheet.create({
   },
 })
 
-const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
+const FollowButtons = (props: FollowButtonsProps) => (props.hidden ? null : (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.active ? colors.background.active : colors.background.inactive,
@@ -44,9 +44,9 @@ const FollowMeButton = (props: FollowMeButtonProps) => (props.hidden ? null : (
     <FontAwesome5
       color={props.active ? colors.icon.active : colors.icon.inactive}
       name='location-arrow'
-      size={constants.followMeButton.size / 2}
+      size={constants.followButtons.size / 2}
     />
   </TouchableHighlight>
 ))
 
-export default React.memo(FollowMeButton);
+export default React.memo(FollowButtons);
