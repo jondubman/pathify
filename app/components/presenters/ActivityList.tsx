@@ -197,9 +197,10 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start
     const xRightSelectEnd = (activityMargin / 2 + 1); // amount right of an activity you can scroll to select end
 
-    if (index >= list.length || (index === list.length - 1 &&
+    if ((list.length && index >= list.length) || // if way at the end...
+                                (index === list.length - 1 && // ...or if in right half of last margin after activities
                                  proportion > 1 &&
-                                 xScrolledAfterActivity > xLeftSelectStart)) { // if after the last activity...
+                                 xScrolledAfterActivity > xLeftSelectStart)) {
       this.props.reachedEnd();
       this.setState({ scrolledBetweenActivities: false });
     } else if (proportion > 1) {
@@ -426,7 +427,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
         }
       }
     } else { // empty list
-      log.trace('empty list');
+      log.trace('ActivityList: scrollToTime: empty list');
     }
     const params = {
       animated,
