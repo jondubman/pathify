@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
 import database from 'lib/database';
+import { selectedActivityPath } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
 import { Path } from 'shared/paths';
@@ -20,11 +21,10 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
   const paths: Path[] = [];
   if (state.flags.showPathsOnMap) {
-    if (selectedActivityId && selectedActivityId !== currentActivityId) {
-      const path = database.pathById(selectedActivityId);
-      if (path) {
-        paths.push(path);
-      }
+    // using memoized selector
+    const selectedPath = selectedActivityPath(state);
+    if (selectedPath) {
+      paths.push(selectedPath);
     }
     // currentActivity last, therefore on top:
     if (currentActivityId) {

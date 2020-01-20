@@ -12,6 +12,7 @@ import locations from 'shared/locations';
 import { Activity, ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
 import { MarkEvent } from 'shared/marks';
+import { Path } from 'shared/paths';
 import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
@@ -497,3 +498,14 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   }
   return pulsars;
 }
+const getSelectedActivityId = (state: AppState) => state.options.selectedActivityId;
+export const selectedActivityPath = createSelector(
+  [getSelectedActivityId],
+  (selectedActivityId) => {
+    if (!selectedActivityId) {
+      return undefined;
+    }
+    const path = database.pathById(selectedActivityId);
+    return path;
+  }
+)
