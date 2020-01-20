@@ -46,7 +46,7 @@ export const initialAppState = {
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
     followingPath: false, // is map following the former path of user?
     followingUser: false, // is map following user?
-    keepMapCenteredWhenFollowing: false, // true: continuous. false: map recentered only when you near the edge
+    centerMapContinuously: true, // false means map recentered only when you near the edge (see locWellBounded)
     helpOpen: false, // Help panel
     logInDebugVersion: true,
     logInProductionVersion: false,

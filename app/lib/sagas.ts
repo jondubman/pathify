@@ -796,13 +796,13 @@ const sagas = {
           // Potential cascading AppAction.centerMapOnUser:
           const map = MapUtils();
           if (map) {
-            const { followingUser, keepMapCenteredWhenFollowing } = yield select((state: AppState) => state.flags);
+            const { centerMapContinuously, followingUser } = yield select((state: AppState) => state.flags);
             const bounds = yield call(map.getVisibleBounds);
             if (followingUser) {
               const loc = [lon, lat] as LonLat;
-              const outOfBounds = keepMapCenteredWhenFollowing || (bounds && !utils.locWellBounded(loc, bounds));
-              if (!priorLocation || outOfBounds) {
-                  yield put(newAction(AppAction.centerMapOnUser));
+              const outOfBounds = bounds && !utils.locWellBounded(loc, bounds);
+              if (!priorLocation || outOfBounds || centerMapContinuously) {
+                yield put(newAction(AppAction.centerMapOnUser));
               }
             }
           }
