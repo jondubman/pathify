@@ -341,8 +341,9 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   renderItem({ item, index, separators }) {
     const activity = item as ActivityDataExtended;
     const isCurrent = !activity.tEnd;
-    const time = (activity.tLastUpdate && activity.tStart) ?
-      msecToString(activity.tLastUpdate - activity.tStart) : '';
+    const tLast = isCurrent ? utils.now() : activity.tLast;
+    const time = (tLast && activity.tStart) ?
+      msecToString(Math.max(0, tLast - activity.tStart)) : '';
     const distance = (activity.odo && activity.odoStart) ?
       metersToMilesText(activity.odo - activity.odoStart) : '';
     const isSelected = (activity.id === this.props.selectedActivityId);

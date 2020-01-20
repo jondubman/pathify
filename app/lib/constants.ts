@@ -101,10 +101,6 @@ const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(1
 export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
 
 const colors = {
-  activityDetails: {
-    // itemBackground_current: withOpacity(colorThemes.now, 0.5),
-    // itemBackground_selected: withOpacity(namedColors.azure, 0.5),
-  },
   activityInfo: {
     background: withOpacity(namedColors.silver, 0),
   },
@@ -285,15 +281,6 @@ const colors = {
 // --------------------------------------------------------------------------------------------------------------------
 
 const constants = {
-  activityDetails: {
-    heightCollapsed: 60,
-    heightExpanded: 166,
-    itemBorderRadius: 5,
-    itemHeight: 55,
-    itemMargin: 5,
-    itemsWhenCollapsed: 2,
-    itemsWhenExpanded: 6,
-  },
   activityInfo: {
     height: 200,
     sideMargin: 5,

@@ -64,8 +64,9 @@ class Paths extends PureComponent<PathsProps> {
             coordinates,
           },
         }
+        const key = `pathShape${id}-${lats.length}`;
         shapes.push(
-          <Mapbox.ShapeSource id={`pathShape${id}`} key={`pathShape${id}`} shape={pathShape}>
+          <Mapbox.ShapeSource id={`pathShape${id}`} key={key} shape={pathShape}>
             <Mapbox.LineLayer
               id={`path${id}`}
               key={`path${id}`}
