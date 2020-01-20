@@ -1,4 +1,5 @@
 import React, {
+  Fragment,
 } from 'react';
 
 import {
@@ -32,21 +33,37 @@ const Styles = StyleSheet.create({
   },
 })
 
-const FollowButtons = (props: FollowButtonsProps) => (props.hidden ? null : (
-  <TouchableHighlight
-    style={[Styles.button, {
-      backgroundColor: props.active ? colors.background.active : colors.background.inactive,
-      bottom: props.bottomOffset,
-    }]}
-    onPress={props.onPress}
-    underlayColor={colors.underlay}
-  >
-    <FontAwesome5
-      color={props.active ? colors.icon.active : colors.icon.inactive}
-      name='location-arrow'
-      size={constants.followButtons.size / 2}
-    />
-  </TouchableHighlight>
+const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
+  <Fragment>
+    <TouchableHighlight
+      style={[Styles.button, {
+        backgroundColor: props.followingPath ? colors.backgroundPath.active : colors.backgroundPath.inactive,
+        bottom: props.bottomOffset + constants.buttonBaseOffsetPerRow,
+      }]}
+      onPress={props.onPressFollowPath}
+      underlayColor={colors.underlayPath}
+    >
+      <FontAwesome5
+        color={props.followingPath ? colors.iconFollowPath.active : colors.iconFollowPath.inactive}
+        name='location-arrow'
+        size={constants.followButtons.size / 2}
+      />
+    </TouchableHighlight>
+    <TouchableHighlight
+      style={[Styles.button, {
+        backgroundColor: props.followingUser ? colors.backgroundUser.active : colors.backgroundUser.inactive,
+        bottom: props.bottomOffset,
+      }]}
+      onPress={props.onPressFollowUser}
+      underlayColor={colors.underlayUser}
+    >
+      <FontAwesome5
+        color={props.followingUser ? colors.iconFollowUser.active : colors.iconFollowUser.inactive}
+        name='location-arrow'
+        size={constants.followButtons.size / 2}
+      />
+    </TouchableHighlight>
+  </Fragment>
 ))
 
 export default React.memo(FollowButtons);

@@ -1,10 +1,8 @@
 import { connect } from 'react-redux';
 
 import database from 'lib/database';
-import { cachedActivity } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
-import { ActivityDataExtended } from 'shared/activities';
 import { Path } from 'shared/paths';
 
 interface PathsStateProps {
@@ -22,14 +20,15 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
   const paths: Path[] = [];
   if (state.flags.showPathsOnMap) {
-    if (currentActivityId) {
-      const path = database.pathById(currentActivityId);
+    if (selectedActivityId && selectedActivityId !== currentActivityId) {
+      const path = database.pathById(selectedActivityId);
       if (path) {
         paths.push(path);
       }
     }
-    if (selectedActivityId && selectedActivityId !== currentActivityId) {
-      const path = database.pathById(selectedActivityId);
+    // currentActivity last, therefore on top:
+    if (currentActivityId) {
+      const path = database.pathById(currentActivityId);
       if (path) {
         paths.push(path);
       }

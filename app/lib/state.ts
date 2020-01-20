@@ -42,14 +42,14 @@ export const initialAppState = {
     allowMapStyleNone: false, // really only useful for debugging / perf
     activityListScrolling: false, // is the activityList currently actively being scrolled?
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
-    clockMenuOpen: false,
+    clockMenuOpen: false, // if manually opened by user
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
-    followingPath: false, // is map following the former path of user?
-    followingUser: false, // is map following user?
+    followingPath: false, // is map following prior locations of user on an activity path? see flags.showPastLocation.
+    followingUser: false, // is map following current location of user? (the typical map app follow setting)
     centerMapContinuously: true, // false means map recentered only when you near the edge (see locWellBounded)
-    helpOpen: false, // Help panel
-    logInDebugVersion: true,
-    logInProductionVersion: false,
+    helpOpen: false, // manually opened by user
+    logInDebugVersion: true, // typically true
+    logInProductionVersion: false, // typically false
     logToDatabase: false, // applies only if logs are enabled in general (see logInDebugVersion, logInProductionVersion)
     mapEnable: false, // if false, map will not be shown at all. Hold off at startup until we know the initialBounds.
     mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
@@ -63,7 +63,7 @@ export const initialAppState = {
     receiveHeartbeatEvents: false, // TODO
     receiveMotionChangeEvents: false, // TODO
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
-    settingsOpen: false, // settings panel visible state
+    settingsOpen: false, // manually opened by user
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     showActivityDetails: false, // generally false
     showActivityInfo: true, // generally true
@@ -73,7 +73,7 @@ export const initialAppState = {
     showDebugInfo: false, // for debugging, obviously
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
     showPathsOnMap: true, // generally true
-    showPriorLocation: true, // as a Pulsar on the map
+    showPastLocation: true, // as a Pulsar on the map
     showTimeline: true, // generally true
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
@@ -112,7 +112,7 @@ export const initialAppState = {
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)
   },
-  refs: {
+  refs: { // references to React components so they can be called explicitly when needed e.g. for imperative scrolling
     activityList: undefined as ActivityList | undefined,
     timelineScroll: undefined as TimelineScroll | undefined,
   },

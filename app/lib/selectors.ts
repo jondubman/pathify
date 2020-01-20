@@ -1,6 +1,6 @@
 // Selector functions for Redux reducer, plus some other derived quantities not necessarily dependent on Redux state.
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-// import { createSelector } from 'reselect'
+import { createSelector } from 'reselect'
 
 import { AppState } from 'lib/state';
 import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
@@ -281,44 +281,6 @@ export const previousActivity = (state: AppState, t: Timepoint): (ActivityDataEx
   return null;
 }
 
-export const pulsars = (state: AppState): OptionalPulsars => {
-  const {
-    followingUser,
-    mapFullScreen,
-    mapTapped,
-    showPriorLocation,
-    timelineNow,
-    trackingActivity,
-  } = state.flags;
-  const pulsars = { ...state.options.pulsars };
-  const { colors } = constants;
-  if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
-    pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
-      loc: [state.userLocation.lon, state.userLocation.lat],
-      color: colors.pulsars.userLocation,
-      visible: true,
-    }
-  }
-  // always hide prior location in mapFullScreen
-  if (showPriorLocation && !mapFullScreen && !timelineNow) {
-    const { nearTimeThreshold } = constants.timeline;
-    const { scrollTime } = state.options;
-    const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
-    const tMax = scrollTime + nearTimeThreshold;
-    const locEvent = locations.locEventNearestTimepoint(database.events().filtered('t >= $0 AND t <= $1', tMin, tMax),
-                                                        scrollTime,
-                                                        nearTimeThreshold);
-    if (locEvent) {
-      pulsars.priorLocation = {
-        loc: locations.lonLat(locEvent),
-        color: colors.pulsars.priorLocation,
-        visible: true,
-      }
-    }
-  }
-  return pulsars;
-}
-
 export const selectedActivity = (state: AppState): Activity | undefined => {
   if (state.options.selectedActivityId) {
     return database.activityById(state.options.selectedActivityId);
@@ -476,4 +438,54 @@ export const flavorText = (state: AppState): string[] => {
     log.warn('flavorText error', err);
     return [''];
   }
+}
+
+// Memoized selectors (using reselect / createSelector)
+
+const getScrollTime = (state: AppState) => state.options.scrollTime;
+export const getPastLocationEvent = createSelector(
+  [getScrollTime],
+  (scrollTime) => {
+    const { nearTimeThreshold } = constants.timeline;
+    const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
+    const tMax = scrollTime + nearTimeThreshold;
+    // TODO optimize this, not just with reselect, but in a way that avoids the database calls in a selector that gets
+    // called from mapStateToProps which gets called every time the state changes. That means caching path timestamps,
+    // not just pathLats / pathLons. If cache is not filled, we have no path, and this would be a good fallback.
+    return locations.locEventNearestTimepoint(database.events().filtered('t >= $0 AND t <= $1', tMin, tMax),
+      scrollTime,
+      nearTimeThreshold);
+  }
+)
+
+export const pulsars = (state: AppState): OptionalPulsars => {
+  const {
+    followingUser,
+    mapFullScreen,
+    mapTapped,
+    showPastLocation,
+    timelineNow,
+    trackingActivity,
+  } = state.flags;
+  const pulsars = { ...state.options.pulsars };
+  const { colors } = constants;
+  if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
+    pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
+      loc: [state.userLocation.lon, state.userLocation.lat],
+      color: colors.pulsars.userLocation,
+      visible: true,
+    }
+  }
+  // always hide prior location in mapFullScreen
+  if (showPastLocation && !mapFullScreen && !timelineNow) {
+    const pastLocEvent = getPastLocationEvent(state);
+    if (pastLocEvent) {
+      pulsars.pastLocation = {
+        loc: locations.lonLat(pastLocEvent),
+        color: colors.pulsars.pastLocation,
+        visible: true,
+      }
+    }
+  }
+  return pulsars;
 }

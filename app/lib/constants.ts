@@ -135,7 +135,7 @@ const colors = {
     textSelected: withOpacity(namedColors.white, 1),
   },
   appBackground: colorThemes.background,
-  appText: 'black',
+  appText: namedColors.black,
   byName: namedColors, // all of them
   clock: {
     background: withOpacity(namedColors.black, 0.7),
@@ -154,22 +154,25 @@ const colors = {
   },
   compassButton: {
     background: withOpacity(namedColors.white, defaultOpacity),
-    icon: 'black',
+    icon: namedColors.black,
     underlay: withOpacity(namedColors.purple, defaultOpacity),
   },
   debugInfo: {
     backgroundColor: withOpacity(namedColors.black, 0.65),
     borderColor: withOpacity(namedColors.gray, 0.2),
     borderWidth: 2,
-    text: 'white',
+    text: namedColors.white,
   },
   followButtons: {
-    background: { active: colorThemes.nowDark, inactive: 'black' },
-    icon: { active: 'black', inactive: colorThemes.now },
-    underlay: colorThemes.now,
+    backgroundPath: { active: colorThemes.past, inactive: namedColors.black },
+    backgroundUser: { active: colorThemes.nowDark, inactive: namedColors.black },
+    iconFollowPath: { active: namedColors.white, inactive: colorThemes.past },
+    iconFollowUser: { active: namedColors.white, inactive: colorThemes.now },
+    underlayPath: 'transparent',
+    underlayUser: 'transparent',
   },
   geolocationButton: {
-    background: 'white',
+    background: namedColors.white,
     opacity: 0.75,
     disabledBackground: namedColors.green,
     disabledUnderlay: namedColors.brightGreen, // in transition
@@ -177,8 +180,8 @@ const colors = {
     enabledUnderlay: namedColors.darkerYellow, // in transition
   },
   helpButton: {
-    background: 'white',
-    icon: 'black',
+    background: namedColors.white,
+    icon: namedColors.black,
     underlay: colorThemes.help,
   },
   helpPanel: {
@@ -216,7 +219,7 @@ const colors = {
   },
   pulsars: {
     userLocation: withOpacity(colorThemes.now, 1),
-    priorLocation: withOpacity(namedColors.blue, 1),
+    pastLocation: withOpacity(namedColors.blue, 1),
   },
   refTime: {
     background: withOpacity(namedColors.navy, 0.75),
@@ -227,8 +230,8 @@ const colors = {
     underlay: 'transparent',
   },
   settingsButton: {
-    background: 'white',
-    icon: 'black',
+    background: namedColors.white,
+    icon: namedColors.black,
     underlay: colorThemes.settings,
   },
   settingsPanel: {
@@ -265,7 +268,7 @@ const colors = {
     topLine: withOpacity(namedColors.gray, 0.5),
   },
   topButton: {
-    background: 'white',
+    background: namedColors.white,
     backgroundCurrentSelected: withOpacity(colorThemes.now, 1),
     backgroundSelected: withOpacity(colorThemes.past, 1),
     border: withOpacity(namedColors.silver, 0.65),
@@ -273,9 +276,9 @@ const colors = {
     bubble: withOpacity(namedColors.darkerGray, 1),
     bubbleNow: withOpacity(colorThemes.now, 1),
     bubblePast: withOpacity(colorThemes.past, 1),
-    bubbleLabel: 'white',
-    icon: 'black',
-    iconSelected: 'white',
+    bubbleLabel: namedColors.white,
+    icon: namedColors.black,
+    iconSelected: namedColors.white,
     underlay: colorThemes.topMenu,
   },
   topMenu: {
@@ -317,6 +320,7 @@ const constants = {
     topBottomBorderHeight: activityTopBottomBorderHeight,
   },
   appName: 'Pathify',
+  buttonBaseOffsetPerRow: buttonSize + buttonOffset * 2,
   buttonOffset,
   buttonSize,
   clientId,
@@ -367,7 +371,6 @@ const constants = {
   colors,
   colorThemes,
   compassButton: {
-    aboveDynamicBase: buttonSize + buttonOffset * 2,
     leftOffset: buttonOffset,
     mapHeadingThreshold: 1, // (unit: degrees) minimum map heading/bearing required to show CompassButton
     opacity: defaultOpacity,

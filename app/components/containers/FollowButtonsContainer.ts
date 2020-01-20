@@ -14,27 +14,38 @@ import store from 'lib/store';
 import FollowButtons from 'presenters/FollowButtons';
 
 interface FollowButtonsStateProps {
-  active: boolean;
   bottomOffset: number;
-  hidden: boolean;
+  followingPath: boolean;
+  followingUser: boolean;
+  hideBoth: boolean;
 }
 
 interface FollowButtonsDispatchProps {
-  onPress: (event: GestureResponderEvent) => void;
+  onPressFollowPath: (event: GestureResponderEvent) => void;
+  onPressFollowUser: (event: GestureResponderEvent) => void;
 }
 
 export type FollowButtonsProps = FollowButtonsStateProps & FollowButtonsDispatchProps;
 
 const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
   return {
-    active: state.flags.followingUser,
+    followingPath: state.flags.followingPath,
+    followingUser: state.flags.followingUser,
     bottomOffset: dynamicLowerButtonBase(state),
-    hidden: mapHidden(state),
+    hideBoth: mapHidden(state),
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
-  const onPress = () => {
+  const onPressFollowPath = () => {
+    const { followingPath } = store.getState().flags;
+    if (followingPath) { // toggle the state
+      dispatch(newAction(AppAction.stopFollowingPath));
+    } else {
+      dispatch(newAction(AppAction.startFollowingPath));
+    }
+  }
+  const onPressFollowUser = () => {
     const { followingUser } = store.getState().flags;
     if (followingUser) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingUser));
@@ -43,7 +54,8 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
     }
   }
   const dispatchers = {
-    onPress,
+    onPressFollowPath,
+    onPressFollowUser,
   }
   return dispatchers;
 }
@@ -51,6 +63,6 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
 const FollowButtonsContainer = connect<FollowButtonsStateProps, FollowButtonsDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(FollowButtons as any);
+)(FollowButtons) as any;
 
 export default FollowButtonsContainer;

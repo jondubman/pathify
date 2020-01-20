@@ -550,6 +550,7 @@ const sagas = {
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
           }
           if ((center[0] || center[1]) && haveUserLocation) {
+            yield put(newAction(AppAction.stopFollowingPath)); // otherwise map may hop right back
             yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
           }
           if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
@@ -788,7 +789,7 @@ const sagas = {
       const geoloc = action.params as GeolocationParams;
       // yield call(log.trace, 'saga geolocation', geoloc);
       const { lat, lon, recheckMapBounds } = geoloc;
-      const priorLocation = yield select(state => state.userLocation);
+      const previousUserLocation = yield select(state => state.userLocation);
       yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
       if (recheckMapBounds) {
         const appActive = yield select(state => state.flags.appActive);
@@ -801,7 +802,7 @@ const sagas = {
             if (followingUser) {
               const loc = [lon, lat] as LonLat;
               const outOfBounds = bounds && !utils.locWellBounded(loc, bounds);
-              if (!priorLocation || outOfBounds || centerMapContinuously) {
+              if (!previousUserLocation || outOfBounds || centerMapContinuously) {
                 yield put(newAction(AppAction.centerMapOnUser));
               }
             }
@@ -848,7 +849,7 @@ const sagas = {
     if (appState === AppStateChange.STARTUP) {
       yield call(log.trace, 'Skipping database.changeSettings on mapRegionChanged during app startup');
     } else {
-      yield call(log.trace, 'database.changeSettings on mapRegionChanged');
+      // yield call(log.trace, 'database.changeSettings on mapRegionChanged');
       yield call(database.changeSettings, {
         latMax, latMin, lonMax, lonMin,
         mapHeading: heading,
@@ -906,7 +907,7 @@ const sagas = {
       if (id === 'selectedActivityId') { // TODO experiment
         id  = yield select((state: AppState) => state.options.selectedActivityId);
       }
-      yield call(log.trace, 'saga refreshActivity', id);
+      // yield call(log.trace, 'saga refreshActivity', id);
       const eventsForActivity = yield call(database.eventsForActivity, id);
       const { currentActivityId } = yield select((state: AppState) => state.options);
       const { schemaVersion } = constants.database;
@@ -1414,10 +1415,28 @@ const sagas = {
     }
   },
 
+  // Follow the path, recentering map right away.
+  startFollowingPath: function* () {
+    try {
+      yield call(log.debug, 'saga startFollowingPath');
+      yield put(newAction(AppAction.flagDisable, 'followingUser')); // mutual exclusion
+      yield put(newAction(AppAction.flagEnable, 'followingPath'));
+      const map = MapUtils();
+      if (map) {
+        // yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
+      } else {
+        yield call(log.warn, 'saga startFollowingUser: missing map');
+      }
+    } catch (err) {
+      yield call(log.error, 'saga startFollowingUser', err);
+    }
+  },
+
   // Follow the user, recentering map right away.
   startFollowingUser: function* () {
     try {
       yield call(log.debug, 'saga startFollowingUser');
+      yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
       yield put(newAction(AppAction.flagEnable, 'followingUser'));
       const map = MapUtils();
       if (map) {
@@ -1430,13 +1449,14 @@ const sagas = {
     }
   },
 
+  stopFollowingPath: function* () {
+    yield call(log.debug, 'saga stopFollowingPath');
+    yield put(newAction(AppAction.flagDisable, 'followingPath'));
+  },
+
   stopFollowingUser: function* () {
-    try {
       yield call(log.debug, 'saga stopFollowingUser');
       yield put(newAction(AppAction.flagDisable, 'followingUser'));
-    } catch (err) {
-      yield call(log.error, 'saga stopFollowingUser', err);
-    }
   },
 
   // Respond to timeline pan/zoom. x is in the time domain.
@@ -1487,7 +1507,10 @@ const sagas = {
   userMovedMap: function* (action: Action) {
     try {
       // yield call(log.trace, 'saga userMovedMap');
-      const followingUser = yield select((state: AppState) => state.flags.followingUser);
+      const { followingPath, followingUser } = yield select((state: AppState) => state.flags);
+      if (followingPath) {
+        yield put(newAction(AppAction.stopFollowingPath));
+      }
       if (followingUser) {
         yield put(newAction(AppAction.stopFollowingUser));
       }
