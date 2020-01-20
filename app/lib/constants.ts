@@ -206,12 +206,6 @@ const colors = {
     buttons: withOpacity(namedColors.azure, 0.5),
     underlayColor: 'transparent',
   },
-  nowButton: {
-    background: 'transparent',
-    icon: withOpacity(namedColors.darkGreen, 0.75),
-    text: namedColors.black,
-    underlay: namedColors.maroon,
-  },
   paths: {
     transparent: 'transparent',
     current: withOpacity(colorThemes.now, 0.75),
@@ -464,10 +458,6 @@ const constants = {
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
   minDeviceWidth,
-  nowButton: {
-    iconSize: clockHeight - 8,
-    margin: clockMargin,
-  },
   panelHeight,
   panelWidth,
   paths: {
@@ -505,7 +495,6 @@ const constants = {
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO2
     timelineCloseToNow: 1000,
-    timelineZoomThrottle: 100,
     timerTickInterval: 1000, // once per second
   },
   timeline: {

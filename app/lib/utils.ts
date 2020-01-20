@@ -1,5 +1,5 @@
 import {
-  AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
+  AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to our Redux application state
   Dimensions,
 } from 'react-native';
 

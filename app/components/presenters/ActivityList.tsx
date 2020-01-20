@@ -16,7 +16,7 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import constants from 'lib/constants';
-import { centerline, currentActivityIsSelected } from 'lib/selectors';
+import { centerline } from 'lib/selectors';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
