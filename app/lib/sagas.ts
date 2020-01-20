@@ -78,6 +78,7 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
+  getPastLocationEvent,
   loggableOptions,
   mapPadding,
   menuOpen,
@@ -396,6 +397,13 @@ const sagas = {
           response = state.flags;
           break;
         }
+        case 'locs': {
+          response = {
+            pastLocation: getPastLocationEvent(state),
+            userLocation: state.userLocation,
+          }
+          break;
+        }
         case 'logs': {
           const level = query.level || 0;
           const timeRange = query.timeRange || [0, Infinity];
@@ -460,6 +468,7 @@ const sagas = {
             flags: state.flags,
             isDebugVersion: utils.isDebugVersion,
             options: loggableOptions(state),
+            pastLocationEvent: getPastLocationEvent(state),
             pulsars: yield call(pulsars, state),
             userLocation: state.userLocation,
           }

@@ -357,7 +357,6 @@ const database = {
 
   // paths
 
-  // TODO is this guaranteed to work? Can path not exist yet?
   appendToPath: (update: PathUpdate) => {
     const path = database.pathById(update.id);
     if (path && update.lats && update.lons && update.lats.length === update.lons.length) {
