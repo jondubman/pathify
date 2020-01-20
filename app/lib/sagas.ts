@@ -687,7 +687,7 @@ const sagas = {
 
   // TODO paint this activity red on the ActivityList while on the chopping block so it's clear which it is.
   // TODO consider an option to avoid the confirmation alert, at least for testing.
-  // TODO delete path? underlying events?
+  // TODO delete underlying events?
   deleteActivity: function* (action: Action) {
     try {
       const params = action.params as DeleteActivityParams;
@@ -701,10 +701,12 @@ const sagas = {
             return;
           }
           store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: id, remove: true }));
-          database.deleteActivity(id);
           if (id === selectedActivityId) {
             store.dispatch(newAction(AppAction.setAppOption, { selectedActivityId: null }));
           }
+          setTimeout(() => {
+            database.deleteActivity(id);
+          }, 0)
         },
         text: 'Delete',
         style: 'destructive',

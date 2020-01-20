@@ -223,7 +223,7 @@ const database = {
     }
   },
 
-  // Return new Activity
+  // Return new Activity. Creates Path with corresponding id.
   createActivity: (now: number, odoStart: number = 0): Activity => {
     const newActivityTemplate: ActivityData = {
       id: uuid.default(),
@@ -247,6 +247,7 @@ const database = {
       }
       // create Path right away
       const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
+      // TODO could do something with this
     })
     return newActivity;
   },
@@ -255,6 +256,7 @@ const database = {
     return database.events().filtered('activityId == $0', id);
   },
 
+  // Update both the Activity and its corresponding Path
   updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
     let activity: Activity | null = null;
     realm.write(() => {
@@ -268,6 +270,7 @@ const database = {
     }
   },
 
+  // Delete both the Activity and its corresponding Path
   deleteActivity: (activityId: string): void => {
     let existingActivity = realm.objects('Activity')
                                 .filtered(`id == "${activityId}"`);
