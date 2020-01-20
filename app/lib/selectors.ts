@@ -439,7 +439,7 @@ export const flavorText = (state: AppState): string[] => {
   }
 }
 
-// Memoized selectors (using reselect / createSelector)
+// Selectors memozied using reselect / createSelector:
 
 const getScrollTime = (state: AppState) => state.options.scrollTime;
 export const getPastLocationEvent = createSelector(
@@ -462,10 +462,15 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     followingUser,
     mapFullScreen,
     mapTapped,
+    showAllPastLocations,
     showPastLocation,
     timelineNow,
     trackingActivity,
   } = state.flags;
+  const {
+    currentActivityId,
+    selectedActivityId
+  } = state.options;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
   if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
@@ -479,10 +484,14 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   if (showPastLocation && !mapFullScreen && !timelineNow) {
     const pastLocEvent = getPastLocationEvent(state);
     if (pastLocEvent) {
-      pulsars.pastLocation = {
-        loc: locations.lonLat(pastLocEvent),
-        color: colors.pulsars.pastLocation,
-        visible: true,
+      const { activityId } = pastLocEvent;
+      if (showAllPastLocations || (activityId &&
+          (activityId === currentActivityId || activityId === selectedActivityId))) {
+        pulsars.pastLocation = {
+          loc: locations.lonLat(pastLocEvent),
+          color: colors.pulsars.pastLocation,
+          visible: true,
+        }
       }
     }
   }

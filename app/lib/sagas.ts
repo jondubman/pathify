@@ -26,9 +26,6 @@ import {
   Alert,
   AlertButton,
 } from 'react-native';
-import {
-  AppState as RNAppState,
-} from 'react-native';
 import RNRestart from 'react-native-restart';
 import {
   call,

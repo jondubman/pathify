@@ -403,7 +403,6 @@ const constants = {
       choiceLabel: 12,
     },
   },
-  geolocationAgeThreshold: 5000, // msec; those older than this are queued when they arrive and submitted in batch
   geolocationButton: {
     leftOffset: buttonOffset,
     opacity: defaultOpacity,
@@ -443,11 +442,11 @@ const constants = {
       minVerticalPadding: 20,
     },
     opacityUnderPanels: defaultOpacity, // TODO adjust
-    reorientationTime: interval.seconds(1) / 2,
+    reorientationTime: interval.seconds(1) / 2, // to reorient to heading 0 using CompassButton
   },
   mapLogoHeight,
   mapStyles: [
-    { name: 'None', opacity: 1, url: '' },
+    { name: 'None', opacity: 1, url: '' }, // see flags.allowMapStyleNone
     { name: 'Trails', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
     { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
@@ -521,7 +520,7 @@ const constants = {
     },
     miniBarHeight: 15,
     minimumZoomMsec: 1000, // 1 second
-    nearTimeThreshold: interval.minutes(5), // TODO
+    nearTimeThreshold: interval.seconds(10), // TODO
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     widthMultiplier: 10, // >1, important for smooth panning of the timeline. Larger means harder to reach the edge.
