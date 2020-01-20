@@ -418,17 +418,16 @@ export const Geo = {
         return;
       }
       const { appActive, storeAllLocationEvents, trackingActivity } = state.flags;
-      const geoloc: GeolocationParams = {
-        lat: location.coords.latitude,
-        lon: location.coords.longitude,
-        t: new Date(location.timestamp).getTime(),
-        recheckMapBounds: true,
-      }
-      store.dispatch(newAction(AppAction.geolocation, geoloc));
       const activityId = state.options.currentActivityId || '';
       if (appActive) {
         // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${trackingActivity}`);
         const locationEvent = newLocationEvent(location, activityId);
+        const geoloc: GeolocationParams = {
+          locationEvent,
+          t: new Date(location.timestamp).getTime(),
+          recheckMapBounds: true,
+        }
+        store.dispatch(newAction(AppAction.geolocation, geoloc));
         if ((activityId && activityId !== '') || storeAllLocationEvents) {
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         }
@@ -497,10 +496,9 @@ export const Geo = {
         // AppAction.geolocation
         const lastNewEvent = locationEvents[locationEvents.length - 1];
         const geoloc: GeolocationParams = {
-          lat: lastNewEvent.lat,
-          lon: lastNewEvent.lon,
-          t: new Date(lastNewEvent.t).getTime(),
+          locationEvent: lastNewEvent,
           recheckMapBounds: true,
+          t: new Date(lastNewEvent.t).getTime(),
         }
         store.dispatch(newAction(AppAction.geolocation, geoloc));
       }

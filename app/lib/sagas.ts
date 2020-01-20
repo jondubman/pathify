@@ -153,7 +153,7 @@ const sagas = {
           yield takeEvery(AppAction[action], sagas[AppAction[action]]);
         }
       } else {
-        yield call(log.warn, 'unknown action in AppAction enum', action); // TODO why does this happen?
+        yield call(log.warn, 'unknown action in AppAction enum', action);
       }
     }
     // equivalent to
@@ -468,7 +468,7 @@ const sagas = {
             flags: state.flags,
             isDebugVersion: utils.isDebugVersion,
             options: loggableOptions(state),
-            pastLocationEvent: getPastLocationEvent(state),
+            pastLocation: getPastLocationEvent(state),
             pulsars: yield call(pulsars, state),
             userLocation: state.userLocation,
           }
@@ -514,7 +514,7 @@ const sagas = {
       if (setPaceAfterStart && trackingActivity) {
         yield call(Geo.changePace, true, () => {}); // manually set pace to moving when activating TODO
       }
-      const populated = yield select(state => state.cache.populated);
+      const populated = yield select((state: AppState) => state.cache.populated);
       yield call(log.debug, 'cache has been populated:', populated);
       if (!populated) { // Populate the cache for the first time
         yield put(newAction(AppAction.refreshCache));
@@ -545,7 +545,7 @@ const sagas = {
   centerMap: function* (action: Action) {
     try {
       yield call(log.trace, 'saga centerMap');
-      const haveUserLocation = yield select(state => !!state.userLocation);
+      const haveUserLocation = yield select((state: AppState) => !!state.userLocation);
       const map = MapUtils();
       if (map && map.flyTo) {
         const params = action.params as CenterMapParams;
@@ -628,16 +628,12 @@ const sagas = {
     const long = params && params.long;
     const nowClock = params && params.nowClock;
     yield call(log.trace, `clockPress, now: ${nowClock} long: ${long}`);
-    // TODO experiment
-    if (long) {
-      const activity = yield select(state => selectedActivity(state));
-      if (activity) {
-        yield put(newAction(AppAction.deleteActivity, { id: activity.id }));
-      }
-    } else {
+    // TODO remove long if not needed
+    // if (long) {
+    // } else {
       yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
       yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
-    }
+    // }
   },
 
   // Panels here refer to popups / menus.
@@ -699,7 +695,7 @@ const sagas = {
     try {
       const params = action.params as DeleteActivityParams;
       const { id } = params;
-      const { currentActivityId, selectedActivityId } = yield select(state => state.options);
+      const { currentActivityId, selectedActivityId } = yield select((state: AppState) => state.options);
       let deleteButton: AlertButton = {
         onPress: () => {
           log.info('Delete activity', id);
@@ -797,11 +793,12 @@ const sagas = {
     try {
       const geoloc = action.params as GeolocationParams;
       // yield call(log.trace, 'saga geolocation', geoloc);
-      const { lat, lon, recheckMapBounds } = geoloc;
-      const previousUserLocation = yield select(state => state.userLocation);
+      const { locationEvent, recheckMapBounds } = geoloc;
+      const { lat, lon } = locationEvent;
+      const previousUserLocation = yield select((state: AppState) => state.userLocation);
       yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
       if (recheckMapBounds) {
-        const appActive = yield select(state => state.flags.appActive);
+        const appActive = yield select((state: AppState) => state.flags.appActive);
         if (appActive) {
           // Potential cascading AppAction.centerMapOnUser:
           const map = MapUtils();
@@ -878,7 +875,7 @@ const sagas = {
 
   mapTapped: function* (action: Action) {
     yield call(log.debug, 'saga mapTapped', action.params);
-    const state = yield select(state => state);
+    const state = yield select((state: AppState) => state);
     if (menuOpen(state)) {
       yield put(newAction(AppAction.closePanels));
     } else {
@@ -1008,7 +1005,7 @@ const sagas = {
       const realmActivities = yield call(database.activities);
       const activitiesAsArray = Array.from(realmActivities) as ActivityData[]
       const activities = extendedActivities(activitiesAsArray);
-      const refreshCount = (yield select(state => state.cache.refreshCount)) + 1;
+      const refreshCount = (yield select((state: AppState) => state.cache.refreshCount)) + 1;
       yield put(newAction(AppAction.cache, { activities, populated: true, refreshCount }));
       const now = yield call(utils.now);
       yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp, 'count', activities.length);
@@ -1034,7 +1031,7 @@ const sagas = {
       const refreshCount = (yield select((state: AppState) => state.cache.refreshCount)) + 1;
       const activity = remove ? null : database.activityById(id);
       if (activity) {
-        const activities = [...(yield select(state => state.cache.activities || []))];
+        const activities = [...(yield select((state: AppState) => state.cache.activities || []))];
         const extendedActivity = extendedActivities(Array.from([activity]) as ActivityData[])[0];
         const extendedActivityIndex = activities.findIndex(activity => activity.id === extendedActivity.id);
         if (extendedActivityIndex >= 0) {
@@ -1044,7 +1041,7 @@ const sagas = {
         }
         yield put(newAction(AppAction.cache, { activities, refreshCount }));
       } else {
-        const activities = (yield select(state => state.cache.activities)) as ActivityDataExtended[];
+        const activities = (yield select((state: AppState) => state.cache.activities)) as ActivityDataExtended[];
         const activitiesFiltered = activities.filter(activity => activity.id !== id);
         yield put(newAction(AppAction.cache, { activities: activitiesFiltered, refreshCount }));
       }
@@ -1160,7 +1157,7 @@ const sagas = {
     const { params } = action;
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
     // Next, handle side effects:
-    const state: AppState = yield select(state => state);
+    const state: AppState = yield select((state: AppState) => state);
     const { activityListScrolling, timelineNow, timelineScrolling } = state.flags;
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
@@ -1254,7 +1251,7 @@ const sagas = {
       const params = action.params as StartActivityParams || {};
       yield call(log.info, 'saga startActivity', params);
       const continueActivityId = params.continueActivityId || undefined;
-      const trackingActivity = yield select(state => state.flags.trackingActivity);
+      const trackingActivity = yield select((state: AppState) => state.flags.trackingActivity);
       if (!trackingActivity) {
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
@@ -1311,7 +1308,7 @@ const sagas = {
   startupActions: function* () {
     try {
       yield call(database.completeAnyMigration);
-      const { recoveryMode, startupAction_clearStorage } = yield select(state => state.flags);
+      const { recoveryMode, startupAction_clearStorage } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
       if (startupAction_clearStorage) {
         yield put(newAction(AppAction.clearStorage));
@@ -1385,10 +1382,10 @@ const sagas = {
 
   stopActivity: function* () {
     try {
-      const trackingActivity = yield select(state => state.flags.trackingActivity);
+      const trackingActivity = yield select((state: AppState) => state.flags.trackingActivity);
       if (trackingActivity) {
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
-        const activityId = yield select(state => state.options.currentActivityId);
+        const activityId = yield select((state: AppState) => state.options.currentActivityId);
         const now = utils.now();
         const stopEvent: AppUserActionEvent = {
           ...timeseries.newSyncedEvent(now, activityId),

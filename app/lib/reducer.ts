@@ -35,14 +35,13 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         }
         break;
 
-      // Set newState.userLocation to be the most recent locationEvent
       case ReducerAction.GEOLOCATION:
         {
           newState.userLocation = params;
           // Ignore a redundant locationEvent, one with the same timepoint as userLocation.
           const geoloc = params as GeolocationParams;
           if (!state.userLocation || geoloc.t > state.userLocation.t) {
-            newState.userLocation = { ...geoloc };
+            newState.userLocation = geoloc.locationEvent;
           }
         }
         break;

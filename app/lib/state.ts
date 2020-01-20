@@ -3,12 +3,11 @@
 import ActivityList from 'presenters/ActivityList'
 import TimelineScroll from 'presenters/TimelineScroll'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
-import { GeolocationParams } from 'lib/actions';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
 import { AppStateChange } from 'shared/appEvents';
-import { LonLat } from 'shared/locations';
+import { LocationEvent, LonLat } from 'shared/locations';
 
 const now = utils.now();
 
@@ -122,7 +121,7 @@ export const initialAppState = {
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
-  userLocation?: GeolocationParams;
+  userLocation?: LocationEvent;
 }
 
 // TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema.
