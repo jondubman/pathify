@@ -163,9 +163,12 @@ const sagas = {
   // From here on, functions are alphabetized:
 
   activityListReachedEnd: function* (action: Action) {
-    const flags = yield select((state: AppState) => state.flags);
-    if (!flags.timelineScrolling && !flags.timelineNow) {
-      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+    const { flags, options } = yield select((state: AppState) => state);
+    const { appState } = options;
+    if (appState !== AppStateChange.STARTUP) { // TODO probably a redundant guard
+      if (!flags.timelineScrolling && !flags.timelineNow) {
+        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+      }
     }
   },
 
