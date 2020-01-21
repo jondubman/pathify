@@ -3,7 +3,7 @@ platform :ios, '12.0'
 
 target 'Pathify' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
-  use_frameworks!
+  # use_frameworks!
 
   # Pods for Pathify
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
@@ -41,6 +41,7 @@ target 'Pathify' do
   pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
   pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'PathifyTests' do

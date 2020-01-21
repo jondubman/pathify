@@ -190,7 +190,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-mapbox-gl (7.0.8):
+  - react-native-mapbox-gl (7.0.9):
     - React
   - react-native-slider (2.0.8):
     - React
@@ -379,7 +379,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-mapbox-gl: fcd88e2bf0ddea552b0209cc2770a5ac2b9c9910
+  react-native-mapbox-gl: 7d6dda14fda15b680f70ade65e47b2d39cb976d1
   react-native-slider: 3a1cfd00c9c31068251b536822f7192e8d1d6b6f
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
@@ -391,7 +391,7 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RealmJS: da09f3b0fa88637ab51af8efa17b335f13d02046
+  RealmJS: c19d60dbe21606dade0f6217f4dd0d1fb8bb4e3a
   RNBackgroundFetch: 8d8d66b47eafcb9e772b2eb95057939038b3ef95
   RNBackgroundGeolocation: 8f0a20788100fbf08987d80f2053ae6eba79c566
   RNDeviceInfo: 0e40d9a9031252d2525d8b69a4b3fa8689efcea4
@@ -399,6 +399,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: cd62e7361d4e7f3d3377398991bc4ae828a8ddb1
+PODFILE CHECKSUM: 513f51b5816e9e95014023c6da2cd307be94a739
 
 COCOAPODS: 1.8.4

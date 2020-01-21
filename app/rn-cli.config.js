@@ -1,5 +1,6 @@
 // This is the key to getting Typescript to work with react-native.
 module.exports = {
+  assets: ['react-native-vector-icons'],
   transformer: {
     getTransformOptions: async () => ({
       transform: {

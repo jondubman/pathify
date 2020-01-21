@@ -6,7 +6,6 @@ import com.facebook.react.ReactApplication;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
 import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -31,7 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativeRestartPackage(),
             new ReactSliderPackage(),
             new RCTMGLPackage(),
-            new VectorIconsPackage(),
             new SvgPackage()
       );
     }
