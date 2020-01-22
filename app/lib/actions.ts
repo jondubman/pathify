@@ -34,6 +34,7 @@ export enum AppAction {
   'addEvents' = 'addEvents',
   'appStateChange' = 'appStateChange',
   'appQuery' = 'appQuery',
+  'appStartupCompleted' = 'appStartupCompleted',
   'backgroundTapped' = 'backgroundTapped',
   'cache' = 'cache',
   'centerMap' = 'centerMap',

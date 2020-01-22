@@ -167,6 +167,7 @@ const sagas = {
     const { appState } = options;
     if (appState !== AppStateChange.STARTUP) { // TODO probably a redundant guard
       if (!flags.timelineScrolling && !flags.timelineNow) {
+        yield call(log.trace, 'saga activityListReachedEnd: enabling timelineNow');
         yield put(newAction(AppAction.flagEnable, 'timelineNow'));
       }
     }
@@ -444,7 +445,12 @@ const sagas = {
           break;
         }
         case 'settings': {
-          response = yield call(database.settings);
+          const settings = yield call(database.settings);
+          response = {
+            ...settings,
+            pausedTime_: new Date(settings.pausedTime).toString(),
+            updateTime_: new Date(settings.updateTime).toString(),
+          }
           break;
         }
         case 'status': {
@@ -486,13 +492,21 @@ const sagas = {
     }
   },
 
+  appStartupCompleted: function* (action: Action) {
+    yield call(log.info, 'appStartupCompleted');
+    yield put(newAction(AppAction.flagEnable, 'appStartupCompleted')); // note name of flag and this saga match here
+  },
+
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
-    const { manual, newState } = params;
-    const stillStartingUp = yield select((state: AppState) => state.options.appState === AppStateChange.STARTUP);
-    if (!manual && stillStartingUp) {
-      yield call(log.info, `appStateChange saga: ${newState} but still starting up, ignoring`);
-      return;
+    const { manual, newState } = params; // TODO manual param not really needed
+    const appStartupCompleted = yield select((state: AppState) => state.flags.appStartupCompleted);
+    if (!appStartupCompleted) {
+      yield take(AppAction.appStartupCompleted); // wait for it...
+    }
+    const appStartupCompletedNow = yield select((state: AppState) => state.flags.appStartupCompleted);
+    if (!appStartupCompletedNow) {
+      yield call(log.warn, 'Something has gone wrong with appStartupCompleted');
     }
     yield call(log.info, `appStateChange saga: ${newState}${manual ? ', invoked manually' : ''}`);
     const activating = (newState === AppStateChange.ACTIVE);
@@ -516,7 +530,7 @@ const sagas = {
       }
       const populated = yield select((state: AppState) => state.cache.populated);
       yield call(log.debug, 'cache has been populated:', populated);
-      if (!populated) { // Populate the cache for the first time
+      if (!populated) {
         yield put(newAction(AppAction.refreshCache));
       }
     } else {
@@ -709,6 +723,10 @@ const sagas = {
           }
           setTimeout(() => {
             database.deleteActivity(id);
+            const { activityList } = store.getState().refs;
+            if (activityList) {
+              activityList.forceUpdate();
+            }
           }, 0)
         },
         text: 'Delete',
@@ -733,33 +751,35 @@ const sagas = {
     const enabledNow = flags[flagName];
     const options = yield select((state: AppState) => state.options);
     const { appState, viewTime } = options;
-    if (appState !== AppStateChange.STARTUP) { // avoid changing settings during startup (instead, we apply previous)
+    if (appState === AppStateChange.STARTUP) {
+      // avoid changing settings during startup (instead, we apply previous)
+    } else {
       // In general, persist persistedFlags in Settings
       if (persistedFlags.includes(flagName)) {
         yield call(database.changeSettings, { [flagName]: enabledNow }); // note usage of computed property name
       }
-    }
-    if (flagName === 'timelineNow') {
-      if (enabledNow) { // this means we just enabled it
-        const now = utils.now();
-        const pausedTime = viewTime; // the current viewTime (which is about to be changed)
-        if (!flags.activityListScrolling && !flags.timelineScrolling) {
-          yield put(newAction(AppAction.setAppOption, {
-            pausedTime,
-            centerTime: now,
-            scrollTime: now,
-            viewTime: now,
-          }))
-          yield put(newAction(AppAction.timerTick, now));
+      if (flagName === 'timelineNow') {
+        if (enabledNow) { // this means we just enabled it
+          const now = utils.now();
+          const pausedTime = viewTime; // the current viewTime (which is about to be changed)
+          if (!flags.activityListScrolling && !flags.timelineScrolling) {
+            yield put(newAction(AppAction.setAppOption, {
+              pausedTime,
+              centerTime: now,
+              scrollTime: now,
+              viewTime: now,
+            }))
+            yield put(newAction(AppAction.timerTick, now));
+          }
         }
       }
-    }
-    if (flagName === 'trackingActivity') {
-      if (flags.setPaceAfterStart && enabledNow) {
-        // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
-        yield call(Geo.changePace, true, () => {
-          log.debug('BackgroundGeolocation pace manually set to moving');
-        })
+      if (flagName === 'trackingActivity') {
+        if (flags.setPaceAfterStart && enabledNow) {
+          // Set pace to moving to ensure we don't miss anything at the start, bypassing stationary monitoring.
+          yield call(Geo.changePace, true, () => {
+            log.debug('BackgroundGeolocation pace manually set to moving');
+          })
+        }
       }
     }
   },
@@ -996,7 +1016,6 @@ const sagas = {
       yield take(AppAction.refreshActivityDone); // wait for it to finish
       count++;
       yield call(log.trace, 'refreshAllActivities: refreshActivityDone', count, id);
-      yield delay(constants.timing.activityRefreshDelay);
     }
   },
 
@@ -1158,8 +1177,14 @@ const sagas = {
     // First, actually set the options!
     const { params } = action;
     yield put(newAction(ReducerAction.SET_APP_OPTION, action.params));
-    // Next, handle side effects:
+
+    // Next, handle option side effects:
     const state: AppState = yield select((state: AppState) => state);
+    const { appState } = state.options;
+    if (appState === AppStateChange.STARTUP) {
+      // Note no side effects during startup
+      return;
+    }
     const { activityListScrolling, timelineNow, timelineScrolling } = state.flags;
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
@@ -1169,11 +1194,12 @@ const sagas = {
       if (timelineNow) {
         if (t < utils.now() - constants.timing.timelineCloseToNow) {
           yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-          yield call(log.scrollEvent, 'setAppOption: disabled timelineNow as side effect of setting params.viewtime');
+          yield call(log.scrollEvent, 'setAppOption: disabled timelineNow as side effect of setting viewtime');
         }
       } else {
         // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
+        yield call(log.trace, 'Setting viewTime when timeline is paused updates pausedTime:', t);
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
       }
       // If viewTime is too far from the current timeline center, re-center timeline around viewTime.
@@ -1208,20 +1234,17 @@ const sagas = {
         yield call(log.scrollEvent, 'setAppOption: scrollActivityList to scrollTime:', params.scrollTime);
       }
     }
-    // Write through to settings in database, if needed
-    const options = yield select((state: AppState) => state.options); // ensure we have the latest
-    const { appState } = options;
-    if (appState !== AppStateChange.STARTUP) { // If starting up, avoid writing the same settings we just read.
-      const newSettings = {} as any;
-      for (let propName of persistedOptions) {
-        if (params[propName] !== undefined) {
-          newSettings[propName] = params[propName];
-        }
+    // Write through to settings in database.
+    // Note that if starting up (the early return above), we avoid writing the same settings we just read.
+    const newSettings = {} as any;
+    for (let propName of persistedOptions) {
+      if (params[propName] !== undefined) {
+        newSettings[propName] = params[propName];
       }
-      if (Object.entries(newSettings).length) {
-        // yield call(log.trace, 'Writing settings to database', newSettings);
-        yield call(database.changeSettings, newSettings);
-      }
+    }
+    if (Object.entries(newSettings).length) {
+      yield call(log.trace, 'Writing settings to database', newSettings);
+      yield call(database.changeSettings, newSettings);
     }
   },
 
@@ -1258,7 +1281,9 @@ const sagas = {
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
         yield call(Geo.setConfig, true, background);
-        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+        if (!continueActivityId) {
+          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+        }
         const now = utils.now();
         let activityId: string;
         if (continueActivityId) {
@@ -1309,6 +1334,7 @@ const sagas = {
   // but is essentially an option to startActivity.
   startupActions: function* () {
     try {
+      const runningInBackgroundNow = utils.appInBackground();
       yield call(database.completeAnyMigration);
       const { recoveryMode, startupAction_clearStorage } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
@@ -1317,18 +1343,18 @@ const sagas = {
       }
       const settings = (yield call(database.settings)) as SettingsObject;
       yield call(log.info, 'Saved App settings', settings);
-      // restore app flags from settings
-      for (let propName of persistedFlags) {
-        if (settings[propName] !== undefined) {
-          const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
-          yield put(newAction(actionType, propName));
-        }
-      }
       // restore app options from settings
       const newSettings = {} as any;
       for (let propName of persistedOptions) {
         if (settings[propName] !== undefined) {
           newSettings[propName] = settings[propName];
+        }
+      }
+      // restore app flags from settings
+      for (let propName of persistedFlags) {
+        if (settings[propName] !== undefined) {
+          const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
+          yield put(newAction(actionType, propName));
         }
       }
       const propagatedSettings = {} as any; // TODO really mean type of AppState options
@@ -1341,7 +1367,16 @@ const sagas = {
         yield call(log.debug, 'Reading settings from database', newSettings);
         yield put(newAction(AppAction.setAppOption, { ...newSettings, ...propagatedSettings }));
       }
-      const { currentActivityId, pausedTime, latMax, latMin, lonMax, lonMin, mapHeading, mapZoomLevel } = settings;
+      const {
+        currentActivityId,
+        pausedTime,
+        latMax,
+        latMin,
+        lonMax,
+        lonMin,
+        mapHeading,
+        mapZoomLevel
+      } = settings;
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
@@ -1360,6 +1395,9 @@ const sagas = {
       yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
       yield call(Geo.startBackgroundGeolocation);
       if (!recoveryMode) {
+        // if (!runningInBackgroundNow) {
+        //   yield put(newAction(AppAction.refreshCache)); // TODO experiment -- do on load
+        // }
         if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
           yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId })); // this will follow user
@@ -1368,15 +1406,15 @@ const sagas = {
             const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
             if (activity && activity.id) {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
-              yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: false, zoomTimeline: true })); // in startupActions
+              yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: false, zoomTimeline: false })); // in startupActions
             }
           }
         }
       }
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
-      const runningInBackgroundNow = utils.appInBackground();
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
+      yield put(newAction(AppAction.appStartupCompleted)); // yield take(AppAction.appStartupCompleted) waits for this.
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
     }
@@ -1476,6 +1514,7 @@ const sagas = {
     const scrollTime = (x[0] + x[1]) / 2;
     yield put(newAction(AppAction.flagDisable, 'timelineScrolling'));
     if (timelineScrolling && !activityListScrolling) {
+      yield call(log.trace, 'zanzi timelineZoomed', scrollTime);
       yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
     }
     yield call(log.scrollEvent, 'timelineZoomed', scrollTime, activityListScrolling, timelineScrolling);
@@ -1530,11 +1569,12 @@ const sagas = {
   // Zoom the map and/or timeline to the duration/bounds of the (cached) Activity.
   zoomToActivity: function* (action: Action) {
     const { id, zoomMap, zoomTimeline } = action.params as ZoomToActivityParams;
-    const state = (yield select((state: AppState) => state)) as AppState;
-    if (!state.cache.populated) {
-      yield call(log.info, 'saga zoomToActivity: cache not populated yet');
-      yield take(AppAction.refreshCacheDone); // TODO really we only need the specified activity to be cached
+    const populated = (yield select((state: AppState) => state.cache.populated));
+    if (!populated) {
+      yield call(log.info, 'saga zoomToActivity: cache not populated yet', action.params);
+      yield take(AppAction.refreshCacheDone); // TODO really we only need the specified activity to have been cached
     }
+    const state = (yield select((state: AppState) => state)) as AppState; // careful - this can go stale if done above!
     const activity = cachedActivity(state, id);
     if (activity) {
       yield call(log.debug, `saga zoomToActivity activityId: ${activity.id}`);

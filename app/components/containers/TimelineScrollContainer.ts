@@ -12,6 +12,7 @@ import {
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import TimelineScroll from 'presenters/TimelineScroll';
+import log from 'shared/log';
 
 export interface TimelineScrollStateProps {
   centerTime: number;
@@ -57,6 +58,7 @@ const mapDispatchToProps = (dispatch: Function): TimelineScrollDispatchProps => 
     }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the TimelineScroll.
   }
   const setTimelineNow = (enabled: boolean) => {
+    log.trace('TimelineScrollContainer: setTimelineNow', enabled);
     dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'timelineNow'));
   }
   const setTimelineScrolling = (enabled: boolean) => {

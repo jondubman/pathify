@@ -167,10 +167,15 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     }
   }
 
-  // Handle ActivityList scroll event
+  // Handle ActivityList scroll event.
+  // This often causes Timeline to scroll to stay synced up, and will also enable timelineNow if you scroll to the end.
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;
     log.scrollEvent('ActivityList handleScroll', x);
+    // const now = utils.now();
+    // const { timeStamp } = event;
+    // log.trace('ActivityList handleScroll', x, timeStamp, new Date(timeStamp).toString(), now, msecToString(now - timeStamp));
+
     const { list } = this.props;
 
     // ActivityList has been scrolled to position x. Convert to Timepoint and pass to onScroll.
@@ -191,6 +196,8 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       log.scrollEvent('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
       this.props.onScrollTimeline(t);
       this.setState({ scrolledBetweenActivities: false });
+    } else {
+      log.scrollEvent('handleScroll outside activity', baseX, ratio, index, proportion);
     }
     const xScrolledAfterActivity = remainder - activityWidth;
     // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
@@ -201,7 +208,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
                                 (index === list.length - 1 && // ...or if in right half of last margin after activities
                                  proportion > 1 &&
                                  xScrolledAfterActivity > xLeftSelectStart)) {
-      this.props.reachedEnd();
+      log.debug('ActivityList handleScroll reachedEnd');
       this.setState({ scrolledBetweenActivities: false });
     } else if (proportion > 1) {
       log.scrollEvent('ActivityList handleScroll: proportion', proportion,
@@ -235,6 +242,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   handleScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;
     log.scrollEvent('ActivityList handleScrollEndDrag', x);
+    log.trace('ActivityList handleScrollEndDrag', x);
     const { list } = this.props;
     const totalWidthPerActivity = activityMargin + activityWidth;
     const baseX = x - activityMargin;
@@ -262,7 +270,14 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   render() {
     utils.addToCount('renderActivityList');
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
-    const { currentActivityId, list, selectedActivityId, timelineNow, top, trackingActivity } = this.props;
+    const {
+      currentActivityId,
+      list,
+      selectedActivityId,
+      timelineNow,
+      top,
+      trackingActivity
+    } = this.props;
     const { scrolledBetweenActivities } = this.state;
     const selectedIsCurrent = (selectedActivityId === currentActivityId);
     const centerLineLeft = centerline() - centerLineWidth / 2;

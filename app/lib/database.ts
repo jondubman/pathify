@@ -7,11 +7,13 @@ import {
 } from 'lib/actions';
 import constants from 'lib/constants';
 import store from 'lib/store';
+import utils from 'lib/utils';
 import {
   Activity,
   ActivityData,
   ActivitySchema,
 } from 'shared/activities';
+import log from 'shared/log';
 import {
   Path,
   PathSchema,
@@ -26,8 +28,6 @@ import {
   Timepoint,
 } from 'shared/timeseries';
 
-import log from 'shared/log';
-
 export const LogSchema: Realm.ObjectSchema = {
   name: 'Log',
   properties: {
@@ -38,6 +38,7 @@ export const LogSchema: Realm.ObjectSchema = {
 }
 
 export interface LogMessage extends LogMessageData, Realm.Object {
+  // nothing beyond those two
 }
 
 export interface LogMessageData {
@@ -66,6 +67,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     showTimeline: 'bool',
     timelineNow: 'bool',
     timelineZoomValue: 'double',
+    updateTime: 'int',
   }
 }
 
@@ -87,6 +89,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   showTimeline: boolean,
   timelineNow: boolean,
   timelineZoomValue: number,
+  updateTime: number,
 }
 
 const schemaList = [
@@ -121,6 +124,7 @@ const defaultSettings = {
   showTimeline: true,
   timelineNow: true,
   timelineZoomValue: constants.timeline.default.zoomValue,
+  updateTime: 0,
 }
 
 let migrationRequired = false;
@@ -337,20 +341,24 @@ const database = {
 
   changeSettings: async (changes: any) => {
     try {
+      const now = utils.now();
       const settings = realm.objects('Settings');
       if (settings.length) {
         realm.write(() => {
           for (let [key, value] of Object.entries(changes)) {
             settings[0][key] = value;
           }
+          settings[0].updateTime = now;
+          // log.debug('changeSettings changes:', changes);
         })
       } else {
         // Note id is always 1 (Settings is a singleton)
         // Initialize settings:
-        const settings = { ...defaultSettings, ...changes }; // merge any changes
+        const settings = { ...defaultSettings, ...changes, updateTime: now }; // merge any changes
         realm.write(() => {
           realm.create('Settings', settings, true); // true: update
         })
+        log.debug('changeSettings wrote:', settings);
       }
       // log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
     } catch (err) {

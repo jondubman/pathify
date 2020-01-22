@@ -9,8 +9,6 @@ import { ActivityDataExtended } from 'shared/activities';
 import { AppStateChange } from 'shared/appEvents';
 import { LocationEvent, LonLat } from 'shared/locations';
 
-const now = utils.now();
-
 // Note events and persistent settings are external to this (in Realm) - see database module
 
 export interface CacheInfo {
@@ -28,6 +26,8 @@ export interface MapRegionUpdate {
 // This is the default, initial Redux state before any saved Settings are restored from Realm.
 // See persistedFlags and persistedOptions below.
 
+const now = utils.now();
+
 export const initialAppState = {
   cache: {
     activities: [],
@@ -41,6 +41,7 @@ export const initialAppState = {
     allowMapStyleNone: false, // really only useful for debugging / perf
     activityListScrolling: false, // is the activityList currently actively being scrolled?
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
+    appStartupCompleted: false, // once true, should never be set to false
     clockMenuOpen: false, // if manually opened by user
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
     followingPath: false, // is map following prior locations of user on an activity path? see flags.showPastLocation.

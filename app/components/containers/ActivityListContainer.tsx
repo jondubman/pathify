@@ -35,7 +35,6 @@ interface ActivityListDispatchProps {
   onPressFutureZone: () => void;
   onScrollTimeline: (t: Timepoint) => void;
   register: (component: Component) => void;
-  reachedEnd: () => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
@@ -83,17 +82,16 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     }
   }
   const onPressFutureZone = (): void => {
+    log.trace('ActivityListContainer onPressFutureZone');
     dispatch(newAction(AppAction.activityListReachedEnd));
     const now = utils.now();
     dispatch(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in onPressFutureZone
   }
   const onScrollTimeline = (t: Timepoint) => {
+    log.trace('ActivityListContainer onScrollTimeline', t);
     dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
     dispatch(newAction(AppAction.activityListScrolled, { t }));
     dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
-  }
-  const reachedEnd = () => {
-    dispatch(newAction(AppAction.activityListReachedEnd));
   }
   const register = (component) => {
     setTimeout(() => {
@@ -104,7 +102,6 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     onPressActivity,
     onPressFutureZone,
     onScrollTimeline,
-    reachedEnd,
     register,
   }
   return dispatchers;

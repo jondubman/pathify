@@ -13,19 +13,6 @@ export interface AppStateChangeEvent extends GenericEvent {
   newState: AppStateChange;
 }
 
-export const lastStartupTime = (events: Events): (Timepoint | null) => {
-  const reversedEvents = events.filtered('type == "APP"');
-  for (let e of reversedEvents) {
-    const event = e as any as GenericEvent;
-    if (event.type === EventType.APP) {
-      if ((event as AppStateChangeEvent).newState === AppStateChange.STARTUP) {
-        return event.t;
-      }
-    }
-  }
-  return null;
-}
-
 export enum AppUserAction {
   // 'MENU_ITEM_SELECTED' = 'MENU_ITEM_SELECTED',
   'START' = 'START',

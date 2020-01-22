@@ -74,7 +74,7 @@ const colorThemes = {
 }
 
 // For Realm database. Very meaningful to Realm!
-const schemaVersion = 25;
+const schemaVersion = 26;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
@@ -476,7 +476,6 @@ const constants = {
   },
   timing: { // msec
     activityListAnimationCompletion: 600,
-    activityRefreshDelay: 1000, // TODO
     menuFade: 300,
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,

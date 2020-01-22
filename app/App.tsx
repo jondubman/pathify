@@ -3,7 +3,7 @@ import {
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
 } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons';
+// import FontAwesome5 from 'react-native-vector-icons';
 import { Provider } from 'react-redux';
 
 // Note the following transformer, along with package.json files containing a name property, enables import from lib/* etc.
@@ -59,16 +59,16 @@ export default class App extends Component {
       log.info('windowSize', utils.windowSize());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
+      store.dispatch(newAction(AppAction.startupActions));
 
       // For react-native-vector-icons if use_frameworks in Podfile
       // See https://awesomeopensource.com/project/oblador/react-native-vector-icons
-      log.debug('FontAwesome5', FontAwesome5);
-      if ((FontAwesome5 as any).loadFont) {
-        log.debug('react-native-vector-icons loadFont');
-        (FontAwesome5 as any).loadFont();
-      }
+      // log.debug('FontAwesome5', FontAwesome5);
+      // if ((FontAwesome5 as any).loadFont) {
+      //   log.debug('react-native-vector-icons loadFont');
+      //   (FontAwesome5 as any).loadFont();
+      // }
 
-      store.dispatch(newAction(AppAction.startupActions));
       const interval = setInterval(() => {
         const { flags } = store.getState();
         if (flags.appActive && flags.ticksEnabled) { // no need for timer ticks in the background
