@@ -342,7 +342,7 @@ const database = {
   changeSettings: async (changes: any) => {
     try {
       const now = utils.now();
-      const settings = realm.objects('Settings');
+      const settings = realm.objects('Settings') as Realm.Results<SettingsObject>;
       if (settings.length) {
         realm.write(() => {
           for (let [key, value] of Object.entries(changes)) {
@@ -391,7 +391,7 @@ const database = {
 
   settings: (): any => {
     try {
-      const currentState = realm.objects('Settings');
+      const currentState = realm.objects('Settings') as Realm.Results<SettingsObject>;
       if (currentState.length) {
         return { ...currentState[0], schemaVersion }; // return a copy of all the settings plus schemaVersion
       }

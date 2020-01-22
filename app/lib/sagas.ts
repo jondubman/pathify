@@ -745,18 +745,17 @@ const sagas = {
     }
   },
 
-  //  After-effects (i.e. downstream side effects) of modifying app flags are handled here.
+  // After-effects (i.e. downstream side effects) of modifying app flags are handled here.
   flag_sideEffects: function* (flagName: string) {
-    const flags = yield select((state: AppState) => state.flags);
+    const { flags, options } = yield select((state: AppState) => state);
     const enabledNow = flags[flagName];
-    const options = yield select((state: AppState) => state.options);
-    const { appState, viewTime } = options;
-    if (appState === AppStateChange.STARTUP) {
-      // avoid changing settings during startup (instead, we apply previous)
-    } else {
-      // In general, persist persistedFlags in Settings
+    const { appStartupCompleted } = flags;
+    const { viewTime } = options;
+    // Avoid changing settings during startup (instead, we apply previous.)
+    if (appStartupCompleted) {
+      // Persist persistedFlags in Settings.
       if (persistedFlags.includes(flagName)) {
-        yield call(database.changeSettings, { [flagName]: enabledNow }); // note usage of computed property name
+        yield call(database.changeSettings, { [flagName]: enabledNow }); // Note usage of computed property name.
       }
       if (flagName === 'timelineNow') {
         if (enabledNow) { // this means we just enabled it
@@ -1415,6 +1414,11 @@ const sagas = {
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
       yield put(newAction(AppAction.appStartupCompleted)); // yield take(AppAction.appStartupCompleted) waits for this.
+      if (pausedTime) {
+        yield call(log.debug, 'zanzi', pausedTime);
+        yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime })); // intent is to trigger side-effects
+        // yield put(newAction(AppAction.scrollTimeline, { scrollTime: pausedTime }));
+      }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
     }
