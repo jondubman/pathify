@@ -635,15 +635,10 @@ const sagas = {
 
   clockPress: function* (action: Action) {
     const params = action.params as ClockPressParams;
-    const long = params && params.long;
     const nowClock = params && params.nowClock;
-    yield call(log.trace, `clockPress, now: ${nowClock} long: ${long}`);
-    // TODO remove long if not needed
-    // if (long) {
-    // } else {
-      yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
-      yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
-    // }
+    yield call(log.trace, `clockPress, now: ${nowClock}`);
+    yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
+    yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
   },
 
   // Panels here refer to popups / menus.
@@ -909,6 +904,9 @@ const sagas = {
     if (menuOpen(state)) {
       yield put(newAction(AppAction.closePanels));
     } else {
+      if (state.flags.mapTapTogglesFullScreen) {
+        yield put(newAction(AppAction.flagToggle, 'mapFullScreen'));
+      }
       yield put(newAction(AppAction.flagToggle, 'mapTapped'));
     }
   },

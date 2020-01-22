@@ -11,6 +11,7 @@ import { AppState } from 'lib/state';
 interface AppUIStateProps {
   mapFullScreen: boolean;
   mapTapped: boolean;
+  mapTapTogglesFullScreen: boolean;
   showActivityInfo: boolean;
   showDebugInfo: boolean;
   showTimeline: boolean;
@@ -23,10 +24,18 @@ interface AppUIDispatchProps {
 export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
-  const { mapFullScreen, mapTapped, showActivityInfo, showDebugInfo, showTimeline } = state.flags;
+  const {
+    mapFullScreen,
+    mapTapped,
+    mapTapTogglesFullScreen,
+    showActivityInfo,
+    showDebugInfo,
+    showTimeline
+  } = state.flags;
   return {
     mapFullScreen,
     mapTapped,
+    mapTapTogglesFullScreen,
     showActivityInfo: showActivityInfo,
     showDebugInfo: showDebugInfo && !!selectedOrCurrentActivity(state) && !menuOpen(state),
     showTimeline: showTimeline && !mapFullScreen,

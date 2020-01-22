@@ -169,7 +169,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                       {props.mapStyles.map((mapStyle: MapStyle, index: number) => (
                         <TouchableHighlight
                           key={index}
-                          onPress={() => { props.onSelectMapStyle(mapStyle.name)} }
+                          onPressIn={() => { props.onSelectMapStyle(mapStyle.name)} }
                           style={[Styles.choice, (mapStyle.name === props.mapStyle.name) ? Styles.chosen : null]}
                           underlayColor={constants.colors.settingsPanel.choiceUnderlay}
                         >

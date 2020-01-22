@@ -29,18 +29,12 @@ const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps 
 }
 
 const mapDispatchToProps = (dispatch: Function, ownProps?: OwnProps): ClockDispatchProps => {
-  const onLongPress = () => {
-    if (ownProps && ownProps.interactive) {
-      dispatch(newAction(AppAction.clockPress, { long: true, nowClock: false }));
-    }
-  }
   const onPress = () => {
     if (ownProps && ownProps.interactive) {
-      dispatch(newAction(AppAction.clockPress, { long: false, nowClock: false }));
+      dispatch(newAction(AppAction.clockPress, { nowClock: false }));
     }
   }
   const dispatchers = {
-    onLongPress,
     onPress,
   }
   return dispatchers;

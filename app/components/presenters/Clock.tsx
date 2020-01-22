@@ -34,7 +34,6 @@ export interface ClockStateProps {
 }
 
 export interface ClockDispatchProps {
-  onLongPress: () => void;
   onPress: () => void;
 }
 
@@ -232,8 +231,7 @@ const ClockMechanics = (props: ClockProps) => (
 const Clock = (props: ClockProps) => props.interactive ? (
   <TouchableHighlight
     style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
-    onLongPress={props.onLongPress}
-    onPress={props.onPress}
+    onPressIn={props.onPress}
     underlayColor={colors.underlay}
   >
     {ClockMechanics(props)}

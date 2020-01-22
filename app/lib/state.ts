@@ -56,7 +56,9 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    mapTapped: false, // tapping the map in mapFullScreen mode hides even the minimal UI, leaving nothing but map/path
+    mapTapped: false, // tapping the map in mapFullScreen mode when mapTapTogglesFullScreen disabled
+                      // hides even the minimal UI, leaving nothing but map/path
+    mapTapTogglesFullScreen: true, // should tapping the map by itself toggle full screen mode; false is less surprising
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     receiveActivityChangeEvents: false, // TODO

@@ -149,7 +149,6 @@ export interface CenterMapParams {
 }
 
 export interface ClockPressParams {
-  long: boolean;
   nowClock: boolean;
 }
 

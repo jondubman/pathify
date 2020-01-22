@@ -142,7 +142,7 @@ const colors = {
     backgroundPastCurrent: withOpacity(namedColors.azure, 0.75),
     backgroundStopped: withOpacity(namedColors.yellow, 0.65), // debug-only
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.65), // debug-only
-    underlay: withOpacity(namedColors.black, 0.5),
+    underlay: 'transparent',
   },
   clockMenu: {
     background: withOpacity(colorThemes.background, defaultOpacity),

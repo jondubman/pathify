@@ -39,7 +39,7 @@ const HelpButton = (props: HelpButtonProps) => (
       backgroundColor: props.enabled ? colors.underlay : colors.background,
       top: props.topOffset,
     }]}
-    onPress={props.onPress}
+    onPressIn={props.onPress}
     underlayColor={props.enabled ? colors.background : colors.underlay}
   >
     <FontAwesome5

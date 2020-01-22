@@ -40,7 +40,7 @@ const SettingsButton = (props: SettingsButtonProps) => (
       backgroundColor: props.open ? colors.underlay : colors.background,
       opacity: props.open ? opacityWhenOpen : opacityWhenClosed,
     }]}
-    onPress={props.onPress}
+    onPressIn={props.onPress}
     underlayColor={props.open ? colors.background : colors.underlay}
   >
     <FontAwesome5
