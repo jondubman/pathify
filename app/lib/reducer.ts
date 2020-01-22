@@ -24,7 +24,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
 
       case ReducerAction.CACHE:
         {
-          const cacheInfo = params as CacheInfo;
+          const cacheInfo = params as CacheInfo; // what info is being cached now?
           if (cacheInfo.activities) {
             newState.cache.activities = [ ...cacheInfo.activities ];
             if (cacheInfo.populated) {

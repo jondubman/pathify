@@ -28,10 +28,12 @@ const utils = {
     return _counts;
   },
 
+  // not currently used
   deepCopy: (obj: Object): Object => (
     JSON.parse(JSON.stringify(obj))
   ),
 
+  // used for debugging
   displayTimestamp: (t: number) => (
     `${(new Date(t)).toDateString()} ` +
     `${(new Date(t)).toTimeString().split(' ')[0]}:${t.toString().slice(t.toString().length - 4, t.toString().length)}`
@@ -39,11 +41,11 @@ const utils = {
 
   isDebugVersion: __DEV__,
 
-  // return true if loc is inside bounds.
-  // lonInset and latInset of 0 is the simple test.
-  // lonInset or latInset > 0 shrinks the range that is considered inside the bounds.
+  // Return true if given loc is inside given bounds, thus:
+  // lonInset and latInset of 0 yield the simplest containment test.
+  // lonInset or latInset > 0 shrinks the range that is considered 'inside' the bounds.
   // lonInset or latInset < 0 expands that range.
-  locInsideBounds: (loc: LonLat, bounds: Bounds, lonInset = 0, latInset = 0) => {
+  locInsideBounds: (loc: LonLat, bounds: Bounds, lonInset = 0, latInset = 0): boolean => {
     const lon = loc[0];
     const lat = loc[1];
     const NE = bounds[0];
@@ -58,7 +60,7 @@ const utils = {
   // bounds is like what we get from mapArea.getVisibleBounds: [NE [lon, lat], SW [lon, lat]]
   // Note: NE and SW must be in that order, [NE, SW]
   // Hint: read [0] as 'lon' and [1] as 'lat'
-  locWellBounded: (loc: LonLat, bounds: Bounds) => {
+  locWellBounded: (loc: LonLat, bounds: Bounds): boolean => {
     const NE = bounds[0]; // NE is [lon, lat] of NE corner of bounds
     const SW = bounds[1]; // SW is [lon, lat] of SW corner of bounds
     const lonRange = NE[0] - SW[0]; // longitude range of bounds
@@ -79,6 +81,7 @@ const utils = {
 
   now: () => (Date.now()), // TODO allow the app's concept of the current time to be simulated, or real (this is real)
 
+  // not currently used
   objectWithoutKey: (object: any, key: string) => {
     const { [key]: deletedKey, ...otherKeys } = object;
     return otherKeys;

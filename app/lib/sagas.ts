@@ -1418,7 +1418,8 @@ const sagas = {
         lonMax,
         lonMin,
         mapHeading,
-        mapZoomLevel
+        mapZoomLevel,
+        timelineNow,
       } = settings;
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
@@ -1460,7 +1461,15 @@ const sagas = {
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
       yield put(newAction(AppAction.completeAppStartup));
       yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (as the above is async)
-      if (pausedTime) {
+      if (timelineNow) {
+        const { flags } = yield select((state: AppState) => state);
+        if (!flags.timelineNow) {
+          yield call(log.trace, 'timelineNow was enabled in settings but got disabled during startup - re-enabling');
+          setTimeout(() => {
+            store.dispatch(newAction(AppAction.flagEnable, 'timelineNow'));
+          }, constants.timing.activityListDelayReadjustmentAfterStartup);
+        }
+      } else if (pausedTime) {
         setTimeout(() => {
           store.dispatch(newAction(AppAction.setAppOption, { // TODO somehow these are drifting slightly - investigate.
             pausedTime,
@@ -1469,7 +1478,7 @@ const sagas = {
             viewTime: pausedTime,
           }))
           store.dispatch(newAction(AppAction.scrollActivityList, { scrollTime: pausedTime })); // in startupActions
-        }, constants.timing.activityListDelayReadjustmentAfterStartup); // TODO is this needed? It's not pretty.
+        }, constants.timing.activityListDelayReadjustmentAfterStartup);
       }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);

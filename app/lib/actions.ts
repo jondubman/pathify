@@ -97,7 +97,6 @@ export interface Action {
 }
 
 // Generic Redux action creator.
-
 // The simplest action creators are just a function that returns an action object, with a type, that can be
 // passed to Redux dispatch.
 
@@ -105,32 +104,30 @@ export interface Action {
 // -- Something happens that should influence the Redux store, which is shared throughout the app.
 //    This might be a location update from background geolocation, a user-initiated UI action, etc.
 // -- Call an action creator, e.g. newAction
-// -- Dispatch that action (store.dispatch) to Redux
+// -- Dispatch that action (store.dispatch) to Redux (note this looks different inside saga generators - use yield call)
 // -- If it's a ReducerAction, it should be handled by one of the cases in the reducer.
-//    reducerActions should act synchronously using pure functions without side effects.
+//    reducerActions must act synchronously using pure functions without side effects.
 // -- If it's an AppAction, it should be handled by one of the sagas, after the action passes through the reducer.
-//    (which may well take no action with it)
+//    (which generally takes no action with an AppAction, only ReducerActions.)
 //    appActions may yield other appActions and/or reducerActions.
 
-// This simple helper just forms an action with type and params properties.
+// This simple helper used throughout the app just forms an action with type and params properties.
 // Note type could be an AppAction or ReducerAction.
-export const newAction = (type: ActionType, params: any = null) => ({
+export const newAction = (type: ActionType, params: any = null): Action => ({
   type,
   params,
 })
 
 // From here on: types related to params for actions
 
-import { LocationEvent, LonLat } from 'shared/locations';
-import { AppStateChange } from 'shared/appEvents';
-import { GenericEvents } from 'shared/timeseries';
-
-// TODO complete this list
-
 export enum AbsoluteRelativeOption {
   'absolute' = 'absolute',
   'relative' = 'relative',
 }
+
+import { LocationEvent, LonLat } from 'shared/locations';
+import { AppStateChange } from 'shared/appEvents';
+import { GenericEvents } from 'shared/timeseries';
 
 export interface ActivityListScrolledParams {
   t: number;

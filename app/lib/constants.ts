@@ -288,7 +288,7 @@ const constants = {
   },
   activityList: {
     activityHeight: initialTimelineHeight,
-    activityMargin: activityListMargin, // applied on left
+    activityMargin: activityListMargin, // applied on left of each activity
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderLineHeight: 1,
     borderRadius: 5,
@@ -475,7 +475,7 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
-    activityListDelayReadjustmentAfterStartup: 500,
+    activityListDelayReadjustmentAfterStartup: 500, // TODO would be better not to need this
     activityListAnimationCompletion: 600,
     menuFade: 300,
     opacitySliderThrottle: 50,

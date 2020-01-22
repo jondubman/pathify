@@ -12,7 +12,6 @@ import locations from 'shared/locations';
 import { Activity, ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
 import { MarkEvent } from 'shared/marks';
-import { Path } from 'shared/paths';
 import { interval, Timepoint, TimeRange } from 'shared/timeseries';
 import { continuousTracks, Tracks } from 'shared/tracks';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
@@ -123,15 +122,6 @@ export const centerline = () => {
   return utils.windowSize().width / 2;
 }
 
-export const futureTimespan = (state: AppState): Timespans => {
-  const { nowTime } = state.options;
-  const timespan: Timespan = {
-    kind: TimespanKind.FUTURE,
-    tr: [nowTime, nowTime + interval.days(365)], // a whole year should be sufficient
-  }
-  return [timespan];
-}
-
 export const clockNowMode = (state: AppState): boolean => {
   if (state.flags.timelineNow) {
     return true;
@@ -202,6 +192,15 @@ export const dynamicTimelineWidth = (state: AppState): number => (
 export const dynamicTopBelowButtons = (state: AppState): number => (
   dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
+
+export const futureTimespan = (state: AppState): Timespans => {
+  const { nowTime } = state.options;
+  const timespan: Timespan = {
+    kind: TimespanKind.FUTURE,
+    tr: [nowTime, nowTime + interval.days(365)], // a whole year should be sufficient
+  }
+  return [timespan];
+}
 
 export const loggableOptions = (state: AppState) => {
   const options = { ...state.options } as any;

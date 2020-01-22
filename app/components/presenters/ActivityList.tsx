@@ -78,15 +78,15 @@ const Styles = StyleSheet.create({
   },
   touchableActivity: {
     height: activityHeight,
-    marginLeft: activityMargin,
+    marginLeft: activityMargin, // Note activityMargin is applied only on the left. Important for offset calculations.
   },
-  borderLine: {
+  borderLine: { // multiple instances of these above and below ActivityList, similar to what's above Timeline
     backgroundColor: colors.borderLine,
     position: 'absolute',
     width: utils.windowSize().width,
     height: constants.activityList.borderLineHeight,
   },
-  centerLine: {
+  centerLine: { // These are vertical.
     backgroundColor: colors.centerLine,
   },
   centerLineBright: {
@@ -100,21 +100,21 @@ const Styles = StyleSheet.create({
   },
 })
 
-const marginLeft = centerline(); // allows list to be positioned such that left edge of real content is centered.
-const marginRight = centerline(); // allows list to be positioned such that right edge of real content is centered.
+const listMarginLeft = centerline(); // allows list to be positioned such that left edge of real content is centered.
+const listMarginRight = centerline(); // allows list to be positioned such that right edge of real content is centered.
 
 // note the left margin of the first activity is effectively the right margin of listHeaderStyle
 const listHeaderStyle = {
   backgroundColor: colors.backgroundMarginPast,
   borderRadius: 0,
-  width: marginLeft,
+  width: listMarginLeft,
   height: activityHeight,
 }
 const listFooterBaseStyle = {
   ...listHeaderStyle,
   backgroundColor: colors.backgroundMarginFuture,
   marginLeft: activityMargin,
-  width: marginRight,
+  width: listMarginRight,
 }
 const listFooterNowNotTrackingStyle = {
   ...listFooterBaseStyle,
@@ -123,7 +123,10 @@ const listFooterNowNotTrackingStyle = {
 const listFooterTrackingStyle = {
   ...listHeaderStyle,
   backgroundColor: colors.backgroundMarginFuture,
-  width: marginRight,
+  width: listMarginRight,
+}
+const listFooterClockStyle = {
+  marginLeft: 0,
 }
 
 // The basic layout of this horizontal list is simple: margins flanking N boxes, each with activityMargin.
@@ -132,7 +135,7 @@ const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
   {
     index,
     length: (activityMargin + activityWidth),
-    offset: marginLeft + (index * (activityMargin + activityWidth)),
+    offset: listMarginLeft + (index * (activityMargin + activityWidth)),
   }
 )
 
@@ -166,6 +169,8 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       this.scrollToTime(scrollTime);
     }
   }
+
+  // TODO factor out the code that computes offsets from the code that does scrolling imperatively.
 
   // Handle ActivityList scroll event.
   // This often causes Timeline to scroll to stay synced up, and will also enable timelineNow if you scroll to the end.
@@ -316,10 +321,10 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           }
           <FlatList<ActivityDataExtended>
             data={list}
-            extraData={this.props}
+            extraData={this.props /* TODO does this help? */}
             getItemLayout={getItemLayout}
             horizontal
-            initialNumToRender={list.length /* TODO experiment *}
+            initialNumToRender={list.length /* TODO does this help? *}
             initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
             ListHeaderComponent={/* on far left of ActivityList */
               <View style={listHeaderStyle} />}
@@ -332,7 +337,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
                 onPress={() => { this.props.onPressFutureZone() /* which will enable timelineNow mode */ }}
                 underlayColor={colors.futureZoneUnderlay}
               >
-                <View>
+                <View style={listFooterClockStyle}>
                   <NowClockContainer interactive={false} />
                 </View>
               </TouchableHighlight>

@@ -1,6 +1,3 @@
-// TODO this disables annoying spurious warnings in the simulator, by hiding ALL warnings. Use with care!
-console.disableYellowBox = true;
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -9,7 +6,10 @@ import {
 // import FontAwesome5 from 'react-native-vector-icons';
 import { Provider } from 'react-redux';
 
-// Note the following transformer, along with package.json files containing a name property, enables import from lib/* etc.
+// This disables annoying spurious warnings in the simulator, by hiding ALL warnings. But they still show up in the log.
+console.disableYellowBox = true;
+
+// Note the following transformer, along with package.json files with a name property, enables import from lib/* etc.
 // https: //www.npmjs.com/package/react-native-typescript-transformer
 // This is referenced in getTransformModulePath in rn-cli.config.js.
 
@@ -38,13 +38,15 @@ const mapNewStateToAppStateChange = {
 export default class App extends Component {
   constructor(props: any) {
     super(props);
-    this.handleAppStateChange = this.handleAppStateChange.bind(this);
+    this.handleAppStateChange = this.handleAppStateChange.bind(this); // active, background, etc.
   }
 
   componentDidMount() {
     try {
       store.create(); // proactively create Redux store instance
       const { flags } = store.getState();
+
+      // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
       if (flags.logToDatabase) {
         log.registerCallback((level: string, ...args) => {
@@ -58,13 +60,14 @@ export default class App extends Component {
           }, 0);
         })
       }
+      // Start logging
       log.info('----- App starting up! (device log)');
       log.info('windowSize', utils.windowSize());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
       store.dispatch(newAction(AppAction.startupActions));
 
-      // For react-native-vector-icons if use_frameworks in Podfile
+      // For react-native-vector-icons when using use_frameworks in Podfile
       // See https://awesomeopensource.com/project/oblador/react-native-vector-icons
       // log.debug('FontAwesome5', FontAwesome5);
       // if ((FontAwesome5 as any).loadFont) {
@@ -72,20 +75,23 @@ export default class App extends Component {
       //   (FontAwesome5 as any).loadFont();
       // }
 
+      // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {
         const { flags } = store.getState();
-        if (flags.appActive && flags.ticksEnabled) { // no need for timer ticks in the background
+        if (flags.appActive && flags.ticksEnabled) { // no need for timer ticks when runing in the background
           store.dispatch(newAction(AppAction.timerTick, utils.now()));
         }
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
-      setTimeout(pollServer, 0); // attempt to stay in contact with server TODO always do this in the background?
+
+      // Attempt to contact the Pathify server.
+      setTimeout(pollServer, 0); // TODO always do this in the background?
     } catch (err) {
       log.warn('App componentDidMount err', err);
     }
   }
 
-  // TODO does this ever really happen, or need to?
+  // TODO does this ever really happen?
   componentWillUnmount() {
     log.info('removing event listener for handleAppStateChange');
     // RNAppState.removeEventListener('change', this.handleAppStateChange);
