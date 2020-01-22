@@ -372,7 +372,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     // Note onPress receives a GestureResponderEvent we are ignoring.
     return (
       <TouchableHighlight
-        onPress={() => { this.props.onPressActivity(item) }}
+        onPress={() => { this.props.onPressActivity(activity.id) }}
         style={Styles.touchableActivity}
         underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
       >

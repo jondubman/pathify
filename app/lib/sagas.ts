@@ -270,7 +270,7 @@ const sagas = {
               }
             }
           }
-          database.appendToPath(pathUpdate);
+          yield call(database.appendToPath, pathUpdate);
 
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
           if (activity.tLastLoc && firstNewLoc) {
@@ -316,18 +316,18 @@ const sagas = {
           let results = [] as any;
           let activities = Array.from(realmActivities) as any;
           for (let i = 0; i < activities.length; i++) {
-            let modifiedActivity = loggableActivity(activities[i]);
+            let modifiedActivity = yield call(loggableActivity, activities[i]);
             results.push(modifiedActivity);
           }
           response = { results };
           break;
         }
         case 'activity': { // default to current or selected if activityId not specified
-          const activity = query.activityId ? database.activityById(query.activityId)
-                                            : currentActivity(state) || selectedActivity(state);
+          const activity = query.activityId ? yield call(database.activityById, query.activityId)
+            : (yield call(currentActivity, state)) || (yield call(selectedActivity, state));
           let results = [] as any;
           if (activity) {
-            let modifiedActivity = loggableActivity(activity);
+            let modifiedActivity = yield call(loggableActivity, activity);
             results.push({ activity: modifiedActivity });
             if (query.events) {
               const events = (yield call(database.events)).filtered(`activityId == "${query.activityId}"`);
@@ -354,7 +354,7 @@ const sagas = {
         case 'counts': {
           response = {
             activities: (yield call(database.activities)).length,
-            counts: utils.counts(),
+            counts: yield call(utils.counts),
             events: (yield call(database.events)).length,
             logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
@@ -373,7 +373,7 @@ const sagas = {
           if (query.since) {
             timeRange[0] = query.since;
           }
-          let eventsFiltered = timeRange ? timeseries.filterByTime(events, timeRange) : events;
+          let eventsFiltered = timeRange ? yield call(timeseries.filterByTime, events, timeRange) : events;
           // TODO these query options need to be updated for Realm.
           //
           // if (query.filterTypes) {
@@ -400,7 +400,7 @@ const sagas = {
         }
         case 'locs': {
           response = {
-            pastLocation: getPastLocationEvent(state),
+            pastLocation: yield call(getPastLocationEvent, state),
             userLocation: state.userLocation,
           }
           break;
@@ -411,7 +411,7 @@ const sagas = {
           const pageSize = query.pageSize || Infinity;
           const logs = (yield call(database.logs))
             .filtered('t >= $0 AND t <= $1', timeRange[0], timeRange[1]);
-          const leveledLogs = (level ? logs.filtered('level != "trace"') : logs)
+          const leveledLogs = (level ? yield call(logs.filtered, 'level != "trace"') : logs)
             .slice(query.startIndex || 0, Math.min(pageSize, constants.maxLogsToTransmit));
           response = leveledLogs.map((message: LogMessage) => (
             {
@@ -423,7 +423,7 @@ const sagas = {
           break;
         }
         case 'options': {
-          response = loggableOptions(state);
+          response = yield call(loggableOptions, state);
           break;
         }
         case 'ping': {
@@ -464,7 +464,7 @@ const sagas = {
             },
             counts: {
               activities: (yield call(database.activities)).length,
-              counts: utils.counts(),
+              counts: yield call(utils.counts),
               events: (yield call(database.events)).length,
               logs: (yield call(database.logs)).length,
               paths: (yield call(database.paths)).length,
@@ -473,8 +473,8 @@ const sagas = {
             },
             flags: state.flags,
             isDebugVersion: utils.isDebugVersion,
-            options: loggableOptions(state),
-            pastLocation: getPastLocationEvent(state),
+            options: yield call(loggableOptions, state),
+            pastLocation: yield call(getPastLocationEvent, state),
             pulsars: yield call(pulsars, state),
             userLocation: state.userLocation,
           }
@@ -1132,14 +1132,40 @@ const sagas = {
     }
   },
 
-  // TODO not yet used
+  // This is used when tapping an activity in the ActivityList. It zooms both the map and the timeline, neither of which
+  // is done in the general case of simply scrolling the Timeline or ActivityList. The midpoint of the activity is used
+  // as the reference timepoint;. This is intended for most intentional type of selection, configuring the app UI to
+  // focus on the specified activity.
   selectActivity: function* (action: Action) {
-    yield call(log.trace, 'saga selectActivity');
     try {
       const params = action.params as SelectActivityParams;
       const id = params.id;
-      // TODO
       yield call(log.debug, 'saga selectActivity', id);
+      const state = yield select((state: AppState) => state);
+      const activity = yield call(cachedActivity, state, id);
+      if (activity) {
+        yield call(log.debug, 'saga selectActivity: activity found', id);
+        const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
+          (activity.tStart + utils.now()) / 2;
+        if (activity.tEnd) {
+          // Pressing some prior activity.
+          yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+          yield put(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in selectActivity
+        } else {
+          // Pressing the currentActivity.
+          log.debug('selectActivity: Pressing the currentActivity', new Date(newTime).toString());
+          yield put(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in selectActivity
+        }
+        const appOptions = {
+          centerTime: newTime, // TODO is it necessary to set this here?
+          scrollTime: newTime,
+          selectedActivityId: activity.id,
+          viewTime: newTime,
+        }
+        log.debug('selectActivity setting appOptions', appOptions);
+        yield put(newAction(AppAction.setAppOption, appOptions));
+        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // both
+      }
     } catch (err) {
       yield call(log.error, 'saga selectActivity', err);
     }

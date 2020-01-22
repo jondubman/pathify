@@ -31,7 +31,7 @@ interface ActivityListStateProps {
 }
 
 interface ActivityListDispatchProps {
-  onPressActivity: (activity: ActivityDataExtended) => void;
+  onPressActivity: (id: string) => void;
   onPressFutureZone: () => void;
   onScrollTimeline: (t: Timepoint) => void;
   register: (component: Component) => void;
@@ -56,30 +56,8 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   // TODO move most of this to selectActivity saga so it can be triggered independently
-  const onPressActivity = (activity: ActivityDataExtended): void => {
-    if (activity) {
-      log.debug('onPressActivity', activity.id);
-      const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
-        (activity.tStart + utils.now()) / 2;
-      if (activity.tEnd) {
-        // Pressing some prior activity.
-        dispatch(newAction(AppAction.flagDisable, 'timelineNow'));
-        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in onPressActivity
-      } else {
-        // Pressing the currentActivity.
-        log.debug('onPressActivity: Pressing the currentActivity', new Date(newTime).toString());
-        dispatch(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in onPressActivity
-      }
-      const appOptions = {
-        centerTime: newTime, // TODO is it necessary to set this here?
-        scrollTime: newTime,
-        selectedActivityId: activity.id,
-        viewTime: newTime,
-      }
-      log.debug('onPressActivity appOptions', appOptions);
-      dispatch(newAction(AppAction.setAppOption, appOptions));
-      dispatch(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in onPressActivity
-    }
+  const onPressActivity = (id: string): void => {
+    dispatch(newAction(AppAction.selectActivity, { id }));
   }
   const onPressFutureZone = (): void => {
     log.trace('ActivityListContainer onPressFutureZone');
