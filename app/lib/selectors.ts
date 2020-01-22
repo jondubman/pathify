@@ -114,7 +114,6 @@ export const cachedActivity = (state: AppState, id: string): ActivityDataExtende
 export const cachedActivityForTimepoint = (state: AppState, t: Timepoint): ActivityDataExtended | undefined => {
   const cache = state.cache;
   const result = cache.activities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
-  // log.trace('cachedActivityForTimepoint', t, result);
   return result;
 }
 

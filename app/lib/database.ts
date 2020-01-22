@@ -244,14 +244,10 @@ const database = {
     let newActivity;
     realm.write(() => {
       newActivity = realm.create('Activity', newActivityTemplate);
-      const pathUpdate: PathUpdate = {
-        id: newActivityTemplate.id,
-        lats: [],
-        lons: [],
-      }
+      const pathUpdate = database.newPathUpdate(newActivityTemplate.id);
       // create Path right away
       const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
-      // TODO could do something with this
+      // TODO could cache this path, though there's no need now.
     })
     return newActivity;
   },
@@ -372,11 +368,24 @@ const database = {
     const path = database.pathById(update.id);
     if (path && update.lats && update.lons && update.lats.length === update.lons.length) {
       realm.write(() => {
+        path.ele.push(...update.ele || constants.paths.elevationUnvailable);
         path.lats.push(...update.lats);
         path.lons.push(...update.lons);
+        path.odo.push(...update.odo);
+        path.t.push(...update.t);
       })
     }
   },
+
+  newPathUpdate: (id: string): PathUpdate => ({
+    ele: [],
+    id,
+    lats: [],
+    lons: [],
+    odo: [],
+    schemaVersion,
+    t: [],
+  }),
 
   pathById: (id: string): Path | undefined => {
     if (!id) {

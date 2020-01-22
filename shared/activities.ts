@@ -13,6 +13,7 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     id: 'string',
     schemaVersion: 'int',
     odoStart: 'int?',
+    // tFirstLoc: { type: 'int', indexed: true },
     tLastLoc: 'int?',
     tLastUpdate: { type: 'int', indexed: true },
     tStart: { type: 'int', indexed: true },
@@ -27,8 +28,8 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     maxGapDistance: 'int?',
     tMaxGapDistance: 'int?',
 
-    gain: 'int?', // total elevation gain
-    loss: 'int?', // total elevation loss
+    gain: 'int?', // total elevation gain TODO
+    loss: 'int?', // total elevation loss TODO
 
     // bounds
     latMax: 'double?',
@@ -36,12 +37,15 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     lonMax: 'double?',
     lonMin: 'double?',
 
-    // schemaVersion 22
     extra: 'string?',
-
-    // schemaVersion 23
     name: 'string?',
     rating: 'double?',
+
+    // TODO caching the first and last known location would be useful for filtering (see tFirstLoc as well)
+    // latFirst: 'double?',
+    // latLast: 'double?',
+    // lonFirst: 'double?',
+    // lonLast: 'double?',
   },
 }
 
@@ -58,6 +62,7 @@ export interface ActivityData {
 
   // All others optional: (TODO should be same properties as in Activity above, but all are optional)
   odoStart?: number;
+  // tFirstUpdate?: number;
   tLastLoc?: Timepoint;
   tLastUpdate?: Timepoint;
   tStart?: number;

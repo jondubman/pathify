@@ -73,8 +73,10 @@ const colorThemes = {
   topMenu: namedColors.darkerGray,
 }
 
-// For Realm database. Very meaningful to Realm!
-const schemaVersion = 26;
+// For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
+// It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
+// as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
+const schemaVersion = 28;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
@@ -83,8 +85,8 @@ const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
-const mapLogoHeight = 34; // mapbox logo
-const minDeviceWidth = 320; // iPhone SE
+const mapLogoHeight = 34; // Mapbox logo
+const minDeviceWidth = 320; // minimum design width; iPhone SE
 const initialTimelineHeight = 90;
 const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
@@ -448,6 +450,7 @@ const constants = {
   panelHeight,
   panelWidth,
   paths: {
+    elevationUnvailable: -1, // used to connote no elevation information in a Path
     metersAccuracyRequired: 40, // TODO was 30
     width: 8,
   },

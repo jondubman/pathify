@@ -231,9 +231,10 @@ const sagas = {
     if (activityId) {
       const activity: Activity = yield call(database.activityById, activityId);
       if (activity) {
+        const { schemaVersion } = constants.database;
         const activityUpdate: ActivityData = {
           id: activity.id,
-          schemaVersion: constants.database.schemaVersion,
+          schemaVersion,
           count: (activity.count || 0) + events.length,
         }
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
@@ -254,19 +255,29 @@ const sagas = {
             activityUpdate.odo = lastNewLoc.odo;
           }
           // Scan through the events
-          const pathUpdate: PathUpdate = { id: activityId, lats: [], lons: [] };
+          const pathUpdate = yield call(database.newPathUpdate, activityId);
           for (let i = 0; i < events.length; i++) {
             const event = events[i];
             if (event.type == EventType.LOC) {
-              const { accuracy, lon, lat } = event as LocationEvent;
+              const {
+                accuracy,
+                ele,
+                lon,
+                lat,
+                odo,
+                t,
+              } = event as LocationEvent;
               if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
                 // add a single path segment
                 activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat);
                 activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat);
                 activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon);
                 activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon);
+                pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
                 pathUpdate.lats.push(lat);
                 pathUpdate.lons.push(lon);
+                pathUpdate.odo.push(odo);
+                pathUpdate.t.push(t);
               }
             }
           }
@@ -946,15 +957,24 @@ const sagas = {
       const { currentActivityId } = yield select((state: AppState) => state.options);
       const { schemaVersion } = constants.database;
       const activityUpdate: ActivityData = { id, schemaVersion };
-      const pathUpdate: PathUpdate = { id, lats: [], lons: [] };
+      const pathUpdate = yield call(database.newPathUpdate, id);
       activityUpdate.count = eventsForActivity.length;
       let prevLocEvent: LocationEvent | null = null;
       for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
         const event = e as any as GenericEvent;
         if (event.type === EventType.LOC) {
           const locEvent = event as LocationEvent;
-          const { accuracy, lon, lat, t } = locEvent;
+          const {
+            accuracy,
+            ele,
+            lon,
+            lat,
+            odo,
+            t,
+          } = locEvent;
           if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+            // ele
+            pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
             // lats
             pathUpdate.lats.push(lat);
             activityUpdate.latMax = Math.max(activityUpdate.latMax || -Infinity, lat);
@@ -963,6 +983,10 @@ const sagas = {
             pathUpdate.lons.push(lon);
             activityUpdate.lonMax = Math.max(activityUpdate.lonMax || -Infinity, lon);
             activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
+            // odo
+            pathUpdate.odo.push(odo);
+            // t
+            pathUpdate.t.push(t);
           }
           activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max is redundant when events sorted by t
           activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
@@ -1503,13 +1527,15 @@ const sagas = {
         yield put(newAction(AppAction.addEvents, { events: [stopEvent, endMark] }));
         const activity = yield call(database.activityById, activityId);
         yield call(log.debug, 'stopActivity', loggableActivity(activity));
-        if (activity) { // TODO error if not
+        if (activity) {
           yield call(database.updateActivity, {
             id: activityId,
             schemaVersion: constants.database.schemaVersion, // TODO make sure to handle schema update while tracking
             tLastUpdate: now,
             tEnd: now,
           })
+        } else {
+          yield call(log.warn, 'Missing activity in stopActivity')
         }
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
         const halfTime = activity.tStart + (now - activity.tStart) / 2;
