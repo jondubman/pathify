@@ -43,6 +43,7 @@ export enum AppAction {
   'clearStorage' = 'clearStorage',
   'clockPress' = 'clockPress',
   'closePanels' = 'closePanels',
+  'completeAppStartup' = 'completeAppStartup',
   'continueActivity' = 'continueActivity',
   'delayedAction' = 'delayedAction',
   'deleteActivity' = 'deleteActivity',

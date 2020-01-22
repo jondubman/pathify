@@ -202,7 +202,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     log.scrollEvent('TimelineScroll onScrollEndDrag domain', domain);
     this.setZoomDomainWhileScrolling(domain); // note onFinishScrolling until after _timer in case of momentum scroll
     this._timer = setTimeout(() => {
-      log.scrollEvent('TimelineScroll time!', domain);
+      log.scrollEvent('TimelineScroll onScrollEndDrag timer fired:', domain);
       this.onFinishScrolling(domain);
       this._timer = undefined;
     }, constants.timing.scrollViewWaitForMomentumScroll)

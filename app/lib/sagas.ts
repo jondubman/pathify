@@ -494,7 +494,7 @@ const sagas = {
 
   appStartupCompleted: function* (action: Action) {
     yield call(log.info, 'appStartupCompleted');
-    yield put(newAction(AppAction.flagEnable, 'appStartupCompleted')); // note name of flag and this saga match here
+    // used with yield take, doesn't need to do anything else
   },
 
   appStateChange: function* (action: Action) {
@@ -503,10 +503,6 @@ const sagas = {
     const appStartupCompleted = yield select((state: AppState) => state.flags.appStartupCompleted);
     if (!appStartupCompleted) {
       yield take(AppAction.appStartupCompleted); // wait for it...
-    }
-    const appStartupCompletedNow = yield select((state: AppState) => state.flags.appStartupCompleted);
-    if (!appStartupCompletedNow) {
-      yield call(log.warn, 'Something has gone wrong with appStartupCompleted');
     }
     yield call(log.info, `appStateChange saga: ${newState}${manual ? ', invoked manually' : ''}`);
     const activating = (newState === AppStateChange.ACTIVE);
@@ -674,6 +670,12 @@ const sagas = {
     if (topMenuOpen && option !== 'otherThanTopMenu') {
       yield put(newAction(AppAction.flagDisable, 'topMenuOpen'));
     }
+  },
+
+  completeAppStartup: function* (action: Action) {
+    yield call(log.info, 'completeAppStartup');
+    yield put(newAction(AppAction.flagEnable, 'appStartupCompleted'));
+    yield put(newAction(AppAction.appStartupCompleted)); // so you can yield take(AppAction.appStartupCompleted)
   },
 
   // Activities are 'continued' automatically when the app is terminated and then restarted during activity tracking,
@@ -931,8 +933,8 @@ const sagas = {
     try {
       const params = action.params as RefreshActivityParams;
       let { id } = params;
-      if (id === 'selectedActivityId') { // TODO experiment
-        id  = yield select((state: AppState) => state.options.selectedActivityId);
+      if (id === 'selectedActivityId') { // this allows you to pass the string 'selectedActivityId' as the id,
+        id  = yield select((state: AppState) => state.options.selectedActivityId); // which is used in appQuery
       }
       // yield call(log.trace, 'saga refreshActivity', id);
       const eventsForActivity = yield call(database.eventsForActivity, id);
@@ -1179,12 +1181,16 @@ const sagas = {
 
     // Next, handle option side effects:
     const state: AppState = yield select((state: AppState) => state);
-    const { appState } = state.options;
-    if (appState === AppStateChange.STARTUP) {
-      // Note no side effects during startup
+    const {
+      activityListScrolling,
+      appStartupCompleted,
+      timelineNow,
+      timelineScrolling,
+    } = state.flags;
+    if (!appStartupCompleted) {
+      yield call(log.trace, 'setAppOption: appStartupCompleted false, skipping side-effects');
       return;
     }
-    const { activityListScrolling, timelineNow, timelineScrolling } = state.flags;
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
@@ -1202,7 +1208,10 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
       }
       // If viewTime is too far from the current timeline center, re-center timeline around viewTime.
-      const { centerTime, timelineZoomValue } = state.options;
+      const {
+        centerTime,
+        timelineZoomValue
+      } = state.options;
       const visibleTime = yield call(timelineVisibleTime, timelineZoomValue);
       const timeGap = Math.abs(centerTime - t);
       const recenterThreshold = visibleTime * (constants.timeline.widthMultiplier / 3);
@@ -1394,9 +1403,10 @@ const sagas = {
       yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
       yield call(Geo.startBackgroundGeolocation);
       if (!recoveryMode) {
-        // if (!runningInBackgroundNow) {
-        //   yield put(newAction(AppAction.refreshCache)); // TODO experiment -- do on load
-        // }
+        if (!runningInBackgroundNow) {
+          yield put(newAction(AppAction.refreshCache)); // Get this started. See AppAction.refreshCacheDone.
+          yield take(AppAction.refreshCacheDone); // TODO experiment - wait for this to complete before carrying on.
+        }
         if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
           yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId })); // this will follow user
@@ -1413,11 +1423,20 @@ const sagas = {
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
-      yield put(newAction(AppAction.appStartupCompleted)); // yield take(AppAction.appStartupCompleted) waits for this.
+      yield call(log.trace, 'zanzi 0');
+      const populated = (yield select((state: AppState) => state.cache.populated));
+      if (!populated) {
+        yield take(AppAction.refreshCacheDone); // TODO experiment - wait for this to complete before carrying on.
+      }
+      yield call(log.trace, 'zanzi 1');
+      yield put(newAction(AppAction.completeAppStartup));
+      yield call(log.trace, 'zanzi 2');
+      yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (as the above is async)
+      yield call(log.trace, 'zanzi 3');
       if (pausedTime) {
-        yield call(log.debug, 'zanzi', pausedTime);
+        yield call(log.trace, 'zanzi 4');
         yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime })); // intent is to trigger side-effects
-        // yield put(newAction(AppAction.scrollTimeline, { scrollTime: pausedTime }));
+        yield call(log.trace, 'zanzi 5');
       }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
@@ -1518,7 +1537,7 @@ const sagas = {
     const scrollTime = (x[0] + x[1]) / 2;
     yield put(newAction(AppAction.flagDisable, 'timelineScrolling'));
     if (timelineScrolling && !activityListScrolling) {
-      yield call(log.trace, 'zanzi timelineZoomed', scrollTime);
+      yield call(log.scrollEvent, 'timelineZoomed', scrollTime);
       yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
     }
     yield call(log.scrollEvent, 'timelineZoomed', scrollTime, activityListScrolling, timelineScrolling);

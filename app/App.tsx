@@ -1,3 +1,6 @@
+// TODO this disables annoying spurious warnings in the simulator, by hiding ALL warnings. Use with care!
+console.disableYellowBox = true;
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
