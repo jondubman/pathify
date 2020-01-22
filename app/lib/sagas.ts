@@ -711,7 +711,11 @@ const sagas = {
     try {
       const params = action.params as DeleteActivityParams;
       const { id } = params;
-      const { currentActivityId, selectedActivityId } = yield select((state: AppState) => state.options);
+      const {
+        currentActivityId,
+        scrollTime,
+        selectedActivityId,
+      } = yield select((state: AppState) => state.options);
       let deleteButton: AlertButton = {
         onPress: () => {
           log.info('Delete activity', id);
@@ -727,7 +731,10 @@ const sagas = {
             database.deleteActivity(id);
             const { activityList } = store.getState().refs;
             if (activityList) {
-              activityList.forceUpdate();
+              log.debug('activityList.forceUpdate');
+              store.dispatch(newAction(AppAction.scrollActivityList, { scrollTime })); // in deleteActivity
+            } else {
+              log.warn('Missing refs.activityList');
             }
           }, 0)
         },
