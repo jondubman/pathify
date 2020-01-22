@@ -475,6 +475,7 @@ const constants = {
     topOffset: safeAreaTop,
   },
   timing: { // msec
+    activityListDelayReadjustmentAfterStartup: 500,
     activityListAnimationCompletion: 600,
     menuFade: 300,
     opacitySliderThrottle: 50,

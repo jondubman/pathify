@@ -21,7 +21,7 @@ const utils = {
   },
 
   appInBackground: (): boolean => (
-    !(RNAppState.currentState === 'active')
+    (RNAppState.currentState === 'background')
   ),
 
   counts: (): any => {

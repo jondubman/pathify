@@ -499,10 +499,10 @@ const sagas = {
 
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
-    const { manual, newState } = params; // TODO manual param not really needed
+    const { manual, newState } = params; // manual param not currently used for anything but logging
     const appStartupCompleted = yield select((state: AppState) => state.flags.appStartupCompleted);
     if (!appStartupCompleted) {
-      yield take(AppAction.appStartupCompleted); // wait for it...
+      yield take(AppAction.appStartupCompleted); // Wait for startup to complete if needed.
     }
     yield call(log.info, `appStateChange saga: ${newState}${manual ? ', invoked manually' : ''}`);
     const activating = (newState === AppStateChange.ACTIVE);
@@ -1102,8 +1102,10 @@ const sagas = {
     const refs = yield select((state: AppState) => state.refs);
     const { activityList } = refs;
     if (activityList !== undefined && activityList.scrollToTime) {
-      yield call(log.scrollEvent, 'scrollActivityList:', scrollTime);
+      yield call(log.scrollEvent, 'saga scrollActivityList:', scrollTime);
       yield call(activityList.scrollToTime, scrollTime); // in saga scrollActivityList
+    } else {
+      yield call(log.scrollEvent, 'saga scrollActivityList: activityList is not ready yet');
     }
   },
 
@@ -1193,7 +1195,7 @@ const sagas = {
     }
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
-    // Note that the AppAction.setAppOption within this block recurse back into this saga, but only one level deep.
+    // Note that the AppAction.setAppOption within this block recurses back into this saga, but only one level deep.
     if (params.viewTime !== undefined) {
       const t = params.viewTime;
       if (timelineNow) {
@@ -1404,8 +1406,8 @@ const sagas = {
       yield call(Geo.startBackgroundGeolocation);
       if (!recoveryMode) {
         if (!runningInBackgroundNow) {
-          yield put(newAction(AppAction.refreshCache)); // Get this started. See AppAction.refreshCacheDone.
-          yield take(AppAction.refreshCacheDone); // TODO experiment - wait for this to complete before carrying on.
+          yield put(newAction(AppAction.refreshCache));
+          yield take(AppAction.refreshCacheDone); // This shouldn't take long. Simpler to have it out of the way.
         }
         if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
@@ -1423,20 +1425,18 @@ const sagas = {
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
-      yield call(log.trace, 'zanzi 0');
-      const populated = (yield select((state: AppState) => state.cache.populated));
-      if (!populated) {
-        yield take(AppAction.refreshCacheDone); // TODO experiment - wait for this to complete before carrying on.
-      }
-      yield call(log.trace, 'zanzi 1');
       yield put(newAction(AppAction.completeAppStartup));
-      yield call(log.trace, 'zanzi 2');
       yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (as the above is async)
-      yield call(log.trace, 'zanzi 3');
       if (pausedTime) {
-        yield call(log.trace, 'zanzi 4');
-        yield put(newAction(AppAction.setAppOption, { scrollTime: pausedTime })); // intent is to trigger side-effects
-        yield call(log.trace, 'zanzi 5');
+        setTimeout(() => {
+          store.dispatch(newAction(AppAction.setAppOption, { // TODO somehow these are drifting slightly - investigate.
+            pausedTime,
+            centerTime: pausedTime,
+            scrollTime: pausedTime,
+            viewTime: pausedTime,
+          }))
+          store.dispatch(newAction(AppAction.scrollActivityList, { scrollTime: pausedTime })); // in startupActions
+        }, constants.timing.activityListDelayReadjustmentAfterStartup); // TODO is this needed? It's not pretty.
       }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);

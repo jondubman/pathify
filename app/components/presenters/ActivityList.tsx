@@ -201,8 +201,8 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     }
     const xScrolledAfterActivity = remainder - activityWidth;
     // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
-    const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start
-    const xRightSelectEnd = (activityMargin / 2 + 1); // amount right of an activity you can scroll to select end
+    const xLeftSelectStart = (activityMargin / 2 - 2); // amount left of an activity you can scroll to select start
+    const xRightSelectEnd = (activityMargin / 2 + 2); // amount right of an activity you can scroll to select end
 
     if ((list.length && index >= list.length) || // if way at the end...
                                 (index === list.length - 1 && // ...or if in right half of last margin after activities
@@ -319,6 +319,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             extraData={this.props}
             getItemLayout={getItemLayout}
             horizontal
+            initialNumToRender={list.length /* TODO experiment *}
             initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
             ListHeaderComponent={/* on far left of ActivityList */
               <View style={listHeaderStyle} />}
@@ -390,8 +391,12 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // closest activity.
   scrollToTime(scrollTime: number) {
     log.scrollEvent('ActivityList scrollToTime', scrollTime);
-    const { animated, list, trackingActivity } = this.props;
-    let offset = activityMargin;
+    const {
+      animated,
+      list,
+      trackingActivity,
+    } = this.props;
+    let offset = activityMargin; // starting point
     if (list && list.length) {
       const index = list.findIndex((activity: ActivityDataExtended) => { // look for the activity we are scrolling to
         const start = activity.tStart;
