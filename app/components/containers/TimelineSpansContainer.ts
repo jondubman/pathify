@@ -17,13 +17,6 @@ export interface TimelineSpansDispatchProps {
 export type TimelineSpansProps = TimelineSpansStateProps & TimelineSpansDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineSpansStateProps => {
-  // if (timelineShowContinuousTracks) {
-  //   const tracks: Tracks = state.flags.timelineShowContinuousTracks ? continuousTrackList(state) : [];
-  //   const timespans: Timespans = tracks.map((track: Track): Timespan => ({
-  //     kind: TimespanKind.LOCATIONS,
-  //     tr: track.tr,
-  //   }))
-  // }
   const timespans: Timespans = timelineTimespans(state);
   return {
     data: timespans,

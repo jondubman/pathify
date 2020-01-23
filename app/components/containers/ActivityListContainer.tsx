@@ -55,7 +55,6 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
-  // TODO move most of this to selectActivity saga so it can be triggered independently
   const onPressActivity = (id: string): void => {
     dispatch(newAction(AppAction.selectActivity, { id }));
   }

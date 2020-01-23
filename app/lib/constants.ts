@@ -483,7 +483,7 @@ const constants = {
     menuFade: 300,
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
-    scrollViewWaitForMomentumScroll: 20, // TODO2
+    scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     timelineCloseToNow: 1000,
     timerTickInterval: 1000, // once per second
   },

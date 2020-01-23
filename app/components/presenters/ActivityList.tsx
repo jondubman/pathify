@@ -354,6 +354,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             }}
             renderItem={this.renderItem}
             scrollIndicatorInsets={scrollInsets}
+            showsHorizontalScrollIndicator={true}
           />
         </View>
       </Fragment>

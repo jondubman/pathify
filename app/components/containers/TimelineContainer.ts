@@ -64,8 +64,16 @@ const getZoomDomain = (state: AppState) => {
 }
 
 const mapStateToProps = (state: AppState): TimelineStateProps => {
-  const { timelinePinchToZoom, showTimelineMarks, showTimelineSpans, timelineNow } = state.flags;
-  const { centerTime, timelineZoomValue } = state.options;
+  const {
+    timelinePinchToZoom,
+    showTimelineMarks,
+    showTimelineSpans,
+    timelineNow
+  } = state.flags;
+  const {
+    centerTime,
+    timelineZoomValue
+  } = state.options;
   const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
   const visibleTime = timelineVisibleTime(timelineZoomValue);
   const visibleWidth = dynamicTimelineWidth(state);

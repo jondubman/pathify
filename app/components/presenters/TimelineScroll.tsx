@@ -212,8 +212,10 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     utils.addToCount('renderTimelineScroll');
     const {
       decelerationRate,
+      pinchZoom,
       register,
       scrollToX,
+      timelineZoomValue,
     } = this.props;
     return (
       <ScrollView
@@ -229,7 +231,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         onScrollBeginDrag={this.onScrollBeginDrag}
         onScrollEndDrag={this.onScrollEndDrag}
         overScrollMode='never'
-        pinchGestureEnabled={false}
+        pinchGestureEnabled={pinchZoom}
         ref={(_scrollView: ScrollView) => {
           this._scrollView = _scrollView;
           register(this);
@@ -238,7 +240,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         style={TimelineStyles.scrollView}
-        zoomScale={1}
+        zoomScale={pinchZoom ? timelineZoomValue : 1}
       >
         <TimelineContainer />
       </ScrollView>
