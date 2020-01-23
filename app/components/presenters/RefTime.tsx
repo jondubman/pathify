@@ -102,9 +102,11 @@ const RefTime = (props: RefTimeProps) => (
           <Text style={[Styles.refTimeText, Styles.seconds]}>
             :{props.seconds}
           </Text>
+          {/* Fractions not needed in a context in which most of the interesting things happen no more than 1x/sec...
           <Text style={[Styles.refTimeText, Styles.msec]}>
             .{props.hundredths}
           </Text>
+          */}
         </View>
         <Text style={Styles.subText}>
           {props.ampm} {props.day} {props.month} {props.dayOfMonth}, {props.year}

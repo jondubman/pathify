@@ -58,7 +58,7 @@ export const initialAppState = {
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     mapTapped: false, // tapping the map in mapFullScreen mode when mapTapTogglesFullScreen disabled
                       // hides even the minimal UI, leaving nothing but map/path
-    mapTapTogglesFullScreen: true, // should tapping the map by itself toggle full screen mode; false is less surprising
+    mapTapTogglesFullScreen: false, // should tapping the map by itself toggle full screen mode; false seems better.
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     receiveActivityChangeEvents: false, // TODO
@@ -84,7 +84,6 @@ export const initialAppState = {
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
-    // timelineShowContinuousTracks: false, // should the timeline show continuous periods with location data
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
   },
@@ -144,5 +143,4 @@ export const persistedOptions = [
   'mapStyle',
   'pausedTime',
   'timelineZoomValue',
-  'viewTime',
 ]

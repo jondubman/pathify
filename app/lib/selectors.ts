@@ -12,8 +12,7 @@ import locations from 'shared/locations';
 import { Activity, ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
 import { MarkEvent } from 'shared/marks';
-import { interval, Timepoint, TimeRange } from 'shared/timeseries';
-import { continuousTracks, Tracks } from 'shared/tracks';
+import { interval, Timepoint } from 'shared/timeseries';
 import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
 import {
   msecToString,
@@ -23,12 +22,6 @@ import {
 export const activityIncludesMark = (activityId: string, mark: MarkEvent): boolean => {
   const activity = database.activityById(activityId);
   return !!(mark.activityId && activity && mark.activityId === activity.id)
-}
-
-// TODO review
-export const continuousTrackList = (state: AppState): Tracks => {
-  const tr: TimeRange = [0, utils.now()];
-  return continuousTracks(database.events(), constants.maxTimeGapForContinuousTrack, tr);
 }
 
 const colorForAppState = {
@@ -54,10 +47,12 @@ export const activityIndex = (state: AppState) => (
 )
 
 // Each activityTimespan shows one Activity
-// TODO review
 const activityTimespans = (state: AppState): Timespans => {
-  const activities = database.activities();
-  return activities.map((activity: Activity): Timespan => {
+  const activities = state.cache.activities;
+  if (!activities || !activities.length) {
+    return [];
+  }
+  return activities.map((activity: ActivityDataExtended): Timespan => {
     const timespan = {
       kind: TimespanKind.ACTIVITY,
       tr: [activity.tStart, Math.min(activity.tEnd || Infinity, utils.now())],
@@ -431,7 +426,7 @@ export const flavorText = (state: AppState): string[] => {
     const gap = timeGapBetweenActivities(state, scrollTime);
     const previous = previousActivity(state, scrollTime);
     const gapPercent = ((previous === null) ? '?' : (((scrollTime - previous.tLast) / gap) * 100).toFixed(0));
-    return ['CLOCK STOPPED', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
+    return ['PAST', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
   } catch(err) {
     log.warn('flavorText error', err);
     return [''];

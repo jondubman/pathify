@@ -21,6 +21,7 @@ const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps 
     current: selectedIsCurrent,
     selected: !!selectedActivityId,
     hours: d.getHours(),
+    milliseconds: d.getMilliseconds(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),
     stopped: !state.flags.ticksEnabled,

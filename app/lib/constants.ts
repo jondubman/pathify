@@ -217,7 +217,7 @@ const colors = {
     background: withOpacity(namedColors.navy, 0.75),
     hoursMinutes: namedColors.white,
     seconds: withOpacity(namedColors.white, 0.75),
-    msec: withOpacity(namedColors.white, 0), // TODO show sometimes?
+    msec: 'transparent',
     subText: withOpacity(namedColors.white, 0.75),
     underlay: 'transparent',
   },
@@ -442,7 +442,6 @@ const constants = {
     pointLength: 30,
   },
   maxLogsToTransmit: 1000,
-  maxTimeGapForContinuousTrack: interval.seconds(5),
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
@@ -450,8 +449,8 @@ const constants = {
   panelHeight,
   panelWidth,
   paths: {
-    elevationUnvailable: -1, // used to connote no elevation information in a Path
-    metersAccuracyRequired: 40, // TODO was 30
+    elevationUnvailable: -1000, // Meters. 0 or -1 may a legitimate elevation; needs to be stored in Realm as a number.
+    metersAccuracyRequired: 40, // Locations with accuracy less than this are excluded from the Path
     width: 8,
   },
   refTime: {
@@ -485,7 +484,14 @@ const constants = {
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     timelineCloseToNow: 1000,
-    timerTickInterval: 1000, // once per second
+    // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
+    // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
+    // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.
+    // 50 generates buttery smooth motion of second hand on the clock, but may drop JS frame.
+    // 100 is a good compromise. Above 200, the stepping motion becomes more apparent.
+    timerTickInterval: 50, // TODO leave it as 50 for now while seeking perf improvements elsewhere. Can always drop it.
+    // Note that every component's mapStateToProps will be called via react-redux Connect this often, so if there are
+    // any perf issues there, they will rapidly reveal themselves by lowering this interval.
   },
   timeline: {
     activityZoomFactor: 1.25, // 1 means zoom Timeline to exact duration of Activity. Should be somewhat >1 for context.

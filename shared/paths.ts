@@ -8,6 +8,7 @@ export const PathSchema: Realm.ObjectSchema = { // Note: keep PathSchema and Pat
     ele: 'int[]',
     lats: 'double[]',
     lons: 'double[]',
+    odo: 'int[]', // meters, so it can be an int
     schemaVersion: 'int',
     t: 'int[]',
   },
@@ -21,6 +22,7 @@ export interface PathUpdate {
   ele: number[];
   lats: number[]; // required, may be empty, should have same length as lons
   lons: number[]; // required, may be empty
+  odo: number[];
   schemaVersion: number;
   t: number[];
 }

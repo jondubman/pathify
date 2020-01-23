@@ -141,8 +141,8 @@ const sagas = {
     for (let action in AppAction) {
       if (AppAction[action]) {
         // yield call(log.trace, 'configuring saga for AppAction', action);
-        if (action === AppAction.setAppOptionASAP) { // special case
-          // With this action, *any* prior call to setAppOptionASAP not yet processed is ignored, so use with care!
+        if (action === AppAction.setAppOptionASAP || action === AppAction.timerTick) { // special case
+          // With this action, *any* prior call to these actions not yet processed is ignored, so use with care!
           // This is really only appropriate for isolated rapid event sources like a slider that is being dragged.
           yield takeLatest(AppAction[action], sagas[AppAction[action]]);
         } else {
@@ -254,7 +254,7 @@ const sagas = {
             activityUpdate.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
             activityUpdate.odo = lastNewLoc.odo;
           }
-          // Scan through the events
+          // Scan through the events.
           const pathUpdate = yield call(database.newPathUpdate, activityId);
           for (let i = 0; i < events.length; i++) {
             const event = events[i];
@@ -267,6 +267,7 @@ const sagas = {
                 odo,
                 t,
               } = event as LocationEvent;
+              // TODO this accuracy test is a bit crude, but works well enough for now.
               if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
                 // add a single path segment
                 activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat);
@@ -1307,7 +1308,8 @@ const sagas = {
         newSettings[propName] = params[propName];
       }
     }
-    if (Object.entries(newSettings).length) {
+    const newSettingsCount = Object.entries(newSettings).length;
+    if (newSettingsCount) {
       yield call(log.trace, 'Writing settings to database', newSettings);
       yield call(database.changeSettings, newSettings);
     }

@@ -26,6 +26,7 @@ export interface ClockStateProps {
   current: boolean; // true means time on clock points to current activity, whether or not nowMode is enabled
   selected: boolean; // true means time on clock points to a selected activity, whether or not nowMode is enabled
   hours: number,
+  milliseconds: number;
   minutes: number,
   seconds: number,
   stopped: boolean;
@@ -222,8 +223,8 @@ const ClockMechanics = (props: ClockProps) => (
   <View>
     <ClockTicks />
     <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
-    <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes)]} />
-    <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds)]} />
+    <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes + (props.seconds / 60))]} />
+    <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds + (props.milliseconds / 1000))]} />
     <View style={Styles.centerCircle} />
   </View>
 )
