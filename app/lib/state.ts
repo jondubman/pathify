@@ -96,6 +96,7 @@ export const initialAppState = {
   // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
   options: { // Like the flags, these are not necessarily user-configurable.
     appState: AppStateChange.STARTUP as AppStateChange,
+    backTime: now, // time you go back to if you jump to NOW on the Timeline, and then go back
     centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: null as string | null, // while tracking Activity

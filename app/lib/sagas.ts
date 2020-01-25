@@ -650,7 +650,8 @@ const sagas = {
     const nowClock = params && params.nowClock;
     yield call(log.trace, `clockPress, now: ${nowClock}`);
     yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
-    yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
+    // TODO WIP
+    // yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
   },
 
   // Panels here refer to popups / menus.
@@ -854,6 +855,27 @@ const sagas = {
       }
     } catch (err) {
       yield call(log.error, 'geolocation', err);
+    }
+  },
+
+  jumpToBackTime: function* (action: Action) {
+    yield call(log.debug, 'saga jumpToBackTime');
+    const { backTime } = yield select((state: AppState) => state.options);
+    yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+    yield put(newAction(AppAction.setAppOption, { scrollTime: backTime }));
+    yield put(newAction(AppAction.scrollActivityList, { scrollTime: backTime }));
+  },
+
+  jumpToNow: function* (action: Action) {
+    yield call(log.debug, 'saga jumpToNow');
+    const { timelineNow } = yield select((state: AppState) => state.flags);
+    const { viewTime } = yield select((state: AppState) => state.options);
+    if (!timelineNow) {
+      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+      yield put(newAction(AppAction.setAppOption, { backTime: viewTime })); // TODO might actually want history feature
+      const now = utils.now() + constants.timing.timelineCloseToNow;
+      // TODO add boolean param forceNow to scrollActivityList?
+      yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in jumpToNow
     }
   },
 

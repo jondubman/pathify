@@ -3,9 +3,7 @@ import {
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import { currentActivityIsSelected } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import utils from 'lib/utils';
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
 interface OwnProps { // matching those of PausedClockContainer
@@ -13,27 +11,31 @@ interface OwnProps { // matching those of PausedClockContainer
 }
 
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
-  const { selectedActivityId } = state.options;
-  const selectedIsCurrent = currentActivityIsSelected(state);
-  const d = new Date(utils.now());
+  const { timelineNow } = state.flags;
+  const t = timelineNow ? state.options.backTime : state.options.nowTime;
+  const d = new Date(t);
   return {
-    current: selectedIsCurrent,
-    selected: !!selectedActivityId,
-    ghostMode: false,
+    current: false,
+    selected: false,
+    ghostMode: true,
     hours: d.getHours(),
     milliseconds: d.getMilliseconds(),
     minutes: d.getMinutes(),
     seconds: d.getSeconds(),
-    stopped: !state.flags.ticksEnabled,
-    nowMode: true,
-    interactive: !!ownProps && ownProps.interactive,
+    stopped: false,
+    nowMode: !timelineNow,
+    interactive: true, // TODO ignoring ownProps
   }
 }
 
 const mapDispatchToProps = (dispatch: Function, ownProps?: OwnProps): ClockDispatchProps => {
-  const onPress = () => {
+  const onPress = (nowMode: boolean) => {
     if (ownProps && ownProps.interactive) { // The test for interactive is likely redundant, but still appropriate.
-      dispatch(newAction(AppAction.clockPress, { nowClock: true }));
+      if (nowMode) {
+        dispatch(newAction(AppAction.jumpToNow));
+      } else {
+        dispatch(newAction(AppAction.jumpToBackTime));
+      }
     }
   }
   const dispatchers = {
@@ -42,9 +44,9 @@ const mapDispatchToProps = (dispatch: Function, ownProps?: OwnProps): ClockDispa
   return dispatchers;
 }
 
-const NowClockContainer = connect<ClockStateProps, ClockDispatchProps, OwnProps>(
+const GhostClockContainer = connect<ClockStateProps, ClockDispatchProps, OwnProps>(
   mapStateToProps as any,
   mapDispatchToProps
 )(Clock as any);
 
-export default NowClockContainer;
+export default GhostClockContainer;

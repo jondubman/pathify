@@ -145,6 +145,8 @@ const colors = {
     backgroundStopped: withOpacity(namedColors.yellow, 0.65), // debug-only
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.65), // debug-only
     underlay: 'transparent',
+    underlayGhostNow: withOpacity(colorThemes.now, 0.65),
+    underlayGhostPast: withOpacity(colorThemes.past, 0.65),
   },
   clockMenu: {
     background: withOpacity(colorThemes.background, defaultOpacity),
@@ -309,8 +311,8 @@ const constants = {
   clientId,
   clock: {
     border: {
-      width: 1,
-      color: withOpacity(colors.byName.white, 0.65),
+      width: 1.5,
+      color: withOpacity(colors.byName.white, 0.85),
     },
     centerCircle: {
       color: withOpacity(colors.byName.red, 1),
@@ -331,7 +333,7 @@ const constants = {
     secondHand: {
       color: withOpacity(colors.byName.orange, 1),
       lengthRatio: 1,
-      thickness: 1,
+      thickness: 1.5,
     },
     ticks: {
       count: 60,
@@ -455,7 +457,7 @@ const constants = {
   },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
-    height: 46,
+    height: 50, // TODO was 46
     leftContentsWidth: 100, // note the mapbox logo is in the lower left of the screen and needs to be avoided
     width: 126,
   },
@@ -489,7 +491,7 @@ const constants = {
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.
     // 50 generates buttery smooth motion of second hand on the clock, but may drop JS frame.
     // 100 is a good compromise. Above 200, the stepping motion becomes more apparent.
-    timerTickInterval: 50, // TODO leave it as 50 for now while seeking perf improvements elsewhere. Can always drop it.
+    timerTickInterval: 100,
     // Note that every component's mapStateToProps will be called via react-redux Connect this often, so if there are
     // any perf issues there, they will rapidly reveal themselves by lowering this interval.
   },

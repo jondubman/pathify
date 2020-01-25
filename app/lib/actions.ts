@@ -52,6 +52,8 @@ export enum AppAction {
   'flagToggle' = 'flagToggle',
   'geolocation' = 'geolocation',
   'importEvents' = 'importEvents',
+  'jumpToBackTime' = 'jumpToBackTime',
+  'jumpToNow' = 'jumpToNow',
   'log' = 'log',
   'mapRegionChanged' = 'mapRegionChanged',
   'mapRegionChanging' = 'mapRegionChanging',

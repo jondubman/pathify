@@ -1,4 +1,6 @@
-// Note this presenter component is used by two container components (NowClockContainer, PausedClockContainer)
+// Note this presenter component is used by multiple container components
+// (GhostClockContainer, NowClockContainer, PausedClockContainer)
+// TODO improve separation of clock mechanism
 
 import React, {
 } from 'react';
@@ -25,6 +27,7 @@ const {
 export interface ClockStateProps {
   current: boolean; // true means time on clock points to current activity, whether or not nowMode is enabled
   selected: boolean; // true means time on clock points to a selected activity, whether or not nowMode is enabled
+  ghostMode: boolean;
   hours: number,
   milliseconds: number;
   minutes: number,
@@ -35,7 +38,7 @@ export interface ClockStateProps {
 }
 
 export interface ClockDispatchProps {
-  onPress: () => void;
+  onPress: (nowMode: boolean) => void;
 }
 
 export type ClockProps = ClockStateProps & ClockDispatchProps;
@@ -109,11 +112,19 @@ const Styles = StyleSheet.create({
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
   },
+  ghostNow: {
+    backgroundColor: 'transparent',
+    opacity: 0.75,
+  },
+  ghostPast: {
+    backgroundColor: 'transparent',
+    opacity: 0.75,
+  },
   majorTick: {
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: ticks.major.color,
-    bottom: radius - borderWidth + (radius - ticks.major.length),
+    bottom: radius - borderWidth / 2 + (radius - ticks.major.length),
     height: ticks.major.length - borderWidth,
     width: ticks.major.width,
   },
@@ -121,7 +132,7 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     backgroundColor: ticks.minor.color,
-    bottom: radius - borderWidth + (radius - ticks.minor.length),
+    bottom: radius - borderWidth / 2+ (radius - ticks.minor.length),
     height: ticks.minor.length - borderWidth,
     width: ticks.minor.width,
   },
@@ -194,8 +205,11 @@ const ClockTicks = () => {
 }
 
 const clockBackgroundStyle = (props: ClockProps): Object => {
-  const { current, nowMode, selected, stopped } = props;
+  const { current, ghostMode, nowMode, selected, stopped } = props;
   // Note stopped is really just for debugging. It means the ticks are disbabled app-wide.
+  if (ghostMode) {
+    return nowMode ? Styles.ghostNow : Styles.ghostPast;
+  }
   if (nowMode) {
     if (stopped) {
       return Styles.stoppedNow; // debug-only
@@ -220,20 +234,21 @@ const clockBackgroundStyle = (props: ClockProps): Object => {
 }
 
 const ClockMechanics = (props: ClockProps) => (
-  <View>
+  <View pointerEvents={"none"}>
     <ClockTicks />
-    <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
-    <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes + (props.seconds / 60))]} />
-    <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds + (props.milliseconds / 1000))]} />
-    <View style={Styles.centerCircle} />
+    <View pointerEvents={"none"} style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
+    <View pointerEvents={"none"} style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes + (props.seconds / 60))]} />
+    <View pointerEvents={"none"} style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds + (props.milliseconds / 1000))]} />
+    <View pointerEvents={"none"} style={Styles.centerCircle} />
   </View>
 )
 
 const Clock = (props: ClockProps) => props.interactive ? (
   <TouchableHighlight
     style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
-    onPressIn={props.onPress}
-    underlayColor={colors.underlay}
+    onPress={() => { props.onPress(props.nowMode) }}
+    underlayColor={props.ghostMode ? (props.nowMode ? colors.underlayGhostNow : colors.underlayGhostPast)
+                                   : colors.underlay}
   >
     {ClockMechanics(props)}
   </TouchableHighlight>

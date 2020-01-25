@@ -10,6 +10,7 @@ import {
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 
+import GhostClockContainer from 'containers/GhostClockContainer';
 import PausedClockContainer from 'containers/PausedClockContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import RefTimeContainer from 'containers/RefTimeContainer';
@@ -18,6 +19,24 @@ import { centerline } from 'lib/selectors';
 
 const { refTime, timeline } = constants;
 const colors = constants.colors.timeline;
+
+const clockWidth = constants.clock.height;
+const ghostFudgeLeft = clockWidth + 2;
+const ghostFudgeRight = clockWidth - 3;
+
+// TODO this is sort of inelegant, but effective at finessing the placement of the GhostClock.
+const ghostExtra = () => {
+  const smallSize = 320;
+  const mediumSize = 375;
+  const size = utils.windowSize().width;
+  if (size > mediumSize) {
+   return 23;
+  }
+  if (size > smallSize) {
+    return 14;
+  }
+  return 1;
+}
 
 const Styles = StyleSheet.create({
   centerLine: {
@@ -28,8 +47,16 @@ const Styles = StyleSheet.create({
     width: timeline.centerLineWidth,
   },
   clockCenter: {
-    left: centerline() - constants.clock.height / 2,
+    left: centerline() - clockWidth / 2,
     position: 'absolute',
+  },
+  ghostClockNow: { // shows up when timelineNow is false; action enables timelineNow
+    position: 'absolute',
+    left: (centerline() - clockWidth / 2) + ghostFudgeLeft + ghostExtra(),
+  },
+  ghostClockPast: { // shows up when timelineNow is true; action disables timelineNow and scrolls back in time
+    position: 'absolute',
+    right: (centerline() - clockWidth / 2) + ghostFudgeRight + ghostExtra(),
   },
   topLine: {
     backgroundColor: colors.topLine,
@@ -42,8 +69,20 @@ const Styles = StyleSheet.create({
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
     <View style={[Styles.clockCenter, { bottom: props.bottom }]}>
-      {props.nowMode ? <NowClockContainer interactive={true} /> : <PausedClockContainer interactive={true} />}
+      {props.nowMode ? <NowClockContainer interactive={true} key='NowClock' />
+        : <PausedClockContainer interactive={true} key='PausedClock' />}
     </View>
+    {props.timelineScrolling ? null :
+      props.nowMode ? (
+        <View style={[Styles.ghostClockPast, { bottom: props.bottom }]}>
+          <GhostClockContainer interactive={true} key='GhostClockPast' />
+        </View>
+      ) : (
+        <View style={[Styles.ghostClockNow, { bottom: props.bottom }]}>
+          <GhostClockContainer interactive={true} key='GhostClockNow' />
+        </View>
+      )
+    }
     <RefTimeContainer />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />

@@ -36,7 +36,7 @@ export const selectedActivityIndex = (state: AppState) => (
   state.cache.activities.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
 )
 
-export const activityIndex = (state: AppState) => (
+export const activityIndex = (state: AppState): string => (
   state.cache.activities.length ?
     selectedActivityIndex(state) > -1 ?
       `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}`
@@ -47,6 +47,8 @@ export const activityIndex = (state: AppState) => (
 )
 
 // Each activityTimespan shows one Activity
+// TODO this desperately needs reselect!
+// TODO consider splitting this into separate pastActivityTimespans and a currentActivityTimespan.
 const activityTimespans = (state: AppState): Timespans => {
   const activities = state.cache.activities;
   if (!activities || !activities.length) {

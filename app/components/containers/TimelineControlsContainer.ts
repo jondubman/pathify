@@ -14,6 +14,7 @@ interface TimelineControlsStateProps {
   mapFullScreen: boolean;
   nowMode: boolean;
   timelineHeight: number;
+  timelineScrolling: boolean;
 }
 
 interface TimelineControlsDispatchProps {
@@ -27,6 +28,7 @@ const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
     mapFullScreen: state.flags.mapFullScreen,
     nowMode: state.flags.timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     timelineHeight: dynamicTimelineHeight(state),
+    timelineScrolling: state.flags.timelineScrolling,
   }
 }
 
