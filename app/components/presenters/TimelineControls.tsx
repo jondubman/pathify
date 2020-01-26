@@ -21,8 +21,6 @@ const { refTime, timeline } = constants;
 const colors = constants.colors.timeline;
 
 const clockWidth = constants.clock.height;
-const ghostFudgeLeft = clockWidth + 2;
-const ghostFudgeRight = clockWidth - 3;
 
 // TODO this is sort of inelegant, but effective at finessing the placement of the GhostClock.
 const ghostExtra = () => {
@@ -35,7 +33,7 @@ const ghostExtra = () => {
   if (size > smallSize) {
     return 14;
   }
-  return 1;
+  return 3;
 }
 
 const Styles = StyleSheet.create({
@@ -52,11 +50,11 @@ const Styles = StyleSheet.create({
   },
   ghostClockNow: { // shows up when timelineNow is false; action enables timelineNow
     position: 'absolute',
-    left: (centerline() - clockWidth / 2) + ghostFudgeLeft + ghostExtra(),
+    left: centerline() + clockWidth / 2 + ghostExtra(),
   },
   ghostClockPast: { // shows up when timelineNow is true; action disables timelineNow and scrolls back in time
     position: 'absolute',
-    right: (centerline() - clockWidth / 2) + ghostFudgeRight + ghostExtra(),
+    right: centerline() + clockWidth / 2 + ghostExtra(),
   },
   topLine: {
     backgroundColor: colors.topLine,

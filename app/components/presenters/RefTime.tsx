@@ -16,6 +16,7 @@ const colors = constants.colors.refTime;
 const {
   height,
   leftContentsWidth,
+  topSpace,
   width,
 } = constants.refTime;
 
@@ -27,6 +28,7 @@ const Styles = StyleSheet.create({
   leftHighlight: {
     height,
     justifyContent: 'flex-start', // vertically
+    paddingTop: topSpace,
     width: leftContentsWidth,
   },
   leftText: {
@@ -41,6 +43,7 @@ const Styles = StyleSheet.create({
   },
   refTimeFull: {
     flexDirection: 'row',
+    marginTop: topSpace - 2,
   },
   refTimeText: {
     fontFamily: constants.fonts.family,
@@ -49,7 +52,6 @@ const Styles = StyleSheet.create({
   rightHalf: {
     height,
     paddingLeft: 5,
-    marginTop: -2, // lift it up slightly to align with left side
     width,
   },
   subText: {

@@ -92,7 +92,6 @@ const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
 const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activities
 const clockHeight = 70;
-const clockMargin = 4;
 
 // helper: pad with zeros as needed
 const zeroPrefix = (s: string) => (s.length ? (s.length === 1 ? '0' + s : s) : '00')
@@ -324,7 +323,6 @@ const constants = {
       lengthRatio: 0.6,
       thickness: 3,
     },
-    margin: clockMargin,
     minuteHand: {
       color: withOpacity(colors.byName.white, 1),
       lengthRatio: 1,
@@ -456,8 +454,9 @@ const constants = {
   },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
-    height: 50, // TODO was 46
+    height: 55,
     leftContentsWidth: 100, // note the mapbox logo is in the lower left of the screen and needs to be avoided
+    topSpace: 4,
     width: 126,
   },
   safeAreaBottom,
