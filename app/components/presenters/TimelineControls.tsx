@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import {
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 
@@ -52,9 +53,24 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     left: centerline() + clockWidth / 2 + ghostExtra(),
   },
+  ghostClockNowLabel: {
+    color: constants.colors.ghostClockLabels.now,
+    left: 2,
+    top: 45,
+  },
   ghostClockPast: { // shows up when timelineNow is true; action disables timelineNow and scrolls back in time
     position: 'absolute',
     right: centerline() + clockWidth / 2 + ghostExtra(),
+  },
+  ghostClockPastLabel: {
+    color: constants.colors.ghostClockLabels.past,
+    top: 45,
+  },
+  text: {
+    alignSelf: 'center',
+    fontFamily: constants.fonts.family,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   topLine: {
     backgroundColor: colors.topLine,
@@ -73,10 +89,16 @@ const TimelineControls = (props: TimelineControlsProps) => (
     {props.timelineScrolling ? null :
       props.nowMode ? (
         <View style={[Styles.ghostClockPast, { bottom: props.bottom }]}>
+          <Text style={[Styles.text, Styles.ghostClockPastLabel]}>
+            BACK
+          </Text>
           <GhostClockContainer interactive={true} key='GhostClockPast' />
         </View>
       ) : (
         <View style={[Styles.ghostClockNow, { bottom: props.bottom }]}>
+            <Text style={[Styles.text, Styles.ghostClockNowLabel]}>
+              NOW
+          </Text>
           <GhostClockContainer interactive={true} key='GhostClockNow' />
         </View>
       )

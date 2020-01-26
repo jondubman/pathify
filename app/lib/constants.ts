@@ -178,6 +178,10 @@ const colors = {
     enabledBackground: namedColors.yellow,
     enabledUnderlay: namedColors.darkerYellow, // in transition
   },
+  ghostClockLabels: {
+    now: withOpacity(colorThemes.now, 0.5),
+    past: withOpacity(namedColors.lighterBlue, 0.5),
+  },
   helpButton: {
     background: namedColors.white,
     icon: namedColors.black,
@@ -456,7 +460,7 @@ const constants = {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
     height: 55,
     leftContentsWidth: 100, // note the mapbox logo is in the lower left of the screen and needs to be avoided
-    topSpace: 4,
+    topSpace: 6,
     width: 126,
   },
   safeAreaBottom,
