@@ -8,7 +8,6 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
   TouchableHighlight,
   View,
 } from 'react-native';
@@ -19,21 +18,16 @@ import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
 import store from 'lib/store';
 import utils from 'lib/utils';
+import ActivityListItem from 'presenters/ActivityListItem';
 import { ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
 import { Timepoint } from 'shared/timeseries';
-import {
-  metersToMilesText,
-  msecToString,
-} from 'shared/units';
 
 const colors = constants.colors.activityList;
 const {
   activityHeight,
   activityMargin,
   activityWidth,
-  borderRadius,
-  borderWidth,
   centerLineTop,
   centerLineWidth,
   height,
@@ -41,24 +35,6 @@ const {
 } = constants.activityList;
 
 const Styles = StyleSheet.create({
-  activity: {
-    borderRadius,
-    borderWidth,
-    height: activityHeight,
-    width: activityWidth,
-  },
-  currentActivity: {
-    backgroundColor: colors.current.background,
-    borderColor: colors.current.border,
-  },
-  pastActivity: {
-    backgroundColor: colors.past.background,
-    borderColor: colors.past.border,
-  },
-  pastActivitySelected: {
-    backgroundColor: colors.past.selected,
-    borderColor: colors.past.borderSelected,
-  },
   box: {
     backgroundColor: colors.background,
     height,
@@ -72,13 +48,6 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 2,
     marginRight: 4,
-  },
-  textSelected: {
-    color: colors.textSelected,
-  },
-  touchableActivity: {
-    height: activityHeight,
-    marginLeft: activityMargin, // Note activityMargin is applied only on the left. Important for offset calculations.
   },
   borderLine: { // multiple instances of these above and below ActivityList, similar to what's above Timeline
     backgroundColor: colors.borderLine,
@@ -345,7 +314,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             onLayout={this.autoScroll}
             onScroll={this.handleScroll}
             onScrollEndDrag={this.handleScrollEndDrag}
-            style={{ marginTop: topBottomBorderHeight }}
             ref={(ref) => {
               if (ref) {
                 _ref = ref;
@@ -355,38 +323,22 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             renderItem={this.renderItem}
             scrollIndicatorInsets={scrollInsets}
             showsHorizontalScrollIndicator={true}
+            style={{ marginTop: topBottomBorderHeight }}
           />
         </View>
       </Fragment>
     )
   }
 
+  // item in this case is the cached ActivityDataExtended and index is just an index into the same list.
   renderItem({ item, index, separators }) {
     const activity = item as ActivityDataExtended;
-    const isCurrent = !activity.tEnd;
-    const tLast = isCurrent ? utils.now() : activity.tLast;
-    const time = (tLast && activity.tStart) ?
-      msecToString(Math.max(0, tLast - activity.tStart)) : '';
-    const distance = (activity.odo && activity.odoStart) ?
-      metersToMilesText(activity.odo - activity.odoStart) : '';
-    const isSelected = (activity.id === this.props.selectedActivityId);
-    const activityStyle = [
-      Styles.activity,
-      isCurrent ? Styles.currentActivity : (isSelected ? Styles.pastActivitySelected : Styles.pastActivity),
-    ]
-    const textStyle = [Styles.text, isSelected ? Styles.textSelected : null];
-    // Note onPress receives a GestureResponderEvent we are ignoring.
     return (
-      <TouchableHighlight
+      <ActivityListItem
+        activity={activity}
+        selected={activity.id === this.props.selectedActivityId}
         onPress={() => { this.props.onPressActivity(activity.id) }}
-        style={Styles.touchableActivity}
-        underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
-      >
-        <View style={activityStyle}>
-          <Text style={textStyle}>{time}</Text>
-          <Text style={textStyle}>{distance}</Text>
-        </View>
-      </TouchableHighlight>
+      />
     )
   }
 

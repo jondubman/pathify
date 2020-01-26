@@ -260,5 +260,4 @@ const Clock = (props: ClockProps) => props.interactive ? (
   </View>
 )
 
-
 export default Clock; // Note Clock is not a pure functional component (thus cannot use React.memo)

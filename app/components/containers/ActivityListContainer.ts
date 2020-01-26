@@ -45,7 +45,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
     animated: false,
     currentActivityId,
-    list: state.cache.activities || [],
+    list: state.cache.activities || [], // TODO could filter activities
     refreshCount: state.cache.refreshCount,
     selectedActivityId,
     timelineNow,
