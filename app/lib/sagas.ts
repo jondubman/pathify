@@ -863,7 +863,8 @@ const sagas = {
     const { backTime } = yield select((state: AppState) => state.options);
     yield put(newAction(AppAction.flagDisable, 'timelineNow'));
     yield put(newAction(AppAction.setAppOption, { scrollTime: backTime }));
-    yield put(newAction(AppAction.scrollActivityList, { scrollTime: backTime }));
+    yield put(newAction(AppAction.scrollActivityList, { scrollTime: backTime })); // in jumpToBackTime
+    yield put(newAction(AppAction.scrollTimeline, { scrollTime: backTime })); // in jumpToBackTime
   },
 
   jumpToNow: function* (action: Action) {
@@ -874,8 +875,8 @@ const sagas = {
       yield put(newAction(AppAction.flagEnable, 'timelineNow'));
       yield put(newAction(AppAction.setAppOption, { backTime: viewTime })); // TODO might actually want history feature
       const now = utils.now() + constants.timing.timelineCloseToNow;
-      // TODO add boolean param forceNow to scrollActivityList?
       yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in jumpToNow
+      yield put(newAction(AppAction.scrollTimeline, { scrollTime: now })); // in jumpToNow
     }
   },
 
