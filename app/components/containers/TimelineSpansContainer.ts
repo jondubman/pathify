@@ -1,14 +1,15 @@
 import { connect } from 'react-redux';
 
-import { Timespans } from 'containers/TimelineContainer';
-import {
-  timelineTimespans,
-} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import TimelineSpans from 'presenters/TimelineSpans';
+import {
+  ActivityDataExtended,
+} from 'shared/activities';
 
 export interface TimelineSpansStateProps {
-  data: Timespans;
+  activities: ActivityDataExtended[];
+  currentActivityId: string;
+  selectedActivityId: string;
 }
 
 export interface TimelineSpansDispatchProps {
@@ -17,9 +18,11 @@ export interface TimelineSpansDispatchProps {
 export type TimelineSpansProps = TimelineSpansStateProps & TimelineSpansDispatchProps;
 
 const mapStateToProps = (state: AppState): TimelineSpansStateProps => {
-  const timespans: Timespans = timelineTimespans(state);
+  const { currentActivityId, selectedActivityId } = state.options;
   return {
-    data: timespans,
+    activities: state.cache.activities,
+    currentActivityId: currentActivityId || '',
+    selectedActivityId: selectedActivityId || '',
   }
 }
 

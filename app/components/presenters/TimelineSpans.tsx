@@ -1,32 +1,50 @@
-import * as React from 'react';
+// This TimelineSpans presentational component contains the TimelineSpan presentational component.
+// There is also the TimelineSpansContainer that provides data for this component.
 
+import * as React from 'react';
 import * as Victory from 'victory-native';
 
-import { Timespan, Timespans } from 'containers/TimelineContainer';
+import { TimelineSpansProps } from 'containers/TimelineSpansContainer';
+import constants, {
+  TimespanKind,
+} from 'lib/constants';
+import utils from 'lib/utils';
 import TimelineSpan from 'presenters/TimelineSpan';
+import { ActivityDataExtended } from 'shared/activities';
 
-interface TimelineSpansProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
-  data: Timespans;
+interface TimelineSpansExtendedProps extends TimelineSpansProps,
+  Victory.VictoryCommonProps, Victory.VictoryDatableProps {
+  // includes scale prop used below
 }
 
-class TimelineSpans extends React.Component<TimelineSpansProps> {
+class TimelineSpans extends React.Component<TimelineSpansExtendedProps> {
 
   constructor(props: any) {
     super(props);
+    this.timespanColor = this.timespanColor.bind(this);
   }
 
-  // TODO have scale here, need to apply it and pass in scaled X as prop to TimelineSpan, and not pass scale as a prop.
-  // Then, turn TimelineSpan into a PureComponent. No biggie if this component is updated; it's TimelineSpan we want
-  // to minimize updating.
+  timespanColor(activity: ActivityDataExtended) {
+    if (activity.id === this.props.currentActivityId) {
+      return constants.colors.timeline.currentActivity;
+    }
+    if (activity.id === this.props.selectedActivityId) {
+      return constants.colors.timeline.selectedActivity;
+    }
+    return constants.colors.timeline.timespans[TimespanKind.ACTIVITY]; // default
+  }
+
   render() {
-    const { data } = this.props;
+    utils.addToCount('renderTimelineSpans');
+    const { activities } = this.props;
     const { scale } = this.props as any;
-    return data.map((ts: Timespan, index: number) => (
-      <TimelineSpan key={`${scale.x(ts.tr[0])}-${scale.x(ts.tr[1])}`}
-                    color={ts.color}
-                    kind={ts.kind}
-                    xStart={scale.x(ts.tr[0])}
-                    xEnd={scale.x(ts.tr[1])}
+    return activities.map((activity: ActivityDataExtended, index: number) => (
+      <TimelineSpan
+        key={`${scale.x(activity.tStart)}-${scale.x(activity.tLast)}`}
+        color={this.timespanColor(activity)}
+        kind={TimespanKind.ACTIVITY}
+        xStart={scale.x(activity.tStart)}
+        xEnd={scale.x(activity.tLast)}
       />
     ))
   }

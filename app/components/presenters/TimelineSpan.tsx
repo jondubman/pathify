@@ -6,11 +6,15 @@ const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript ty
 import constants, { TimespanKind } from 'lib/constants';
 import utils from 'lib/utils';
 
-interface TimelineSpanProps {
+export interface TimelineSpanStateProps {
   color?: string;
   kind: TimespanKind;
   xStart: number;
   xEnd: number;
+}
+export interface TimelineSpanDispatchProps {
+}
+export interface TimelineSpanProps extends TimelineSpanStateProps, TimelineSpanDispatchProps {
 }
 
 // yBase is at the bottom of the timeline. y should decrease from there. Notice this function is recursive.

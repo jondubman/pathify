@@ -19,6 +19,7 @@ import {
 } from 'victory-native';
 
 import { TimelineProps } from 'containers/TimelineContainer';
+import TimelineFutureSpanContainer from 'containers/TimelineFutureSpanContainer';
 import TimelineSpansContainer from 'containers/TimelineSpansContainer';
 import TimelineMarksContainer from 'containers/TimelineMarksContainer';
 import constants from 'lib/constants';
@@ -105,6 +106,7 @@ class Timeline extends Component<TimelineProps> {
     utils.addToCount('renderTimeline');
     const {
       pinchZoom,
+      showFutureTimespan,
       showMarks,
       showSpans,
       timelineWidth,
@@ -148,6 +150,9 @@ class Timeline extends Component<TimelineProps> {
           />
           {showSpans ?
             <TimelineSpansContainer />
+            : null}
+          {showSpans && showFutureTimespan ?
+            <TimelineFutureSpanContainer />
             : null}
           {showMarks ?
             <TimelineMarksContainer />

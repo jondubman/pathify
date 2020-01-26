@@ -3,17 +3,24 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { createSelector } from 'reselect'
 
 import { AppState } from 'lib/state';
-import constants, { MapStyle, TimespanKind, withOpacity } from 'lib/constants';
+import constants, {
+  MapStyle,
+  TimespanKind,
+} from 'lib/constants';
 import database from 'lib/database';
 import utils from 'lib/utils';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
-import { Timespan, Timespans } from 'containers/TimelineContainer';
 import locations from 'shared/locations';
-import { Activity, ActivityDataExtended } from 'shared/activities';
+import {
+  Activity,
+  ActivityDataExtended,
+} from 'shared/activities';
 import log from 'shared/log';
 import { MarkEvent } from 'shared/marks';
-import { interval, Timepoint } from 'shared/timeseries';
-import { AppStateChange, AppStateChangeEvent } from 'shared/appEvents';
+import {
+  interval,
+  Timepoint,
+} from 'shared/timeseries';
 import {
   msecToString,
 } from 'shared/units';
@@ -24,13 +31,14 @@ export const activityIncludesMark = (activityId: string, mark: MarkEvent): boole
   return !!(mark.activityId && activity && mark.activityId === activity.id)
 }
 
-const colorForAppState = {
-  [AppStateChange.NONE]: 'transparent',
-  [AppStateChange.STARTUP]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.75), // == ACTIVE
-  [AppStateChange.ACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.5),
-  [AppStateChange.INACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0),
-  [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.3),
-}
+// TODO cleanup
+// const colorForAppState = {
+//   [AppStateChange.NONE]: 'transparent',
+//   [AppStateChange.STARTUP]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.75), // == ACTIVE
+//   [AppStateChange.ACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.5),
+//   [AppStateChange.INACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0),
+//   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.3),
+// }
 
 export const selectedActivityIndex = (state: AppState) => (
   state.cache.activities.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
@@ -46,58 +54,35 @@ export const activityIndex = (state: AppState): string => (
     '' // don't bother showing 0
 )
 
-// Each activityTimespan shows one Activity
-// TODO this desperately needs reselect!
-// TODO consider splitting this into separate pastActivityTimespans and a currentActivityTimespan.
-const activityTimespans = (state: AppState): Timespans => {
-  const activities = state.cache.activities;
-  if (!activities || !activities.length) {
-    return [];
-  }
-  return activities.map((activity: ActivityDataExtended): Timespan => {
-    const timespan = {
-      kind: TimespanKind.ACTIVITY,
-      tr: [activity.tStart, Math.min(activity.tEnd || Infinity, utils.now())],
-    } as Timespan;
-    if (activity.id === state.options.selectedActivityId) {
-      timespan.color = constants.colors.timeline.selectedActivity;
-    }
-    if (activity.id === state.options.currentActivityId) {
-      timespan.color = constants.colors.timeline.currentActivity;
-    }
-    return timespan;
-  })
-}
-
 // For debugging, appStateTimespans show appState over time.
-// TODO review
-const appStateTimespans = (state: AppState): Timespans => {
-  const timespans: Timespans = [];
-  let previousState = AppStateChange.NONE;
-  let previousTimepoint: Timepoint = 0;
+// TODO cleanup
+// const appStateTimespans = (state: AppState): Timespans => {
+//   const timespans: Timespans = [];
+//   let previousState = AppStateChange.NONE;
+//   let previousTimepoint: Timepoint = 0;
 
-  const appEvents = database.events().filtered('type == "APP"');
-  for (let e of appEvents) {
-    const event = e as any as AppStateChangeEvent;
-    const { newState, t } = event;
-    if (previousState !== AppStateChange.NONE) {
-      timespans.push({
-        kind: TimespanKind.APP_STATE,
-        tr: [previousTimepoint, t],
-        color: colorForAppState[previousState],
-      })
-    }
-    previousState = newState;
-    previousTimepoint = t;
-  }
-  // Add a timepsan representing the current state.
-  timespans.push({
-    kind: TimespanKind.APP_STATE,
-    tr: [previousTimepoint, utils.now()],
-    color: colorForAppState[previousState],
-  })
-  return timespans;
-}
+//   const appEvents = database.events().filtered('type == "APP"');
+//   for (let e of appEvents) {
+//     const event = e as any as AppStateChangeEvent;
+//     const { newState, t } = event;
+//     if (previousState !== AppStateChange.NONE) {
+//       timespans.push({
+//         kind: TimespanKind.APP_STATE,
+//         tr: [previousTimepoint, t],
+//         color: colorForAppState[previousState],
+//       })
+//     }
+//     previousState = newState;
+//     previousTimepoint = t;
+//   }
+//   // Add a timepsan representing the current state.
+//   timespans.push({
+//     kind: TimespanKind.APP_STATE,
+//     tr: [previousTimepoint, utils.now()],
+//     color: colorForAppState[previousState],
+//   })
+//   return timespans;
+// }
 
 // cachedActivity by id
 export const cachedActivity = (state: AppState, id: string): ActivityDataExtended | undefined => {
@@ -188,15 +173,6 @@ export const dynamicTimelineWidth = (state: AppState): number => (
 export const dynamicTopBelowButtons = (state: AppState): number => (
   dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
 )
-
-export const futureTimespan = (state: AppState): Timespans => {
-  const { nowTime } = state.options;
-  const timespan: Timespan = {
-    kind: TimespanKind.FUTURE,
-    tr: [nowTime, nowTime + interval.days(365)], // a whole year should be sufficient
-  }
-  return [timespan];
-}
 
 export const loggableOptions = (state: AppState) => {
   const options = { ...state.options } as any;
@@ -299,10 +275,16 @@ export const selectedOrCurrentActivity = (state: AppState): Activity | undefined
   return selectedActivity(state) || currentActivity(state);
 }
 
+// If after the last activity, timeGap returned is the time since then, based on state.now.
 export const timeGapBetweenActivities = (state: AppState, t: Timepoint): number => {
   const { activities } = state.cache;
-  if (activities.length < 2) {
+  const { nowTime } = state.options;
+  if (activities.length < 1) {
     return 0;
+  }
+  const mostRecentEnd = activities[activities.length - 1].tLast;
+  if (t > mostRecentEnd) {
+    return (nowTime - mostRecentEnd)
   }
   for (let i = 0; i < activities.length - 1; i++) {
     const prev = activities[i];
@@ -312,18 +294,6 @@ export const timeGapBetweenActivities = (state: AppState, t: Timepoint): number 
     }
   }
   return 0;
-}
-
-export const timelineTimespans = (state: AppState): Timespans => {
-  const timespans: Timespans = [];
-  timespans.push(...activityTimespans(state));
-  if (state.flags.showAppStateTimespans) {
-    timespans.push(...appStateTimespans(state));
-  }
-  if (state.flags.showFutureTimespan) {
-    timespans.push(...futureTimespan(state));
-  }
-  return timespans;
 }
 
 // value (logarithmic) should be between 0 and 1.

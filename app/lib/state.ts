@@ -71,7 +71,6 @@ export const initialAppState = {
     showActivityInfo: true, // generally true
     showActivityList: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
-    showAppStateTimespans: false, // for debugging
     showDebugInfo: false, // for debugging, obviously
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
     showPathsOnMap: true, // generally true

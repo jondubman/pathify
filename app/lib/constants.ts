@@ -451,7 +451,7 @@ const constants = {
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
     height: 55,
-    leftContentsWidth: 100, // note the mapbox logo is in the lower left of the screen and needs to be avoided
+    leftContentsWidth: 120,
     topSpace: 6,
     width: 126,
   },

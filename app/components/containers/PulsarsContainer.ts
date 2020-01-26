@@ -19,7 +19,6 @@ import { LonLat } from 'shared/locations';
 export interface OptionalPulsar {
   loc: LonLat;
   color: string;
-  revision: number;
   visible: boolean;
 }
 

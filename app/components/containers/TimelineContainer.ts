@@ -27,6 +27,7 @@ export type Timespans = Timespan[];
 export interface TimelineStateProps {
   centerTime: number;
   pinchZoom: boolean;
+  showFutureTimespan: boolean;
   showMarks: boolean;
   showSpans: boolean;
   timelineNow: boolean;
@@ -66,6 +67,7 @@ const getZoomDomain = (state: AppState) => {
 const mapStateToProps = (state: AppState): TimelineStateProps => {
   const {
     timelinePinchToZoom,
+    showFutureTimespan,
     showTimelineMarks,
     showTimelineSpans,
     timelineNow
@@ -82,6 +84,7 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   return {
     centerTime,
     pinchZoom: timelinePinchToZoom,
+    showFutureTimespan,
     showMarks: showTimelineMarks,
     showSpans: showTimelineSpans,
     timelineNow,
