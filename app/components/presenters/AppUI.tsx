@@ -15,14 +15,14 @@ import log from 'shared/log';
 
 import ActivityInfoContainer from 'containers/ActivityInfoContainer';
 import { AppUIProps } from 'containers/AppUIContainer';
-import ClockMenuContainer from 'containers/ClockMenuContainer';
+import StartMenuContainer from 'containers/StartMenuContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import DebugInfoContainer from 'containers/DebugInfoContainer';
 import FollowButtonsContainer from 'containers/FollowButtonsContainer';
-import GeoButtonContainer from 'containers/GeoButtonContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
 import MapAreaContainer from 'containers/MapAreaContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
+import StartButtonContainer from 'containers/StartButtonContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 import TimelineScrollContainer from 'containers/TimelineScrollContainer';
 import TopMenuContainer from 'containers/TopMenuContainer';
@@ -69,12 +69,12 @@ class AppUI extends Component<AppUIProps> {
             {showActivityInfo ? <ActivityInfoContainer /> : null}
             {showDebugInfo ? <DebugInfoContainer /> : null}
             <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-              {mapFullScreen ? null : <ClockMenuContainer />}
+              <StartMenuContainer />
             </View>
             <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
               <CompassButtonContainer />
               <FollowButtonsContainer />
-              <GeoButtonContainer />
+              <StartButtonContainer />
             </View>
             {showTimeline ? <TimelineControlsContainer /> : null}
             <View style={{ position: 'absolute', width }}>

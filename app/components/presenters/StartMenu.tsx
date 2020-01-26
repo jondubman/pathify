@@ -8,14 +8,14 @@ import {
   View,
 } from 'react-native';
 
-import { ClockMenuProps } from 'containers/ClockMenuContainer';
+import { StartMenuProps } from 'containers/StartMenuContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 
-const colors = constants.colors.clockMenu;
+const colors = constants.colors.startMenu;
 const {
   height,
-} = constants.clockMenu;
+} = constants.startMenu;
 const width = utils.windowSize().width;
 
 const Styles = StyleSheet.create({
@@ -48,7 +48,7 @@ const initialState = {
 }
 type State = Readonly<typeof initialState>
 
-class ClockMenu extends React.Component<ClockMenuProps> {
+class StartMenu extends React.Component<StartMenuProps> {
 
   readonly state: State = initialState;
 
@@ -75,4 +75,4 @@ class ClockMenu extends React.Component<ClockMenuProps> {
   }
 }
 
-export default ClockMenu;
+export default StartMenu;

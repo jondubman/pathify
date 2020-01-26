@@ -649,9 +649,6 @@ const sagas = {
     const params = action.params as ClockPressParams;
     const nowClock = params && params.nowClock;
     yield call(log.trace, `clockPress, now: ${nowClock}`);
-    yield put(newAction(AppAction.closePanels, { option: 'otherThanClockMenu' }));
-    // TODO WIP
-    // yield put(newAction(AppAction.flagToggle, 'clockMenuOpen'));
   },
 
   // Panels here refer to popups / menus.
@@ -660,20 +657,20 @@ const sagas = {
     yield call(log.debug, 'saga closePanels', params);
     const option = (params && params.option) || '';
     const {
-      clockMenuOpen,
+      startMenuOpen,
       helpOpen,
       settingsOpen,
       topMenuOpen,
     } = yield select((state: AppState) => state.flags);
 
-    if (clockMenuOpen && option !== 'otherThanClockMenu') {
-      yield put(newAction(AppAction.flagDisable, 'clockMenuOpen'));
-    }
     if (helpOpen && option !== 'otherThanHelp') {
       yield put(newAction(AppAction.flagDisable, 'helpOpen'));
     }
     if (settingsOpen && option !== 'otherThanSettings') {
       yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+    }
+    if (startMenuOpen && option !== 'otherThanStartMenu') {
+      yield put(newAction(AppAction.flagDisable, 'startMenuOpen'));
     }
     if (topMenuOpen && option !== 'otherThanTopMenu') {
       yield put(newAction(AppAction.flagDisable, 'topMenuOpen'));
@@ -872,9 +869,9 @@ const sagas = {
     const { timelineNow } = yield select((state: AppState) => state.flags);
     const { viewTime } = yield select((state: AppState) => state.options);
     if (!timelineNow) {
-      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
       yield put(newAction(AppAction.setAppOption, { backTime: viewTime })); // TODO might actually want history feature
-      const now = utils.now() + constants.timing.timelineCloseToNow;
+      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+      const now = utils.now() + constants.timing.timelineCloseToNow; // TODO should not need this fudge factor
       yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in jumpToNow
       yield put(newAction(AppAction.scrollTimeline, { scrollTime: now })); // in jumpToNow
     }

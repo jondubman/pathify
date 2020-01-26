@@ -229,7 +229,7 @@ export const mapStyles = (state: AppState): MapStyle[] => (
 )
 
 export const menuOpen = (state: AppState): boolean => (
-  state.flags.clockMenuOpen || state.flags.helpOpen || state.flags.settingsOpen || state.flags.topMenuOpen
+  state.flags.helpOpen || state.flags.settingsOpen || state.flags.startMenuOpen || state.flags.topMenuOpen
 )
 
 export const nextActivity = (state: AppState, t: Timepoint): (ActivityDataExtended | null) => {

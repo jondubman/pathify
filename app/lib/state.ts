@@ -42,7 +42,6 @@ export const initialAppState = {
     activityListScrolling: false, // is the activityList currently actively being scrolled?
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
-    clockMenuOpen: false, // if manually opened by user
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
     followingPath: false, // is map following prior locations of user on an activity path? see flags.showPastLocation.
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
@@ -66,6 +65,7 @@ export const initialAppState = {
     receiveMotionChangeEvents: false, // TODO
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // manually opened by user
+    startMenuOpen: false, // if manually opened by user
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     showActivityDetails: false, // generally false
     showActivityInfo: true, // generally true

@@ -147,10 +147,6 @@ const colors = {
     underlayGhostNow: withOpacity(colorThemes.now, 0.65),
     underlayGhostPast: withOpacity(colorThemes.past, 0.65),
   },
-  clockMenu: {
-    background: withOpacity(colorThemes.background, defaultOpacity),
-    border: namedColors.darkerGray,
-  },
   compassButton: {
     background: withOpacity(namedColors.white, defaultOpacity),
     icon: namedColors.black,
@@ -170,7 +166,7 @@ const colors = {
     underlayPath: 'transparent',
     underlayUser: 'transparent',
   },
-  geolocationButton: {
+  startButton: {
     background: namedColors.white,
     opacity: 0.75,
     disabledBackground: namedColors.green,
@@ -236,6 +232,10 @@ const colors = {
     border: colorThemes.settings,
     choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
     opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
+  },
+  startMenu: {
+    background: withOpacity(colorThemes.background, defaultOpacity),
+    border: namedColors.darkerGray,
   },
   switch: {
     background: withOpacity(namedColors.darkerGray, 0.5),
@@ -352,9 +352,6 @@ const constants = {
     },
     width: clockHeight, // Note this is not a typo. Width and height are identical because clock is round.
   },
-  clockMenu: {
-    height: 200, // TODO this is somewhat arbitrary at the moment
-  },
   colors,
   colorThemes,
   compassButton: {
@@ -389,11 +386,6 @@ const constants = {
       choice: 15,
       choiceLabel: 12,
     },
-  },
-  geolocationButton: {
-    leftOffset: buttonOffset,
-    opacity: defaultOpacity,
-    size: buttonSize,
   },
   helpButton: {
     opacity: defaultOpacity,
@@ -479,6 +471,14 @@ const constants = {
     leftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
+  },
+  startButton: {
+    leftOffset: buttonOffset,
+    opacity: defaultOpacity,
+    size: buttonSize,
+  },
+  startMenu: {
+    height: 150,
   },
   timing: { // msec
     activityListDelayReadjustmentAfterStartup: 500, // TODO would be better not to need this

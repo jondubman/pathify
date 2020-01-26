@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 
 import constants from 'lib/constants';
-const colors = constants.colors.geolocationButton;
+const colors = constants.colors.startButton;
 const {
   leftOffset,
   opacity,
   size,
-} = constants.geolocationButton;
+} = constants.startButton;
 
 const Styles = StyleSheet.create({
   button: { // round
@@ -37,9 +37,9 @@ const Styles = StyleSheet.create({
 
 // const modeIcons = ['ghost', 'bullseye', 'running', 'bolt']; // also 'play'
 
-import { GeoButtonProps } from 'containers/GeoButtonContainer';
+import { StartButtonProps } from 'containers/StartButtonContainer';
 
-const GeoButton = (props: GeoButtonProps) => (
+const StartButton = (props: StartButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
       backgroundColor: props.enabled ? colors.enabledBackground : colors.disabledBackground,
@@ -53,7 +53,7 @@ const GeoButton = (props: GeoButtonProps) => (
       <FontAwesome5
         color={constants.colors.byName.black}
         name={'stop'}
-        size={constants.geolocationButton.size / 2}
+        size={constants.startButton.size / 2}
       />
     ) : (
       <Text style={Styles.label}>
@@ -63,4 +63,4 @@ const GeoButton = (props: GeoButtonProps) => (
   </TouchableHighlight>
 )
 
-export default GeoButton;
+export default StartButton;

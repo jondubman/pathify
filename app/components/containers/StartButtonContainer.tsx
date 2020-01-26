@@ -6,35 +6,35 @@ import { connect } from 'react-redux';
 import { AppAction, newAction } from 'lib/actions';
 import { dynamicLowerButtonBase } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import GeoButton from 'presenters/GeoButton';
+import StartButton from 'presenters/StartButton';
 import log from 'shared/log';
 
-interface GeoButtonStateProps {
+interface StartButtonStateProps {
   bottomOffset: number,
   enabled: boolean,
 }
 
-interface GeoButtonDispatchProps {
+interface StartButtonDispatchProps {
   onStart: (event: GestureResponderEvent) => void;
   onStop: (event: GestureResponderEvent) => void;
 }
 
-export type GeoButtonProps = GeoButtonStateProps & GeoButtonDispatchProps;
+export type StartButtonProps = StartButtonStateProps & StartButtonDispatchProps;
 
-const mapStateToProps = (state: AppState): GeoButtonStateProps => {
+const mapStateToProps = (state: AppState): StartButtonStateProps => {
   return {
     bottomOffset: dynamicLowerButtonBase(state),
     enabled: state.flags.trackingActivity,
   }
 }
 
-const mapDispatchToProps = (dispatch: Function): GeoButtonDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): StartButtonDispatchProps => {
   const onStart = () => {
-    log.debug('GeoButton press START');
+    log.debug('StartButton press START');
     dispatch(newAction(AppAction.startActivity));
   }
   const onStop = () => {
-    log.debug('GeoButton press STOP');
+    log.debug('StartButton press STOP');
     dispatch(newAction(AppAction.stopActivity));
   }
   const dispatchers = {
@@ -44,9 +44,9 @@ const mapDispatchToProps = (dispatch: Function): GeoButtonDispatchProps => {
   return dispatchers;
 }
 
-const GeoButtonContainer = connect<GeoButtonStateProps, GeoButtonDispatchProps>(
+const StartButtonContainer = connect<StartButtonStateProps, StartButtonDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(GeoButton as any);
+)(StartButton as any);
 
-export default GeoButtonContainer;
+export default StartButtonContainer;
