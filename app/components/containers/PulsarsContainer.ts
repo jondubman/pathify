@@ -8,7 +8,10 @@
 
 import { connect } from 'react-redux';
 
-import { pulsars } from 'lib/selectors';
+import {
+  cachedActivity,
+  pulsars,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Pulsars from 'presenters/Pulsars';
 import { LonLat } from 'shared/locations';
@@ -16,6 +19,7 @@ import { LonLat } from 'shared/locations';
 export interface OptionalPulsar {
   loc: LonLat;
   color: string;
+  revision: number;
   visible: boolean;
 }
 
@@ -23,8 +27,8 @@ export interface OptionalPulsar {
 export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
 interface PulsarsStateProps {
-  keySuffix: string;
   pulsars: OptionalPulsars;
+  revision: number;
 }
 
 interface PulsarsDispatchProps {
@@ -34,12 +38,17 @@ export type PulsarsProps = PulsarsStateProps & PulsarsDispatchProps;
 
 const mapStateToProps = (state: AppState): PulsarsStateProps => {
   const { flags, options } = state;
-  // keySuffix needs to be unique, but is only used to populate the React component key.
-  const keySuffix = (options.currentActivityId || (options.selectedActivityId ? `${options.scrollTime}` : '')) +
-    `${JSON.stringify(options.currentActivityId)}${JSON.stringify(options.selectedActivityId)}`;
+  const { currentActivityId, scrollTime } = options;
+  let revision = 0;
+  if (currentActivityId) {
+    const activity = cachedActivity(state, currentActivityId);
+    if (activity) {
+      revision = activity.tLast + scrollTime;
+    }
+  }
   return {
-    keySuffix,
     pulsars: flags.appActive ? pulsars(state) : {}, // hide pulsars when app is in background to save resources
+    revision,
   }
 }
 

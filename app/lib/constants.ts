@@ -418,8 +418,7 @@ const constants = {
       heading: 0,
       opacity: 0.5,
       style: 'Satellite', // e.g. None, Trails, Topo, Satellite. See mapStyles.name
-      zoom: 10, // TODO still needed?
-      zoomStartActivity: 16,
+      zoomStartActivity: 15,
     },
     fitBounds: {
       duration: 500,

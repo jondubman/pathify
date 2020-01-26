@@ -10,15 +10,15 @@ import { PulsarsProps } from 'containers/PulsarsContainer';
 
 class Pulsars extends Component<PulsarsProps> {
   render() {
-    const { keySuffix, pulsars } = this.props;
+    const { pulsars } = this.props;
     return (
       <Fragment>
         {Object.keys(pulsars).map((key => {
-          const pulsar = pulsars[key];
+          const pulsar = pulsars[key]; // key here is like 'pastLocation' or 'userLocation'.
           const { loc, color, visible } = pulsar;
-          const compoundKey = key + keySuffix;
+          const compoundKey = `${key}`;
           return visible ?
-            <Pulsar key={compoundKey} id={key} loc={loc} color={color} />
+            <Pulsar key={compoundKey} id={compoundKey} loc={loc} color={color} />
             :
             null
         }))}

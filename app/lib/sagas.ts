@@ -1370,25 +1370,23 @@ const sagas = {
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
         yield call(Geo.setConfig, true, background);
-        if (!continueActivityId) {
-          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-        }
         const now = utils.now();
         let activityId: string;
         if (continueActivityId) {
           // should already have the AppUserActionEvent and MarkEvent from before; just set currentActivityId.
           activityId = continueActivityId;
         } else {
+          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
           const followingNow = yield select((state: AppState) => state.flags.followingUser);
           if (followingNow) {
-            yield put(newAction(AppAction.centerMap, {
-              center: [0, 0],
-              option: 'relative',
-              zoom: constants.map.default.zoomStartActivity,
-            } as CenterMapParams));
           } else {
             yield put(newAction(AppAction.startFollowingUser));
           }
+          yield put(newAction(AppAction.centerMap, {
+            center: [0, 0],
+            option: 'relative',
+            zoom: constants.map.default.zoomStartActivity,
+          } as CenterMapParams));
           const newActivity = yield call(database.createActivity, now);
           activityId = newActivity.id;
           const startEvent: AppUserActionEvent = {

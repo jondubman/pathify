@@ -17,9 +17,9 @@ import constants from 'lib/constants';
 import { LonLat } from 'shared/locations';
 
 const pulseMin = 1;
-const pulseMax = 3;
+const pulseMax = 4;
 const pulseMsec = constants.timing.pulsarPulse;
-const desiredRadius = 8;
+const desiredRadius = 10;
 const defaultCircleColor = constants.colors.user;
 
 interface PulsarProps {
@@ -35,7 +35,7 @@ interface PulsarState {
 class Pulsar extends Component<PulsarProps, PulsarState> {
 
   readonly state: PulsarState = {
-    pulse: new Animated.Value(pulseMin),
+    pulse: new Animated.Value(pulseMin), // Start at pulseMin. We then animate to pulseMax, and back to pulseMin.
   }
   _pulseAnimation: any = null;
 
@@ -53,7 +53,7 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
       toValue: pulseMin,
       duration: pulseMsec,
     })
-    this._pulseAnimation = Animated.loop(
+    this._pulseAnimation = Animated.loop( // indefinitely
       Animated.sequence([pulseOutAnimation, pulseInAnimation]),
     )
     this._pulseAnimation.start();
@@ -67,14 +67,14 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
     }
     const { pulse } = this.state;
     // pulse directly affects the circleStrokeWidth, which gets drawn outside the circle's canonical radius.
-    // To yield a circle with desiredRadius, circleRadius should be smaller when pulse is larger.
+    // To yield a circle that always has desiredRadius, circleRadius is reduced when pulse is larger.
     const radius = pulse.interpolate({
       inputRange: [pulseMin, pulseMax],
       outputRange: [desiredRadius - pulseMin, desiredRadius - pulseMax],
     })
     const opacity = pulse.interpolate({
       inputRange: [pulseMin, pulseMax],
-      outputRange: [0.5, 1],
+      outputRange: [0.25, 1],
     })
     const circleStyle = {
       circleRadius: radius,
