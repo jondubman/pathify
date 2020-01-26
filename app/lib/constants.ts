@@ -339,12 +339,12 @@ const constants = {
       count: 60,
       major: {
         color: withOpacity(colors.byName.white, 0.75),
-        length: 10,
+        length: 13,
         width: 1,
       },
       minor: {
-        color: withOpacity(colors.byName.gray, 0.75),
-        length: 5,
+        color: withOpacity(colors.byName.gray, 0.65),
+        length: 7,
         width: 1,
       },
     },
