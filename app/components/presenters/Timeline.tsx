@@ -20,7 +20,7 @@ import {
 
 import { TimelineProps } from 'containers/TimelineContainer';
 import TimelineFutureSpanContainer from 'containers/TimelineFutureSpanContainer';
-import TimelineSpansContainer from 'containers/TimelineSpansContainer';
+import ActivityTimespansContainer from 'containers/ActivityTimespansContainer';
 import TimelineMarksContainer from 'containers/TimelineMarksContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
@@ -149,7 +149,7 @@ class Timeline extends Component<TimelineProps> {
             tickValues={tickValues}
           />
           {showSpans ?
-            <TimelineSpansContainer />
+            <ActivityTimespansContainer />
             : null}
           {showSpans && showFutureTimespan ?
             <TimelineFutureSpanContainer />

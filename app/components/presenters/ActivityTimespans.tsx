@@ -1,10 +1,7 @@
-// This TimelineSpans presentational component contains the TimelineSpan presentational component.
-// There is also the TimelineSpansContainer that provides data for this component.
-
 import * as React from 'react';
 import * as Victory from 'victory-native';
 
-import { TimelineSpansProps } from 'containers/TimelineSpansContainer';
+import { ActivityTimespansProps } from 'containers/ActivityTimespansContainer';
 import constants, {
   TimespanKind,
 } from 'lib/constants';
@@ -12,12 +9,12 @@ import utils from 'lib/utils';
 import TimelineSpan from 'presenters/TimelineSpan';
 import { ActivityDataExtended } from 'shared/activities';
 
-interface TimelineSpansExtendedProps extends TimelineSpansProps,
+interface ActivityTimespansExtendedProps extends ActivityTimespansProps,
   Victory.VictoryCommonProps, Victory.VictoryDatableProps {
   // includes scale prop used below
 }
 
-class TimelineSpans extends React.Component<TimelineSpansExtendedProps> {
+class ActivityTimespans extends React.Component<ActivityTimespansExtendedProps> {
 
   constructor(props: any) {
     super(props);
@@ -35,7 +32,7 @@ class TimelineSpans extends React.Component<TimelineSpansExtendedProps> {
   }
 
   render() {
-    utils.addToCount('renderTimelineSpans');
+    utils.addToCount('renderActivityTimespans');
     const { activities } = this.props;
     const { scale } = this.props as any;
     return activities.map((activity: ActivityDataExtended, index: number) => (
@@ -50,4 +47,4 @@ class TimelineSpans extends React.Component<TimelineSpansExtendedProps> {
   }
 }
 
-export default TimelineSpans;
+export default ActivityTimespans;
