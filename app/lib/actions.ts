@@ -226,6 +226,10 @@ export interface StartActivityParams {
   continueActivityId?: string;
 }
 
+export interface UserMovedMapParams {
+  center: LonLat;
+}
+
 export interface ZoomToActivityParams {
   id: string,
   zoomMap: boolean,

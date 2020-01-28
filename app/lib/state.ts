@@ -45,7 +45,7 @@ export const initialAppState = {
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
     followingPath: false, // is map following prior locations of user on an activity path? see flags.showPastLocation.
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
-    centerMapContinuously: true, // false means map recentered only when you near the edge (see locWellBounded)
+    centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     helpOpen: false, // manually opened by user
     logInDebugVersion: true, // typically true
     logInProductionVersion: false, // typically false

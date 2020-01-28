@@ -231,15 +231,17 @@ class MapArea extends Component<MapAreaProps> {
     const { isUserInteraction } = args.properties;
     if (isUserInteraction) {
       log.info('onRegionIsChanging', args.geometry.coordinates);
-      this.props.userMovedMap();
     }
     this.props.mapRegionChanging();
   }
 
   onRegionDidChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
-    const { heading, zoomLevel } = args.properties;
+    const { heading, isUserInteraction, zoomLevel } = args.properties;
     const { visibleBounds } = args.properties as any; // TODO: TS definition is off
-    // log.trace(`onRegionDidChange bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+    log.trace(`onRegionDidChange bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+    if (isUserInteraction) {
+      this.props.userMovedMap(args.geometry.coordinates as LonLat);
+    }
     this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel });
   }
 

@@ -66,6 +66,7 @@ import {
   SequenceParams,
   SleepParams,
   StartActivityParams,
+  UserMovedMapParams,
   ZoomToActivityParams,
 } from 'lib/actions'
 import constants from 'lib/constants';
@@ -831,8 +832,9 @@ const sagas = {
       const { locationEvent, recheckMapBounds } = geoloc;
       const { lat, lon } = locationEvent;
       const previousUserLocation = yield select((state: AppState) => state.userLocation);
+      const { mapMoving } = yield select((state: AppState) => state.flags);
       yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
-      if (recheckMapBounds) {
+      if (recheckMapBounds && !mapMoving) {
         const appActive = yield select((state: AppState) => state.flags.appActive);
         if (appActive) {
           // Potential cascading AppAction.centerMapOnUser:
@@ -1671,10 +1673,20 @@ const sagas = {
   },
 
   // Stop following user after panning the map.
-  // TODO if only zoom has changed, or if pan is below a threshold, leave following alone.
   userMovedMap: function* (action: Action) {
     try {
-      yield put(newAction(AppAction.stopFollowing));
+      const { center } = action.params as UserMovedMapParams;
+      const map = MapUtils()!;
+      const bounds = yield call(map.getVisibleBounds);
+      const userLocation = yield select((state: AppState) => state.userLocation);
+      if (userLocation) {
+        const userLoc: LonLat = [userLocation.lon, userLocation.lat];
+        if (utils.locWellBounded(userLoc, bounds)) {
+          yield call(log.trace, 'userMovedMap, but locWellBounded', center);
+        } else {
+          yield put(newAction(AppAction.stopFollowingUser)); // in userMovedMap TODO what about stopFollowingPath?
+        }
+      }
     } catch (err) {
       yield call(log.error, 'userMovedMap', err);
     }

@@ -23,7 +23,7 @@ interface MapAreaDispatchProps {
   mapRegionChanging: () => void;
   mapRendered: () => void;
   mapTapped: (args: any) => void;
-  userMovedMap: () => void;
+  userMovedMap: (center: LonLat) => void;
 }
 
 export type MapAreaProps = MapAreaStateProps & MapAreaDispatchProps;
@@ -59,8 +59,8 @@ const mapDispatchToProps = (dispatch: Function): MapAreaDispatchProps => {
     mapRendered: () => {
       dispatch(newAction(AppAction.mapRendered));
     },
-    userMovedMap: () => {
-      dispatch(newAction(AppAction.userMovedMap));
+    userMovedMap: (center: LonLat) => {
+      dispatch(newAction(AppAction.userMovedMap, { center }));
     },
   }
   return dispatchers;
