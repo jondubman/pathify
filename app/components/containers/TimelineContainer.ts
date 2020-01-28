@@ -45,7 +45,7 @@ export type TimelineProps = TimelineStateProps & TimelineDispatchProps;
 
 let _zoomDomain: { x: [number, number], y: DomainTuple }; // most recently used visible domain of the Timeline
 
-// TODO should probably use reselect library, as that solves the general case.
+// TODO could use reselect
 const getZoomDomain = (state: AppState) => {
   const { centerTime, timelineZoomValue } = state.options;
   const visibleTime = timelineVisibleTime(timelineZoomValue);

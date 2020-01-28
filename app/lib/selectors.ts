@@ -308,6 +308,15 @@ export const timelineVisibleTime = (value: number): number => {
   return visibleTime;
 }
 
+export const timepointVisibleOnTimeline = (state: AppState, t: Timepoint): boolean => {
+  const { centerTime, timelineZoomValue } = state.options;
+  const visibleTime = timelineVisibleTime(timelineZoomValue);
+  const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
+  const tMin = centerTime - scrollableAreaTime / 2;
+  const tMax = centerTime + scrollableAreaTime / 2;
+  return (tMin <= t && t <= tMax);
+}
+
 // value (logarithmic) should be between 0 and 1.
 // returned number is index for one of the constants.timeline.zoomRanges that's the best fit given this slider value.
 export const timelineZoomLevel = (value: number): number => {

@@ -21,9 +21,11 @@ class TimelineSpans extends React.Component<TimelineFutureSpanExtendedProps> {
   }
 
   render() {
+    if (!this.props.visible) {
+      return null; // bail out
+    }
     utils.addToCount('renderTimelineFutureSpan');
     const { nowTime, scale } = this.props as any;
-    // TODO Clip this if we know it's out of view, i.e. if you are scrolled far enough back in time.
     const endTime = nowTime + interval.days(365);
     return (
       <TimelineSpan
