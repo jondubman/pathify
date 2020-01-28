@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AppAction, newAction } from 'lib/actions';
+import { AppAction, CenterMapParams, newAction } from 'lib/actions';
 import constants from 'lib/constants';
 import { AppState } from 'lib/state';
 import StartMenu from 'presenters/StartMenu';
@@ -52,6 +52,13 @@ const mapDispatchToProps = (dispatch: Function): StartMenuDispatchProps => {
     log.debug('onSelectNewActivity');
     dispatch(newAction(AppAction.flagDisable, 'startMenuOpen'));
     dispatch(newAction(AppAction.startActivity));
+    setTimeout(() => {
+      dispatch(newAction(AppAction.centerMap, {
+        center: [0, 0],
+        option: 'relative',
+        zoom: constants.map.default.zoomStartActivity,
+      } as CenterMapParams))
+    }, 0)
   }
   const dispatchers = {
     onDismiss,

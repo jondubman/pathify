@@ -1380,14 +1380,6 @@ const sagas = {
           } else {
             yield put(newAction(AppAction.startFollowingUser));
           }
-          // TODO omitting centerMap with zoom in startActivity for now.
-          // geolocation will center the map, now that we are following.
-
-          // yield put(newAction(AppAction.centerMap, {
-          //   center: [0, 0],
-          //   option: 'relative',
-          //   zoom: constants.map.default.zoomStartActivity,
-          // } as CenterMapParams));
           const newActivity = yield call(database.createActivity, now);
           activityId = newActivity.id;
           const startEvent: AppUserActionEvent = {
