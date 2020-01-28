@@ -1,11 +1,14 @@
 import React, {
+  Fragment,
 } from 'react';
 
 import {
+  StyleProp,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
+  ViewStyle,
 } from 'react-native';
 
 import { StartMenuProps } from 'containers/StartMenuContainer';
@@ -13,34 +16,15 @@ import constants from 'lib/constants';
 import utils from 'lib/utils';
 
 const colors = constants.colors.startMenu;
-const {
-  height,
-} = constants.startMenu;
-const width = utils.windowSize().width;
 
 const Styles = StyleSheet.create({
-  panel: {
-    backgroundColor: colors.background,
-    borderTopLeftRadius: constants.buttonSize / 2,
-    borderTopRightRadius: constants.buttonSize / 2,
-    borderColor: colors.border,
-    borderWidth: 1,
-    height,
-    justifyContent: 'flex-start',
-    paddingRight: constants.buttonOffset,
-    width,
-  },
-  subpanel: {
-    alignSelf: 'flex-end',
-    display: 'flex',
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
   text: {
+    alignSelf: 'center',
+    backgroundColor: colors.menuItemBackground,
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.choice,
     fontWeight: 'bold',
-    margin: 5,
+    marginVertical: 20,
   },
 })
 
@@ -58,19 +42,86 @@ class StartMenu extends React.Component<StartMenuProps> {
 
   render() {
     const { props } = this;
+
+    const menuItemStyle = {
+      width: props.width - constants.startMenu.borderWidth * 2,
+    } as StyleProp<ViewStyle>;
+
+    const panelStyle = {
+      backgroundColor: colors.dimmerBackground,
+      flexDirection: 'column',
+      left: 0,
+      height: utils.windowSize().height,
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 0,
+      width: utils.windowSize().width,
+    } as StyleProp<ViewStyle>;
+
+    const subpanelStyle = {
+      alignSelf: 'center',
+      backgroundColor: colors.panelBackground,
+      borderRadius: constants.buttonSize / 2,
+      borderColor: colors.border,
+      borderWidth: constants.startMenu.borderWidth,
+      flexDirection: 'column',
+      height: props.height,
+      justifyContent: 'center',
+      width: props.width,
+    } as StyleProp<ViewStyle>;
+
+    const timelineSpaceStyle = { // for layout
+      opacity: 0,
+      height: props.timelineHeight,
+    };
+
     return (
-      <React.Fragment>
+      <Fragment>
         { props.open ?
-          <View style={[Styles.panel, {bottom: props.bottom}]}>
-            <View>
-              <View style={Styles.subpanel}>
+          <TouchableHighlight
+            onPress={props.onDismiss}
+            style={panelStyle}
+          >
+            <Fragment>
+              <View style={subpanelStyle}>
+                {props.trackingActivity ? (
+                  <TouchableHighlight
+                    onPress={props.onSelectEndActivity}
+                    style={menuItemStyle}
+                    underlayColor={constants.colors.startMenu.menuItemUnderlay}
+                  >
+                    <Text style={Styles.text}>
+                      End Current Activity
+                    </Text>
+                  </TouchableHighlight>
+                ) : (
+                  <TouchableHighlight
+                    onPress={props.onSelectNewActivity}
+                    style={menuItemStyle}
+                    underlayColor={constants.colors.startMenu.menuItemUnderlay}
+                  >
+                    <Text style={Styles.text}>
+                      Start New Activity
+                    </Text>
+                  </TouchableHighlight>
+                )}
+                <TouchableHighlight
+                  onPress={props.onDismiss}
+                  style={menuItemStyle}
+                  underlayColor={constants.colors.startMenu.menuItemUnderlay}
+                >
+                  <Text style={Styles.text}>
+                    {props.trackingActivity ? 'Continue' : 'Close'}
+                  </Text>
+                </TouchableHighlight>
               </View>
-            </View>
-          </View>
-        :
-        null
+              <View style={timelineSpaceStyle} />
+            </Fragment>
+          </TouchableHighlight>
+          :
+          null
         }
-      </React.Fragment>
+      </Fragment>
     )
   }
 }

@@ -13,7 +13,7 @@ interface SettingsButtonStateProps {
 }
 
 interface SettingsButtonDispatchProps {
-  onPress: (event: GestureResponderEvent) => void;
+  onPressIn: (event: GestureResponderEvent) => void;
 }
 
 export type SettingsButtonProps = SettingsButtonStateProps & SettingsButtonDispatchProps;
@@ -25,13 +25,13 @@ const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): SettingsButtonDispatchProps => {
-  const onPress = () => {
+  const onPressIn = () => {
     log.debug('SettingsButton press');
     dispatch(newAction(AppAction.closePanels, { option: 'otherThanSettings' }));
     dispatch(newAction(AppAction.flagToggle, 'settingsOpen'));
   }
   const dispatchers = {
-    onPress,
+    onPressIn,
   }
   return dispatchers;
 }

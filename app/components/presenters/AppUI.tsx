@@ -64,25 +64,25 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
-          {mapFullScreen && (mapTapped && !mapTapTogglesFullScreen) ? null : (<Fragment>
-            {showTimeline ? <TimelineScrollContainer /> : null}
-            {showActivityInfo ? <ActivityInfoContainer /> : null}
-            {showDebugInfo ? <DebugInfoContainer /> : null}
-            <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+          {mapFullScreen && (mapTapped && !mapTapTogglesFullScreen) ? null :
+            (<Fragment>
+              {showTimeline ? <TimelineScrollContainer /> : null}
+              {showActivityInfo ? <ActivityInfoContainer /> : null}
+              {showDebugInfo ? <DebugInfoContainer /> : null}
+              <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+                <CompassButtonContainer />
+                <FollowButtonsContainer />
+                <StartButtonContainer />
+              </View>
+              {showTimeline ? <TimelineControlsContainer /> : null}
+              <View style={{ position: 'absolute', width }}>
+                <HelpPanelContainer />
+                {mapFullScreen ? null : <TopMenuContainer />}
+                <SettingsPanelContainer />
+              </View>
               <StartMenuContainer />
-            </View>
-            <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-              <CompassButtonContainer />
-              <FollowButtonsContainer />
-              <StartButtonContainer />
-            </View>
-            {showTimeline ? <TimelineControlsContainer /> : null}
-            <View style={{ position: 'absolute', width }}>
-              <HelpPanelContainer />
-              {mapFullScreen ? null : <TopMenuContainer />}
-              <SettingsPanelContainer />
-            </View>
-          </Fragment>)}
+            </Fragment>)
+          }
         </View>
       </View>
     )

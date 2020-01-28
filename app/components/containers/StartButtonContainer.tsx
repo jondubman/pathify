@@ -10,13 +10,13 @@ import StartButton from 'presenters/StartButton';
 import log from 'shared/log';
 
 interface StartButtonStateProps {
-  bottomOffset: number,
-  enabled: boolean,
+  bottomOffset: number;
+  startMenuOpen: boolean;
+  trackingActivity: boolean;
 }
 
 interface StartButtonDispatchProps {
-  onStart: (event: GestureResponderEvent) => void;
-  onStop: (event: GestureResponderEvent) => void;
+  onPressIn: (event: GestureResponderEvent) => void;
 }
 
 export type StartButtonProps = StartButtonStateProps & StartButtonDispatchProps;
@@ -24,22 +24,19 @@ export type StartButtonProps = StartButtonStateProps & StartButtonDispatchProps;
 const mapStateToProps = (state: AppState): StartButtonStateProps => {
   return {
     bottomOffset: dynamicLowerButtonBase(state),
-    enabled: state.flags.trackingActivity,
+    startMenuOpen: state.flags.startMenuOpen,
+    trackingActivity: state.flags.trackingActivity,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): StartButtonDispatchProps => {
-  const onStart = () => {
-    log.debug('StartButton press START');
-    dispatch(newAction(AppAction.startActivity));
-  }
-  const onStop = () => {
-    log.debug('StartButton press STOP');
-    dispatch(newAction(AppAction.stopActivity));
+  const onPressIn = (event: GestureResponderEvent) => {
+    log.debug('StartButton press');
+    dispatch(newAction(AppAction.closePanels, { option: 'otherThanStartMenu' }));
+    dispatch(newAction(AppAction.flagToggle, 'startMenuOpen'));
   }
   const dispatchers = {
-    onStart,
-    onStop,
+    onPressIn,
   }
   return dispatchers;
 }

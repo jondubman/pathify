@@ -42,14 +42,14 @@ import { StartButtonProps } from 'containers/StartButtonContainer';
 const StartButton = (props: StartButtonProps) => (
   <TouchableHighlight
     style={[Styles.button, {
-      backgroundColor: props.enabled ? colors.enabledBackground : colors.disabledBackground,
+      backgroundColor: props.trackingActivity ? colors.enabledBackground : colors.disabledBackground,
       bottom: props.bottomOffset,
       left: leftOffset,
     }]}
-    onPress={props.enabled ? props.onStop : props.onStart}
-    underlayColor={props.enabled ? colors.enabledUnderlay : colors.disabledUnderlay}
+    onPressIn={props.onPressIn}
+    underlayColor={props.trackingActivity ? colors.enabledUnderlay : colors.disabledUnderlay}
   >
-    {props.enabled ? (
+    {props.trackingActivity ? (
       <FontAwesome5
         color={constants.colors.byName.black}
         name={'stop'}

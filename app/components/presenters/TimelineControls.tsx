@@ -1,6 +1,8 @@
 // This component renders the Clock, RefTime, top lines and center line of the timeline.
 
-import * as React from 'react';
+import React, {
+  Fragment,
+} from 'react';
 
 import {
   StyleSheet,
@@ -49,6 +51,9 @@ const Styles = StyleSheet.create({
     left: centerline() - clockWidth / 2,
     position: 'absolute',
   },
+  ghostClockFader: {
+    opacity: 0.25,
+  },
   ghostClockNow: { // shows up when timelineNow is false; action enables timelineNow
     position: 'absolute',
     left: centerline() + clockWidth / 2 + ghostExtra(),
@@ -88,18 +93,26 @@ const TimelineControls = (props: TimelineControlsProps) => (
     </View>
     {props.timelineScrolling ? null :
       props.nowMode ? (
-        <View style={[Styles.ghostClockPast, { bottom: props.bottom }]}>
-          <Text style={[Styles.text, Styles.ghostClockPastLabel]}>
-            BACK
-          </Text>
-          <GhostClockContainer interactive={true} key='GhostClockPast' />
-        </View>
+        <Fragment>
+          <View style={[Styles.ghostClockPast, { bottom: props.bottom }]}>
+            <Text style={[Styles.text, Styles.ghostClockPastLabel]}>
+              BACK
+            </Text>
+            <View style={Styles.ghostClockFader}>
+              <GhostClockContainer interactive={true} key='GhostClockPast' />
+            </View>
+          </View>
+        </Fragment>
       ) : (
         <View style={[Styles.ghostClockNow, { bottom: props.bottom }]}>
+          <Fragment>
             <Text style={[Styles.text, Styles.ghostClockNowLabel]}>
               NOW
-          </Text>
-          <GhostClockContainer interactive={true} key='GhostClockNow' />
+            </Text>
+            <View style={Styles.ghostClockFader}>
+              <GhostClockContainer interactive={true} key='GhostClockNow' />
+            </View>
+          </Fragment>
         </View>
       )
     }

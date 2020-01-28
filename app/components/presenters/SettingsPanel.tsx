@@ -76,8 +76,6 @@ const Styles = StyleSheet.create({
     borderRadius: constants.buttonSize / 2,
     borderColor: colors.border,
     borderWidth: 1,
-    // flex: 1,
-    // flexDirection: 'column',
     justifyContent: 'flex-start',
     left: leftOffset,
     height,

@@ -166,14 +166,6 @@ const colors = {
     underlayPath: 'transparent',
     underlayUser: 'transparent',
   },
-  startButton: {
-    background: namedColors.white,
-    opacity: 0.75,
-    disabledBackground: namedColors.green,
-    disabledUnderlay: namedColors.brightGreen, // in transition
-    enabledBackground: namedColors.yellow,
-    enabledUnderlay: namedColors.darkerYellow, // in transition
-  },
   ghostClockLabels: {
     now: withOpacity(colorThemes.now, 0.5),
     past: withOpacity(namedColors.lighterBlue, 0.5),
@@ -233,9 +225,19 @@ const colors = {
     choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
     opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
   },
+  startButton: {
+    opacity: 0.75,
+    disabledBackground: namedColors.green,
+    disabledUnderlay: namedColors.brightGreen, // in transition
+    enabledBackground: namedColors.yellow,
+    enabledUnderlay: namedColors.darkerYellow, // in transition
+  },
   startMenu: {
-    background: withOpacity(colorThemes.background, defaultOpacity),
     border: namedColors.darkerGray,
+    dimmerBackground: withOpacity(colorThemes.background, defaultOpacity),
+    menuItemBackground: 'transparent',
+    menuItemUnderlay: withOpacity(namedColors.white, 0.5),
+    panelBackground: withOpacity(namedColors.black, 1),
   },
   switch: {
     background: withOpacity(namedColors.darkerGray, 0.5),
@@ -453,7 +455,7 @@ const constants = {
     height: 55,
     leftContentsWidth: 120,
     topSpace: 6,
-    width: 126,
+    width: 160 - buttonOffset * 2, // was 126, which fits on smallest device without overlap
   },
   safeAreaBottom,
   safeAreaTop,
@@ -478,7 +480,9 @@ const constants = {
     size: buttonSize,
   },
   startMenu: {
+    borderWidth: 1,
     height: 150,
+    width: 200,
   },
   timing: { // msec
     activityListDelayReadjustmentAfterStartup: 500, // TODO would be better not to need this

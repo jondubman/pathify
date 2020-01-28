@@ -47,7 +47,7 @@ const Styles = StyleSheet.create({
   },
   refTimeText: {
     fontFamily: constants.fonts.family,
-    fontSize: 15,
+    fontSize: 16,
   },
   rightHalf: {
     height,
@@ -57,7 +57,7 @@ const Styles = StyleSheet.create({
   subText: {
     color: colors.subText,
     fontFamily: constants.fonts.family,
-    fontSize: 10,
+    fontSize: 11,
   },
   hoursMinutes: {
     color: colors.hoursMinutes,
