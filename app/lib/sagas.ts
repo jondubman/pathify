@@ -844,7 +844,7 @@ const sagas = {
               const loc = [lon, lat] as LonLat;
               const outOfBounds = bounds && !utils.locWellBounded(loc, bounds);
               if (!previousUserLocation || outOfBounds || centerMapContinuously) {
-                yield put(newAction(AppAction.centerMapOnUser));
+                yield put(newAction(AppAction.centerMapOnUser)); // in geolocation
               }
             }
           }
@@ -1380,11 +1380,14 @@ const sagas = {
           } else {
             yield put(newAction(AppAction.startFollowingUser));
           }
-          yield put(newAction(AppAction.centerMap, {
-            center: [0, 0],
-            option: 'relative',
-            zoom: constants.map.default.zoomStartActivity,
-          } as CenterMapParams));
+          // TODO omitting centerMap with zoom in startActivity for now.
+          // geolocation will center the map, now that we are following.
+
+          // yield put(newAction(AppAction.centerMap, {
+          //   center: [0, 0],
+          //   option: 'relative',
+          //   zoom: constants.map.default.zoomStartActivity,
+          // } as CenterMapParams));
           const newActivity = yield call(database.createActivity, now);
           activityId = newActivity.id;
           const startEvent: AppUserActionEvent = {
@@ -1576,42 +1579,58 @@ const sagas = {
       yield call(log.debug, 'saga startFollowingPath');
       yield put(newAction(AppAction.flagDisable, 'followingUser')); // mutual exclusion
       yield put(newAction(AppAction.flagEnable, 'followingPath'));
-      const map = MapUtils();
-      if (map) {
-        // yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
-      } else {
-        yield call(log.warn, 'saga startFollowingUser: missing map');
-      }
+    } catch (err) {
+      yield call(log.error, 'saga startFollowingPath', err);
+    }
+  },
+
+  startFollowingUser: function* (action: Action) {
+    try {
+      yield call(log.debug, 'saga startFollowingUser');
+      yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
+      yield put(newAction(AppAction.flagEnable, 'followingUser'));
     } catch (err) {
       yield call(log.error, 'saga startFollowingUser', err);
     }
   },
 
-  // Follow the user, recentering map right away.
-  startFollowingUser: function* () {
+  stopFollowing: function* (action: Action) {
     try {
-      yield call(log.debug, 'saga startFollowingUser');
-      yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
-      yield put(newAction(AppAction.flagEnable, 'followingUser'));
-      const map = MapUtils();
-      if (map) {
-        yield put(newAction(AppAction.centerMapOnUser)); // cascading app action
-      } else {
-        yield call(log.warn, 'saga startFollowingUser: missing map');
+      yield call(log.trace, 'saga stopFollowing');
+      const { followingPath, followingUser } = yield select((state: AppState) => state.flags);
+      if (followingPath) {
+        yield put(newAction(AppAction.stopFollowingPath));
+        yield take(AppAction.stoppedFollowingPath);
       }
+      if (followingUser) {
+        yield put(newAction(AppAction.stopFollowingUser));
+        yield take(AppAction.stoppedFollowingUser);
+      }
+      yield put(newAction(AppAction.stoppedFollowing));
     } catch (err) {
-      yield call(log.error, 'saga startFollowingUser', err);
+      yield call(log.error, 'stopFollowing', err);
     }
   },
 
   stopFollowingPath: function* () {
     yield call(log.debug, 'saga stopFollowingPath');
     yield put(newAction(AppAction.flagDisable, 'followingPath'));
+    yield put(newAction(AppAction.stoppedFollowingPath));
   },
 
   stopFollowingUser: function* () {
-      yield call(log.debug, 'saga stopFollowingUser');
-      yield put(newAction(AppAction.flagDisable, 'followingUser'));
+    yield call(log.debug, 'saga stopFollowingUser');
+    yield put(newAction(AppAction.flagDisable, 'followingUser'));
+    yield put(newAction(AppAction.stoppedFollowingUser));
+  },
+
+  stoppedFollowing: function* () {
+  },
+
+  stoppedFollowingPath: function* () {
+  },
+
+  stoppedFollowingUser: function* () {
   },
 
   // Respond to timeline pan/zoom. x is in the time domain.
@@ -1660,16 +1679,10 @@ const sagas = {
   },
 
   // Stop following user after panning the map.
+  // TODO if only zoom has changed, or if pan is below a threshold, leave following alone.
   userMovedMap: function* (action: Action) {
     try {
-      // yield call(log.trace, 'saga userMovedMap');
-      const { followingPath, followingUser } = yield select((state: AppState) => state.flags);
-      if (followingPath) {
-        yield put(newAction(AppAction.stopFollowingPath));
-      }
-      if (followingUser) {
-        yield put(newAction(AppAction.stopFollowingUser));
-      }
+      yield put(newAction(AppAction.stopFollowing));
     } catch (err) {
       yield call(log.error, 'userMovedMap', err);
     }
@@ -1691,7 +1704,8 @@ const sagas = {
       const { duration } = constants.map.fitBounds;
       const map = MapUtils();
       if (zoomMap && map && map.fitBounds) {
-        yield put(newAction(AppAction.stopFollowingUser));
+        yield put(newAction(AppAction.stopFollowing));
+        yield take(AppAction.stoppedFollowing); // wait for that to complete so map doesn't get yanked by geolocation
         const { latMax, latMin, lonMax, lonMin } = activity;
         yield call(log.trace, 'saga zoomToActivity', { latMax, latMin, lonMax, lonMin });
         if (!state.flags.mapRendered) {

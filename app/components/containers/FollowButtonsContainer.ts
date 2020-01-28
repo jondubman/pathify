@@ -51,6 +51,10 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
       dispatch(newAction(AppAction.stopFollowingUser));
     } else {
       dispatch(newAction(AppAction.startFollowingUser));
+
+      // TODO center map right away
+      // dispatch(newAction(AppAction.centerMap, {
+      // })
     }
   }
   const dispatchers = {

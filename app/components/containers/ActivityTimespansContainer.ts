@@ -1,5 +1,8 @@
 import { connect } from 'react-redux';
 
+import {
+  timepointVisibleOnTimeline,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ActivityTimespans from 'presenters/ActivityTimespans';
 import {
@@ -19,8 +22,12 @@ export type ActivityTimespansProps = ActivityTimespansStateProps & ActivityTimes
 
 const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
+  const filteredActivities = state.cache.activities.filter((activity: ActivityDataExtended) => (
+    timepointVisibleOnTimeline(state, activity.tStart) ||
+    timepointVisibleOnTimeline(state, activity.tLast)
+  ))
   return {
-    activities: state.cache.activities,
+    activities: filteredActivities,
     currentActivityId: currentActivityId || '',
     selectedActivityId: selectedActivityId || '',
   }

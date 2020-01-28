@@ -308,6 +308,8 @@ export const timelineVisibleTime = (value: number): number => {
   return visibleTime;
 }
 
+// 'Visible' in this case means visible on the Timeline that is rendered into a containing ScrollView, only a portion of
+// which is visible to the user at any time. This is used to filter timespans from the Timeline that are out of view.
 export const timepointVisibleOnTimeline = (state: AppState, t: Timepoint): boolean => {
   const { centerTime, timelineZoomValue } = state.options;
   const visibleTime = timelineVisibleTime(timelineZoomValue);

@@ -47,6 +47,7 @@ class MapArea extends Component<MapAreaProps> {
     this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
     this.onPress = this.onPress.bind(this);
     this.setCamera = this.setCamera.bind(this);
+    this.zoomTo = this.zoomTo.bind(this);
   }
 
   getMap(): IMapUtils{
@@ -59,6 +60,7 @@ class MapArea extends Component<MapAreaProps> {
       getVisibleBounds: this.getVisibleBounds,
       getZoom: this.getZoom,
       setCamera: this.setCamera,
+      zoomTo: this.zoomTo,
     }
   }
 
@@ -228,6 +230,7 @@ class MapArea extends Component<MapAreaProps> {
   onRegionIsChanging(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
     const { isUserInteraction } = args.properties;
     if (isUserInteraction) {
+      log.info('onRegionIsChanging', args.geometry.coordinates);
       this.props.userMovedMap();
     }
     this.props.mapRegionChanging();
@@ -256,6 +259,13 @@ class MapArea extends Component<MapAreaProps> {
       camera.setCamera(config);
     }
   }
+
+  zoomTo(zoomLevel: number) {
+    if (this._camera) {
+      const camera = this._camera!;
+      camera.zoomTo(zoomLevel); // TODO options
+    }
+  }
 }
 
 // methods exposed for imperative use as needed
@@ -268,6 +278,7 @@ export interface IMapUtils {
   getVisibleBounds: () => Promise<BoundsWithHeading>;
   getZoom: () => Promise<number>;
   setCamera: (config: object) => void;
+  zoomTo: (zoomLevel: number) => void;
 }
 
 // ref to singleton MapArea component that is created
