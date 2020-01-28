@@ -387,6 +387,7 @@ const constants = {
     sizes: {
       choice: 15,
       choiceLabel: 12,
+      menuItem: 18,
     },
   },
   helpButton: {
@@ -481,8 +482,8 @@ const constants = {
   },
   startMenu: {
     borderWidth: 1,
-    height: 150,
-    width: 200,
+    height: 180,
+    width: 240,
   },
   timing: { // msec
     activityListDelayReadjustmentAfterStartup: 500, // TODO would be better not to need this

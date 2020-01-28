@@ -22,7 +22,7 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: colors.menuItemBackground,
     color: constants.fonts.colors.default,
-    fontSize: constants.fonts.sizes.choice,
+    fontSize: constants.fonts.sizes.menuItem,
     fontWeight: 'bold',
     marginVertical: 20,
   },
@@ -86,7 +86,7 @@ class StartMenu extends React.Component<StartMenuProps> {
               <View style={subpanelStyle}>
                 {props.trackingActivity ? (
                   <TouchableHighlight
-                    onPress={props.onSelectEndActivity}
+                    onPressIn={props.onSelectEndActivity}
                     style={menuItemStyle}
                     underlayColor={constants.colors.startMenu.menuItemUnderlay}
                   >
