@@ -15,6 +15,7 @@ import {
   Activity,
   ActivityDataExtended,
 } from 'shared/activities';
+import { LonLat } from 'shared/locations';
 import log from 'shared/log';
 import { MarkEvent } from 'shared/marks';
 import {
@@ -419,7 +420,7 @@ export const flavorText = (state: AppState): string[] => {
 // Selectors memozied using reselect / createSelector:
 
 const getScrollTime = (state: AppState) => state.options.scrollTime;
-export const getPastLocationEvent = createSelector(
+export const getStoredLocationEvent = createSelector(
   [getScrollTime],
   (scrollTime) => {
     const { nearTimeThreshold } = constants.timeline;
@@ -431,6 +432,43 @@ export const getPastLocationEvent = createSelector(
     return locations.locEventNearestTimepoint(database.events().filtered('t >= $0 AND t <= $1', tMin, tMax),
       scrollTime,
       nearTimeThreshold);
+  }
+)
+const getCachedActivities = (state: AppState) => state.cache.activities;
+export const getCachedLocation = createSelector(
+  [getScrollTime, getCachedActivities],
+  (scrollTime, cachedActivities) => {
+    if (!cachedActivities) {
+      return null;
+    }
+    const t = scrollTime;
+    const activity = cachedActivities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
+    if (activity) {
+      const path = database.pathById(activity.id);
+      if (!path) {
+        return null;
+      }
+      for (let i = 0; i < path.t.length - 1; i++) {
+        // smoothly interpolate between the points we know
+        const t1 = path.t[i];
+        const t2 = path.t[i + 1];
+        if (t1 <= t && t <= t2) {
+          const tDiff = t2 - t1;
+          const proportion = (scrollTime - t1) / tDiff;
+          const lat1 = path.lats[i];
+          const lat2 = path.lats[i + 1];
+          const lon1 = path.lons[i];
+          const lon2 = path.lons[i+1];
+          const lat = (lat2 - lat1) * proportion + lat1;
+          const lon = (lon2 - lon1) * proportion + lon1;
+          return [lon, lat] as LonLat;
+        }
+        // contrast with: simple results, without interpolation
+        // return [path.lons[i], path.lats[i]] as LonLat; // choosing first loc
+        // return [path.lons[i+1], path.lats[i+1]] as LonLat; // choosing second loc
+      }
+    }
+    return null;
   }
 )
 
@@ -457,18 +495,29 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       visible: true,
     }
   }
+  // TODO cleanup prior approach
   // always hide prior location in mapFullScreen
-  if (showPastLocation && !mapFullScreen && !timelineNow) {
-    const pastLocEvent = getPastLocationEvent(state);
-    if (pastLocEvent) {
-      const { activityId } = pastLocEvent;
-      if (showAllPastLocations || (activityId &&
-          (activityId === currentActivityId || activityId === selectedActivityId))) {
-        pulsars.pastLocation = {
-          loc: locations.lonLat(pastLocEvent),
-          color: colors.pulsars.pastLocation,
-          visible: true,
-        }
+  // if (showPastLocation && !mapFullScreen && !timelineNow) {
+  //   const pastLoc = getCachedLocationEvent(state);
+  //   if (pastLocEvent) {
+  //     const { activityId } = pastLocEvent;
+  //     if (showAllPastLocations || (activityId &&
+  //         (activityId === currentActivityId || activityId === selectedActivityId))) {
+  //       pulsars.pastLocation = {
+  //         loc: locations.lonLat(pastLocEvent),
+  //         color: colors.pulsars.pastLocation,
+  //         visible: true,
+  //       }
+  //     }
+  //   }
+  // }
+  if (showAllPastLocations || (showPastLocation && !mapFullScreen && !timelineNow)) {
+    const pastLoc = getCachedLocation(state);
+    if (pastLoc) {
+      pulsars.pastLocation = {
+        loc: pastLoc,
+        color: colors.pulsars.pastLocation,
+        visible: true,
       }
     }
   }

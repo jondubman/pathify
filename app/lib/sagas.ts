@@ -76,7 +76,8 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
-  getPastLocationEvent,
+  getCachedLocation,
+  getStoredLocationEvent,
   loggableOptions,
   mapPadding,
   menuOpen,
@@ -487,7 +488,8 @@ const sagas = {
             flags: state.flags,
             isDebugVersion: utils.isDebugVersion,
             options: yield call(loggableOptions, state),
-            pastLocation: yield call(getPastLocationEvent, state),
+            pastLocationCached: yield call(getCachedLocation, state),
+            pastLocationStored: yield call(getStoredLocationEvent, state),
             pulsars: yield call(pulsars, state),
             userLocation: state.userLocation,
           }
@@ -601,6 +603,26 @@ const sagas = {
       }
     } catch (err) {
       yield call(log.error, 'saga centerMap', err);
+    }
+  },
+
+  // This has the side effect of panning the map component imperatively. Note use of flyTo which makes it more fluid.
+  // This should not affect zoom.
+  centerMapOnPath: function* () {
+    try {
+      const map = MapUtils();
+      if (map && map.flyTo) {
+        const pathLocation = [0, 0]; // TODO
+        if (pathLocation) {
+          yield call(map.flyTo as any, pathLocation);
+        } else {
+          yield call(log.info, 'saga centerMapOnPath: missing pathLocation');
+        }
+      } else {
+        yield call(log.warn, 'saga centerMapOnPath: missing map');
+      }
+    } catch (err) {
+      yield call(log.error, 'saga centerMapOnPath', err);
     }
   },
 
@@ -1658,7 +1680,12 @@ const sagas = {
   // One second is the approximate frequency of location updates
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
-    const { appActive, timelineNow, timelineScrolling } = yield select((state: AppState) => state.flags);
+    const {
+      appActive,
+      followingPath,
+      timelineNow,
+      timelineScrolling
+    } = yield select((state: AppState) => state.flags);
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const options = { nowTime: now } as any; // always update nowTime

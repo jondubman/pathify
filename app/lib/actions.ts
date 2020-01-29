@@ -38,6 +38,7 @@ export enum AppAction {
   'backgroundTapped' = 'backgroundTapped',
   'cache' = 'cache',
   'centerMap' = 'centerMap',
+  'centerMapOnPath' = 'centerMapOnPath',
   'centerMapOnUser' = 'centerMapOnUser',
   'clearLogs' = 'clearLogs',
   'clearStorage' = 'clearStorage',
