@@ -79,7 +79,7 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
-  getCachedLocation,
+  getCachedPathInfo,
   getStoredLocationEvent,
   loggableOptions,
   mapPadding,
@@ -417,7 +417,6 @@ const sagas = {
         }
         case 'locs': {
           response = {
-            pastLocation: yield call(getPastLocationEvent, state),
             userLocation: state.userLocation,
           }
           break;
@@ -491,7 +490,7 @@ const sagas = {
             flags: state.flags,
             isDebugVersion: utils.isDebugVersion,
             options: yield call(loggableOptions, state),
-            pastLocationCached: yield call(getCachedLocation, state),
+            pastLocationCached: yield call(getCachedPathInfo, state),
             pastLocationStored: yield call(getStoredLocationEvent, state),
             pulsars: yield call(pulsars, state),
             userLocation: state.userLocation,
@@ -616,20 +615,20 @@ const sagas = {
       const map = MapUtils();
       if (map && map.flyTo) {
         const state = yield select((state: AppState) => state);
-        const pathLocation = yield call(getCachedLocation, state);
-        if (pathLocation) {
-          yield call(log.trace, 'saga centerMapOnPath: missing pathLocation');
+        const pathInfo = yield call(getCachedPathInfo, state);
+        if (pathInfo) {
+          yield call(log.trace, 'saga centerMapOnPath: missing pathInfo');
           if (state.flags.animateMapWhenFollowingPath) {
             const config: CameraSettings = {
               animationDuration: constants.map.centerMapDuration,
-              centerCoordinate: pathLocation,
+              centerCoordinate: pathInfo.loc,
             }
             yield call(map.setCamera as any, config);
           } else {
-            yield call(map.flyTo as any, pathLocation);
+            yield call(map.flyTo as any, pathInfo.loc);
           }
         } else {
-          yield call(log.info, 'saga centerMapOnPath: missing pathLocation');
+          yield call(log.info, 'saga centerMapOnPath: missing pathInfo');
         }
       } else {
         yield call(log.warn, 'saga centerMapOnPath: missing map');
@@ -1715,10 +1714,10 @@ const sagas = {
         const map = MapUtils();
         if (map) {
           const state: AppState = yield select((state: AppState) => state);
-          const pathLocation = yield call(getCachedLocation, state);
+          const pathInfo = yield call(getCachedPathInfo, state);
           const bounds = state.mapBounds;
-          if (pathLocation && bounds) {
-            if (!utils.locWellBounded(pathLocation, bounds)) {
+          if (pathInfo && bounds) {
+            if (!utils.locWellBounded(pathInfo.loc, bounds)) {
               yield put(newAction(AppAction.centerMapOnPath));
             }
           }
@@ -1743,7 +1742,8 @@ const sagas = {
         }
       }
       if (followingPath) {
-        loc = yield call(getCachedLocation, state);
+        const cachedLocation = yield call(getCachedPathInfo, state);
+        loc = cachedLocation.loc;
       }
       if (loc) {
         if (utils.locWellBounded(loc, bounds)) {

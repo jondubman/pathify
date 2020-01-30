@@ -4,6 +4,7 @@ import { AppState } from 'lib/state';
 import ActivityInfo from 'presenters/ActivityInfo';
 
 interface ActivityInfoStateProps {
+  showActivityDetails: boolean;
   showActivityList: boolean;
 }
 
@@ -14,6 +15,7 @@ export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
   return {
+    showActivityDetails: state.flags.showActivityDetails && !state.flags.mapFullScreen,
     showActivityList: state.flags.showActivityList && !state.flags.mapFullScreen,
   }
 }

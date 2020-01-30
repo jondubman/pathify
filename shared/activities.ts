@@ -3,7 +3,10 @@ import Realm from 'realm';
 
 import log from './log';
 import { Timepoint } from './timeseries';
-import { metersToMiles, msecToString } from './units';
+import {
+  metersToMiles,
+  msecToTimeString,
+} from './units';
 import utils from './sharedUtils';
 
 export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
@@ -121,7 +124,7 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
       if (tEnd) {
         a.tLast = tEnd || utils.now();
         a.tTotal = tEnd - a.tStart;
-        a.tTotalText = msecToString(a.tTotal);
+        a.tTotalText = msecToTimeString(a.tTotal);
       }
     }
   } catch (err) {

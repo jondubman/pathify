@@ -32,15 +32,6 @@ export const activityIncludesMark = (activityId: string, mark: MarkEvent): boole
   return !!(mark.activityId && activity && mark.activityId === activity.id)
 }
 
-// TODO cleanup
-// const colorForAppState = {
-//   [AppStateChange.NONE]: 'transparent',
-//   [AppStateChange.STARTUP]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.75), // == ACTIVE
-//   [AppStateChange.ACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.5),
-//   [AppStateChange.INACTIVE]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0),
-//   [AppStateChange.BACKGROUND]: withOpacity(constants.colors.timeline.timespans[TimespanKind.APP_STATE], 0.3),
-// }
-
 export const selectedActivityIndex = (state: AppState) => (
   state.cache.activities.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
 )
@@ -54,36 +45,6 @@ export const activityIndex = (state: AppState): string => (
     :
     '' // don't bother showing 0
 )
-
-// For debugging, appStateTimespans show appState over time.
-// TODO cleanup
-// const appStateTimespans = (state: AppState): Timespans => {
-//   const timespans: Timespans = [];
-//   let previousState = AppStateChange.NONE;
-//   let previousTimepoint: Timepoint = 0;
-
-//   const appEvents = database.events().filtered('type == "APP"');
-//   for (let e of appEvents) {
-//     const event = e as any as AppStateChangeEvent;
-//     const { newState, t } = event;
-//     if (previousState !== AppStateChange.NONE) {
-//       timespans.push({
-//         kind: TimespanKind.APP_STATE,
-//         tr: [previousTimepoint, t],
-//         color: colorForAppState[previousState],
-//       })
-//     }
-//     previousState = newState;
-//     previousTimepoint = t;
-//   }
-//   // Add a timepsan representing the current state.
-//   timespans.push({
-//     kind: TimespanKind.APP_STATE,
-//     tr: [previousTimepoint, utils.now()],
-//     color: colorForAppState[previousState],
-//   })
-//   return timespans;
-// }
 
 // cachedActivity by id
 export const cachedActivity = (state: AppState, id: string): ActivityDataExtended | undefined => {
@@ -127,7 +88,7 @@ export const currentOrSelectedActivity = (state: AppState): Activity | undefined
   return currentActivity(state) || selectedActivity(state);
 }
 
-// This is not technically a selector as it doesn't refer to state
+// Note this 'selector' does not currently depend on state.
 export const dynamicAreaTop = (state: AppState): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )
@@ -169,6 +130,10 @@ export const dynamicTimelineWidth = (state: AppState): number => (
     0
     :
     utils.windowSize().width
+)
+
+export const dynamicTopBelowActivityList = (state: AppState): number => (
+  dynamicTopBelowButtons(state) + (state.flags.showActivityList ? constants.activityList.height : 0)
 )
 
 export const dynamicTopBelowButtons = (state: AppState): number => (
@@ -435,38 +400,66 @@ export const getStoredLocationEvent = createSelector(
   }
 )
 const getCachedActivities = (state: AppState) => state.cache.activities;
-export const getCachedLocation = createSelector(
+export const getCachedPathInfo = createSelector(
   [getScrollTime, getCachedActivities],
   (scrollTime, cachedActivities) => {
     if (!cachedActivities) {
       return null;
     }
     const t = scrollTime;
-    const activity = cachedActivities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
+    const activity = cachedActivities.find(activity =>
+      (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast || !activity.tEnd))
+    )
     if (activity) {
       const path = database.pathById(activity.id);
       if (!path) {
         return null;
       }
-      if (scrollTime === activity.tLast) {
-        const lastLat = path.lats[path.t.length - 1];
-        const lastLon = path.lons[path.t.length - 1];
-        return [lastLon, lastLat]
+      if (scrollTime >= activity.tLast) {
+        const lastIndex = path.t.length - 1;
+        const lastEle = path.ele[lastIndex];
+        const lastLat = path.lats[lastIndex];
+        const lastLon = path.lons[lastIndex];
+        const lastOdo = path.odo[lastIndex];
+        return {
+          activity,
+          ele: lastEle,
+          loc: [lastLon, lastLat],
+          odo: lastOdo,
+        }
       }
       for (let i = 0; i < path.t.length - 1; i++) {
-        // smoothly interpolate between the points we know
+        // smoothly (linearly) interpolate between points we know
         const t1 = path.t[i];
         const t2 = path.t[i + 1];
         if (t1 <= t && t <= t2) {
           const tDiff = t2 - t1;
           const proportion = (scrollTime - t1) / tDiff;
+
+          // interpolate elevation
+          const ele1 = path.ele[i];
+          const ele2 = path.ele[i + 1];
+          const ele = (ele2 - ele1) * proportion + ele1;
+
+          // interpolate location
           const lat1 = path.lats[i];
           const lat2 = path.lats[i + 1];
           const lon1 = path.lons[i];
           const lon2 = path.lons[i+1];
           const lat = (lat2 - lat1) * proportion + lat1;
           const lon = (lon2 - lon1) * proportion + lon1;
-          return [lon, lat] as LonLat;
+
+          // interpolate odometer
+          const odo1 = path.odo[i];
+          const odo2 = path.odo[i + 1];
+          const odo = (odo2 - odo1) * proportion + odo1;
+
+          return {
+            activity,
+            ele,
+            loc: [lon, lat] as LonLat,
+            odo,
+          }
         }
         // contrast with: simple results, without interpolation
         // return [path.lons[i], path.lats[i]] as LonLat; // choosing first loc
@@ -487,10 +480,6 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     timelineNow,
     trackingActivity,
   } = state.flags;
-  // const {
-  //   currentActivityId,
-  //   selectedActivityId
-  // } = state.options;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
   if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
@@ -500,27 +489,11 @@ export const pulsars = (state: AppState): OptionalPulsars => {
       visible: true,
     }
   }
-  // TODO cleanup prior approach
-  // always hide prior location in mapFullScreen
-  // if (showPastLocation && !mapFullScreen && !timelineNow) {
-  //   const pastLoc = getCachedLocationEvent(state);
-  //   if (pastLocEvent) {
-  //     const { activityId } = pastLocEvent;
-  //     if (showAllPastLocations || (activityId &&
-  //         (activityId === currentActivityId || activityId === selectedActivityId))) {
-  //       pulsars.pastLocation = {
-  //         loc: locations.lonLat(pastLocEvent),
-  //         color: colors.pulsars.pastLocation,
-  //         visible: true,
-  //       }
-  //     }
-  //   }
-  // }
-  if (showAllPastLocations || (showPastLocation && !mapFullScreen && !timelineNow)) {
-    const pastLoc = getCachedLocation(state);
-    if (pastLoc) {
+  if (showAllPastLocations || (showPastLocation && !(mapFullScreen && mapTapped) && !timelineNow)) {
+    const info = getCachedPathInfo(state);
+    if (info) {
       pulsars.pastLocation = {
-        loc: pastLoc,
+        loc: info.loc as LonLat,
         color: colors.pulsars.pastLocation,
         visible: true,
       }

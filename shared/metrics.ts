@@ -13,7 +13,11 @@ import {
 import log from './log';
 import sharedConstants from './sharedConstants';
 
-import { metersToFeet, metersToMiles, msecToString } from './units';
+import {
+  metersToFeet,
+  metersToMiles,
+  msecToString
+} from './units';
 
 // These are camel case rather than upper case simply as a stylistic preference.
 // ActivityMetricName is the way to refer to a particular metric, but such a name is not a guarantee that it must exist.

@@ -66,6 +66,8 @@ const colorThemes = {
   background: namedColors.black,
   help: namedColors.yellow,
   now: namedColors.green,
+  nowSelected: namedColors.azure,
+  nowSelectedDark: namedColors.azure_dark,
   nowDark: namedColors.darkGreen,
   nowDarker: namedColors.darkerGreen,
   past: namedColors.blue,
@@ -102,6 +104,14 @@ const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(1
 export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
 
 const colors = {
+  activityDetails: {
+    backgroundCurrentNow: withOpacity(colorThemes.now, 0.25),
+    backgroundCurrentSelected: withOpacity(colorThemes.nowSelected, 0.5),
+    backgroundPast: withOpacity(colorThemes.past, 0.35),
+    bigFont: withOpacity(namedColors.white, 1),
+    border: withOpacity(namedColors.white, 0.75),
+    labelFont: withOpacity(namedColors.white, 0.75),
+  },
   activityInfo: {
     background: withOpacity(namedColors.silver, 0),
   },
@@ -136,11 +146,10 @@ const colors = {
   byName: namedColors, // all of them
   clock: {
     background: withOpacity(namedColors.black, 0.7),
-    border: withOpacity(namedColors.azure, 0.9),
     backgroundNow: withOpacity(colorThemes.nowDark, 0.65),
     backgroundPast: withOpacity(namedColors.black, 0.75),
-    backgroundPastSelected: withOpacity(namedColors.azure_dark, 0.75),
-    backgroundPastCurrent: withOpacity(namedColors.azure, 0.75),
+    backgroundPastSelected: withOpacity(colorThemes.nowSelectedDark, 0.75),
+    backgroundPastCurrent: withOpacity(colorThemes.nowSelected, 0.75),
     backgroundStopped: withOpacity(namedColors.yellow, 0.65), // debug-only
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.65), // debug-only
     underlay: 'transparent',
@@ -190,12 +199,6 @@ const colors = {
     endSelected: namedColors.red,
     syntheticEnd: withOpacity(namedColors.yellow, 0.75),
     syntheticEndSelected: namedColors.yellow,
-  },
-  menus: {
-    background: withOpacity(namedColors.black, 0.7),
-    border: withOpacity(namedColors.azure, 0.7),
-    buttons: withOpacity(namedColors.azure, 0.5),
-    underlayColor: 'transparent',
   },
   paths: {
     transparent: 'transparent',
@@ -290,6 +293,17 @@ const colors = {
 // --------------------------------------------------------------------------------------------------------------------
 
 const constants = {
+  activityDetails: {
+    bigFontSize: 32,
+    borderRadius: 0,
+    borderWidth: 0,
+    height: 64,
+    itemMarginEdges: 0,
+    itemMarginBottom: 0,
+    itemMarginTop: 0,
+    labelFontSize: 11,
+    spaceBetween: 0,
+  },
   activityInfo: {
     height: 200,
     sideMargin: 5,

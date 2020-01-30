@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 
+import ActivityDetailsContainer from 'containers/ActivityDetailsContainer';
 import { ActivityInfoProps } from 'containers/ActivityInfoContainer';
 import ActivityListContainer from 'containers/ActivityListContainer';
 import constants from 'lib/constants';
@@ -32,6 +33,7 @@ const ActivityInfo = (props: ActivityInfoProps) => (
   <React.Fragment>
     <View pointerEvents="none" style={Styles.box} />
     {props.showActivityList ? <ActivityListContainer /> : null}
+    {props.showActivityDetails ? <ActivityDetailsContainer /> : null}
   </React.Fragment>
 )
 

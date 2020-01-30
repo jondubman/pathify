@@ -10,7 +10,7 @@ import {
 import constants from 'lib/constants';
 import {
   metersToMilesText,
-  msecToString,
+  msecToTimeString,
 } from 'shared/units';
 
 import { ActivityDataExtended } from 'shared/activities';
@@ -36,6 +36,7 @@ const Styles = StyleSheet.create({
     borderRadius,
     borderWidth,
     height: activityHeight,
+    justifyContent: 'space-around',
     width: activityWidth,
   },
   currentActivity: {
@@ -57,15 +58,28 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
+  faint: {
+    opacity: 0.65,
+  },
   text: {
-    alignSelf: 'flex-end',
     color: colors.text,
+    fontSize: 16,
+  },
+  textEmphasize: {
     fontWeight: 'bold',
-    margin: 2,
-    marginRight: 4,
+  },
+  textLine: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+  },
+  textLines: {
+    flexDirection: 'column',
   },
   textSelected: {
     color: colors.textSelected,
+  },
+  timeLabel: {
+    fontSize: 11,
   },
   touchableActivity: {
     height: activityHeight,
@@ -78,14 +92,16 @@ const ActivityListItem = (props: ActivityListItemProps) => {
   const isCurrent = !activity.tEnd;
   const { tLast } = activity;
   const time = (tLast && activity.tStart) ?
-    msecToString(Math.max(0, tLast - activity.tStart)) : '';
+    msecToTimeString(Math.max(0, tLast - activity.tStart)) : '';
   const distance = (activity.odo && activity.odoStart) ?
-    metersToMilesText(activity.odo - activity.odoStart) : '';
+    metersToMilesText(activity.odo - activity.odoStart, '') : '';
+  const distanceLabel = ' mi';
   const activityStyle = [
     Styles.activity,
     isCurrent ? Styles.currentActivity : (selected ? Styles.pastActivitySelected : Styles.pastActivity),
   ]
   const textStyle = [Styles.text, selected ? Styles.textSelected : null];
+  const infoStyle = [textStyle, Styles.textEmphasize];
   // Note onPress receives a GestureResponderEvent we are ignoring.
   return (
     <TouchableHighlight
@@ -94,8 +110,20 @@ const ActivityListItem = (props: ActivityListItemProps) => {
       underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
     >
       <View style={activityStyle}>
-        <Text style={textStyle}>{time}</Text>
-        <Text style={textStyle}>{distance}</Text>
+        <View style={Styles.textLines}>
+          <View style={Styles.textLine}>
+            <Text style={infoStyle}>{time}</Text>
+          </View>
+        </View>
+        <View style={Styles.textLines}>
+          <View style={Styles.textLine}>
+            <Text style={[Styles.faint, Styles.text, Styles.timeLabel]}>TOTAL</Text>
+          </View>
+        </View>
+        <View style={Styles.textLine}>
+          <Text style={infoStyle}>{distance}</Text>
+          <Text style={textStyle}>{distanceLabel}</Text>
+        </View>
       </View>
     </TouchableHighlight>
   )

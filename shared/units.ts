@@ -6,7 +6,8 @@ export const minutesFromMsec = (msec: number) => msec / 60000;
 
 // input: some number like 8.5 representing minutes
 // output: a string like 8:30 in this case
-export const minutesToString = (minutes: number) => {
+// or, if zeroPadHours is true
+export const minutesToString = (minutes: number, zeroPadHours = false) => {
   const hours = Math.floor(minutes / 60);
   const minutesRounded = precisionRound(minutes % 60, 2);
   const minutesOnly = Math.floor(minutesRounded);
@@ -15,9 +16,15 @@ export const minutesToString = (minutes: number) => {
   if (parseInt(seconds) < 10) {
     seconds = '0' + seconds; // now, a string
   }
-  if (hours) {
+  if (hours || zeroPadHours) {
     const zeroPaddedMinutes = minutesOnly < 10 ? `0${minutesOnly}` : minutesOnly;
-    return `${hours}:${zeroPaddedMinutes}:${seconds}`;
+    let hoursPad = '';
+    if (zeroPadHours) {
+      if (hours < 10) {
+        hoursPad = '0';
+      }
+    }
+    return `${hoursPad}${hours}:${zeroPaddedMinutes}:${seconds}`;
   }
   else {
     return `${minutesOnly}:${seconds}`;
@@ -26,12 +33,14 @@ export const minutesToString = (minutes: number) => {
 
 export const msecToString = (msec: number) => minutesToString(minutesFromMsec(msec));
 
+export const msecToTimeString = (msec: number) => minutesToString(minutesFromMsec(msec), true);
+
 export const precisionRound = (num: number, precision: number) => {
   const factor = Math.pow(10, precision);
   return Math.round(num * factor) / factor;
 }
 
-export const metersToMilesText = (odo: number | undefined) => (
+export const metersToMilesText = (odo: number | undefined, suffix = ' mi') => (
   (odo === undefined) ? '' :
-  `${parseFloat(metersToMiles(odo).toFixed(2))} mi`
+    `${parseFloat(metersToMiles(odo).toFixed(2))}${suffix}`
 )
