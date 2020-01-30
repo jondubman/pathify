@@ -1411,6 +1411,9 @@ const sagas = {
           activityId = continueActivityId;
         } else {
           yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+          yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
+          yield put(newAction(AppAction.flagDisable, 'mapTapped'));
+          yield put(newAction(AppAction.flagEnable, 'showActivityDetails'));
           const followingNow = yield select((state: AppState) => state.flags.followingUser);
           if (followingNow) {
           } else {
@@ -1588,7 +1591,9 @@ const sagas = {
         } else {
           yield call(log.warn, 'Missing activity in stopActivity')
         }
+        yield put(newAction(AppAction.flagDisable, 'showActivityDetails'));
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+        yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
         const halfTime = activity.tStart + (now - activity.tStart) / 2;
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,
@@ -1698,11 +1703,12 @@ const sagas = {
       mapMoving,
       mapReorienting,
       timelineNow,
-      timelineScrolling
+      timelineScrolling,
     } = yield select((state: AppState) => state.flags);
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
-      const options = { nowTime: now } as any; // always update nowTime
+      const nowTimeRounded = Math.floor(now / 1000) * 1000;
+      const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
       if (timelineNow) {
         options.scrollTime = now;
         if (!timelineScrolling) { // because if timelineScrolling, user's actions are more important

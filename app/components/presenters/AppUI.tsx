@@ -64,10 +64,10 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
+          {showActivityInfo ? <ActivityInfoContainer /> : null}
           {mapFullScreen && (mapTapped && !mapTapTogglesFullScreen) ? null :
             (<Fragment>
               {showTimeline ? <TimelineScrollContainer /> : null}
-              {showActivityInfo ? <ActivityInfoContainer /> : null}
               {showDebugInfo ? <DebugInfoContainer /> : null}
               <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <CompassButtonContainer />

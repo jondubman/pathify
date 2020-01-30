@@ -140,4 +140,4 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
   </View>
 ) : null)
 
-export default ActivityDetails;
+export default React.memo(ActivityDetails);

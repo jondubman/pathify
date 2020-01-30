@@ -18,6 +18,7 @@ interface FollowButtonsStateProps {
   followingPath: boolean;
   followingUser: boolean;
   hideBoth: boolean;
+  hideFollowPath: boolean;
 }
 
 interface FollowButtonsDispatchProps {
@@ -28,11 +29,18 @@ interface FollowButtonsDispatchProps {
 export type FollowButtonsProps = FollowButtonsStateProps & FollowButtonsDispatchProps;
 
 const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
+  const {
+    followingPath,
+    followingUser,
+    mapFullScreen,
+    timelineNow,
+  } = state.flags;
   return {
-    followingPath: state.flags.followingPath,
-    followingUser: state.flags.followingUser,
+    followingPath,
+    followingUser,
     bottomOffset: dynamicLowerButtonBase(state),
     hideBoth: mapHidden(state),
+    hideFollowPath: timelineNow && mapFullScreen && !followingPath,
   }
 }
 

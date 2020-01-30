@@ -13,17 +13,17 @@ import log from 'shared/log';
 
 interface SettingsPanelStateProps {
   open: boolean;
-  mapFullScreen: boolean;
   mapOpacity: number;
   mapStyle: MapStyle;
   mapStyles: MapStyle[];
+  showTimeline: boolean;
 }
 
 interface SettingsPanelDispatchProps {
   onSelectMapStyle: (name: string) => void;
   onSetMapOpacity: (opacity: number) => void;
   onSetMapOpacityPreview: (opacity: number) => void;
-  onSetMapFullScreen: (value: boolean) => void;
+  onSetShowTimeline: (value: boolean) => void;
 }
 
 export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatchProps;
@@ -31,10 +31,10 @@ export type SettingsPanelProps = SettingsPanelStateProps & SettingsPanelDispatch
 const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
   return {
     open: state.flags.settingsOpen,
-    mapFullScreen: state.flags.mapFullScreen,
     mapOpacity: state.options.mapOpacity, // note: not using state.options.mapOpacityPreview, to avoid stuttering slider
     mapStyle: dynamicMapStyle(state),
     mapStyles: mapStyles(state),
+    showTimeline: !state.flags.mapFullScreen,
   }
 }
 
@@ -50,9 +50,9 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   const onSetMapOpacityPreview = (mapOpacityPreview: number) => {
     dispatch(newAction(AppAction.setAppOptionASAP, { mapOpacityPreview })); // ASAP really speeds things up here
   }
-  const onSetMapFullScreen = (value: boolean) => {
-    log.debug('SettingsPanel onSetMapFullScreen', value);
-    dispatch(newAction(value ? AppAction.flagEnable : AppAction.flagDisable, 'mapFullScreen'));
+  const onSetShowTimeline = (value: boolean) => {
+    log.debug('SettingsPanel onSetShowTimeline', value);
+    dispatch(newAction(value ? AppAction.flagDisable : AppAction.flagEnable, 'mapFullScreen'));
     dispatch(newAction(AppAction.flagDisable, 'mapTapped'));
     // Close this panel. User could re-open it with one tap. This is probably what is preferred now.
     // The whole point of full screening the map is to have less clutter on top... including this panel.
@@ -67,7 +67,7 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
     onSelectMapStyle,
     onSetMapOpacity,
     onSetMapOpacityPreview,
-    onSetMapFullScreen,
+    onSetShowTimeline,
   }
   return dispatchers;
 }

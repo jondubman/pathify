@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 
+import { showActivityList } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ActivityInfo from 'presenters/ActivityInfo';
 
@@ -14,9 +15,12 @@ interface ActivityInfoDispatchProps {
 export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
+  const { mapFullScreen, mapTapped, showActivityDetails } = state.flags;
   return {
-    showActivityDetails: state.flags.showActivityDetails && !state.flags.mapFullScreen,
-    showActivityList: state.flags.showActivityList && !state.flags.mapFullScreen,
+    // showActivityDetails in mapFullScreen unless mapTapped.
+    showActivityDetails: showActivityDetails && (!mapFullScreen || (mapFullScreen && !mapTapped)),
+    // In contrast, ActiviyList is generally hidden in mapFullScreen mode.
+    showActivityList: showActivityList(state),
   }
 }
 

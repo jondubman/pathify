@@ -34,20 +34,25 @@ export type ActivityDetailsProps = ActivityDetailsStateProps & ActivityDetailsDi
 const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   const top = dynamicTopBelowActivityList(state);
   const info = getCachedPathInfo(state);
+  const { scrollTime } = state.options;
   const { timelineNow } = state.flags;
   if (info) {
     const activity = info.activity as ActivityDataExtended;
     let distanceText = '';
     let elevationText = '';
-    let timeText = '';
+    let timeText = '?'; // TODO this should never show up
+    const isCurrent = activity && (activity.id === state.options.currentActivityId);
     if (activity) {
-      if (activity.odoStart) {
+      if (info.odo && activity.odoStart) {
         distanceText = metersToMilesText(Math.max(info.odo - activity.odoStart), '');
       }
-      elevationText = (info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0); // TODO support negative elevation
-      timeText = msecToTimeString(state.options.scrollTime - activity.tStart);
+      // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.
+      elevationText = (!info.ele || info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0);
+      if (activity.tStart) {
+        const t = scrollTime;
+        timeText = msecToTimeString(t - activity.tStart);
+      }
     }
-    const isCurrent = activity && (activity.id === state.options.currentActivityId);
     return {
       distanceText,
       elevationText,

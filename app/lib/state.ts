@@ -105,6 +105,7 @@ export const initialAppState = {
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
     nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
+    nowTimeRounded: now, // updated on timerTick, minus the fractions of a second
     pulsars: {} as OptionalPulsars, // pulsing colored dots to indicate location on the map
     pausedTime: now, // timepoint where timeline was last paused
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline

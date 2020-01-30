@@ -132,8 +132,12 @@ export const dynamicTimelineWidth = (state: AppState): number => (
     utils.windowSize().width
 )
 
+export const showActivityList = (state: AppState): boolean => (
+  (state.flags.showActivityList && !state.flags.mapFullScreen)
+)
+
 export const dynamicTopBelowActivityList = (state: AppState): number => (
-  dynamicTopBelowButtons(state) + (state.flags.showActivityList ? constants.activityList.height : 0)
+  dynamicTopBelowButtons(state) + (showActivityList(state) ? constants.activityList.height : 0)
 )
 
 export const dynamicTopBelowButtons = (state: AppState): number => (

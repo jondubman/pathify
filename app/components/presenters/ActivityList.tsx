@@ -331,6 +331,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   }
 
   // item in this case is the cached ActivityDataExtended and index is just an index into the same list.
+  // Note the rounding is so we don't update this component more often than once per second, worst case, to show time.
   renderItem({ item, index, separators }) {
     const activity = item as ActivityDataExtended;
     return (

@@ -41,18 +41,12 @@ const Styles = StyleSheet.create({
     color: constants.colors.byName.gray,
     fontSize: constants.fonts.sizes.choiceLabel,
     fontWeight: 'normal',
-    marginBottom: 2,
   },
   chosen: {
     backgroundColor: constants.colorThemes.settings,
   },
   chosenText: {
     color: 'black',
-  },
-  fullScreenMapLabel: { // left of switch
-    position: 'absolute',
-    top: 20,
-    right: 70,
   },
   multiSelect: {
     flexDirection: 'row',
@@ -100,13 +94,19 @@ const Styles = StyleSheet.create({
   switch: {
     position: 'absolute',
     top: 10,
-    right: 10,
+    left: constants.buttonOffset * 2 + constants.buttonSize,
+  },
+  switchView: {
+    flexDirection: 'column',
+    left: constants.buttonOffset,
+    position: 'absolute',
+    top: topOffset - constants.buttonOffset,
   },
   text: {
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.choice,
     fontWeight: 'bold',
-    margin: 5,
+    marginTop: constants.buttonOffset,
   },
   view: {
     position: 'absolute',
@@ -143,20 +143,6 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
         {props.open ?
           <View style={Styles.view}>
             <View style={Styles.panel}>
-              <View style={Styles.fullScreenMapLabel}>
-                <Text style={Styles.choiceLabelText}>
-                  FULL SCREEN MAP
-                  </Text>
-              </View>
-              <View style={Styles.switch}>
-                <Switch
-                  ios_backgroundColor={colors.background}
-                  onValueChange={props.onSetMapFullScreen}
-                  thumbColor={colors.thumb}
-                  trackColor={colors.track}
-                  value={props.mapFullScreen}
-                />
-              </View>
               <View style={Styles.subpanels}>
                 <View style={Styles.subpanel}>
                   <View style={Styles.subpanelContents}>
@@ -202,6 +188,20 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
           :
           null
         }
+        <View style={Styles.switchView}>
+          <View style={Styles.switch}>
+            <Switch
+              ios_backgroundColor={colors.background}
+              onValueChange={props.onSetShowTimeline}
+              thumbColor={colors.thumb}
+              trackColor={colors.track}
+              value={props.showTimeline}
+            />
+            <Text style={Styles.choiceLabelText}>
+              TIMELINE
+          </Text>
+          </View>
+        </View>
         <SettingsButtonContainer />
       </View>
     )
