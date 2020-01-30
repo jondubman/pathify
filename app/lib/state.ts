@@ -40,6 +40,7 @@ export const initialAppState = {
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     allowMapStyleNone: false, // really only useful for debugging / perf
     activityListScrolling: false, // is the activityList currently actively being scrolled?
+    animateMapWhenFollowingPath: true, // animation pans more smoothly
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
     closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs

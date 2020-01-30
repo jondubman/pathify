@@ -9,7 +9,10 @@ import {
 } from 'react-native';
 
 // https://github.com/react-native-mapbox-gl/maps/blob/master/docs/MapView.md
-import Mapbox, { RegionPayload } from '@react-native-mapbox-gl/maps';
+import Mapbox, {
+  CameraSettings,
+  RegionPayload
+} from '@react-native-mapbox-gl/maps';
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
@@ -255,7 +258,7 @@ class MapArea extends Component<MapAreaProps> {
     this.props.mapTapped(args);
   }
 
-  setCamera(config: object) {
+  setCamera(config: CameraSettings) {
     if (this._camera) {
       const camera = this._camera!;
       camera.setCamera(config);
@@ -279,7 +282,7 @@ export interface IMapUtils {
   getMap: () => IMapUtils;
   getVisibleBounds: () => Promise<BoundsWithHeading>;
   getZoom: () => Promise<number>;
-  setCamera: (config: object) => void;
+  setCamera: (config: CameraSettings) => void;
   zoomTo: (zoomLevel: number) => void;
 }
 

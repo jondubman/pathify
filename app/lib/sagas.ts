@@ -23,6 +23,9 @@
 // Use yield call(log...) instead of log directly (yield call effect) so the call happens at the right time.
 
 import {
+  CameraSettings,
+} from '@react-native-mapbox-gl/maps';
+import {
   Alert,
   AlertButton,
 } from 'react-native';
@@ -588,7 +591,7 @@ const sagas = {
             yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
           }
           if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
-            const config = {
+            const config: CameraSettings = {
               animationDuration: constants.map.centerMapDuration,
               centerCoordinate: newCenter,
               zoomLevel: zoom,
@@ -616,7 +619,15 @@ const sagas = {
         const pathLocation = yield call(getCachedLocation, state);
         if (pathLocation) {
           yield call(log.trace, 'saga centerMapOnPath: missing pathLocation');
-          yield call(map.flyTo as any, pathLocation);
+          if (state.flags.animateMapWhenFollowingPath) {
+            const config: CameraSettings = {
+              animationDuration: constants.map.centerMapDuration,
+              centerCoordinate: pathLocation,
+            }
+            yield call(map.setCamera as any, config);
+          } else {
+            yield call(map.flyTo as any, pathLocation);
+          }
         } else {
           yield call(log.info, 'saga centerMapOnPath: missing pathLocation');
         }
