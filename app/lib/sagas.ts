@@ -612,8 +612,10 @@ const sagas = {
     try {
       const map = MapUtils();
       if (map && map.flyTo) {
-        const pathLocation = [0, 0]; // TODO
+        const state = yield select((state: AppState) => state);
+        const pathLocation = yield call(getCachedLocation, state);
         if (pathLocation) {
+          yield call(log.trace, 'saga centerMapOnPath: missing pathLocation');
           yield call(map.flyTo as any, pathLocation);
         } else {
           yield call(log.info, 'saga centerMapOnPath: missing pathLocation');
@@ -1683,6 +1685,8 @@ const sagas = {
     const {
       appActive,
       followingPath,
+      mapMoving,
+      mapReorienting,
       timelineNow,
       timelineScrolling
     } = yield select((state: AppState) => state.flags);
@@ -1696,6 +1700,19 @@ const sagas = {
         }
       }
       yield put(newAction(AppAction.setAppOption, options));
+      if (followingPath && !mapMoving && !mapReorienting) {
+        const map = MapUtils();
+        if (map) {
+          const state: AppState = yield select((state: AppState) => state);
+          const pathLocation = yield call(getCachedLocation, state);
+          const bounds = state.mapBounds;
+          if (pathLocation && bounds) {
+            if (!utils.locWellBounded(pathLocation, bounds)) {
+              yield put(newAction(AppAction.centerMapOnPath));
+            }
+          }
+        }
+      }
     }
   },
 
@@ -1705,13 +1722,23 @@ const sagas = {
       const { center } = action.params as UserMovedMapParams;
       const map = MapUtils()!;
       const bounds = yield call(map.getVisibleBounds);
-      const userLocation = yield select((state: AppState) => state.userLocation);
-      if (userLocation) {
-        const userLoc: LonLat = [userLocation.lon, userLocation.lat];
-        if (utils.locWellBounded(userLoc, bounds)) {
+      const state = yield select((state: AppState) => state);
+      const { followingPath, followingUser } = state.flags;
+      let loc: LonLat | null = null;
+      if (followingUser) {
+        const userLocation = yield select((state: AppState) => state.userLocation);
+        if (userLocation) {
+          loc = [userLocation.lon, userLocation.lat] as LonLat;
+        }
+      }
+      if (followingPath) {
+        loc = yield call(getCachedLocation, state);
+      }
+      if (loc) {
+        if (utils.locWellBounded(loc, bounds)) {
           yield call(log.trace, 'userMovedMap, but locWellBounded', center);
         } else {
-          yield put(newAction(AppAction.stopFollowingUser)); // in userMovedMap TODO what about stopFollowingPath?
+          yield put(newAction(AppAction.stopFollowing));
         }
       }
     } catch (err) {

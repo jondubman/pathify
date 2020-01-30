@@ -88,7 +88,7 @@ export const initialAppState = {
   },
   mapHeading: constants.map.default.heading,
   mapHeadingInitial: null as number | null, // once set, never changes
-  mapBounds: constants.map.default.bounds,
+  mapBounds: constants.map.default.bounds as LonLat[],
   mapBoundsInitial: null as LonLat[] | null, // once set, never changes
   mapZoom: null as number | null,
   mapZoomInitial: null as number | null, // once set, never changes

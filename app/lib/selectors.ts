@@ -448,6 +448,11 @@ export const getCachedLocation = createSelector(
       if (!path) {
         return null;
       }
+      if (scrollTime === activity.tLast) {
+        const lastLat = path.lats[path.t.length - 1];
+        const lastLon = path.lons[path.t.length - 1];
+        return [lastLon, lastLat]
+      }
       for (let i = 0; i < path.t.length - 1; i++) {
         // smoothly interpolate between the points we know
         const t1 = path.t[i];
@@ -482,10 +487,10 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     timelineNow,
     trackingActivity,
   } = state.flags;
-  const {
-    currentActivityId,
-    selectedActivityId
-  } = state.options;
+  // const {
+  //   currentActivityId,
+  //   selectedActivityId
+  // } = state.options;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
   if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
