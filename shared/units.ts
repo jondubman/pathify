@@ -1,4 +1,6 @@
 export const metersPerSecondToMilesPerHour = (mps: number) => mps * 2.23694;
+export const metersPerSecondToMilesPerMinute = (mps: number) => mps * 0.0372823;
+export const metersPerSecondToMinutesPerMile = (mps: number) => 1 / metersPerSecondToMilesPerMinute(mps);
 export const metersToFeet = (m: number) => m * 3.28084;
 export const metersToMiles = (m: number) => m * 0.00062137;
 

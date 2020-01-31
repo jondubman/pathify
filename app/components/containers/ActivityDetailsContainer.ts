@@ -9,13 +9,17 @@ import ActivityDetails from 'presenters/ActivityDetails';
 import {
   ActivityDataExtended,
 } from 'shared/activities';
+// import log from 'shared/log';
 import {
+  metersPerSecondToMinutesPerMile,
   metersToFeet,
   metersToMilesText,
+  minutesToString,
   msecToTimeString,
 } from 'shared/units';
 
 interface ActivityDetailsStateProps {
+  averagePaceText: string;
   distanceText: string;
   elevationText: string;
   isCurrent: boolean;
@@ -36,15 +40,24 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   const info = getCachedPathInfo(state);
   const { scrollTime } = state.options;
   const { timelineNow } = state.flags;
+  let partialDistance = 0;
+  let totalDistance = 0;
+  let totalTime = 0;
+  let averagePaceText = '';
+  let distanceText = '';
+  let elevationText = '';
+  let paceText = '';
+  let timeText = '';
   if (info) {
     const activity = info.activity as ActivityDataExtended;
-    let distanceText = '';
-    let elevationText = '';
-    let timeText = '?'; // TODO this should never show up
     const isCurrent = activity && (activity.id === state.options.currentActivityId);
     if (activity) {
+      if (activity.odo && activity.odoStart) {
+        totalDistance = Math.max(activity.odo - activity.odoStart, 0);
+      }
       if (info.odo && activity.odoStart) {
-        distanceText = metersToMilesText(Math.max(info.odo - activity.odoStart), '');
+        partialDistance = Math.max(info.odo - activity.odoStart, 0); // meters
+        distanceText = metersToMilesText(partialDistance, '');
       }
       // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.
       elevationText = (!info.ele || info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0);
@@ -52,12 +65,20 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         const t = scrollTime;
         timeText = msecToTimeString(t - activity.tStart);
       }
+      totalTime = activity.tLast - activity.tStart;
+      if (totalDistance && totalTime) {
+        const averagePace = metersPerSecondToMinutesPerMile(totalDistance / (totalTime / 1000));
+        averagePaceText = minutesToString(averagePace);
+        const partialPace = averagePace; // for now, showing averagePace
+        paceText = minutesToString(partialPace);
+      }
     }
     return {
+      averagePaceText,
       distanceText,
       elevationText,
       isCurrent,
-      paceText: 'p',
+      paceText,
       timelineNow,
       timeText,
       top,
@@ -65,14 +86,15 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     }
   } else {
     return {
-      distanceText: '',
-      elevationText: '',
+      averagePaceText,
+      distanceText,
+      elevationText,
       isCurrent: false,
-      paceText: '',
+      paceText,
       timelineNow,
-      timeText: '',
+      timeText,
       top,
-      visible: false,
+      visible: false, // this makes the rest basically irrelevant
     }
   }
 }
