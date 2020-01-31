@@ -228,7 +228,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
     const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start
     if (index >= list.length || ((index === list.length - 1) && (!list[list.length - 1].tEnd ||
-      (proportion > 1 && xScrolledAfterActivity > xLeftSelectStart)))
+      (proportion > 1 && xScrolledAfterActivity > xLeftSelectStart))))
     { // if sufficiently past the last activity... or any amount past the current activity...
       this.props.onPressFutureZone();
     }

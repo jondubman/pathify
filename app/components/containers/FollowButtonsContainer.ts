@@ -51,6 +51,7 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
       dispatch(newAction(AppAction.stopFollowingPath));
     } else {
       dispatch(newAction(AppAction.startFollowingPath));
+      dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
     }
   }
   const onPressFollowUser = () => {
@@ -59,6 +60,7 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
       dispatch(newAction(AppAction.stopFollowingUser));
     } else {
       dispatch(newAction(AppAction.startFollowingUser));
+      dispatch(newAction(AppAction.jumpToNow)); // TODO maybe make this a preference. Can always jump back.
       setTimeout(() => {
         dispatch(newAction(AppAction.centerMapOnUser));
       }, 0)

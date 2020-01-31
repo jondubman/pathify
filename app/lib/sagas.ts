@@ -1610,8 +1610,11 @@ const sagas = {
   startFollowingPath: function* () {
     try {
       yield call(log.debug, 'saga startFollowingPath');
-      yield put(newAction(AppAction.flagDisable, 'followingUser')); // mutual exclusion
-      yield put(newAction(AppAction.flagEnable, 'followingPath'));
+      const { followingPath } = yield select((state: AppState) => state.flags);
+      if (!followingPath) {
+        yield put(newAction(AppAction.flagDisable, 'followingUser')); // mutual exclusion
+        yield put(newAction(AppAction.flagEnable, 'followingPath'));
+      }
     } catch (err) {
       yield call(log.error, 'saga startFollowingPath', err);
     }
@@ -1620,8 +1623,11 @@ const sagas = {
   startFollowingUser: function* (action: Action) {
     try {
       yield call(log.debug, 'saga startFollowingUser');
-      yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
-      yield put(newAction(AppAction.flagEnable, 'followingUser'));
+      const { followingUser } = yield select((state: AppState) => state.flags);
+      if (!followingUser) {
+        yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
+        yield put(newAction(AppAction.flagEnable, 'followingUser'));
+      }
     } catch (err) {
       yield call(log.error, 'saga startFollowingUser', err);
     }
