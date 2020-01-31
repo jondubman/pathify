@@ -19,6 +19,7 @@ import Slider from '@react-native-community/slider';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
 import constants, { MapStyle } from 'lib/constants';
+import { centerline } from 'lib/selectors';
 
 const colors = constants.colors.settingsPanel;
 const {
@@ -28,6 +29,7 @@ const {
 } = constants.settingsPanel;
 
 const subpanelLeft = 10;
+const switchLeft = constants.buttonSize + constants.buttonOffset;
 
 const Styles = StyleSheet.create({
   choice: {
@@ -92,21 +94,25 @@ const Styles = StyleSheet.create({
     top: constants.settingsPanel.subpanelTopOffset,
   },
   switch: {
+    alignSelf: 'center',
+    marginTop: 10,
+  },
+  switchContainer: {
+    height: constants.buttonSize + constants.buttonOffset,
+    left: switchLeft,
     position: 'absolute',
-    top: 10,
-    left: constants.buttonOffset * 2 + constants.buttonSize,
+    top: topOffset - constants.buttonOffset / 2,
   },
   switchView: {
-    flexDirection: 'column',
-    left: constants.buttonOffset,
-    position: 'absolute',
-    top: topOffset - constants.buttonOffset,
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   text: {
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.choice,
     fontWeight: 'bold',
-    marginTop: constants.buttonOffset,
+    margin: constants.buttonOffset,
   },
   view: {
     position: 'absolute',
@@ -138,6 +144,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
   render() {
     const { props } = this;
     const colors = constants.colors.switch;
+    const switchWidth = centerline() - (constants.buttonSize / 2) - switchLeft;
     return (
       <View style={Styles.view}>
         {props.open ?
@@ -188,18 +195,22 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
           :
           null
         }
-        <View style={Styles.switchView}>
-          <View style={Styles.switch}>
-            <Switch
-              ios_backgroundColor={colors.background}
-              onValueChange={props.onSetShowTimeline}
-              thumbColor={colors.thumb}
-              trackColor={colors.track}
-              value={props.showTimeline}
-            />
-            <Text style={Styles.choiceLabelText}>
-              TIMELINE
-          </Text>
+        <View style={[Styles.switchContainer, { width: switchWidth }]}>
+          <View style={Styles.switchView}>
+            <View style={Styles.switch}>
+              <View style={{ marginLeft: 2 }}>
+                <Switch
+                  ios_backgroundColor={colors.background}
+                  onValueChange={props.onSetShowTimeline}
+                  thumbColor={colors.thumb}
+                  trackColor={colors.track}
+                  value={props.showTimeline}
+                />
+              </View>
+              <Text style={Styles.choiceLabelText}>
+                TIMELINE
+              </Text>
+            </View>
           </View>
         </View>
         <SettingsButtonContainer />

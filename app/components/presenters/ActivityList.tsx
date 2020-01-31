@@ -187,7 +187,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     } else if (proportion > 1) {
       log.scrollEvent('ActivityList handleScroll: proportion', proportion,
         'amountScrolledAfterActivity', xScrolledAfterActivity, 'index', index, 'remainder', remainder);
-      if (activity && xScrolledAfterActivity <= xLeftSelectStart) {
+      if (activity && activity.tEnd && (xScrolledAfterActivity <= xLeftSelectStart)) {
         const { tLast } = activity;
         if (tLast) {
           this.props.onScrollTimeline(tLast); // This may change selectedActivityId.
@@ -227,9 +227,9 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const xScrolledAfterActivity = remainder - activityWidth;
     // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
     const xLeftSelectStart = (activityMargin / 2 - 1); // amount left of an activity you can scroll to select start
-    if (index >= list.length || (index === list.length - 1 &&
-      proportion > 1 &&
-      xScrolledAfterActivity > xLeftSelectStart)) { // if after the last activity...
+    if (index >= list.length || ((index === list.length - 1) && (!list[list.length - 1].tEnd ||
+      (proportion > 1 && xScrolledAfterActivity > xLeftSelectStart)))
+    { // if sufficiently past the last activity... or any amount past the current activity...
       this.props.onPressFutureZone();
     }
   }
