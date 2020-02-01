@@ -3,12 +3,16 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AppAction, CenterMapParams, newAction } from 'lib/actions';
+import {
+  AppAction,
+  CenterMapParams,
+  newAction,
+} from 'lib/actions';
 import constants from 'lib/constants';
 import { AppState } from 'lib/state';
 import StartMenu from 'presenters/StartMenu';
 import {
-  dynamicTimelineHeight
+  dynamicTimelineHeight,
 } from 'lib/selectors';
 import log from 'shared/log';
 

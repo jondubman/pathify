@@ -92,11 +92,7 @@ const TopButton = (props: TopButtonProps) => (props.visible ? (
         opacity: props.selected ? opacitySelected : opacity,
         top: props.topOffset,
       }]}
-      onPress={() => {
-        if (!props.current) {
-          props.onDeleteActivity(props.activityId)
-        }
-      }}
+      onPressIn={props.onPress}
       underlayColor={props.enabled ? backgroundColor(props) : colors.underlay}
     >
       <FontAwesome5

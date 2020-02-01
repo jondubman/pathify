@@ -15,7 +15,11 @@ interface ActivityInfoDispatchProps {
 export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
-  const { mapFullScreen, mapTapped, showActivityDetails } = state.flags;
+  const {
+    mapFullScreen,
+    mapTapped,
+    showActivityDetails
+  } = state.flags;
   return {
     // showActivityDetails in mapFullScreen unless mapTapped.
     showActivityDetails: showActivityDetails && (!mapFullScreen || (mapFullScreen && !mapTapped)),

@@ -23,7 +23,6 @@ interface TopButtonStateProps {
 }
 
 interface TopButtonDispatchProps {
-  onDeleteActivity: (id: string) => void;
   onPress: (event: GestureResponderEvent) => void;
 }
 
@@ -46,12 +45,6 @@ const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
     log.debug('TopButton press');
     dispatch(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));
     dispatch(newAction(AppAction.flagToggle, 'topMenuOpen'));
-  }
-  const onDeleteActivity = (id: string) => {
-    log.debug('TopButton onDeleteActivity');
-    if (id) {
-      dispatch(newAction(AppAction.deleteActivity, { id }));
-    }
   }
   const dispatchers = {
     onDeleteActivity,

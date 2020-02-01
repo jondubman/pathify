@@ -284,8 +284,11 @@ const colors = {
     underlay: colorThemes.topMenu,
   },
   topMenu: {
-    background: withOpacity(colorThemes.background, defaultOpacity),
     border: namedColors.darkerGray,
+    dimmerBackground: withOpacity(colorThemes.background, defaultOpacity),
+    menuItemBackground: 'transparent',
+    menuItemUnderlay: withOpacity(namedColors.white, 0.5),
+    panelBackground: withOpacity(namedColors.black, 1),
   },
   user: colorThemes.now,
 }
@@ -633,10 +636,9 @@ const constants = {
     size: buttonSize,
   },
   topMenu: {
-    height: panelHeight,
-    subpanelTopOffset: buttonSize + buttonOffset,
-    topOffset: safeAreaTop,
-    width: minDeviceWidth - (buttonSize + buttonOffset) * 2 - buttonOffset,
+    borderWidth: 1,
+    height: 180,
+    width: 240,
   },
 }
 
