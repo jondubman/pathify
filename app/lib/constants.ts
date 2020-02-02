@@ -239,6 +239,7 @@ const colors = {
   },
   startMenu: {
     border: namedColors.darkerGray,
+    buttonBackground: withOpacity(namedColors.gray, 0.25),
     dimmerBackground: withOpacity(colorThemes.background, defaultOpacity),
     menuItemBackground: 'transparent',
     menuItemUnderlay: withOpacity(namedColors.white, 0.5),
@@ -504,6 +505,8 @@ const constants = {
   startMenu: {
     borderWidth: menuBorderWidth,
     height: 180,
+    marginHorizontal: 10,
+    menuItemMargin: 10,
     width: 240,
   },
   timing: { // msec

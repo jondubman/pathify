@@ -17,6 +17,11 @@ import utils from 'lib/utils';
 
 const colors = constants.colors.startMenu;
 
+const {
+  marginHorizontal,
+  menuItemMargin,
+} = constants.startMenu;
+
 const Styles = StyleSheet.create({
   text: {
     alignSelf: 'center',
@@ -24,7 +29,7 @@ const Styles = StyleSheet.create({
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.menuItem,
     fontWeight: 'bold',
-    marginVertical: 20,
+    margin: menuItemMargin,
   },
 })
 
@@ -44,7 +49,7 @@ class StartMenu extends React.Component<StartMenuProps> {
     const { props } = this;
 
     const menuItemStyle = {
-      width: props.width - constants.startMenu.borderWidth * 2,
+      width: props.width - (constants.startMenu.borderWidth + marginHorizontal) * 2,
     } as StyleProp<ViewStyle>;
 
     const panelStyle = {
@@ -56,6 +61,18 @@ class StartMenu extends React.Component<StartMenuProps> {
       position: 'absolute',
       top: 0,
       width: utils.windowSize().width,
+    } as StyleProp<ViewStyle>;
+
+    const subpanelContentsStyle = {
+      justifyContent: 'space-evenly',
+      height: props.height,
+      marginHorizontal,
+    } as StyleProp<ViewStyle>;
+
+    const menuItemContainerStyle = {
+      backgroundColor: colors.buttonBackground,
+      borderRadius: constants.buttonSize / 2,
+      overflow: 'hidden',
     } as StyleProp<ViewStyle>;
 
     const subpanelStyle = {
@@ -84,36 +101,44 @@ class StartMenu extends React.Component<StartMenuProps> {
           >
             <Fragment>
               <View style={subpanelStyle}>
-                {props.trackingActivity ? (
-                  <TouchableHighlight
-                    onPressIn={props.onSelectEndActivity}
-                    style={menuItemStyle}
-                    underlayColor={constants.colors.startMenu.menuItemUnderlay}
-                  >
-                    <Text style={Styles.text}>
-                      End Current Activity
-                    </Text>
-                  </TouchableHighlight>
-                ) : (
-                  <TouchableHighlight
-                    onPress={props.onSelectNewActivity}
-                    style={menuItemStyle}
-                    underlayColor={constants.colors.startMenu.menuItemUnderlay}
-                  >
-                    <Text style={Styles.text}>
-                      Start New Activity
-                    </Text>
-                  </TouchableHighlight>
-                )}
-                <TouchableHighlight
-                  onPressIn={props.onDismiss}
-                  style={menuItemStyle}
-                  underlayColor={constants.colors.startMenu.menuItemUnderlay}
-                >
-                  <Text style={Styles.text}>
-                    {props.trackingActivity ? 'Continue' : 'Close'}
-                  </Text>
-                </TouchableHighlight>
+                <View style={subpanelContentsStyle}>
+                  {props.trackingActivity ? (
+                    <View style={menuItemContainerStyle}>
+                      <TouchableHighlight
+                        onPressIn={props.onSelectEndActivity}
+                        style={menuItemStyle}
+                        underlayColor={constants.colors.startMenu.menuItemUnderlay}
+                      >
+                        <Text style={Styles.text}>
+                          End Current Activity
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
+                  ) : (
+                    <View style={menuItemContainerStyle}>
+                      <TouchableHighlight
+                        onPress={props.onSelectNewActivity}
+                        style={menuItemStyle}
+                        underlayColor={constants.colors.startMenu.menuItemUnderlay}
+                      >
+                        <Text style={Styles.text}>
+                          Start New Activity
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
+                  )}
+                  <View style={menuItemContainerStyle}>
+                    <TouchableHighlight
+                      onPressIn={props.onDismiss}
+                      style={menuItemStyle}
+                      underlayColor={constants.colors.startMenu.menuItemUnderlay}
+                    >
+                      <Text style={Styles.text}>
+                        {props.trackingActivity ? 'Continue' : 'Close'}
+                      </Text>
+                    </TouchableHighlight>
+                  </View>
+                </View>
               </View>
               <View style={timelineSpaceStyle} />
             </Fragment>
