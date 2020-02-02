@@ -18,6 +18,11 @@ import utils from 'lib/utils';
 
 const colors = constants.colors.topMenu;
 
+const {
+  marginHorizontal,
+  menuItemMargin
+} = constants.topMenu;
+
 const Styles = StyleSheet.create({
   text: {
     alignSelf: 'center',
@@ -25,7 +30,7 @@ const Styles = StyleSheet.create({
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.menuItem,
     fontWeight: 'bold',
-    marginVertical: 20,
+    margin: menuItemMargin,
   },
 })
 
@@ -45,7 +50,7 @@ class TopMenu extends React.Component<TopMenuProps> {
     const { props } = this;
 
     const menuItemStyle = {
-      width: props.width - constants.topMenu.borderWidth * 2,
+      width: props.width - (constants.topMenu.borderWidth + marginHorizontal) * 2,
     } as StyleProp<ViewStyle>;
 
     const panelStyle = {
@@ -71,61 +76,83 @@ class TopMenu extends React.Component<TopMenuProps> {
       width: props.width,
     } as StyleProp<ViewStyle>;
 
+    const subpanelContentsStyle = {
+      justifyContent: 'space-evenly',
+      height: props.height,
+      marginHorizontal,
+    } as StyleProp<ViewStyle>;
+
+    const menuItemContainerStyle = {
+      backgroundColor: colors.buttonBackground,
+      borderRadius: constants.buttonSize / 2,
+      overflow: 'hidden',
+    } as StyleProp<ViewStyle>;
+
     const timelineSpaceStyle = { // for layout
       opacity: 0,
       height: props.timelineHeight,
-    };
+    } as StyleProp<ViewStyle>;
 
     return (
       <Fragment>
         {props.open ?
           <TouchableHighlight
-            onPress={props.onDismiss}
+            onPressIn={props.onDismiss}
             style={panelStyle}
           >
             <Fragment>
               <View style={subpanelStyle}>
-                {props.showingActivityDetails ? (
-                  <TouchableHighlight
-                    onPressIn={props.onHideActivityDetails}
-                    style={menuItemStyle}
-                    underlayColor={constants.colors.topMenu.menuItemUnderlay}
-                  >
-                    <Text style={Styles.text}>
-                      Hide Activity Details
-                    </Text>
-                  </TouchableHighlight>
-                ) : (
+                <View style={subpanelContentsStyle}>
+                  {props.showingActivityDetails ? (
+                    <View style={menuItemContainerStyle}>
+                      <TouchableHighlight
+                        onPress={props.onHideActivityDetails}
+                        style={menuItemStyle}
+                        underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                      >
+                        <Text style={Styles.text}>
+                          Hide Activity Details
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
+                  ) : (
+                    <View style={menuItemContainerStyle}>
+                      <TouchableHighlight
+                        onPress={props.onShowActivityDetails}
+                        style={menuItemStyle}
+                        underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                      >
+                        <Text style={Styles.text}>
+                          Show Activity Details
+                      </Text>
+                      </TouchableHighlight>
+                    </View>
+                  )}
+                  {(props.current || !props.selectedActivityId) ? null : (
+                    <View style={menuItemContainerStyle}>
+                      <TouchableHighlight
+                        onPress={props.onDeleteActivity(props.selectedActivityId!)}
+                        style={menuItemStyle}
+                        underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                      >
+                        <Text style={Styles.text}>
+                          {'Delete Activity'}
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
+                  )}
+                  <View style={menuItemContainerStyle}>
                     <TouchableHighlight
-                      onPress={props.onShowActivityDetails}
+                      onPressIn={props.onDismiss}
                       style={menuItemStyle}
                       underlayColor={constants.colors.topMenu.menuItemUnderlay}
                     >
                       <Text style={Styles.text}>
-                        Show Activity Details
-                    </Text>
+                        {'Close'}
+                      </Text>
                     </TouchableHighlight>
-                  )}
-                {(props.current && props.selectedActivityId) ? null : (
-                  <TouchableHighlight
-                    onPress={props.onDeleteActivity(props.selectedActivityId)}
-                    style={menuItemStyle}
-                    underlayColor={constants.colors.topMenu.menuItemUnderlay}
-                  >
-                    <Text style={Styles.text}>
-                      {'Delete Activity'}
-                    </Text>
-                  </TouchableHighlight>
-                )}
-                <TouchableHighlight
-                  onPress={props.onDismiss}
-                  style={menuItemStyle}
-                  underlayColor={constants.colors.topMenu.menuItemUnderlay}
-                >
-                  <Text style={Styles.text}>
-                    {'Close'}
-                  </Text>
-                </TouchableHighlight>
+                  </View>
+                </View>
               </View>
               <View style={timelineSpaceStyle} />
             </Fragment>

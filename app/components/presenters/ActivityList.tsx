@@ -335,11 +335,13 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   renderItem({ item, index, separators }) {
     const activity = item as ActivityDataExtended;
     return (
-      <ActivityListItem
-        activity={activity}
-        selected={activity.id === this.props.selectedActivityId}
-        onPress={() => { this.props.onPressActivity(activity.id) }}
-      />
+      <View style={{ borderRadius: constants.activityList.borderRadius, overflow: 'hidden' }}>
+        <ActivityListItem
+          activity={activity}
+          selected={activity.id === this.props.selectedActivityId}
+          onPress={() => { this.props.onPressActivity(activity.id) }}
+        />
+      </View>
     )
   }
 

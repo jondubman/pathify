@@ -46,21 +46,25 @@ const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
   const onPressFollowPath = () => {
-    const { followingPath } = store.getState().flags;
+    const { followingPath, mapFullScreen, timelineNow } = store.getState().flags;
     if (followingPath) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingPath));
     } else {
       dispatch(newAction(AppAction.startFollowingPath));
-      dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
+      if (!mapFullScreen && timelineNow) {
+        dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
+      }
     }
   }
   const onPressFollowUser = () => {
-    const { followingUser } = store.getState().flags;
+    const { followingUser, mapFullScreen, timelineNow } = store.getState().flags;
     if (followingUser) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingUser));
     } else {
       dispatch(newAction(AppAction.startFollowingUser));
-      dispatch(newAction(AppAction.jumpToNow)); // TODO maybe make this a preference. Can always jump back.
+      if (!mapFullScreen && !timelineNow) {
+        dispatch(newAction(AppAction.jumpToNow));
+      }
       setTimeout(() => {
         dispatch(newAction(AppAction.centerMapOnUser));
       }, 0)

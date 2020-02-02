@@ -29,14 +29,23 @@ interface TopButtonDispatchProps {
 export type TopButtonProps = TopButtonStateProps & TopButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): TopButtonStateProps => {
+  const {
+    helpOpen,
+    settingsOpen,
+    topMenuOpen,
+  } = state.flags;
+  const {
+    currentActivityId,
+    selectedActivityId,
+  } = state.options;
   return {
     activityCount: activityIndex(state).toString(),
-    activityId: state.options.selectedActivityId || '',
-    current: !!(state.options.currentActivityId && state.options.currentActivityId === state.options.selectedActivityId),
-    enabled: state.flags.topMenuOpen,
+    activityId: selectedActivityId || '',
+    current: !!(currentActivityId && currentActivityId === selectedActivityId),
+    enabled: topMenuOpen,
     selected: state.options.selectedActivityId !== null,
     topOffset: dynamicAreaTop(state),
-    visible: !(state.flags.settingsOpen || state.flags.helpOpen),
+    visible: !(settingsOpen || helpOpen),
   }
 }
 
@@ -47,7 +56,6 @@ const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
     dispatch(newAction(AppAction.flagToggle, 'topMenuOpen'));
   }
   const dispatchers = {
-    onDeleteActivity,
     onPress,
   }
   return dispatchers;

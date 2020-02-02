@@ -83,11 +83,13 @@ const schemaVersion = 28;
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
+const borderRadiusSmall = 5;
 const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
 const mapLogoHeight = 34; // Mapbox logo
+const menuBorderWidth = 1.5;
 const minDeviceWidth = 320; // minimum design width; iPhone SE
 const initialTimelineHeight = 90;
 const panelWidth = 252; // fits on iPhone SE
@@ -285,6 +287,7 @@ const colors = {
   },
   topMenu: {
     border: namedColors.darkerGray,
+    buttonBackground: withOpacity(namedColors.gray, 0.25),
     dimmerBackground: withOpacity(colorThemes.background, defaultOpacity),
     menuItemBackground: 'transparent',
     menuItemUnderlay: withOpacity(namedColors.white, 0.5),
@@ -317,7 +320,7 @@ const constants = {
     activityMargin: activityListMargin, // applied on left of each activity
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderLineHeight: 1,
-    borderRadius: 5,
+    borderRadius: borderRadiusSmall,
     borderWidth: 1,
     centerLineTop: -buttonOffset,
     centerLineWidth: 2,
@@ -327,6 +330,7 @@ const constants = {
     topBottomBorderHeight: activityTopBottomBorderHeight,
   },
   appName: 'Pathify',
+  borderRadiusSmall,
   buttonBaseOffsetPerRow: buttonSize + buttonOffset * 2,
   buttonOffset,
   buttonSize,
@@ -498,7 +502,7 @@ const constants = {
     size: buttonSize,
   },
   startMenu: {
-    borderWidth: 1,
+    borderWidth: menuBorderWidth,
     height: 180,
     width: 240,
   },
@@ -636,8 +640,10 @@ const constants = {
     size: buttonSize,
   },
   topMenu: {
-    borderWidth: 1,
-    height: 180,
+    borderWidth: menuBorderWidth,
+    marginHorizontal: 10,
+    menuItemMargin: 10,
+    height: 240,
     width: 240,
   },
 }

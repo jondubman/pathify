@@ -79,7 +79,7 @@ class StartMenu extends React.Component<StartMenuProps> {
       <Fragment>
         { props.open ?
           <TouchableHighlight
-            onPress={props.onDismiss}
+            onPressIn={props.onDismiss}
             style={panelStyle}
           >
             <Fragment>
@@ -106,7 +106,7 @@ class StartMenu extends React.Component<StartMenuProps> {
                   </TouchableHighlight>
                 )}
                 <TouchableHighlight
-                  onPress={props.onDismiss}
+                  onPressIn={props.onDismiss}
                   style={menuItemStyle}
                   underlayColor={constants.colors.startMenu.menuItemUnderlay}
                 >

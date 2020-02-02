@@ -77,7 +77,7 @@ class AppUI extends Component<AppUIProps> {
               {showTimeline ? <TimelineControlsContainer /> : null}
               <View style={{ position: 'absolute', width }}>
                 <HelpPanelContainer />
-                {mapFullScreen ? null : <TopMenuContainer />}
+                <TopMenuContainer />
                 <SettingsPanelContainer />
               </View>
               <StartMenuContainer />
