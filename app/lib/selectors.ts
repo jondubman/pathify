@@ -23,6 +23,7 @@ import {
   Timepoint,
 } from 'shared/timeseries';
 import {
+  metersPerSecondToMinutesPerMile,
   msecToString,
 } from 'shared/units';
 
@@ -388,6 +389,7 @@ export const flavorText = (state: AppState): string[] => {
 
 // Selectors memozied using reselect / createSelector:
 
+// Note getScrollTime is used by multiple selectors (getCachedPathInfo, getStoredLocationEvent)
 const getScrollTime = (state: AppState) => state.options.scrollTime;
 export const getStoredLocationEvent = createSelector(
   [getScrollTime],
@@ -395,15 +397,13 @@ export const getStoredLocationEvent = createSelector(
     const { nearTimeThreshold } = constants.timeline;
     const tMin = scrollTime - nearTimeThreshold; // TODO this filtering should happen at the lower level
     const tMax = scrollTime + nearTimeThreshold;
-    // TODO optimize this, not just with reselect, but in a way that avoids the database calls in a selector that gets
-    // called from mapStateToProps which gets called every time the state changes. That means caching path timestamps,
-    // not just pathLats / pathLons. If cache is not filled, we have no path, and this would be a good fallback.
     return locations.locEventNearestTimepoint(database.events().filtered('t >= $0 AND t <= $1', tMin, tMax),
       scrollTime,
       nearTimeThreshold);
   }
 )
 const getCachedActivities = (state: AppState) => state.cache.activities;
+// PathInfo here means info derived from the Path that includes scrollTime.
 export const getCachedPathInfo = createSelector(
   [getScrollTime, getCachedActivities],
   (scrollTime, cachedActivities) => {
@@ -411,6 +411,10 @@ export const getCachedPathInfo = createSelector(
       return null;
     }
     const t = scrollTime;
+    let tPaceMeasurement = t - constants.timing.paceMeasurement; // looking for odo just prior to this
+    let odoPaceMeasurement = 0;
+    let timeAtPaceMeasurement = 0;
+    let pace = 0;
     const activity = cachedActivities.find(activity =>
       (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast || !activity.tEnd))
     )
@@ -430,12 +434,17 @@ export const getCachedPathInfo = createSelector(
           ele: lastEle,
           loc: [lastLon, lastLat],
           odo: lastOdo,
+          pace,
         }
       }
       for (let i = 0; i < path.t.length - 1; i++) {
         // smoothly (linearly) interpolate between points we know
         const t1 = path.t[i];
         const t2 = path.t[i + 1];
+        if (t1 >= tPaceMeasurement && !odoPaceMeasurement) {
+          odoPaceMeasurement = path.odo[i];
+          timeAtPaceMeasurement = path.t[i];
+        }
         if (t1 <= t && t <= t2) {
           const tDiff = t2 - t1;
           const proportion = (scrollTime - t1) / tDiff;
@@ -458,16 +467,19 @@ export const getCachedPathInfo = createSelector(
           const odo2 = path.odo[i + 1];
           const odo = (odo2 - odo1) * proportion + odo1;
 
+          if (odoPaceMeasurement) {
+            const meters = odo - odoPaceMeasurement;
+            const seconds = (t - timeAtPaceMeasurement) / 1000;
+            pace = meters / seconds;
+          }
           return {
             activity,
             ele,
             loc: [lon, lat] as LonLat,
             odo,
+            pace,
           }
         }
-        // contrast with: simple results, without interpolation
-        // return [path.lons[i], path.lats[i]] as LonLat; // choosing first loc
-        // return [path.lons[i+1], path.lats[i+1]] as LonLat; // choosing second loc
       }
     }
     return null;

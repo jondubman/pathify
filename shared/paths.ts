@@ -10,7 +10,7 @@ export const PathSchema: Realm.ObjectSchema = { // Note: keep PathSchema and Pat
     lons: 'double[]',
     odo: 'int[]', // meters, so it can be an int
     schemaVersion: 'int',
-    t: 'int[]',
+    t: 'int[]', // msec
   },
 }
 

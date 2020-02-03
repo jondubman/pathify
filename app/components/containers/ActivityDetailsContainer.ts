@@ -24,6 +24,7 @@ interface ActivityDetailsStateProps {
   elevationText: string;
   isCurrent: boolean;
   paceText: string;
+  speedText: string;
   timelineNow: boolean;
   timeText: string;
   top: number;
@@ -47,6 +48,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   let distanceText = '';
   let elevationText = '';
   let paceText = '';
+  let speedText = '';
   let timeText = '';
   if (info) {
     const activity = info.activity as ActivityDataExtended;
@@ -55,22 +57,23 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       if (activity.odo && activity.odoStart) {
         totalDistance = Math.max(activity.odo - activity.odoStart, 0);
       }
-      if (info.odo && activity.odoStart) {
-        partialDistance = Math.max(info.odo - activity.odoStart, 0); // meters
-        distanceText = metersToMilesText(partialDistance, '');
-      }
-      // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.
-      elevationText = (!info.ele || info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0);
       if (activity.tStart) {
         const t = scrollTime;
         timeText = msecToTimeString(t - activity.tStart);
       }
+      if (info.odo && activity.odoStart) {
+        partialDistance = Math.max(info.odo - activity.odoStart, 0); // meters
+        distanceText = metersToMilesText(partialDistance, '');
+      }
+      if (info.pace) {
+        paceText = minutesToString(metersPerSecondToMinutesPerMile(info.pace));
+      }
+      // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.
+      elevationText = (!info.ele || info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0);
       totalTime = activity.tLast - activity.tStart;
       if (totalDistance && totalTime) {
         const averagePace = metersPerSecondToMinutesPerMile(totalDistance / (totalTime / 1000));
         averagePaceText = minutesToString(averagePace);
-        const partialPace = averagePace; // for now, showing averagePace
-        paceText = minutesToString(partialPace);
       }
     }
     return {
@@ -79,6 +82,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       elevationText,
       isCurrent,
       paceText,
+      speedText,
       timelineNow,
       timeText,
       top,
@@ -91,6 +95,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       elevationText,
       isCurrent: false,
       paceText,
+      speedText,
       timelineNow,
       timeText,
       top,

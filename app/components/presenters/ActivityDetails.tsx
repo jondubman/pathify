@@ -137,6 +137,30 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
         </View>
       </View>
     </View>
+    <View style={Styles.row}>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {props.averagePaceText}
+          </Text>
+          <Text style={Styles.labelText}>
+            AVERAGE PACE (min/mi)
+          </Text>
+        </View>
+      </View>
+      <View style={Styles.bufferZone}>
+      </View>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {props.speedText}
+          </Text>
+          <Text style={Styles.labelText}>
+            SPEED (mph)
+          </Text>
+        </View>
+      </View>
+    </View>
   </View>
 ) : null)
 

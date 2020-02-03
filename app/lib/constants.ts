@@ -514,6 +514,7 @@ const constants = {
     activityListAnimationCompletion: 600,
     menuFade: 300,
     opacitySliderThrottle: 50,
+    paceMeasurement: interval.seconds(20),
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     timelineCloseToNow: 1000,
