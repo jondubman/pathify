@@ -153,10 +153,10 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
       <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
         <View style={Styles.itemContents}>
           <Text style={Styles.bigText}>
-            {props.speedText}
+            {props.averageSpeedText}
           </Text>
           <Text style={Styles.labelText}>
-            SPEED (mph)
+            AVERAGE SPEED (mph)
           </Text>
         </View>
       </View>

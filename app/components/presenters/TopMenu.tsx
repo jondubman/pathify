@@ -103,7 +103,7 @@ class TopMenu extends React.Component<TopMenuProps> {
             <Fragment>
               <View style={subpanelStyle}>
                 <View style={subpanelContentsStyle}>
-                  {props.showingActivityDetails ? (
+                  {props.showActivityDetails ? (
                     <View style={menuItemContainerStyle}>
                       <TouchableHighlight
                         onPress={props.onHideActivityDetails}

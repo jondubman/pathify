@@ -17,7 +17,7 @@ interface TopMenuStateProps {
   height: number;
   open: boolean;
   selectedActivityId: string | null;
-  showingActivityDetails: boolean;
+  showActivityDetails: boolean;
   timelineHeight: number;
   width: number;
 }
@@ -33,13 +33,16 @@ interface TopMenuDispatchProps {
 export type TopMenuProps = TopMenuStateProps & TopMenuDispatchProps;
 
 const mapStateToProps = (state: AppState): TopMenuStateProps => {
-  const { currentActivityId, selectedActivityId } = state.options;
+  const {
+    currentActivityId,
+    selectedActivityId
+  } = state.options;
   return {
     current: !!(currentActivityId && currentActivityId === selectedActivityId),
     height: constants.topMenu.height,
     open: state.flags.topMenuOpen,
     selectedActivityId,
-    showingActivityDetails: state.flags.showActivityDetails,
+    showActivityDetails: state.flags.showActivityDetails,
     timelineHeight: dynamicTimelineHeight(state),
     width: constants.topMenu.width,
   }

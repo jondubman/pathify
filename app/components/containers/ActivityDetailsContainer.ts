@@ -3,14 +3,16 @@ import { connect } from 'react-redux';
 import {
   dynamicTopBelowActivityList,
   getCachedPathInfo,
+  getScrollTimeRounded,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ActivityDetails from 'presenters/ActivityDetails';
 import {
   ActivityDataExtended,
 } from 'shared/activities';
-// import log from 'shared/log';
+import log from 'shared/log';
 import {
+  metersPerSecondToMilesPerHour,
   metersPerSecondToMinutesPerMile,
   metersToFeet,
   metersToMilesText,
@@ -20,6 +22,7 @@ import {
 
 interface ActivityDetailsStateProps {
   averagePaceText: string;
+  averageSpeedText: string;
   distanceText: string;
   elevationText: string;
   isCurrent: boolean;
@@ -39,20 +42,24 @@ export type ActivityDetailsProps = ActivityDetailsStateProps & ActivityDetailsDi
 const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   const top = dynamicTopBelowActivityList(state);
   const info = getCachedPathInfo(state);
-  const { scrollTime } = state.options;
+  const { currentActivityId } = state.options;
+  const scrollTime = getScrollTimeRounded(state);
   const { timelineNow } = state.flags;
+
   let partialDistance = 0;
   let totalDistance = 0;
   let totalTime = 0;
+
   let averagePaceText = '';
+  let averageSpeedText = '';
   let distanceText = '';
   let elevationText = '';
-  let paceText = '';
+  let paceText = '0';
   let speedText = '';
   let timeText = '';
   if (info) {
     const activity = info.activity as ActivityDataExtended;
-    const isCurrent = activity && (activity.id === state.options.currentActivityId);
+    const isCurrent = activity && (activity.id === currentActivityId);
     if (activity) {
       if (activity.odo && activity.odoStart) {
         totalDistance = Math.max(activity.odo - activity.odoStart, 0);
@@ -72,12 +79,15 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       elevationText = (!info.ele || info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0);
       totalTime = activity.tLast - activity.tStart;
       if (totalDistance && totalTime) {
-        const averagePace = metersPerSecondToMinutesPerMile(totalDistance / (totalTime / 1000));
+        const mps = totalDistance / (totalTime / 1000);
+        const averagePace = metersPerSecondToMinutesPerMile(mps);
         averagePaceText = minutesToString(averagePace);
+        averageSpeedText = metersPerSecondToMilesPerHour(mps).toFixed(1);
       }
     }
     return {
       averagePaceText,
+      averageSpeedText,
       distanceText,
       elevationText,
       isCurrent,
@@ -91,6 +101,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   } else {
     return {
       averagePaceText,
+      averageSpeedText,
       distanceText,
       elevationText,
       isCurrent: false,

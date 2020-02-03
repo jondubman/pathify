@@ -46,7 +46,11 @@ const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
   const onPressFollowPath = () => {
-    const { followingPath, mapFullScreen, timelineNow } = store.getState().flags;
+    const {
+      followingPath,
+      mapFullScreen,
+      timelineNow,
+    } = store.getState().flags;
     if (followingPath) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingPath));
     } else {
@@ -57,7 +61,11 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
     }
   }
   const onPressFollowUser = () => {
-    const { followingUser, mapFullScreen, timelineNow } = store.getState().flags;
+    const {
+      followingUser,
+      mapFullScreen,
+      timelineNow,
+    } = store.getState().flags;
     if (followingUser) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingUser));
     } else {

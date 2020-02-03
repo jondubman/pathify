@@ -9,6 +9,7 @@ import {
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import store from 'lib/store';
 import TopButton from 'presenters/TopButton';
 import log from 'shared/log';
 
@@ -23,7 +24,7 @@ interface TopButtonStateProps {
 }
 
 interface TopButtonDispatchProps {
-  onPress: (event: GestureResponderEvent) => void;
+  onPressIn: (event: GestureResponderEvent) => void;
 }
 
 export type TopButtonProps = TopButtonStateProps & TopButtonDispatchProps;
@@ -50,13 +51,22 @@ const mapStateToProps = (state: AppState): TopButtonStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
-  const onPress = () => {
-    log.debug('TopButton press');
-    dispatch(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));
-    dispatch(newAction(AppAction.flagToggle, 'topMenuOpen'));
+  const onPressIn = () => {
+    log.debug('TopButton onPressIn');
+    // TODO for now, this menu is inert unless there is a selected activity, because it would serve no purpose.
+    const state = store.getState();
+    const { mapFullScreen } = state.flags;
+    const { selectedActivityId } = state.options;
+    if (mapFullScreen) {
+      dispatch(newAction(AppAction.flagDisable, 'mapFullScreen'));
+    }
+    if (selectedActivityId !== null) {
+      dispatch(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));
+      dispatch(newAction(AppAction.flagToggle, 'topMenuOpen'));
+    }
   }
   const dispatchers = {
-    onPress,
+    onPressIn,
   }
   return dispatchers;
 }

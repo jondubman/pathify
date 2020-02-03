@@ -87,12 +87,12 @@ const TopButton = (props: TopButtonProps) => (props.visible ? (
     </Text>
     <TouchableHighlight
       style={[Styles.button, {
-        backgroundColor: props.enabled ? colors.underlay : backgroundColor(props),
+        backgroundColor: backgroundColor(props),
         borderColor: props.selected ? colors.borderSelected : colors.border,
         opacity: props.selected ? opacitySelected : opacity,
         top: props.topOffset,
       }]}
-      onPressIn={props.onPress}
+      onPressIn={props.onPressIn}
       underlayColor={props.enabled ? backgroundColor(props) : colors.underlay}
     >
       <FontAwesome5

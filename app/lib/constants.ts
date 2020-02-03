@@ -284,7 +284,7 @@ const colors = {
     bubbleLabel: namedColors.white,
     icon: namedColors.black,
     iconSelected: namedColors.white,
-    underlay: colorThemes.topMenu,
+    underlay: withOpacity(namedColors.black, 1),
   },
   topMenu: {
     border: namedColors.darkerGray,
