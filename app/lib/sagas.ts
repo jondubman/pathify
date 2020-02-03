@@ -346,9 +346,11 @@ const sagas = {
           if (activity) {
             let modifiedActivity = yield call(loggableActivity, activity);
             results.push({ activity: modifiedActivity });
-            if (query.events) {
-              const events = (yield call(database.events)).filtered(`activityId == "${query.activityId}"`);
-              results.push({ events: query.count ? events.length : Array.from(events) })
+            if (query.events && (query.startIndex || query.startIndex === 0) && query.limit) {
+              const events = (yield call(database.events)).filtered(`activityId == "${activity.id}"`);
+              const start = query.startIndex;
+              const end = query.startIndex + query.limit;
+              results.push({ events: query.count ? events.length : Array.from(events).slice(start, end)})
             }
             response = { results };
           }
@@ -384,27 +386,9 @@ const sagas = {
           Geo.emailLog();
           break;
         }
-        case 'events': {
+        case 'events': { // TODO
           const events = yield call(database.events);
-          let timeRange = query.timeRange || [0, Infinity];
-          if (query.since) {
-            timeRange[0] = query.since;
-          }
-          let eventsFiltered = timeRange ? yield call(timeseries.filterByTime, events, timeRange) : events;
-          // TODO these query options need to be updated for Realm.
-          //
-          // if (query.filterTypes) {
-          //   if (query.exclude) {
-          //     eventsFiltered = events.filter((e: GenericEvent) => !query.filterTypes!.includes(e.type));
-          //   } else {
-          //     eventsFiltered = events.filter((e: GenericEvent) => query.filterTypes!.includes(e.type));
-          //   }
-          // }
-          // if (query.startIndex || query.limit) {
-          //   const startIndex = query.startIndex || 0;
-          //   events = events.slice(startIndex, startIndex + (query.limit || (events.length - startIndex)));
-          // }
-          response = query.count ? eventsFiltered.length : Array.from(eventsFiltered);
+          response = query.count ? events.length : Array.from(events);
           break;
         }
         case 'eventCount': { // quick count of the total, no overhead
@@ -1318,7 +1302,7 @@ const sagas = {
       } else {
         // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
-        yield call(log.trace, 'Setting viewTime when timeline is paused updates pausedTime:', t);
+        yield call(log.scrollEvent, 'Setting viewTime when timeline is paused updates pausedTime:', t);
         yield put(newAction(AppAction.setAppOption, { pausedTime: t }));
       }
       // If viewTime is too far from the current timeline center, re-center timeline around viewTime.

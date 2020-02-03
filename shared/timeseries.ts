@@ -70,8 +70,8 @@ export const EventSchema: Realm.ObjectSchema = {
     // MotionEvent
     isMoving: 'bool?',
 
-    // ModeChangeEvent
-    mode: 'string?', // note: Also used in LocationEvent (TODO2)
+    // ModeChangeEvent (also rolled into LocationEvent)
+    mode: 'string?',
     confidence: 'int?',
   }
 }

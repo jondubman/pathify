@@ -216,7 +216,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   handleScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;
     log.scrollEvent('ActivityList handleScrollEndDrag', x);
-    log.trace('ActivityList handleScrollEndDrag', x);
     const { list } = this.props;
     const totalWidthPerActivity = activityMargin + activityWidth;
     const baseX = x - activityMargin;

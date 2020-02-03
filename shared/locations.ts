@@ -17,6 +17,7 @@ export interface LocationEvent extends GenericEvent {
   accuracy?: number; // meters
   battery?: number; // 0 to 1
   charging?: boolean; // is device plugged in
+  confidence?: number; // see ModeChangeEvent
   ele?: number; // meters
   extra?: string; // for debugging
   heading?: number; // 0 <= degrees < 360
@@ -24,13 +25,13 @@ export interface LocationEvent extends GenericEvent {
   latIndexed: number; // int version of lat (times 1M)
   lon: number;
   lonIndexed: number; // int version of lon (times 1M)
+  mode?: string; // see ModeChangeEvent
   odo?: number; // meters
   speed?: number; // mph (converted from meters per second)
 
   // properties derived from other events, but known at creation time of LocationEvent:
   gain?: number; // cumulative within activity
   loss?: number; // cumulative within activity
-  mode?: string; // see ModeChangeEvent
 }
 
 export type LocationEvents = LocationEvent[];

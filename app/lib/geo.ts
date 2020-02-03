@@ -183,8 +183,18 @@ const geoconfig_tracking_background: Config = {
   persistMode: BackgroundGeolocation.PERSIST_MODE_ALL,
 }
 
+const mapActivityToMode = {
+  in_vehicle: ModeType.VEHICLE,
+  on_bicycle: ModeType.BICYCLE,
+  on_foot: ModeType.ON_FOOT,
+  running: ModeType.RUNNING,
+  still: ModeType.STILL,
+}
+
 const newLocationEvent = (info: Location, activityId: string | undefined): LocationEvent => {
   const t = new Date(info.timestamp).getTime();
+  const confidence = info.activity ? info.activity.confidence : 0;
+  const mode = info.activity ? (mapActivityToMode[info.activity.activity] || null) : null;
   return {
     ...timeseries.newSyncedEvent(t),
     activityId,
@@ -192,12 +202,14 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
     accuracy: info.coords.accuracy,
     battery: info.battery.level,
     charging: info.battery.is_charging,
+    confidence,
     ele: info.coords.altitude,
     heading: info.coords.heading,
     lat: info.coords.latitude,
     latIndexed: Math.round(info.coords.latitude * 1000000), // * 1 million
     lon: info.coords.longitude,
     lonIndexed: Math.round(info.coords.longitude * 1000000), // * 1 million
+    mode,
     odo: Math.round(info.odometer), // It's meters and accuracy is not <1m. Half a meter on the odo is just confusing.
     speed: info.coords.speed, // meters per second
   }
@@ -215,13 +227,6 @@ const newMotionEvent = (info: Location, isMoving: boolean, activityId: string | 
 
 const newModeChangeEvent = (activity: string, confidence: number, activityId: string | undefined): ModeChangeEvent => {
   const t = utils.now(); // TODO
-  const mapActivityToMode = {
-      in_vehicle: ModeType.VEHICLE,
-      on_bicycle: ModeType.BICYCLE,
-      on_foot: ModeType.ON_FOOT,
-      running: ModeType.RUNNING,
-      still: ModeType.STILL,
-    }
   const mode = mapActivityToMode[activity] || `unknown activity: ${activity}`;
   log.trace('newModeChangeEvent', activity, mode);
   return {
@@ -241,18 +246,28 @@ export const Geo = {
       log.debug('initializeGeolocation: tracking', tracking);
 
       // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app.
-      // In the app, it's a tracking session with associated metadata. Here, it is walking, bicycling,
+      // In the app, it's a tracking session with associated metadata. Here, it is walking, bicycling, etc. which we
+      // refer to as a "mode" change.
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
-        if (!state.flags.receiveActivityChangeEvents) {
+        const {
+          appActive,
+          receiveActivityChangeEvents,
+          trackingActivity,
+        } = state.flags;
+        if (!trackingActivity || !receiveActivityChangeEvents) {
           return;
         }
-        if (state.flags.appActive) {
+        if (appActive) {
           const activityId = state.options.currentActivityId;
           if (activityId) {
             const modeChangeEvent = newModeChangeEvent(event.activity, event.confidence, activityId);
             store.dispatch(newAction(AppAction.modeChange, modeChangeEvent));
           }
+        } else {
+          // Running in background
+          // TODO we do not save these events in the background, but the mode/confidence are included in location
+          // updates that we do save, so we should be covered.
         }
       }
       const onEnabledChange = (isEnabled: boolean) => {
@@ -417,7 +432,11 @@ export const Geo = {
       if (location.sample || !state.flags.receiveLocations) {
         return;
       }
-      const { appActive, storeAllLocationEvents, trackingActivity } = state.flags;
+      const {
+        appActive,
+        storeAllLocationEvents,
+        trackingActivity,
+      } = state.flags;
       const activityId = state.options.currentActivityId || '';
       if (appActive) {
         // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${trackingActivity}`);

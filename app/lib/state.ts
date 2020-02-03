@@ -61,7 +61,7 @@ export const initialAppState = {
     mapTapTogglesFullScreen: false, // should tapping the map by itself toggle full screen mode; false seems better.
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
-    receiveActivityChangeEvents: false, // TODO
+    receiveActivityChangeEvents: true, // TODO
     receiveHeartbeatEvents: false, // TODO
     receiveMotionChangeEvents: false, // TODO
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation

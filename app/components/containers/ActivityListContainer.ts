@@ -65,7 +65,7 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     dispatch(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in onPressFutureZone
   }
   const onScrollTimeline = (t: Timepoint) => {
-    log.trace('ActivityListContainer onScrollTimeline', t);
+    log.scrollEvent('ActivityListContainer onScrollTimeline', t);
     dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
     dispatch(newAction(AppAction.activityListScrolled, { t }));
     dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
