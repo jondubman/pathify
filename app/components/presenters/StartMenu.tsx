@@ -18,8 +18,8 @@ import utils from 'lib/utils';
 const colors = constants.colors.startMenu;
 
 const {
-  marginHorizontal,
-  menuItemMargin,
+  menuItemMarginHorizontal,
+  menuItemMarginVertical,
 } = constants.startMenu;
 
 const Styles = StyleSheet.create({
@@ -29,7 +29,8 @@ const Styles = StyleSheet.create({
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.menuItem,
     fontWeight: 'bold',
-    margin: menuItemMargin,
+    marginHorizontal: menuItemMarginHorizontal,
+    marginVertical: menuItemMarginVertical,
   },
 })
 
@@ -49,7 +50,7 @@ class StartMenu extends React.Component<StartMenuProps> {
     const { props } = this;
 
     const menuItemStyle = {
-      width: props.width - (constants.startMenu.borderWidth + marginHorizontal) * 2,
+      width: props.width - (constants.startMenu.borderWidth + menuItemMarginHorizontal) * 2,
     } as StyleProp<ViewStyle>;
 
     const panelStyle = {
@@ -66,7 +67,8 @@ class StartMenu extends React.Component<StartMenuProps> {
     const subpanelContentsStyle = {
       justifyContent: 'space-evenly',
       height: props.height,
-      marginHorizontal,
+      marginHorizontal: menuItemMarginHorizontal,
+      marginVertical: menuItemMarginVertical,
     } as StyleProp<ViewStyle>;
 
     const menuItemContainerStyle = {

@@ -505,8 +505,8 @@ const constants = {
   startMenu: {
     borderWidth: menuBorderWidth,
     height: 180,
-    marginHorizontal: 10,
-    menuItemMargin: 10,
+    menuItemMarginHorizontal: 10,
+    menuItemMarginVertical: 20,
     width: 240,
   },
   timing: { // msec
@@ -645,8 +645,8 @@ const constants = {
   },
   topMenu: {
     borderWidth: menuBorderWidth,
-    marginHorizontal: 10,
-    menuItemMargin: 10,
+    menuItemMarginHorizontal: 10,
+    menuItemMarginVertical: 15,
     height: 240,
     width: 240,
   },

@@ -19,8 +19,8 @@ import utils from 'lib/utils';
 const colors = constants.colors.topMenu;
 
 const {
-  marginHorizontal,
-  menuItemMargin
+  menuItemMarginHorizontal,
+  menuItemMarginVertical,
 } = constants.topMenu;
 
 const Styles = StyleSheet.create({
@@ -30,7 +30,8 @@ const Styles = StyleSheet.create({
     color: constants.fonts.colors.default,
     fontSize: constants.fonts.sizes.menuItem,
     fontWeight: 'bold',
-    margin: menuItemMargin,
+    marginHorizontal: menuItemMarginHorizontal,
+    marginVertical: menuItemMarginVertical,
   },
 })
 
@@ -50,7 +51,7 @@ class TopMenu extends React.Component<TopMenuProps> {
     const { props } = this;
 
     const menuItemStyle = {
-      width: props.width - (constants.topMenu.borderWidth + marginHorizontal) * 2,
+      width: props.width - (constants.topMenu.borderWidth + menuItemMarginHorizontal) * 2,
     } as StyleProp<ViewStyle>;
 
     const panelStyle = {
@@ -79,7 +80,8 @@ class TopMenu extends React.Component<TopMenuProps> {
     const subpanelContentsStyle = {
       justifyContent: 'space-evenly',
       height: props.height,
-      marginHorizontal,
+      marginHorizontal: menuItemMarginHorizontal,
+      marginVertical: menuItemMarginVertical,
     } as StyleProp<ViewStyle>;
 
     const menuItemContainerStyle = {
