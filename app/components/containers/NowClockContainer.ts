@@ -19,7 +19,6 @@ const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps 
   return {
     current: selectedIsCurrent,
     selected: !!selectedActivityId,
-    ghostMode: false,
     hours: d.getHours(),
     milliseconds: d.getMilliseconds(),
     minutes: d.getMinutes(),
@@ -32,9 +31,6 @@ const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps 
 
 const mapDispatchToProps = (dispatch: Function, ownProps?: OwnProps): ClockDispatchProps => {
   const onPress = () => {
-    if (ownProps && ownProps.interactive) { // The test for interactive is likely redundant, but still appropriate.
-      dispatch(newAction(AppAction.clockPress, { nowClock: true }));
-    }
   }
   const dispatchers = {
     onPress,

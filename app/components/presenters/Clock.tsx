@@ -1,5 +1,4 @@
 // Note this presenter component is used by multiple container components
-// (GhostClockContainer, NowClockContainer, PausedClockContainer)
 // TODO improve separation of clock mechanism
 
 import React, {
@@ -26,7 +25,6 @@ const {
 export interface ClockStateProps {
   current: boolean; // true means time on clock points to current activity, whether or not nowMode is enabled
   selected: boolean; // true means time on clock points to a selected activity, whether or not nowMode is enabled
-  ghostMode: boolean;
   hours: number,
   milliseconds: number;
   minutes: number,
@@ -37,7 +35,6 @@ export interface ClockStateProps {
 }
 
 export interface ClockDispatchProps {
-  onPress: (nowMode: boolean) => void;
 }
 
 export type ClockProps = ClockStateProps & ClockDispatchProps;
@@ -108,14 +105,6 @@ const Styles = StyleSheet.create({
     bottom: radius - borderWidth - 1,
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
-  },
-  ghostNow: {
-    backgroundColor: 'transparent',
-    opacity: 0.75,
-  },
-  ghostPast: {
-    backgroundColor: 'transparent',
-    opacity: 0.75,
   },
   majorTick: {
     position: 'absolute',
@@ -202,11 +191,8 @@ const ClockTicks = () => {
 }
 
 const clockBackgroundStyle = (props: ClockProps): Object => {
-  const { current, ghostMode, nowMode, selected, stopped } = props;
+  const { current, nowMode, selected, stopped } = props;
   // Note stopped is really just for debugging. It means the ticks are disbabled app-wide.
-  if (ghostMode) {
-    return nowMode ? Styles.ghostNow : Styles.ghostPast;
-  }
   if (nowMode) {
     if (stopped) {
       return Styles.stoppedNow; // debug-only
@@ -241,14 +227,11 @@ const ClockMechanics = (props: ClockProps) => (
 )
 
 const Clock = (props: ClockProps) => props.interactive ? (
-  <TouchableHighlight
+  <View
     style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
-    onPress={() => { props.onPress(props.nowMode) }}
-    underlayColor={props.ghostMode ? (props.nowMode ? colors.underlayGhostNow : colors.underlayGhostPast)
-                                   : colors.underlay}
   >
     {ClockMechanics(props)}
-  </TouchableHighlight>
+  </View>
 ) : (
   <View
     style={{ ...Styles.clock, ...Styles.inertClock, ...clockBackgroundStyle(props) }}

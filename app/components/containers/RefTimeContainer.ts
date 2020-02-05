@@ -75,7 +75,6 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
 const mapDispatchToProps = (dispatch: Function): RefTimeDispatchProps => {
   const dispatchers = {
     onPress: () => {
-      dispatch(newAction(AppAction.clockPress)); // treat like clockPress
     }
   }
   return dispatchers;

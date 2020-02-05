@@ -155,8 +155,6 @@ const colors = {
     backgroundStopped: withOpacity(namedColors.yellow, 0.65), // debug-only
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.65), // debug-only
     underlay: 'transparent',
-    underlayGhostNow: withOpacity(colorThemes.now, 0.65),
-    underlayGhostPast: withOpacity(colorThemes.past, 0.65),
   },
   compassButton: {
     background: withOpacity(namedColors.white, defaultOpacity),
@@ -176,10 +174,6 @@ const colors = {
     iconFollowUser: { active: namedColors.white, inactive: colorThemes.now },
     underlayPath: 'transparent',
     underlayUser: 'transparent',
-  },
-  ghostClockLabels: {
-    now: withOpacity(colorThemes.now, 0.5),
-    past: withOpacity(namedColors.lighterBlue, 0.5),
   },
   helpButton: {
     background: namedColors.white,

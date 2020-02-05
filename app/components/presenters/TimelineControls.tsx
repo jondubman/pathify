@@ -1,5 +1,4 @@
 // This component renders the Clock, RefTime, top lines and center line of the timeline.
-// TODO Cleanup ghost clocks
 
 import React, {
 } from 'react';
