@@ -3,6 +3,8 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 
+import ReactNativeHaptic from 'react-native-haptic';
+
 import {
   AppAction,
   newAction,
@@ -56,9 +58,11 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (id: string): void => {
+    ReactNativeHaptic.generate('impactLight')
     dispatch(newAction(AppAction.selectActivity, { id }));
   }
   const onPressFutureZone = (): void => {
+    ReactNativeHaptic.generate('impactHeavy')
     log.trace('ActivityListContainer onPressFutureZone');
     dispatch(newAction(AppAction.activityListReachedEnd));
     const now = utils.now();

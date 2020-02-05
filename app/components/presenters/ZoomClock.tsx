@@ -48,7 +48,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
       onPanResponderGrant: (evt, gestureState) => {
-        ReactNativeHaptic.generate('impactMedium')
+        ReactNativeHaptic.generate('impactLight')
         log.trace('onPanResponderGrant');
         // The gesture has started. Show visual feedback so the user knows
         // what is happening!
