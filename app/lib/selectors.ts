@@ -437,7 +437,7 @@ export const getCachedPathInfo = createSelector(
     let pace = 0;
     let partialResult = {} as any;
     const activity = cachedActivities.find(activity =>
-      (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast || !activity.tEnd))
+      (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
     )
     if (activity) {
       const path = database.pathById(activity.id);

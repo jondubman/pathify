@@ -1,14 +1,12 @@
 import React, {
   Component,
 } from 'react';
-
 import {
   PanResponder,
   PanResponderInstance,
   StyleSheet,
   View,
 } from 'react-native';
-
 import ReactNativeHaptic from 'react-native-haptic';
 
 import PausedClockContainer from 'containers/PausedClockContainer';
@@ -48,7 +46,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
       onPanResponderGrant: (evt, gestureState) => {
-        ReactNativeHaptic.generate('impactLight')
+        ReactNativeHaptic.generate('impactMedium');
         log.trace('onPanResponderGrant');
         // The gesture has started. Show visual feedback so the user knows
         // what is happening!
@@ -72,7 +70,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
-        ReactNativeHaptic.generate('notificationSuccess')
+        ReactNativeHaptic.generate('notificationSuccess');
         log.trace('onPanResponderRelease');
         this.setState({ deltaY: 0 });
         this.props.onZoom(0); // stop zooming

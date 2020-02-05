@@ -1,6 +1,7 @@
 import {
   GestureResponderEvent,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
@@ -59,6 +60,7 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
         dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
       }
     }
+    ReactNativeHaptic.generate('impactLight');
   }
   const onPressFollowUser = () => {
     const {
@@ -77,6 +79,7 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
         dispatch(newAction(AppAction.centerMapOnUser));
       }, 0)
     }
+    ReactNativeHaptic.generate('impactLight');
   }
   const dispatchers = {
     onPressFollowPath,

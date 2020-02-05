@@ -1,6 +1,7 @@
 import {
   GestureResponderEvent,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
@@ -32,6 +33,7 @@ const mapStateToProps = (state: AppState): StartButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): StartButtonDispatchProps => {
   const onPressIn = (event: GestureResponderEvent) => {
     log.debug('StartButton press');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.closePanels, { option: 'otherThanStartMenu' }));
     dispatch(newAction(AppAction.flagToggle, 'startMenuOpen'));
   }

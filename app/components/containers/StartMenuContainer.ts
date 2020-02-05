@@ -1,6 +1,7 @@
 import {
   GestureResponderEvent,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import {
@@ -45,15 +46,18 @@ const mapStateToProps = (state: AppState): StartMenuStateProps => {
 const mapDispatchToProps = (dispatch: Function): StartMenuDispatchProps => {
   const onDismiss = (event: GestureResponderEvent) => {
     log.debug('onDismiss');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'startMenuOpen'));
   }
   const onSelectEndActivity = (event: GestureResponderEvent) => {
     log.debug('onSelectEndActivity');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'startMenuOpen'));
     dispatch(newAction(AppAction.stopActivity));
   }
   const onSelectNewActivity = (event: GestureResponderEvent) => {
     log.debug('onSelectNewActivity');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'startMenuOpen'));
     dispatch(newAction(AppAction.startActivity));
     setTimeout(() => {

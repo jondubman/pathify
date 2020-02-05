@@ -107,7 +107,7 @@ class StartMenu extends React.Component<StartMenuProps> {
                   {props.trackingActivity ? (
                     <View style={menuItemContainerStyle}>
                       <TouchableHighlight
-                        onPressIn={props.onSelectEndActivity}
+                        onPress={props.onSelectEndActivity}
                         style={menuItemStyle}
                         underlayColor={constants.colors.startMenu.menuItemUnderlay}
                       >

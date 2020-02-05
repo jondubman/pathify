@@ -1,6 +1,7 @@
 import {
   GestureResponderEvent,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
@@ -53,13 +54,14 @@ const mapStateToProps = (state: AppState): TopButtonStateProps => {
 const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
   const onPressIn = () => {
     log.debug('TopButton onPressIn');
-    // TODO for now, this menu is inert unless there is a selected activity, because it would serve no purpose.
+    ReactNativeHaptic.generate('impactLight');
     const state = store.getState();
     const { mapFullScreen } = state.flags;
     const { selectedActivityId } = state.options;
     if (mapFullScreen) {
       dispatch(newAction(AppAction.flagDisable, 'mapFullScreen'));
     }
+    // TODO for now, no actual menu opens unless there is a selected activity, because it would serve no purpose.
     if (selectedActivityId !== null) {
       dispatch(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));
       dispatch(newAction(AppAction.flagToggle, 'topMenuOpen'));

@@ -521,6 +521,7 @@ const constants = {
     timerTickInterval: 100,
     // Note that every component's mapStateToProps will be called via react-redux Connect this often, so if there are
     // any perf issues there, they will rapidly reveal themselves by lowering this interval.
+    vibration: 400, // TODO ignored on iOS?
   },
   timeline: {
     activityZoomFactor: 1.25, // 1 means zoom Timeline to exact duration of Activity. Should be somewhat >1 for context.

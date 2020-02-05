@@ -1,6 +1,7 @@
 import {
   GestureResponderEvent,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
@@ -51,20 +52,24 @@ const mapStateToProps = (state: AppState): TopMenuStateProps => {
 const mapDispatchToProps = (dispatch: Function): TopMenuDispatchProps => {
   const onDeleteActivity = (id: string) => ((event: GestureResponderEvent) => { // Note this returns a function.
     log.debug('TopMenu onDeleteActivity');
+    ReactNativeHaptic.generate('impactHeavy');
     dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
     dispatch(newAction(AppAction.deleteActivity, { id }));
   })
   const onDismiss = (event: GestureResponderEvent) => {
     log.debug('TopMenu onDismiss');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
   }
   const onHideActivityDetails = () => {
     log.debug('TopMenu onHideActivityDetails');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'showActivityDetails'));
     dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
   }
   const onShowActivityDetails = () => {
     log.debug('TopMenu onShowActivityDetails');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagEnable, 'showActivityDetails'));
     dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
   }

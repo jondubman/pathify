@@ -28,6 +28,7 @@ import {
 import {
   Alert,
   AlertButton,
+  Vibration,
 } from 'react-native';
 import RNRestart from 'react-native-restart';
 import {
@@ -753,6 +754,7 @@ const sagas = {
           }
           setTimeout(() => {
             database.deleteActivity(id);
+            Vibration.vibrate(constants.timing.vibration);
             const { activityList } = store.getState().refs;
             if (activityList) {
               log.debug('activityList.forceUpdate');
@@ -1386,6 +1388,7 @@ const sagas = {
       const trackingActivity = yield select((state: AppState) => state.flags.trackingActivity);
       if (!trackingActivity) {
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
+        yield call(Vibration.vibrate, constants.timing.vibration);
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
         yield call(Geo.setConfig, true, background);
         const now = utils.now();
@@ -1550,6 +1553,7 @@ const sagas = {
       const trackingActivity = yield select((state: AppState) => state.flags.trackingActivity);
       if (trackingActivity) {
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
+        yield call(Vibration.vibrate, constants.timing.vibration);
         const activityId = yield select((state: AppState) => state.options.currentActivityId);
         const now = utils.now();
         const stopEvent: AppUserActionEvent = {
