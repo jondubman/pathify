@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 
 import {
   StyleSheet,
@@ -20,11 +20,24 @@ const Styles = StyleSheet.create({
   },
 })
 
-const ZoomClock = (props: ZoomClockProps) => (
-  <View style={[Styles.clockCenter, { bottom: props.bottom }]}>
-    {props.nowMode ? <NowClockContainer interactive={true} key='NowClock' />
-      : <PausedClockContainer interactive={true} key='PausedClock' />}
-  </View>
-)
+class ZoomClock extends Component<ZoomClockProps> {
+
+  constructor(props: ZoomClockProps) {
+    super(props);
+  }
+
+  render() {
+    const {
+      bottom,
+      nowMode,
+    } = this.props;
+    return (
+      <View style={[Styles.clockCenter, { bottom }]}>
+        {nowMode ? <NowClockContainer interactive={true} key='NowClock' />
+              : <PausedClockContainer interactive={true} key='PausedClock' />}
+      </View>
+    )
+  }
+}
 
 export default ZoomClock;
