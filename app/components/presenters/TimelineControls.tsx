@@ -1,43 +1,41 @@
 // This component renders the Clock, RefTime, top lines and center line of the timeline.
+// TODO Cleanup ghost clocks
 
 import React, {
-  Fragment,
+  // Fragment,
 } from 'react';
 
 import {
   StyleSheet,
-  Text,
+  // Text,
   View,
 } from 'react-native';
 
 import constants from 'lib/constants';
 import utils from 'lib/utils';
 
-import GhostClockContainer from 'containers/GhostClockContainer';
-import PausedClockContainer from 'containers/PausedClockContainer';
-import NowClockContainer from 'containers/NowClockContainer';
+// import GhostClockContainer from 'containers/GhostClockContainer';
 import RefTimeContainer from 'containers/RefTimeContainer';
 import { TimelineControlsProps } from 'containers/TimelineControlsContainer';
+import ZoomClockContainer from 'containers/ZoomClockContainer';
 import { centerline } from 'lib/selectors';
 
 const { refTime, timeline } = constants;
 const colors = constants.colors.timeline;
 
-const clockWidth = constants.clock.height;
-
 // TODO this is sort of inelegant, but effective at finessing the placement of the GhostClock.
-const ghostExtra = () => {
-  const smallSize = 320;
-  const mediumSize = 375;
-  const size = utils.windowSize().width;
-  if (size > mediumSize) {
-   return 23;
-  }
-  if (size > smallSize) {
-    return 14;
-  }
-  return 3;
-}
+// const ghostExtra = () => {
+//   const smallSize = 320;
+//   const mediumSize = 375;
+//   const size = utils.windowSize().width;
+//   if (size > mediumSize) {
+//    return 23;
+//   }
+//   if (size > smallSize) {
+//     return 14;
+//   }
+//   return 3;
+// }
 
 const Styles = StyleSheet.create({
   centerLine: {
@@ -47,30 +45,26 @@ const Styles = StyleSheet.create({
     position: 'absolute',
     width: timeline.centerLineWidth,
   },
-  clockCenter: {
-    left: centerline() - clockWidth / 2,
-    position: 'absolute',
-  },
-  ghostClockFader: {
-    opacity: 0.25,
-  },
-  ghostClockNow: { // shows up when timelineNow is false; action enables timelineNow
-    position: 'absolute',
-    left: centerline() + clockWidth / 2 + ghostExtra(),
-  },
-  ghostClockNowLabel: {
-    color: constants.colors.ghostClockLabels.now,
-    left: 2,
-    top: 45,
-  },
-  ghostClockPast: { // shows up when timelineNow is true; action disables timelineNow and scrolls back in time
-    position: 'absolute',
-    right: centerline() + clockWidth / 2 + ghostExtra(),
-  },
-  ghostClockPastLabel: {
-    color: constants.colors.ghostClockLabels.past,
-    top: 45,
-  },
+  // ghostClockFader: {
+  //   opacity: 0.25,
+  // },
+  // ghostClockNow: { // shows up when timelineNow is false; action enables timelineNow
+  //   position: 'absolute',
+  //   left: centerline() + clockWidth / 2 + ghostExtra(),
+  // },
+  // ghostClockNowLabel: {
+  //   color: constants.colors.ghostClockLabels.now,
+  //   left: 2,
+  //   top: 45,
+  // },
+  // ghostClockPast: { // shows up when timelineNow is true; action disables timelineNow and scrolls back in time
+  //   position: 'absolute',
+  //   right: centerline() + clockWidth / 2 + ghostExtra(),
+  // },
+  // ghostClockPastLabel: {
+  //   color: constants.colors.ghostClockLabels.past,
+  //   top: 45,
+  // },
   text: {
     alignSelf: 'center',
     fontFamily: constants.fonts.family,
@@ -87,11 +81,8 @@ const Styles = StyleSheet.create({
 
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
-    <View style={[Styles.clockCenter, { bottom: props.bottom }]}>
-      {props.nowMode ? <NowClockContainer interactive={true} key='NowClock' />
-        : <PausedClockContainer interactive={true} key='PausedClock' />}
-    </View>
-    {props.timelineScrolling ? null :
+    <ZoomClockContainer />
+    {/* {props.timelineScrolling ? null :
       props.nowMode ? (
         <Fragment>
           <View style={[Styles.ghostClockPast, { bottom: props.bottom }]}>
@@ -115,7 +106,7 @@ const TimelineControls = (props: TimelineControlsProps) => (
           </Fragment>
         </View>
       )
-    }
+    } */}
     <RefTimeContainer />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
