@@ -90,6 +90,7 @@ export enum AppAction {
   'stoppedFollowingUser' = 'stoppedFollowingUser',
   'startupActions' = 'startupActions',
   'stopActivity' = 'stopActivity',
+  'timelineRelativeZoom' = 'timelineRelativeZoom',
   'timelineZoomed' = 'timelineZoomed',
   'timelineZooming' = 'timelineZooming',
   'timerTick' = 'timerTick',
@@ -225,6 +226,10 @@ export interface SleepParams {
 
 export interface StartActivityParams {
   continueActivityId?: string;
+}
+
+export interface TimelineRelativeZoomParams {
+  rate: number; // between -1 and 1, where 0 is no action, -1 is zoom out at max rate, and 1 is zoom in at max rate
 }
 
 export interface UserMovedMapParams {

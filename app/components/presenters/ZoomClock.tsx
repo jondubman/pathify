@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 
+import ReactNativeHaptic from 'react-native-haptic';
+
 import PausedClockContainer from 'containers/PausedClockContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import { ZoomClockProps } from 'containers/ZoomClockContainer';
@@ -25,12 +27,19 @@ const Styles = StyleSheet.create({
   },
 })
 
-class ZoomClock extends Component<ZoomClockProps> {
+interface ZoomClockState {
+  deltaY: number;
+}
+
+class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
 
   _panResponder: PanResponderInstance;
 
   constructor(props: ZoomClockProps) {
     super(props);
+    this.state = {
+      deltaY: 0,
+    }
     this._panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -39,20 +48,34 @@ class ZoomClock extends Component<ZoomClockProps> {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
       onPanResponderGrant: (evt, gestureState) => {
+        ReactNativeHaptic.generate('impactMedium')
         log.trace('onPanResponderGrant');
         // The gesture has started. Show visual feedback so the user knows
         // what is happening!
         // gestureState.d{x,y} will be set to zero now
       },
       onPanResponderMove: (evt, gestureState) => {
-        log.trace('onPanResponderMove', gestureState.dx, gestureState.dy);
         // The most recent move distance is gestureState.move{X,Y}
         // The accumulated gesture distance since becoming responder is
         // gestureState.d{x,y}
+        log.trace('onPanResponderMove', gestureState.dx, gestureState.dy);
+        let delta = -gestureState.dy;
+        // deltaMax is the room we have to slide the clock down. For symmetry the upside should be identical.
+        const deltaMax = constants.refTime.height - 5;
+        if (delta > 0) {
+          delta = Math.min(delta, deltaMax); // max delta is deltaMax
+        } else {
+          delta = Math.max(delta, -deltaMax); // min delta is -deltaMax
+        }
+        this.setState({ deltaY: delta });
+        this.props.onZoom(-delta / deltaMax); // normalize to between -1 and 1, and reverse sign to match map zooming.
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
+        ReactNativeHaptic.generate('notificationSuccess')
         log.trace('onPanResponderRelease');
+        this.setState({ deltaY: 0 });
+        this.props.onZoom(0); // stop zooming
         // The user has released all touches while this view is the
         // responder. This typically means a gesture has succeeded
       },
@@ -69,13 +92,20 @@ class ZoomClock extends Component<ZoomClockProps> {
     });
   }
 
+  componentWillUnmount() {
+    this.props.onZoom(0); // stop zooming
+  }
+
   render() {
     const {
       bottom,
       nowMode,
     } = this.props;
+    const {
+      deltaY,
+    } = this.state;
     return (
-      <View {...this._panResponder.panHandlers} style={[Styles.clockCenter, { bottom }]}>
+      <View {...this._panResponder.panHandlers} style={[Styles.clockCenter, { bottom: bottom + deltaY }]}>
         {nowMode ? <NowClockContainer interactive={true} key='NowClock' />
               : <PausedClockContainer interactive={true} key='PausedClock' />}
       </View>

@@ -69,6 +69,7 @@ import {
   SequenceParams,
   SleepParams,
   StartActivityParams,
+  TimelineRelativeZoomParams,
   UserMovedMapParams,
   ZoomToActivityParams,
 } from 'lib/actions'
@@ -128,15 +129,14 @@ import {
   MarkEvent,
   MarkType
 } from 'shared/marks';
-import {
-  PathUpdate,
-} from 'shared/paths';
 import timeseries, {
   EventType,
   GenericEvent,
   TimeRange,
 } from 'shared/timeseries';
 import { msecToString } from 'shared/units';
+
+let _interval; // used by timelineRelativeZoom saga
 
 const sagas = {
 
@@ -1656,10 +1656,45 @@ const sagas = {
   stoppedFollowingUser: function* () {
   },
 
+  timelineRelativeZoom: function* (action: Action) {
+    const { rate } = action.params as TimelineRelativeZoomParams;
+    yield call(log.trace, 'timelineRelativeZoom saga', rate);
+    const {
+      scrollTime,
+      timelineZoomValue,
+    } = yield select((state: AppState) => state.options);
+    const multiplier = 0.01; // TODO constant
+    if (_interval) {
+      clearInterval(_interval);
+      _interval = null;
+    }
+    let newZoom = timelineZoomValue;
+    if (rate) {
+      yield put(newAction(AppAction.setAppOption, { centerTime: scrollTime })); // Recenter timeline before zooming it.
+      _interval = setInterval(() => {
+        newZoom = newZoom + rate * multiplier;
+        if (newZoom < 0) {
+          newZoom = 0;
+        }
+        if (newZoom > 1) {
+          newZoom = 1;
+        }
+        // Note the following avoids Realm side effects while zooming, but we still want to persist at the end.
+        store.dispatch(newAction(ReducerAction.SET_APP_OPTION, { timelineZoomValue: newZoom }));
+        log.trace('timelineRelativeZoom', newZoom);
+      }, constants.timing.timelineRelativeZoomStep);
+    } else {
+      yield put(newAction(AppAction.setAppOptionASAP, { timelineZoomValue : newZoom }));
+    }
+  },
+
   // Respond to timeline pan/zoom. x is in the time domain.
   // viewTime changes here only after scrolling, whereas scrollTime changes during scrolling too.
   timelineZoomed: function* (action: Action) { // see also: timelineZooming
-    const { activityListScrolling, timelineScrolling } = yield select((state: AppState) => state.flags);
+    const {
+      activityListScrolling,
+      timelineScrolling,
+    } = yield select((state: AppState) => state.flags);
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const scrollTime = (x[0] + x[1]) / 2;
@@ -1672,7 +1707,10 @@ const sagas = {
   },
 
   timelineZooming: function* (action: Action) { // see also: timelineZoomed
-    const { activityListScrolling, timelineScrolling } = yield select((state: AppState) => state.flags);
+    const {
+      activityListScrolling,
+      timelineScrolling,
+    } = yield select((state: AppState) => state.flags);
     const newZoom = action.params as DomainPropType;
     const x = (newZoom as any).x as TimeRange; // TODO TypeScript definitions not allowing newZoom.x directly
     const scrollTime = (x[0] + x[1]) / 2;
