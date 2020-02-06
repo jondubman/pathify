@@ -363,8 +363,9 @@ const database = {
     }
   },
 
-  // paths
+  // Paths
 
+  // TODO always keep this in sync with PathSchema
   appendToPath: (update: PathUpdate) => {
     const path = database.pathById(update.id);
     if (path && update.lats && update.lons && update.lats.length === update.lons.length) {
@@ -373,6 +374,7 @@ const database = {
         path.lats.push(...update.lats);
         path.lons.push(...update.lons);
         path.odo.push(...update.odo);
+        path.speed.push(...update.speed);
         path.t.push(...update.t);
       })
     }

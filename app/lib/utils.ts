@@ -92,6 +92,8 @@ const utils = {
     return Math.round(num * factor) / factor;
   },
 
+  roundTime: (t: number) => (Math.round(t / 1000) * 1000),
+
   twoDigitString: (n: number) => {
     if (!n) return '00';
     if (n < 10) return '0' + n;

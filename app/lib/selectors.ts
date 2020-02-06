@@ -5,7 +5,7 @@ import { createSelector } from 'reselect'
 import { AppState } from 'lib/state';
 import constants, {
   MapStyle,
-  TimespanKind,
+  // TimespanKind,
 } from 'lib/constants';
 import database from 'lib/database';
 import utils from 'lib/utils';
@@ -23,7 +23,6 @@ import {
   Timepoint,
 } from 'shared/timeseries';
 import {
-  metersPerSecondToMinutesPerMile,
   msecToString,
 } from 'shared/units';
 
@@ -423,112 +422,114 @@ export const getStoredLocationEvent = createSelector(
 export interface PathInfo {
   activity: ActivityDataExtended;
   ele: number;
+  index: number;
+  length: number;
   loc: LonLat;
   odo: number;
-  pace: number;
   speed: number;
 }
-export const getScrollTimeRounded = (state: AppState) => (Math.floor(state.options.scrollTime / 1000) * 1000);
+export const getScrollTimeRounded = (state: AppState) => utils.roundTime(state.options.scrollTime);
+export const getTimelineNow = (state: AppState) => state.flags.timelineNow;
+export const getTrackingActivity = (state: AppState) => state.flags.trackingActivity;
 const getCachedActivities = (state: AppState) => state.cache.activities;
 // PathInfo here means info derived from the Path that includes scrollTime.
+// getScrollTimeRounded is rounded in order to minimize redundant recalculations, as the clock ticks
+// many times per second in timelineNow mode. Path timestamps are rounded for comparison against getScrollTimeRounded.
 export const getCachedPathInfo = createSelector(
-  [getScrollTimeRounded, getCachedActivities],
-  (scrollTime, cachedActivities): PathInfo | null => {
-    if (!cachedActivities) {
-      return null;
-    }
-    const t = scrollTime;
-    let tPaceMeasurement = t - constants.timing.paceMeasurement; // looking for odo just prior to this
-    let odo = 0;
-    let odoPaceMeasurement = 0;
-    let timeAtPaceMeasurement = 0;
-    let pace = 0;
-    let partialResult = {} as any;
-    let speed = 0;
-    const activity = cachedActivities.find(activity =>
-      (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
-    )
-    if (activity) {
-      const path = database.pathById(activity.id);
-      if (!path) {
+  [getScrollTimeRounded, getTimelineNow, getTrackingActivity, getCachedActivities],
+  (scrollTimeRounded, timelineNow, trackingActivity, cachedActivities): PathInfo | null => {
+    try {
+      if (!cachedActivities) {
         return null;
       }
-      const lastIndex = path.t.length - 1;
-      for (let i = 0; i < lastIndex; i++) {
-        // smoothly (linearly) interpolate between points we know
-        const t1 = path.t[i];
-        const t2 = path.t[i + 1];
-        if (tPaceMeasurement >= activity.tStart && t1 >= tPaceMeasurement && !odoPaceMeasurement) {
-          odoPaceMeasurement = path.odo[i];
-          timeAtPaceMeasurement = path.t[i];
-          log.debug(i, 'odoPaceMeasurement', odoPaceMeasurement, 'timeAtPaceMeasurement', timeAtPaceMeasurement);
+      const t = scrollTimeRounded;
+      let length = 0;
+      let odo = 0;
+      let speed = 0;
+      const activity = cachedActivities.find(activity =>
+        (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
+      )
+      if (activity) {
+        const path = database.pathById(activity.id);
+        if (!path) {
+          return null;
         }
-        if (t1 <= t && t <= t2) {
-          const tDiff = t2 - t1;
-          const proportion = (scrollTime - t1) / tDiff;
-
-          // interpolate elevation
-          const ele1 = path.ele[i];
-          const ele2 = path.ele[i + 1];
-          const ele = (ele2 - ele1) * proportion + ele1;
-
-          // interpolate location
-          const lat1 = path.lats[i];
-          const lat2 = path.lats[i + 1];
-          const lon1 = path.lons[i];
-          const lon2 = path.lons[i + 1];
-          const lat = (lat2 - lat1) * proportion + lat1;
-          const lon = (lon2 - lon1) * proportion + lon1;
-
-          // interpolate odometer
-          const odo1 = path.odo[i];
-          const odo2 = path.odo[i + 1];
-          odo = (odo2 - odo1) * proportion + odo1;
-
-          // interpolate speed
-          const speed1 = path.speed[i];
-          const speed2 = path.speed[i + 1];
-          speed = (speed2 - speed1) * proportion + speed1;
-
-          partialResult = {
+        length = path.t.length;
+        const lastIndex = length - 1;
+        if ((timelineNow && trackingActivity) || t >= utils.roundTime(path.t[lastIndex])) { // special case the end
+          return {
             activity,
-            ele,
-            loc: [lon, lat] as LonLat,
-            odo,
-            pace,
+            ele: path.ele[lastIndex],
+            index: length,
+            length,
+            loc: [path.lons[lastIndex], path.lats[lastIndex]] as LonLat,
+            odo: path.odo[lastIndex],
+            speed: path.speed[lastIndex],
+          }
+        }
+        for (let i = 0; i < lastIndex; i++) {
+          // Smoothly (linearly) interpolate between points we know, rounding all times to nearest second.
+          const t1 = utils.roundTime(path.t[i]);
+          const t2 = utils.roundTime((i === lastIndex - 1) ? activity.tLastLoc! : path.t[i + 1]);
+          if (t1 <= t && t <= t2) {
+            const tDiff = t2 - t1;
+            const proportion = (t - t1) / tDiff;
+
+            // interpolate elevation
+            const ele1 = path.ele[i];
+            const ele2 = path.ele[i + 1];
+            const ele = (ele2 - ele1) * proportion + ele1;
+
+            // interpolate location
+            const lat1 = path.lats[i];
+            const lat2 = path.lats[i + 1];
+            const lon1 = path.lons[i];
+            const lon2 = path.lons[i + 1];
+            const lat = (lat2 - lat1) * proportion + lat1;
+            const lon = (lon2 - lon1) * proportion + lon1;
+
+            // interpolate odometer
+            const odo1 = path.odo[i];
+            const odo2 = path.odo[i + 1];
+            odo = (odo2 - odo1) * proportion + odo1;
+
+            // interpolate speed
+            const speed1 = path.speed[i];
+            const speed2 = path.speed[i + 1];
+            speed = (speed2 - speed1) * proportion + speed1;
+
+            return {
+              activity,
+              ele,
+              index: i,
+              length,
+              loc: [lon, lat] as LonLat,
+              odo,
+              speed,
+            }
+          } // t between t1 and t2
+        } // path loop
+        if (t > activity.tLast) { // after end of activity
+          const lastEle = path.ele[lastIndex];
+          const lastLat = path.lats[lastIndex];
+          const lastLon = path.lons[lastIndex];
+          const lastOdo = path.odo[lastIndex];
+          return {
+            activity,
+            ele: lastEle,
+            index: length,
+            length,
+            loc: [lastLon, lastLat],
+            odo: lastOdo,
             speed,
           }
-        } // t between t1 and t2
-        if (scrollTime > activity.tLast) { // after end of activity
-          odo = path.odo[lastIndex];
         }
-        if (!pace && odo && odoPaceMeasurement && timeAtPaceMeasurement) {
-          const meters = odo - odoPaceMeasurement;
-          const seconds = (t - timeAtPaceMeasurement) / 1000;
-          pace = meters / seconds;
-        }
-      } // path loop
-      if (scrollTime > activity.tLast) { // after end of activity
-        const lastEle = path.ele[lastIndex];
-        const lastLat = path.lats[lastIndex];
-        const lastLon = path.lons[lastIndex];
-        const lastOdo = path.odo[lastIndex];
-        return {
-          activity,
-          ele: lastEle,
-          loc: [lastLon, lastLat],
-          odo: lastOdo,
-          pace,
-          speed,
-        }
-      } else {
-        return {
-          ...partialResult,
-          pace,
-        }
-      }
-    } // if activity
-    return null;
+      } // if activity
+      return null;
+    } catch(err) {
+      log.warn('Exception in getCachedPathInfo', err);
+      return null;
+    }
   }
 )
 

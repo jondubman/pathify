@@ -118,30 +118,6 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
       <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
         <View style={Styles.itemContents}>
           <Text style={Styles.bigText}>
-            {props.odoPaceText}
-          </Text>
-          <Text style={Styles.labelText}>
-            PACE (min/mi) (FROM ODO)
-          </Text>
-        </View>
-      </View>
-      <View style={Styles.bufferZone}>
-      </View>
-      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
-        <View style={Styles.itemContents}>
-          <Text style={Styles.bigText}>
-            {props.elevationText}
-          </Text>
-          <Text style={Styles.labelText}>
-            ELEVATION (feet)
-          </Text>
-        </View>
-      </View>
-    </View>
-    <View style={Styles.row}>
-      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
-        <View style={Styles.itemContents}>
-          <Text style={Styles.bigText}>
             {props.speedPaceText}
           </Text>
           <Text style={Styles.labelText}>
@@ -182,6 +158,30 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
           </Text>
           <Text style={Styles.labelText}>
             AVERAGE SPEED (mph)
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View style={Styles.row}>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {props.index === props.length ? props.length.toString() : `${props.index}/${props.length}`}
+          </Text>
+          <Text style={Styles.labelText}>
+            # OF LOCATIONS
+          </Text>
+        </View>
+      </View>
+      <View style={Styles.bufferZone}>
+      </View>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {props.elevationText}
+          </Text>
+          <Text style={Styles.labelText}>
+            ELEVATION (feet)
           </Text>
         </View>
       </View>

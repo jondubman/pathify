@@ -17,7 +17,6 @@ import {
   metersToFeet,
   metersToMilesText,
   minutesToString,
-  milesPerHourToMetersPerSecond,
   msecToTimeString,
 } from 'shared/units';
 
@@ -27,7 +26,8 @@ interface ActivityDetailsStateProps {
   distanceText: string;
   elevationText: string;
   isCurrent: boolean;
-  odoPaceText: string;
+  index: number;
+  length: number;
   speedPaceText: string;
   speedText: string;
   timelineNow: boolean;
@@ -47,7 +47,6 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   let averageSpeedText = missing;
   let distanceText = missing;
   let elevationText = missing;
-  let odoPaceText = '0';
   let partialDistance = 0;
   let speedPaceText = missing
   let speedText = missing
@@ -62,7 +61,8 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     distanceText,
     elevationText,
     isCurrent: false,
-    odoPaceText,
+    index: 0,
+    length: 0,
     speedPaceText,
     speedText,
     timelineNow,
@@ -74,7 +74,6 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     top = dynamicTopBelowActivityList(state);
     const info = getCachedPathInfo(state);
     const { currentActivityId, scrollTime } = state.options;
-
     if (info) {
       const activity = info.activity as ActivityDataExtended;
       const isCurrent = activity && (activity.id === currentActivityId);
@@ -88,9 +87,6 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         if (info.odo && activity.odoStart) {
           partialDistance = Math.max(info.odo - activity.odoStart, 0); // meters
           distanceText = metersToMilesText(partialDistance, '');
-        }
-        if (info.pace) {
-          odoPaceText = minutesToString(metersPerSecondToMinutesPerMile(info.pace));
         }
         if (info.speed) {
           speedPaceText = minutesToString(metersPerSecondToPace(info.speed));
@@ -115,8 +111,9 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         averageSpeedText,
         distanceText,
         elevationText,
+        index: info.index,
         isCurrent,
-        odoPaceText,
+        length: info.length,
         speedPaceText,
         speedText,
         timelineNow,
