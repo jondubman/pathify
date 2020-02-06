@@ -420,12 +420,20 @@ export const getStoredLocationEvent = createSelector(
       nearTimeThreshold);
   }
 )
+export interface PathInfo {
+  activity: ActivityDataExtended;
+  ele: number;
+  loc: LonLat;
+  odo: number;
+  pace: number;
+  speed: number;
+}
 export const getScrollTimeRounded = (state: AppState) => (Math.floor(state.options.scrollTime / 1000) * 1000);
 const getCachedActivities = (state: AppState) => state.cache.activities;
 // PathInfo here means info derived from the Path that includes scrollTime.
 export const getCachedPathInfo = createSelector(
   [getScrollTimeRounded, getCachedActivities],
-  (scrollTime, cachedActivities) => {
+  (scrollTime, cachedActivities): PathInfo | null => {
     if (!cachedActivities) {
       return null;
     }
@@ -436,6 +444,7 @@ export const getCachedPathInfo = createSelector(
     let timeAtPaceMeasurement = 0;
     let pace = 0;
     let partialResult = {} as any;
+    let speed = 0;
     const activity = cachedActivities.find(activity =>
       (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
     )
@@ -476,12 +485,18 @@ export const getCachedPathInfo = createSelector(
           const odo2 = path.odo[i + 1];
           odo = (odo2 - odo1) * proportion + odo1;
 
+          // interpolate speed
+          const speed1 = path.speed[i];
+          const speed2 = path.speed[i + 1];
+          speed = (speed2 - speed1) * proportion + speed1;
+
           partialResult = {
             activity,
             ele,
             loc: [lon, lat] as LonLat,
             odo,
             pace,
+            speed,
           }
         } // t between t1 and t2
         if (scrollTime > activity.tLast) { // after end of activity
@@ -504,6 +519,7 @@ export const getCachedPathInfo = createSelector(
           loc: [lastLon, lastLat],
           odo: lastOdo,
           pace,
+          speed,
         }
       } else {
         return {

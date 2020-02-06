@@ -222,7 +222,7 @@ const database = {
       log.info('database.completeMigration');
 
       // Migrate Activities and Paths, based on underlying Events
-      // TODO full refresh is no longer needed in the general case
+      // TODO full refresh is not currently needed in the general case. Should this change:
       // store.dispatch(newAction(AppAction.refreshAllActivities));
     }
   },
@@ -237,6 +237,7 @@ const database = {
       loss: 0,
       odo: 0,
       odoStart,
+      tLastRefresh: 0,
       tLastUpdate: now,
       tStart: now,
       tEnd: 0,
@@ -384,6 +385,7 @@ const database = {
     lons: [],
     odo: [],
     schemaVersion,
+    speed: [],
     t: [],
   }),
 

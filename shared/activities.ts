@@ -16,9 +16,10 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     id: 'string',
     schemaVersion: 'int',
     odoStart: 'int?',
-    // tFirstLoc: { type: 'int', indexed: true },
+    tFirstLoc: { type: 'int?', indexed: true },
     tLastLoc: 'int?',
-    tLastUpdate: { type: 'int', indexed: true },
+    tLastRefresh: { type: 'int', indexed: true }, // See refreshActivity. May change after bumping schemaVersion.
+    tLastUpdate: { type: 'int', indexed: true }, // These are the typical updates when tracking.
     tStart: { type: 'int', indexed: true },
     tEnd: { type: 'int', indexed: true },
 
@@ -65,8 +66,9 @@ export interface ActivityData {
 
   // All others optional: (TODO should be same properties as in Activity above, but all are optional)
   odoStart?: number;
-  // tFirstUpdate?: number;
+  tFirstLoc?: number;
   tLastLoc?: Timepoint;
+  tLastRefresh?: Timepoint;
   tLastUpdate?: Timepoint;
   tStart?: number;
   tEnd?: number;

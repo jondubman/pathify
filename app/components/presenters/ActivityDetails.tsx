@@ -8,7 +8,6 @@ import {
 
 import { ActivityDetailsProps } from 'containers/ActivityDetailsContainer';
 import constants from 'lib/constants';
-import utils from 'lib/utils';
 
 const {
   bigFontSize,
@@ -87,6 +86,8 @@ const itemBackgroundStyle = (props: ActivityDetailsProps) => (
   props.isCurrent ? (props.timelineNow ? Styles.itemCurrentNow : Styles.itemCurrentSelected) : Styles.itemPast
 )
 
+// TODO Refactor into an assembly of smaller, actionable, customizable, reconfigurable components.
+
 const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
   <View pointerEvents="none" style={[Styles.box, { top: props.top }]}>
     <View style={Styles.row}>
@@ -117,10 +118,10 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
       <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
         <View style={Styles.itemContents}>
           <Text style={Styles.bigText}>
-            {props.paceText}
+            {props.odoPaceText}
           </Text>
           <Text style={Styles.labelText}>
-            PACE (min/mi)
+            PACE (min/mi) (FROM ODO)
           </Text>
         </View>
       </View>
@@ -133,6 +134,30 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
           </Text>
           <Text style={Styles.labelText}>
             ELEVATION (feet)
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View style={Styles.row}>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {props.speedPaceText}
+          </Text>
+          <Text style={Styles.labelText}>
+            PACE (min/mi)
+          </Text>
+        </View>
+      </View>
+      <View style={Styles.bufferZone}>
+      </View>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {props.speedText}
+          </Text>
+          <Text style={Styles.labelText}>
+            SPEED (mph)
           </Text>
         </View>
       </View>

@@ -13,9 +13,11 @@ import log from 'shared/log';
 import {
   metersPerSecondToMilesPerHour,
   metersPerSecondToMinutesPerMile,
+  metersPerSecondToPace,
   metersToFeet,
   metersToMilesText,
   minutesToString,
+  milesPerHourToMetersPerSecond,
   msecToTimeString,
 } from 'shared/units';
 
@@ -25,7 +27,8 @@ interface ActivityDetailsStateProps {
   distanceText: string;
   elevationText: string;
   isCurrent: boolean;
-  paceText: string;
+  odoPaceText: string;
+  speedPaceText: string;
   speedText: string;
   timelineNow: boolean;
   timeText: string;
@@ -39,14 +42,16 @@ interface ActivityDetailsDispatchProps {
 export type ActivityDetailsProps = ActivityDetailsStateProps & ActivityDetailsDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
-  let averagePaceText = '';
-  let averageSpeedText = '';
-  let distanceText = '';
-  let elevationText = '';
-  let paceText = '0';
+  const missing = '-'; // what to use when data is missing
+  let averagePaceText = missing;
+  let averageSpeedText = missing;
+  let distanceText = missing;
+  let elevationText = missing;
+  let odoPaceText = '0';
   let partialDistance = 0;
-  let speedText = '';
-  let timeText = '';
+  let speedPaceText = missing
+  let speedText = missing
+  let timeText = missing
   let totalDistance = 0;
   let top = 0;
   let totalTime = 0;
@@ -57,12 +62,13 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     distanceText,
     elevationText,
     isCurrent: false,
-    paceText,
+    odoPaceText,
+    speedPaceText,
     speedText,
     timelineNow,
     timeText,
     top,
-    visible: true,
+    visible: false,
   }
   try {
     top = dynamicTopBelowActivityList(state);
@@ -84,10 +90,18 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
           distanceText = metersToMilesText(partialDistance, '');
         }
         if (info.pace) {
-          paceText = minutesToString(metersPerSecondToMinutesPerMile(info.pace));
+          odoPaceText = minutesToString(metersPerSecondToMinutesPerMile(info.pace));
+        }
+        if (info.speed) {
+          speedPaceText = minutesToString(metersPerSecondToPace(info.speed));
+          if (speedPaceText.indexOf(':') !== speedPaceText.lastIndexOf(':')) {
+            speedPaceText = missing;
+          }
+          const mph = metersPerSecondToMilesPerHour(info.speed);
+          speedText = mph.toFixed(1);
         }
         // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.
-        elevationText = (!info.ele || info.ele < 0) ? '' : metersToFeet(info.ele).toFixed(0);
+        elevationText = (!info.ele || info.ele < 0) ? missing : metersToFeet(info.ele).toFixed(0);
         totalTime = activity.tLast - activity.tStart;
         if (totalDistance && totalTime) {
           const mps = totalDistance / (totalTime / 1000);
@@ -102,7 +116,8 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         distanceText,
         elevationText,
         isCurrent,
-        paceText,
+        odoPaceText,
+        speedPaceText,
         speedText,
         timelineNow,
         timeText,

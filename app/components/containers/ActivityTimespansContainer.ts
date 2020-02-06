@@ -21,10 +21,15 @@ export interface ActivityTimespansDispatchProps {
 export type ActivityTimespansProps = ActivityTimespansStateProps & ActivityTimespansDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
-  const { currentActivityId, selectedActivityId } = state.options;
+  const {
+    currentActivityId,
+    scrollTime,
+    selectedActivityId,
+  } = state.options;
   const filteredActivities = state.cache.activities.filter((activity: ActivityDataExtended) => (
-    timepointVisibleOnTimeline(state, activity.tStart) ||
-    timepointVisibleOnTimeline(state, activity.tLast)
+    timepointVisibleOnTimeline(state, activity.tStart) || // can see activity start
+    timepointVisibleOnTimeline(state, activity.tLast) || // or can see activity end
+    (activity.tStart < scrollTime && activity.tLast > scrollTime) // or activity spans scrollTime
   ))
   return {
     activities: filteredActivities,

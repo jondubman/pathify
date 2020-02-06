@@ -5,6 +5,21 @@ export const metersToFeet = (m: number) => m * 3.28084;
 export const metersToMiles = (m: number) => m * 0.00062137;
 export const metersPerMile = 1609.34;
 
+export const metersPerSecondToPace = (mps: number) => {
+  const metersPerMinute = mps * 60;
+  const minutesPerMeter = 1 / metersPerMinute;
+  const milesPerMeter = 1 / metersPerMile;
+  const minutesPerMile = minutesPerMeter / milesPerMeter;
+  return minutesPerMile;
+}
+
+export const metersToMilesText = (odo: number | undefined, suffix = ' mi') => (
+  (odo === undefined) ? '' :
+    `${parseFloat(metersToMiles(odo).toFixed(2))}${suffix}`
+)
+
+export const milesPerHourToMetersPerSecond = (mph: number) => (mph / 0.44704);
+
 export const minutesFromMsec = (msec: number) => msec / 60000;
 
 // input: some number like 8.5 representing minutes
@@ -41,17 +56,4 @@ export const msecToTimeString = (msec: number) => minutesToString(minutesFromMse
 export const precisionRound = (num: number, precision: number) => {
   const factor = Math.pow(10, precision);
   return Math.round(num * factor) / factor;
-}
-
-export const metersToMilesText = (odo: number | undefined, suffix = ' mi') => (
-  (odo === undefined) ? '' :
-    `${parseFloat(metersToMiles(odo).toFixed(2))}${suffix}`
-)
-
-export const mpsToPace = (mps: number) => {
-  const metersPerMinute = mps * 60;
-  const minutesPerMeter = 1 / metersPerMinute;
-  const milesPerMeter = 1 / metersPerMile;
-  const minutesPerMile = minutesPerMeter / milesPerMeter;
-  return minutesPerMile;
 }

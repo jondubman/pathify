@@ -243,6 +243,9 @@ const sagas = {
           schemaVersion,
           count: (activity.count || 0) + events.length,
         }
+        if (firstNewLoc && !activity.tFirstLoc) {
+          activityUpdate.tFirstLoc = firstNewLoc.t;
+        }
         // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
         // The typical case of simply appending one or more events to an Activity is handled here with little work.
         // We simply append to the path and avoid reformulating it entirely.
@@ -271,6 +274,7 @@ const sagas = {
                 lon,
                 lat,
                 odo,
+                speed,
                 t,
               } = event as LocationEvent;
               // TODO this accuracy test is a bit crude, but works well enough for now.
@@ -284,6 +288,7 @@ const sagas = {
                 pathUpdate.lats.push(lat);
                 pathUpdate.lons.push(lon);
                 pathUpdate.odo.push(odo);
+                pathUpdate.speed.push(speed);
                 pathUpdate.t.push(t);
               }
             }
@@ -995,7 +1000,7 @@ const sagas = {
       if (id === 'selectedActivityId') { // this allows you to pass the string 'selectedActivityId' as the id,
         id  = yield select((state: AppState) => state.options.selectedActivityId); // which is used in appQuery
       }
-      // yield call(log.trace, 'saga refreshActivity', id);
+      yield call(log.trace, 'saga refreshActivity', id);
       const eventsForActivity = yield call(database.eventsForActivity, id);
       const { currentActivityId } = yield select((state: AppState) => state.options);
       const { schemaVersion } = constants.database;
@@ -1013,6 +1018,7 @@ const sagas = {
             lon,
             lat,
             odo,
+            speed,
             t,
           } = locEvent;
           if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
@@ -1028,10 +1034,14 @@ const sagas = {
             activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
             // odo
             pathUpdate.odo.push(odo);
+            // speed
+            pathUpdate.speed.push(speed);
             // t
             pathUpdate.t.push(t);
           }
+          activityUpdate.tFirstLoc = Math.min(activityUpdate.tFirstLoc || t, t);
           activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max is redundant when events sorted by t
+          activityUpdate.tLastRefresh = utils.now();
           activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
 
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
@@ -1076,9 +1086,9 @@ const sagas = {
   },
 
   // This looks a no-op, but the AppAction.refreshActivityDone is used with yield take in refreshAllActivities and
-  // every AppAction gets a corresponding saga.
+  // every AppAction has a corresponding saga.
   refreshActivityDone: function* (action: Action) {
-    // yield call(log.trace, 'refreshActivityDone');
+    yield call(log.trace, 'refreshActivityDone');
   },
 
   refreshAllActivities: function* (action: Action) {
