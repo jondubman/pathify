@@ -84,6 +84,7 @@ const schemaVersion = 29;
 const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
 const borderRadiusSmall = 5;
+const bottomButtonSpacing = 10;
 const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
@@ -326,7 +327,8 @@ const constants = {
   },
   appName: 'Pathify',
   borderRadiusSmall,
-  buttonBaseOffsetPerRow: buttonSize + buttonOffset * 2,
+  bottomButtonSpacing,
+  buttonBaseOffsetPerRow: (buttonSize + buttonOffset * 2) + bottomButtonSpacing,
   buttonOffset,
   buttonSize,
   clientId,
@@ -469,9 +471,9 @@ const constants = {
   },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
-    height: 55,
+    height: 65,
     leftContentsWidth: 120,
-    topSpace: 6,
+    topSpace: 12,
     width: 160 - buttonOffset * 2, // was 126, which fits on smallest device without overlap
   },
   safeAreaBottom,

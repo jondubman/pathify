@@ -98,7 +98,8 @@ export const dynamicClockBottom = (state: AppState): number => (
 )
 
 export const dynamicLowerButtonBase = (state: AppState): number => (
-  (state.flags.mapFullScreen ? constants.safeAreaBottom + constants.mapLogoHeight : constants.mapLogoHeight)
+  (state.flags.mapFullScreen ? (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
+                             : constants.mapLogoHeight + constants.bottomButtonSpacing)
 )
 
 export const dynamicMapHeight = (state: AppState): number => {

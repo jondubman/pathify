@@ -51,8 +51,8 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none" style={[Styles.centerLine, {
       height: props.timelineHeight
         + refTime.height
-        + refTime.bottomMargin
         - timeline.bottomPaddingForAxis
+        + 1
     }]} />
   </View>
 )
