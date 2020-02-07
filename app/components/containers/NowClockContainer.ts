@@ -2,13 +2,14 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AppAction, newAction } from 'lib/actions';
+// import { AppAction, newAction } from 'lib/actions';
 import { currentActivityIsSelected } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
 interface OwnProps { // matching those of PausedClockContainer
+  clockStyle: Object;
   interactive: boolean;
 }
 
@@ -17,6 +18,7 @@ const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps 
   const selectedIsCurrent = currentActivityIsSelected(state);
   const d = new Date(utils.now());
   return {
+    clockStyle: (ownProps && ownProps.clockStyle) ? ownProps.clockStyle : {},
     current: selectedIsCurrent,
     selected: !!selectedActivityId,
     hours: d.getHours(),

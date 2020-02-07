@@ -15,6 +15,7 @@ const colors = constants.colors.clock;
 const {
   border,
   centerCircle,
+  centerPoint,
   height,
   hourHand,
   minuteHand,
@@ -23,6 +24,7 @@ const {
 } = constants.clock;
 
 export interface ClockStateProps {
+  clockStyle: any;
   current: boolean; // true means time on clock points to current activity, whether or not nowMode is enabled
   selected: boolean; // true means time on clock points to a selected activity, whether or not nowMode is enabled
   hours: number,
@@ -105,6 +107,15 @@ const Styles = StyleSheet.create({
     bottom: radius - borderWidth - 1,
     width: centerCircle.radius,
     borderRadius: centerCircle.radius,
+  },
+  centerPoint: {
+    position: 'absolute',
+    alignSelf: 'center',
+    backgroundColor: centerPoint.color,
+    height: centerPoint.radius,
+    bottom: radius - centerPoint.radius,
+    width: centerPoint.radius,
+    borderRadius: centerPoint.radius,
   },
   majorTick: {
     position: 'absolute',
@@ -191,7 +202,12 @@ const ClockTicks = () => {
 }
 
 const clockBackgroundStyle = (props: ClockProps): Object => {
-  const { current, nowMode, selected, stopped } = props;
+  const {
+    current,
+    nowMode,
+    selected,
+    stopped,
+  } = props;
   // Note stopped is really just for debugging. It means the ticks are disbabled app-wide.
   if (nowMode) {
     if (stopped) {
@@ -216,6 +232,14 @@ const clockBackgroundStyle = (props: ClockProps): Object => {
   }
 }
 
+const optionalStyle = (props: ClockProps): Object => {
+  if (props.clockStyle) {
+    return props.clockStyle;
+  } else {
+    return {};
+  }
+}
+
 const ClockMechanics = (props: ClockProps) => (
   <View pointerEvents={"none"}>
     <ClockTicks />
@@ -223,18 +247,19 @@ const ClockMechanics = (props: ClockProps) => (
     <View pointerEvents={"none"} style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes + (props.seconds / 60))]} />
     <View pointerEvents={"none"} style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds + (props.milliseconds / 1000))]} />
     <View pointerEvents={"none"} style={Styles.centerCircle} />
+    <View pointerEvents={"none"} style={Styles.centerPoint} />
   </View>
 )
 
 const Clock = (props: ClockProps) => props.interactive ? (
   <View
-    style={{ ...Styles.clock, ...clockBackgroundStyle(props)}}
+    style={{ ...Styles.clock, ...clockBackgroundStyle(props), ...optionalStyle(props)}}
   >
     {ClockMechanics(props)}
   </View>
 ) : (
   <View
-    style={{ ...Styles.clock, ...Styles.inertClock, ...clockBackgroundStyle(props) }}
+      style={{ ...Styles.clock, ...Styles.inertClock, ...clockBackgroundStyle(props), ...optionalStyle(props) }}
   >
     {ClockMechanics(props)}
   </View>

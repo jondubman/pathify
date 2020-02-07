@@ -86,6 +86,7 @@ export const initialAppState = {
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
+    zoomClockPressed: false, // relates to PanResponder on the timeline clock
   },
   mapHeading: constants.map.default.heading,
   mapHeadingInitial: null as number | null, // once set, never changes

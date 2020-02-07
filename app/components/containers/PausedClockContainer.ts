@@ -8,6 +8,7 @@ import { AppState } from 'lib/state';
 import Clock, { ClockStateProps, ClockDispatchProps } from 'presenters/Clock';
 
 interface OwnProps { // matching those of NowClockContainer
+  clockStyle: Object;
   interactive: boolean;
 }
 
@@ -20,6 +21,7 @@ const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps 
   const selectedIsCurrent = currentActivityIsSelected(state);
   const d = new Date(state.flags.timelineScrolling ? scrollTime : pausedTime);
   return {
+    clockStyle: (ownProps && ownProps.clockStyle) ? ownProps.clockStyle : {},
     current: selectedIsCurrent,
     selected: !!selectedActivityId,
     hours: d.getHours(),

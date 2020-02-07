@@ -1,5 +1,6 @@
 import React, {
   Component,
+  Fragment,
 } from 'react';
 import {
   PanResponder,
@@ -48,6 +49,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onPanResponderGrant: (evt, gestureState) => {
         ReactNativeHaptic.generate('impactMedium');
         log.trace('onPanResponderGrant');
+        props.onPressed();
         // The gesture has started. Show visual feedback so the user knows
         // what is happening!
         // gestureState.d{x,y} will be set to zero now
@@ -66,19 +68,21 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           delta = Math.max(delta, -deltaMax); // min delta is -deltaMax
         }
         this.setState({ deltaY: delta });
-        this.props.onZoom(-delta / deltaMax); // normalize to between -1 and 1, and reverse sign to match map zooming.
+        props.onZoom(-delta / deltaMax); // normalize to between -1 and 1, and reverse sign to match map zooming.
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         ReactNativeHaptic.generate('notificationSuccess');
         log.trace('onPanResponderRelease');
         this.setState({ deltaY: 0 });
-        this.props.onZoom(0); // stop zooming
+        props.onZoom(0); // stop zooming
+        props.onReleased();
         // The user has released all touches while this view is the
         // responder. This typically means a gesture has succeeded
       },
       onPanResponderTerminate: (evt, gestureState) => {
         log.trace('onPanResponderTerminate');
+        props.onReleased();
         // Another component has become the responder, so this gesture
         // should be cancelled
       },
@@ -98,15 +102,28 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     const {
       bottom,
       nowMode,
+      pressed,
     } = this.props;
     const {
       deltaY,
     } = this.state;
+    const bottomStyle = {
+      bottom: bottom + deltaY,
+    }
+    let pressedStyle = pressed ? {
+      borderColor: constants.colors.zoomClock.border,
+    } : {};
     return (
-      <View {...this._panResponder.panHandlers} style={[Styles.clockCenter, { bottom: bottom + deltaY }]}>
-        {nowMode ? <NowClockContainer interactive={true} key='NowClock' />
-              : <PausedClockContainer interactive={true} key='PausedClock' />}
-      </View>
+      <Fragment>
+        {pressed ? (
+          <View>
+          </View>
+        ) : null}
+        <View {...this._panResponder.panHandlers} style={[Styles.clockCenter, bottomStyle]}>
+          {nowMode ? <NowClockContainer clockStyle={pressedStyle} interactive={true} key='NowClock' />
+            : <PausedClockContainer clockStyle={pressedStyle} interactive={true} key='PausedClock' />}
+        </View>
+      </Fragment>
     )
   }
 }

@@ -16,27 +16,45 @@ import log from 'shared/log';
 interface ZoomClockStateProps {
   bottom: number;
   nowMode: boolean;
+  pressed: boolean;
 }
 
 interface ZoomClockDispatchProps {
+  onPressed: () => void;
+  onReleased: () => void;
   onZoom: (rate: number) => void;
 }
 
 export type ZoomClockProps = ZoomClockStateProps & ZoomClockDispatchProps;
 
 const mapStateToProps = (state: AppState): ZoomClockStateProps => {
+  const {
+    timelineNow,
+    zoomClockPressed,
+  } = state.flags;
   return {
     bottom: dynamicClockBottom(state),
-    nowMode: state.flags.timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
+    nowMode: timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
+    pressed: zoomClockPressed,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): ZoomClockDispatchProps => {
+  const onPressed = () => {
+    log.trace('ZoomClock onPressed');
+    dispatch(newAction(AppAction.flagEnable, 'zoomClockPressed'));
+  }
+  const onReleased = () => {
+    log.trace('ZoomClock onReleased');
+    dispatch(newAction(AppAction.flagDisable, 'zoomClockPressed'));
+  }
   const onZoom = (rate: number) => {
-    log.trace('onZoom', rate);
+    log.trace('ZoomClock onZoom', rate);
     dispatch(newAction(AppAction.timelineRelativeZoom, { rate }));
   }
   const dispatchers = {
+    onPressed,
+    onReleased,
     onZoom,
   }
   return dispatchers;

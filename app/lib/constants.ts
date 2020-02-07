@@ -290,6 +290,9 @@ const colors = {
     panelBackground: withOpacity(namedColors.black, 1),
   },
   user: colorThemes.now,
+  zoomClock: {
+    border: withOpacity(namedColors.orange, 1),
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -338,8 +341,12 @@ const constants = {
       color: withOpacity(colors.byName.white, 0.85),
     },
     centerCircle: {
-      color: withOpacity(colors.byName.red, 1),
-      radius: 3,
+      color: withOpacity(colors.byName.orange, 1),
+      radius: 4,
+    },
+    centerPoint: {
+      color: withOpacity(colors.byName.white, 1),
+      radius: 1,
     },
     height: clockHeight, // which is also width
     hourHand: {
