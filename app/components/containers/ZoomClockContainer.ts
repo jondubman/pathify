@@ -22,7 +22,7 @@ interface ZoomClockStateProps {
 interface ZoomClockDispatchProps {
   onPressed: () => void;
   onReleased: () => void;
-  onZoom: (rate: number) => void;
+  onZoom: (rate: number, distanceMoved: number) => void;
 }
 
 export type ZoomClockProps = ZoomClockStateProps & ZoomClockDispatchProps;
@@ -48,9 +48,10 @@ const mapDispatchToProps = (dispatch: Function): ZoomClockDispatchProps => {
     log.trace('ZoomClock onReleased');
     dispatch(newAction(AppAction.flagDisable, 'zoomClockPressed'));
   }
-  const onZoom = (rate: number) => {
+  const onZoom = (rate: number, distanceMoved: number) => {
     log.trace('ZoomClock onZoom', rate);
     dispatch(newAction(AppAction.timelineRelativeZoom, { rate }));
+    dispatch(newAction(AppAction.setAppOption, { zoomClockMoved: distanceMoved }));
   }
   const dispatchers = {
     onPressed,

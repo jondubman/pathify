@@ -50,7 +50,7 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.centerLine, {
       height: props.timelineHeight
-        + refTime.height
+        + refTime.height + props.zoomClockMoved
         - timeline.bottomPaddingForAxis
         + 1
     }]} />

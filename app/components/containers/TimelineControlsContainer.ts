@@ -15,6 +15,7 @@ interface TimelineControlsStateProps {
   nowMode: boolean;
   timelineHeight: number;
   timelineScrolling: boolean;
+  zoomClockMoved: number;
 }
 
 interface TimelineControlsDispatchProps {
@@ -29,6 +30,7 @@ const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
     nowMode: state.flags.timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     timelineHeight: dynamicTimelineHeight(state),
     timelineScrolling: state.flags.timelineScrolling,
+    zoomClockMoved: state.options.zoomClockMoved,
   }
 }
 

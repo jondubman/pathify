@@ -68,14 +68,15 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           delta = Math.max(delta, -deltaMax); // min delta is -deltaMax
         }
         this.setState({ deltaY: delta });
-        props.onZoom(-delta / deltaMax); // normalize to between -1 and 1, and reverse sign to match map zooming.
+        // normalize to between -1 and 1, and reverse sign to match map zooming.
+        props.onZoom(-delta / deltaMax, delta);
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         ReactNativeHaptic.generate('notificationSuccess');
         log.trace('onPanResponderRelease');
         this.setState({ deltaY: 0 });
-        props.onZoom(0); // stop zooming
+        props.onZoom(0, 0); // stop zooming
         props.onReleased();
         // The user has released all touches while this view is the
         // responder. This typically means a gesture has succeeded
