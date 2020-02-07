@@ -265,6 +265,7 @@ const colors = {
       [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25), // spans the whole timeline vertically
     },
     centerLine: withOpacity(namedColors.white, 0.5),
+    centerLineZoom: withOpacity(namedColors.orange, 1),
     topLine: withOpacity(namedColors.gray, 0.5),
   },
   topButton: {

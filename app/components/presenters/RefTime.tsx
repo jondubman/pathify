@@ -73,23 +73,25 @@ const Styles = StyleSheet.create({
 const RefTime = (props: RefTimeProps) => (
   <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
     <View style={Styles.leftHalf}>
-      <TouchableHighlight
-        onPress={props.onPress}
-        style={Styles.leftHighlight}
-        underlayColor={colors.underlay}
-      >
-        <View style={Styles.leftView}>
-          <Text style={[Styles.subText, Styles.leftText, props.flavorLine2 ? {} : { marginTop: 2 }]}>
-            {props.flavorLine1}
-          </Text>
-          <Text style={[Styles.subText, Styles.leftText]}>
-            {props.flavorLine2}
-          </Text>
-          <Text style={[Styles.subText, Styles.leftText]}>
-            {props.flavorLine3}
-          </Text>
-        </View>
-      </TouchableHighlight>
+      {props.showLeftSide ? (
+        <TouchableHighlight
+          onPress={props.onPress}
+          style={Styles.leftHighlight}
+          underlayColor={colors.underlay}
+        >
+          <View style={Styles.leftView}>
+            <Text style={[Styles.subText, Styles.leftText, props.flavorLine2 ? {} : { marginTop: 2 }]}>
+              {props.flavorLine1}
+            </Text>
+            <Text style={[Styles.subText, Styles.leftText]}>
+              {props.flavorLine2}
+            </Text>
+            <Text style={[Styles.subText, Styles.leftText]}>
+              {props.flavorLine3}
+            </Text>
+          </View>
+        </TouchableHighlight>
+      ) : null }
     </View>
     <TouchableHighlight
       onPress={props.onPress}

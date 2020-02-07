@@ -21,7 +21,6 @@ const colors = constants.colors.timeline;
 
 const Styles = StyleSheet.create({
   centerLine: {
-    backgroundColor: colors.centerLine,
     bottom: timeline.bottomPaddingForAxis,
     left: centerline() - timeline.centerLineWidth / 2,
     position: 'absolute',
@@ -41,6 +40,10 @@ const Styles = StyleSheet.create({
   },
 })
 
+const backgroundColorFor = (zoomClockMoved: number) => (
+  (zoomClockMoved ? colors.centerLineZoom : colors.centerLine)
+)
+
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
     <ZoomClockContainer />
@@ -49,6 +52,7 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.centerLine, {
+      backgroundColor: backgroundColorFor(props.zoomClockMoved),
       height: props.timelineHeight
         + refTime.height + props.zoomClockMoved
         - timeline.bottomPaddingForAxis
