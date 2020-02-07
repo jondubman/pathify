@@ -53,6 +53,20 @@ target 'Pathify' do
   use_native_modules!('../')
 
   post_install do |installer|
+    installer.generated_projects.each do |project|
+      project.build_configurations.each do |config|
+          if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+          end
+      end
+      project.targets.each do |target|
+        target.build_configurations.each do |config|
+          if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+          end
+        end
+      end
+    end
     installer.pods_project.targets.each do |target|
       # workaround per https://github.com/facebook/react-native/issues/24192
       if target.name == "React"
