@@ -176,6 +176,10 @@ const colors = {
     underlayPath: 'transparent',
     underlayUser: 'transparent',
   },
+  grabBar: {
+    line: withOpacity(namedColors.silver, 0.25),
+    lineActive: withOpacity(namedColors.orange, 0.75),
+},
   helpButton: {
     background: namedColors.white,
     icon: namedColors.black,
@@ -415,6 +419,11 @@ const constants = {
       choiceLabel: 12,
       menuItem: 18,
     },
+  },
+  grabBar: {
+    initialTop: -1,
+    lineHeight: 2,
+    spacing: 2,
   },
   helpButton: {
     opacity: defaultOpacity,

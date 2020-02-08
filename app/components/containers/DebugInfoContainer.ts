@@ -21,7 +21,7 @@ const mapStateToProps = (state: AppState): DebugInfoStateProps => {
   let text = '';
   return {
     text,
-    top: dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset,
+    top: dynamicAreaTop() + constants.buttonSize + constants.buttonOffset,
   }
 }
 

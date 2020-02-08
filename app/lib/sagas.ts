@@ -81,6 +81,7 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
+  dynamicTopBelowButtons,
   getCachedPathInfo,
   getStoredLocationEvent,
   loggableOptions,
@@ -1498,6 +1499,9 @@ const sagas = {
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
+      const grabBarTop = dynamicTopBelowButtons(); // TODO
+      yield put(newAction(AppAction.setAppOption, { grabBarTop }));
+      yield put(newAction(AppAction.flagEnable, 'showGrabBar'));
       if (pausedTime) {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
         yield put(newAction(AppAction.setAppOption, { // Note all these timestamps are aligned on startup.

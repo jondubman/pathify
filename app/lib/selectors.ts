@@ -89,12 +89,16 @@ export const currentOrSelectedActivity = (state: AppState): Activity | undefined
 }
 
 // Note this 'selector' does not currently depend on state.
-export const dynamicAreaTop = (state: AppState): number => (
+export const dynamicAreaTop = (): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )
 
 export const dynamicClockBottom = (state: AppState): number => (
   dynamicTimelineHeight(state) + constants.refTime.height + 1
+)
+
+export const dynamicGrabBarTop = (state: AppState): number => (
+  dynamicTopBelowButtons() + constants.activityList.height + constants.activityDetails.height * 4
 )
 
 export const dynamicLowerButtonBase = (state: AppState): number => (
@@ -133,7 +137,7 @@ export const dynamicTimelineWidth = (state: AppState): number => (
     utils.windowSize().width
 )
 
-export const showActivityList = (state: AppState): boolean => (
+export const shouldShowActivityList = (state: AppState): boolean => (
   (state.flags.showActivityList && !state.flags.mapFullScreen)
 )
 
@@ -157,11 +161,11 @@ export const shouldShowActivityDetails = (state: AppState): boolean => {
 }
 
 export const dynamicTopBelowActivityList = (state: AppState): number => (
-  dynamicTopBelowButtons(state) + (showActivityList(state) ? constants.activityList.height : 0)
+  dynamicTopBelowButtons() + (shouldShowActivityList(state) ? constants.activityList.height : 0)
 )
 
-export const dynamicTopBelowButtons = (state: AppState): number => (
-  dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset
+export const dynamicTopBelowButtons = (): number => (
+  dynamicAreaTop() + constants.buttonSize + constants.buttonOffset
 )
 
 export const loggableOptions = (state: AppState) => {
@@ -183,7 +187,7 @@ export const mapPadding = (state: AppState): [number, number] => {
   const horizontal = constants.map.fitBounds.minHorizontalPadding;
   const showActivityList = state.flags.showActivityList && !state.flags.mapFullScreen;
   const showTimeline = state.flags.showTimeline && !state.flags.mapFullScreen;
-  const topClearZone = dynamicTopBelowButtons(state)
+  const topClearZone = dynamicTopBelowButtons()
     + (showActivityList ? 1 : 0) * constants.activityList.height;
   const bottomClearZone = (showTimeline ? 1 : 0) * constants.timeline.default.height;
   const vertical = Math.max(topClearZone, bottomClearZone);

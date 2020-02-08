@@ -42,8 +42,14 @@ interface ActivityListDispatchProps {
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
-  const { timelineNow, trackingActivity } = state.flags;
-  const { currentActivityId, selectedActivityId } = state.options;
+  const {
+    timelineNow,
+    trackingActivity,
+  } = state.flags;
+  const {
+    currentActivityId,
+    selectedActivityId,
+  } = state.options;
   return {
     animated: false,
     currentActivityId,
@@ -52,7 +58,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     selectedActivityId,
     timelineNow,
     trackingActivity,
-    top: dynamicTopBelowButtons(state),
+    top: dynamicTopBelowButtons(),
   }
 }
 

@@ -47,17 +47,14 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
       onPanResponderGrant: (evt, gestureState) => {
+        // The gesture has started. gestureState.d{x,y} will be set to zero now
         ReactNativeHaptic.generate('impactMedium');
         log.trace('onPanResponderGrant');
         props.onPressed();
-        // The gesture has started. Show visual feedback so the user knows
-        // what is happening!
-        // gestureState.d{x,y} will be set to zero now
       },
       onPanResponderMove: (evt, gestureState) => {
         // The most recent move distance is gestureState.move{X,Y}
-        // The accumulated gesture distance since becoming responder is
-        // gestureState.d{x,y}
+        // The accumulated gesture distance since becoming responder is gestureState.d{x,y}
         log.trace('onPanResponderMove', gestureState.dx, gestureState.dy);
         let delta = -gestureState.dy;
         // deltaMax is the room we have to slide the clock down. For symmetry the upside should be identical.
@@ -73,30 +70,23 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
+        // User has released all touches while this view is the responder. This typically means a gesture has succeeded.
         ReactNativeHaptic.generate('notificationSuccess');
         log.trace('onPanResponderRelease');
         this.setState({ deltaY: 0 });
         props.onZoom(0, 0); // stop zooming
         props.onReleased();
-        // The user has released all touches while this view is the
-        // responder. This typically means a gesture has succeeded
       },
       onPanResponderTerminate: (evt, gestureState) => {
         log.trace('onPanResponderTerminate');
         props.onReleased();
-        // Another component has become the responder, so this gesture
-        // should be cancelled
+        // Another component has become the responder, so this gesture should be cancelled
       },
-      // onShouldBlockNativeResponder: (evt, gestureState) => {
-      //   // Returns whether this component should block native components from becoming the JS
-      //   // responder. Returns true by default. Is currently only supported on android.
-      //   return true;
-      // },
-    });
+    })
   }
 
   componentWillUnmount() {
-    this.props.onZoom(0); // stop zooming
+    this.props.onZoom(0, 0); // stop zooming
   }
 
   render() {
