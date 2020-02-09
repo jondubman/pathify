@@ -328,7 +328,7 @@ const constants = {
     borderWidth: 1,
     centerLineTop: -buttonOffset,
     centerLineWidth: 2,
-    height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight,
+    height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight, // list items match timeline height
     nowClockMarginLeft: activityListMargin,
     scrollbarHeight,
     topBottomBorderHeight: activityTopBottomBorderHeight,

@@ -97,10 +97,6 @@ export const dynamicClockBottom = (state: AppState): number => (
   dynamicTimelineHeight(state) + constants.refTime.height + 1
 )
 
-export const dynamicGrabBarTop = (state: AppState): number => (
-  dynamicTopBelowButtons() + constants.activityList.height + constants.activityDetails.height * 4
-)
-
 export const dynamicLowerButtonBase = (state: AppState): number => (
   (state.flags.mapFullScreen ? (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
                              : constants.mapLogoHeight + constants.bottomButtonSpacing)

@@ -1,5 +1,6 @@
 import React, {
   Component,
+  Fragment,
 } from 'react';
 import {
   PanResponder,
@@ -32,7 +33,8 @@ const lineStyleActive = {
 } as StyleProp<ViewStyle>;
 
 interface GrabBarState {
-  deltaY: number;
+  deltaY: number | undefined;
+  snapY: number | undefined;
 }
 
 class GrabBar extends Component<GrabBarProps, GrabBarState> {
@@ -41,11 +43,25 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
 
   constructor(props: GrabBarProps) {
     super(props);
-    const topMin = dynamicTopBelowButtons();
-    const topMax = topMin + 400; // TODO
     this.state = {
       deltaY: 0,
+      snapY: props.snapTop,
     }
+    const topMin = dynamicTopBelowButtons();
+    const listDetailsBoundary = topMin + constants.activityList.height;
+    const detailsRowHeight = constants.activityDetails.height;
+    const detailsRow1 = listDetailsBoundary + detailsRowHeight;
+    const detailsRow2 = detailsRow1 + detailsRowHeight;
+    const detailsRow3 = detailsRow2 + detailsRowHeight;
+    const detailsRow4 = detailsRow3 + detailsRowHeight;
+    const snapPositions = [
+      topMin,
+      listDetailsBoundary,
+      detailsRow1,
+      detailsRow2,
+      detailsRow3,
+      detailsRow4,
+    ]
     this._panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -64,21 +80,53 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         // The accumulated gesture distance since becoming responder is gestureState.d{x,y}
         log.trace('onPanResponderMove', this.props.top, gestureState.dx, gestureState.dy);
         let delta = gestureState.dy;
-        if (this.props.top + delta < topMin) {
-          delta = topMin - this.props.top;
+        const currentPosition = this.props.top + delta;
+        let containedPosition: number | undefined;
+        let snapTo: number | undefined;
+        const lastIndex = snapPositions.length - 1;
+        if (currentPosition <= snapPositions[0]) {
+          snapTo = snapPositions[0];
+          containedPosition = snapTo;
+        } else if (currentPosition >= snapPositions[lastIndex]) {
+          snapTo = snapPositions[lastIndex];
+          containedPosition = snapTo;
+        } else {
+          containedPosition = currentPosition;
+          for (let p = 0; p < lastIndex; p++) {
+            const p1 = snapPositions[p];
+            const p2 = snapPositions[p + 1];
+            const d1 = currentPosition - p1;
+            const d2 = p2 - currentPosition;
+            if (d1 < 0 || d2 < 0) {
+              continue;
+            }
+            // We are between p1 and p2. Which is closer?
+            snapTo = (d1 < d2) ? p1 : p2;
+            break;
+          }
         }
-        if (this.props.top + delta > topMax) {
-          delta = topMax - this.props.top;
+        if (containedPosition && snapTo) {
+          const previousSnapTo = this.state.snapY;
+          if (snapTo !== previousSnapTo) {
+            ReactNativeHaptic.generate('selection');
+          }
+          const deltaY = containedPosition - this.props.top;
+          // this.props.onMoved(deltaY, snapTo);
+          this.setState({
+            deltaY,
+            snapY: snapTo,
+          })
         }
-        this.setState({ deltaY: delta });
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         // User has released all touches while this view is the responder. This typically means a gesture has succeeded.
         ReactNativeHaptic.generate('notificationSuccess');
-        log.trace('onPanResponderRelease', this.props.top + this.state.deltaY);
-        this.props.onMoved(this.props.top + this.state.deltaY);
-        this.setState({ deltaY: 0 });
+        const deltaY = this.state.deltaY || 0;
+        log.trace('onPanResponderRelease', this.props.top + deltaY);
+        const snapped = this.state.snapY || this.props.top + deltaY;
+        this.props.onMoved(snapped, snapped);
+        this.setState({ deltaY: 0, snapY: 0 });
         this.props.onReleased();
       },
       onPanResponderTerminate: (evt, gestureState) => {
@@ -89,23 +137,44 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
   }
 
   render() {
-    const layoutStyle = {
+    const deltaY = this.state.deltaY || 0;
+    const dragLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
-      top: this.props.top + this.state.deltaY,
+      top: this.props.top + deltaY,
     } as StyleProp<ViewStyle>;
+
+    const snapY = this.state.snapY || 0;
+    const snapLayoutStyle = {
+      flexDirection: 'column',
+      position: 'absolute',
+      top: snapY,
+    } as StyleProp<ViewStyle>;
+
     const {
       pressed,
     } = this.props;
-    const style = pressed ? [lineStyleBase, lineStyleActive] : lineStyleBase;
+    const dragStyle = pressed ? [lineStyleBase, lineStyleActive] : lineStyleBase;
+    const snapStyle = lineStyleBase;
     return (
-      <View {...this._panResponder.panHandlers} style={layoutStyle}>
-        <View pointerEvents="none" style={style} />
-        <View pointerEvents="none" style={style} />
-        <View pointerEvents="none" style={style} />
-        <View pointerEvents="none" style={style} />
-        <View pointerEvents="none" style={style} />
-      </View>
+      <Fragment>
+        <View {...this._panResponder.panHandlers} style={dragLayoutStyle}>
+          <View pointerEvents="none" style={dragStyle} />
+          <View pointerEvents="none" style={dragStyle} />
+          <View pointerEvents="none" style={dragStyle} />
+          <View pointerEvents="none" style={dragStyle} />
+          <View pointerEvents="none" style={dragStyle} />
+        </View>
+        {this.props.top + deltaY === snapY ? null : (
+          <View pointerEvents="none" style={snapLayoutStyle}>
+            <View pointerEvents="none" style={snapStyle} />
+            <View pointerEvents="none" style={snapStyle} />
+            <View pointerEvents="none" style={snapStyle} />
+            <View pointerEvents="none" style={snapStyle} />
+            <View pointerEvents="none" style={snapStyle} />
+          </View>
+        )}
+      </Fragment>
     )
   }
 }

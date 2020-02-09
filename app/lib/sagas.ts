@@ -1500,7 +1500,7 @@ const sagas = {
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
       const grabBarTop = dynamicTopBelowButtons(); // TODO
-      yield put(newAction(AppAction.setAppOption, { grabBarTop }));
+      yield put(newAction(AppAction.setAppOption, { grabBarTop, grabBarSnapTop: grabBarTop })); // TODO
       yield put(newAction(AppAction.flagEnable, 'showGrabBar'));
       if (pausedTime) {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
