@@ -134,26 +134,31 @@ export const dynamicTimelineWidth = (state: AppState): number => (
 )
 
 export const shouldShowActivityList = (state: AppState): boolean => (
-  (state.flags.showActivityList && !state.flags.mapFullScreen)
+  // TODO cleanup
+  // (state.flags.showActivityList && !state.flags.mapFullScreen)
+  (state.options.grabBarSnapIndex > 1)
 )
 
-export const shouldShowActivityDetails = (state: AppState): boolean => {
-  const {
-    mapFullScreen,
-    mapTapped,
-    showActivityDetails,
-    trackingActivity,
-  } = state.flags;
-  if (!showActivityDetails) {
-    return false;
-  }
-  if ((!mapFullScreen || (mapFullScreen && !mapTapped)) && trackingActivity) {
-    return true; // Always show ActivityDetails of currentActivity,_unless mapTapped.
-  }
-  if (mapFullScreen) {
-    return false;
-  }
-  return showActivityDetails; // Here's where the flag directly applies.
+export const showActivityDetailsRows = (state: AppState): number => {
+  const rows = Math.max(0, state.options.grabBarSnapIndex - 2);
+  return rows;
+  // TODO cleanup
+  // const {
+  //   mapFullScreen,
+  //   mapTapped,
+  //   // showActivityDetails,
+  //   trackingActivity,
+  // } = state.flags;
+  // if (!showActivityDetails) {
+  //   return false;
+  // }
+  // if ((!mapFullScreen || (mapFullScreen && !mapTapped)) && trackingActivity) {
+  //   return true; // Always show ActivityDetails of currentActivity,_unless mapTapped.
+  // }
+  // if (mapFullScreen) {
+  //   return false;
+  // }
+  // return showActivityDetails; // Here's where the flag directly applies.
 }
 
 export const dynamicTopBelowActivityList = (state: AppState): number => (

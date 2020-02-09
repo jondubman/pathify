@@ -13,9 +13,9 @@ interface GrabBarStateProps {
 }
 
 interface GrabBarDispatchProps {
-  onMoved: (snap: number) => void;
+  onMoved: (snap: number, snapIndex: number) => void;
   onPressed: () => void;
-  onReleased: (snap: number) => void;
+  onReleased: (snap: number, snapIndex: number) => void;
 }
 
 export type GrabBarProps = GrabBarStateProps & GrabBarDispatchProps;
@@ -28,19 +28,21 @@ const mapStateToProps = (state: AppState): GrabBarStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): GrabBarDispatchProps => {
-  const onMoved = (snap: number) => {
+  const onMoved = (snap: number, snapIndex: number) => {
     dispatch(newAction(AppAction.setAppOption, {
      // grabBarSnap no touch! only set preview. See mapStateToProps.
+     grabBarSnapIndex: snapIndex,
      grabBarSnapPreview: snap,
     }))
   }
   const onPressed = () => {
     dispatch(newAction(AppAction.flagEnable, 'grabBarPressed'));
   }
-  const onReleased = (snap: number) => {
+  const onReleased = (snap: number, snapIndex: number) => {
     dispatch(newAction(AppAction.flagDisable, 'grabBarPressed'));
     dispatch(newAction(AppAction.setAppOption, { // Snap! Now we set both.
       grabBarSnap: snap,
+      grabBarSnapIndex: snapIndex,
       grabBarSnapPreview: snap,
     }))
   }

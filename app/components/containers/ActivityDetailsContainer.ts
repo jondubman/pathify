@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import {
   dynamicTopBelowActivityList,
   getCachedPathInfo,
+  showActivityDetailsRows,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ActivityDetails from 'presenters/ActivityDetails';
@@ -28,6 +29,7 @@ interface ActivityDetailsStateProps {
   isCurrent: boolean;
   index: number;
   length: number;
+  rows: number;
   speedPaceText: string;
   speedText: string;
   timelineNow: boolean;
@@ -63,6 +65,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     isCurrent: false,
     index: 0,
     length: 0,
+    rows: 0,
     speedPaceText,
     speedText,
     timelineNow,
@@ -73,8 +76,12 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   try {
     top = dynamicTopBelowActivityList(state);
     const info = getCachedPathInfo(state);
-    const { currentActivityId, scrollTime } = state.options;
+    const {
+      currentActivityId,
+      scrollTime,
+    } = state.options;
     if (info) {
+      const rows = showActivityDetailsRows(state);
       const activity = info.activity as ActivityDataExtended;
       const isCurrent = activity && (activity.id === currentActivityId);
       if (activity) {
@@ -114,6 +121,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         index: info.index,
         isCurrent,
         length: info.length,
+        rows,
         speedPaceText,
         speedText,
         timelineNow,

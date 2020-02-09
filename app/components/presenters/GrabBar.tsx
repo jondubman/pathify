@@ -15,6 +15,7 @@ import ReactNativeHaptic from 'react-native-haptic';
 import { GrabBarProps } from 'containers/GrabBarContainer';
 import constants from 'lib/constants';
 import {
+  dynamicAreaTop,
   dynamicTopBelowButtons,
 } from 'lib/selectors';
 import utils from 'lib/utils';
@@ -35,6 +36,7 @@ const lineStyleActive = {
 
 interface GrabBarState {
   snap: number | undefined;
+  snapIndex: number | undefined;
   top: number | undefined;
 }
 
@@ -46,10 +48,12 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     super(props);
     this.state = {
       snap: props.snap,
+      snapIndex: undefined,
       top: props.snap,
     }
-    const topMin = dynamicTopBelowButtons();
-    const listDetailsBoundary = topMin + constants.activityList.height;
+    const topMin = dynamicAreaTop() - constants.buttonOffset;
+    const belowTopButtons = dynamicTopBelowButtons();
+    const listDetailsBoundary = belowTopButtons + constants.activityList.height;
     const detailsRowHeight = constants.activityDetails.height;
     const detailsRow1 = listDetailsBoundary + detailsRowHeight;
     const detailsRow2 = detailsRow1 + detailsRowHeight;
@@ -57,6 +61,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const detailsRow4 = detailsRow3 + detailsRowHeight;
     const snapPositions = [
       topMin,
+      belowTopButtons,
       listDetailsBoundary,
       detailsRow1,
       detailsRow2,
@@ -84,13 +89,16 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         const currentPosition = this.props.snap + delta;
         let containedPosition: number | undefined;
         let snap: number | undefined;
+        let snapIndex: number | undefined;
         const lastIndex = snapPositions.length - 1;
         if (currentPosition <= snapPositions[0]) {
           snap = snapPositions[0];
           containedPosition = snap;
+          snapIndex = 0;
         } else if (currentPosition >= snapPositions[lastIndex]) {
           snap = snapPositions[lastIndex];
           containedPosition = snap;
+          snapIndex = lastIndex;
         } else {
           containedPosition = currentPosition;
           for (let p = 0; p < lastIndex; p++) {
@@ -103,6 +111,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
             }
             // We are between p1 and p2. Which is closer?
             snap = (d1 < d2) ? p1 : p2;
+            snapIndex = (d1 < d2) ? p : p + 1;
             break;
           }
         }
@@ -115,8 +124,9 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           this.setState({
             top,
             snap,
+            snapIndex,
           })
-          this.props.onMoved(snap);
+          this.props.onMoved(snap, snapIndex!);
         }
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
@@ -126,7 +136,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         log.trace('onPanResponderRelease', this.props.snap);
         const snapped = this.state.snap || this.props.snap;
         this.setState({ snap: snapped, top: snapped });
-        this.props.onReleased(snapped);
+        this.props.onReleased(snapped, this.state.snapIndex!);
       },
       onPanResponderTerminate: (evt, gestureState) => {
         log.trace('onPanResponderTerminate');
