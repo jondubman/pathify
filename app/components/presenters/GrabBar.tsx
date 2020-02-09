@@ -46,7 +46,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     super(props);
     this.state = {
       snap: props.snap,
-      top: props.top,
+      top: props.snap,
     }
     const topMin = dynamicTopBelowButtons();
     const listDetailsBoundary = topMin + constants.activityList.height;
@@ -79,9 +79,9 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       onPanResponderMove: (evt, gestureState) => {
         // The most recent move distance is gestureState.move{X,Y}
         // The accumulated gesture distance since becoming responder is gestureState.d{x,y}
-        log.trace('onPanResponderMove', this.props.top, gestureState.dx, gestureState.dy);
+        log.trace('onPanResponderMove', this.props.snap, gestureState.dx, gestureState.dy);
         let delta = gestureState.dy;
-        const currentPosition = this.props.top + delta;
+        const currentPosition = this.props.snap + delta;
         let containedPosition: number | undefined;
         let snap: number | undefined;
         const lastIndex = snapPositions.length - 1;
@@ -116,17 +116,17 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
             top,
             snap,
           })
+          this.props.onMoved(snap);
         }
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         // User has released all touches while this view is the responder. This typically means a gesture has succeeded.
         ReactNativeHaptic.generate('notificationSuccess');
-        log.trace('onPanResponderRelease', this.props.top);
-        const snapped = this.state.snap || this.props.top;
-        this.props.onMoved(snapped, snapped);
+        log.trace('onPanResponderRelease', this.props.snap);
+        const snapped = this.state.snap || this.props.snap;
         this.setState({ snap: snapped, top: snapped });
-        this.props.onReleased();
+        this.props.onReleased(snapped);
       },
       onPanResponderTerminate: (evt, gestureState) => {
         log.trace('onPanResponderTerminate');

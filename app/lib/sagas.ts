@@ -1499,8 +1499,11 @@ const sagas = {
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
-      const grabBarTop = dynamicTopBelowButtons(); // TODO
-      yield put(newAction(AppAction.setAppOption, { grabBarTop, grabBarSnapTop: grabBarTop })); // TODO
+      const grabBarSnap = dynamicTopBelowButtons(); // TODO
+      yield put(newAction(AppAction.setAppOption, {
+        grabBarSnap: grabBarSnap,
+        grabBarSnapPreview: grabBarSnap,
+      }))
       yield put(newAction(AppAction.flagEnable, 'showGrabBar'));
       if (pausedTime) {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
