@@ -9,12 +9,12 @@ import GrabBar from 'presenters/GrabBar';
 
 interface GrabBarStateProps {
   pressed: boolean;
-  snapTop: number;
+  snap: number;
   top: number;
 }
 
 interface GrabBarDispatchProps {
-  onMoved: (top: number, snapTop: number) => void;
+  onMoved: (top: number, snap: number) => void;
   onPressed: () => void;
   onReleased: () => void;
 }
@@ -24,14 +24,14 @@ export type GrabBarProps = GrabBarStateProps & GrabBarDispatchProps;
 const mapStateToProps = (state: AppState): GrabBarStateProps => {
   return {
     pressed: state.flags.grabBarPressed,
-    snapTop: state.options.grabBarSnapTop,
+    snap: state.options.grabBarSnapTop,
     top: state.options.grabBarTop,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): GrabBarDispatchProps => {
-  const onMoved = (top: number, snapTop: number) => {
-    dispatch(newAction(AppAction.setAppOption, { grabBarTop: top, grabBarSnapTop: snapTop }));
+  const onMoved = (top: number, snap: number) => {
+    dispatch(newAction(AppAction.setAppOption, { grabBarTop: top, grabBarSnapTop: snap }));
   }
   const onPressed = () => {
     dispatch(newAction(AppAction.flagEnable, 'grabBarPressed'));
