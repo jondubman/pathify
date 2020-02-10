@@ -15,8 +15,7 @@ import ReactNativeHaptic from 'react-native-haptic';
 import { GrabBarProps } from 'containers/GrabBarContainer';
 import constants from 'lib/constants';
 import {
-  dynamicAreaTop,
-  dynamicTopBelowButtons,
+  snapPositions,
 } from 'lib/selectors';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -47,27 +46,11 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
   constructor(props: GrabBarProps) {
     super(props);
     this.state = {
-      snap: props.snap,
+      snap: undefined,
       snapIndex: undefined,
-      top: props.snap,
+      top: undefined,
     }
-    const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
-    const belowTopButtons = dynamicTopBelowButtons();
-    const listDetailsBoundary = belowTopButtons + constants.activityList.height;
-    const detailsRowHeight = constants.activityDetails.height;
-    const detailsRow1 = listDetailsBoundary + detailsRowHeight;
-    const detailsRow2 = detailsRow1 + detailsRowHeight;
-    const detailsRow3 = detailsRow2 + detailsRowHeight;
-    const detailsRow4 = detailsRow3 + detailsRowHeight;
-    const snapPositions = [
-      topMin,
-      belowTopButtons,
-      listDetailsBoundary,
-      detailsRow1,
-      detailsRow2,
-      detailsRow3,
-      detailsRow4,
-    ]
+    const snaps = snapPositions();
     this._panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -90,20 +73,20 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         let containedPosition: number | undefined;
         let snap: number | undefined;
         let snapIndex: number | undefined;
-        const lastIndex = snapPositions.length - 1;
-        if (currentPosition <= snapPositions[0]) {
-          snap = snapPositions[0];
+        const lastIndex = snaps.length - 1;
+        if (currentPosition <= snaps[0]) {
+          snap = snaps[0];
           containedPosition = snap;
           snapIndex = 0;
-        } else if (currentPosition >= snapPositions[lastIndex]) {
-          snap = snapPositions[lastIndex];
+        } else if (currentPosition >= snaps[lastIndex]) {
+          snap = snaps[lastIndex];
           containedPosition = snap;
           snapIndex = lastIndex;
         } else {
           containedPosition = currentPosition;
           for (let p = 0; p < lastIndex; p++) {
-            const p1 = snapPositions[p];
-            const p2 = snapPositions[p + 1];
+            const p1 = snaps[p];
+            const p2 = snaps[p + 1];
             const d1 = currentPosition - p1;
             const d2 = p2 - currentPosition;
             if (d1 < 0 || d2 < 0) {
@@ -122,9 +105,9 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           }
           const top = containedPosition;
           this.setState({
-            top,
             snap,
             snapIndex,
+            top,
           })
           this.props.onMoved(snap, snapIndex!);
         }
@@ -135,7 +118,10 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         ReactNativeHaptic.generate('notificationSuccess');
         log.trace('onPanResponderRelease', this.props.snap);
         const snapped = this.state.snap || this.props.snap;
-        this.setState({ snap: snapped, top: snapped });
+        this.setState({
+          snap: snapped,
+          top: snapped,
+        })
         this.props.onReleased(snapped, this.state.snapIndex!);
       },
       onPanResponderTerminate: (evt, gestureState) => {
@@ -149,13 +135,13 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const dragLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
-      top: this.state.top,
+      top: this.state.top || this.props.snap,
     } as StyleProp<ViewStyle>;
 
     const snapLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
-      top: this.state.snap,
+      top: this.state.snap || this.props.snap,
     } as StyleProp<ViewStyle>;
 
     const {
@@ -164,7 +150,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const dragStyle = pressed ? [lineStyleBase, lineStyleActive] : lineStyleBase;
     const snapStyle = lineStyleBase;
     return (
-      <Fragment>
+      <Fragment key={this.props.key}>
         <View {...this._panResponder.panHandlers} style={dragLayoutStyle}>
           <View pointerEvents="none" style={dragStyle} />
           <View pointerEvents="none" style={dragStyle} />
@@ -172,7 +158,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           <View pointerEvents="none" style={dragStyle} />
           <View pointerEvents="none" style={dragStyle} />
         </View>
-        {this.state.top === this.state.snap ? null : (
+        {this.state.top === this.props.snap ? null : (
           <View pointerEvents="none" style={snapLayoutStyle}>
             <View pointerEvents="none" style={snapStyle} />
             <View pointerEvents="none" style={snapStyle} />

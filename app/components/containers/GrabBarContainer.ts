@@ -4,10 +4,16 @@ import {
   AppAction,
   newAction,
 } from 'lib/actions';
+import {
+  getCachedPathInfo,
+  snapPositions,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import GrabBar from 'presenters/GrabBar';
+import log from 'shared/log';
 
 interface GrabBarStateProps {
+  key: string;
   pressed: boolean;
   snap: number;
 }
@@ -21,10 +27,17 @@ interface GrabBarDispatchProps {
 export type GrabBarProps = GrabBarStateProps & GrabBarDispatchProps;
 
 const mapStateToProps = (state: AppState): GrabBarStateProps => {
+  let snap = state.options.grabBarSnap; // not grabBarSnapPreview! That changes while dragging.
+  // This is the same trick used with the mapOpacity slider to avoid redundant updates.
+  if (!state.options.selectedActivityId || !getCachedPathInfo(state)) {
+    const snaps = snapPositions();
+    snap = Math.min(snap, snaps[2]); // TODO constants.layout.snapIndex...
+  }
   return {
+    key: snap.toString(),
     pressed: state.flags.grabBarPressed,
-    snap: state.options.grabBarSnap, // not grabBarSnapPreview! That changes while dragging.
-  } // This is the same trick used with the mapOpacity slider to avoid redundant updates.
+    snap,
+  }
 }
 
 const mapDispatchToProps = (dispatch: Function): GrabBarDispatchProps => {

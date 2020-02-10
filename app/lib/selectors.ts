@@ -574,3 +574,26 @@ export const selectedActivityPath = createSelector(
     return path;
   }
 )
+
+// Layout
+
+export const snapPositions = (): number[] => {
+    const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
+    const belowTopButtons = dynamicTopBelowButtons();
+    const listDetailsBoundary = belowTopButtons + constants.activityList.height;
+    const detailsRowHeight = constants.activityDetails.height;
+    const detailsRow1 = listDetailsBoundary + detailsRowHeight;
+    const detailsRow2 = detailsRow1 + detailsRowHeight;
+    const detailsRow3 = detailsRow2 + detailsRowHeight;
+    const detailsRow4 = detailsRow3 + detailsRowHeight;
+    const snapPositions = [
+      topMin,
+      belowTopButtons,
+      listDetailsBoundary,
+      detailsRow1,
+      detailsRow2,
+      detailsRow3,
+      detailsRow4,
+    ]
+    return snapPositions;
+}
