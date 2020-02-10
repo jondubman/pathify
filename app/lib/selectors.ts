@@ -88,6 +88,10 @@ export const currentOrSelectedActivity = (state: AppState): Activity | undefined
   return currentActivity(state) || selectedActivity(state);
 }
 
+export const mapIsFullScreen = (state: AppState): boolean => (
+  state.flags.mapFullScreen || state.options.grabBarSnapIndex === 0
+)
+
 // Note this 'selector' does not currently depend on state.
 export const dynamicAreaTop = (): number => (
   constants.safeAreaTop || getStatusBarHeight()
@@ -98,12 +102,12 @@ export const dynamicClockBottom = (state: AppState): number => (
 )
 
 export const dynamicLowerButtonBase = (state: AppState): number => (
-  (state.flags.mapFullScreen ? (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
-                             : constants.mapLogoHeight + constants.bottomButtonSpacing)
+  shouldShowTimeline(state) ? (constants.mapLogoHeight + constants.bottomButtonSpacing)
+                            : (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
 )
 
 export const dynamicMapHeight = (state: AppState): number => {
-  return utils.windowSize().height - dynamicTimelineHeight(state);
+  return utils.windowSize().height;
 }
 
 export const dynamicMapStyle = (state: AppState): MapStyle => (
@@ -111,7 +115,7 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
 )
 
 export const dynamicTimelineHeight = (state: AppState): number => (
-  state.flags.mapFullScreen ?
+  !shouldShowTimeline(state) || mapIsFullScreen(state) ?
     0
     :
     constants.timeline.default.height
@@ -119,46 +123,31 @@ export const dynamicTimelineHeight = (state: AppState): number => (
 
 // pixel width of entire of timeline including off-screen portion
 export const dynamicTimelineScrollWidth = (state: AppState): number => (
-  state.flags.mapFullScreen ?
-    0
-    :
+  shouldShowTimeline(state) ?
     utils.windowSize().width * constants.timeline.widthMultiplier
+    :
+    0
 )
 
 // pixel width of on-screen portion of timeline
 export const dynamicTimelineWidth = (state: AppState): number => (
-  state.flags.mapFullScreen ?
-    0
-    :
+  shouldShowTimeline(state) ?
     utils.windowSize().width
+    :
+    0
 )
 
 export const shouldShowActivityList = (state: AppState): boolean => (
-  // TODO cleanup
-  // (state.flags.showActivityList && !state.flags.mapFullScreen)
   (state.options.grabBarSnapIndex > 1)
+)
+
+export const shouldShowTimeline = (state: AppState): boolean => (
+  shouldShowActivityList(state)
 )
 
 export const showActivityDetailsRows = (state: AppState): number => {
   const rows = Math.max(0, state.options.grabBarSnapIndex - 2);
   return rows;
-  // TODO cleanup
-  // const {
-  //   mapFullScreen,
-  //   mapTapped,
-  //   // showActivityDetails,
-  //   trackingActivity,
-  // } = state.flags;
-  // if (!showActivityDetails) {
-  //   return false;
-  // }
-  // if ((!mapFullScreen || (mapFullScreen && !mapTapped)) && trackingActivity) {
-  //   return true; // Always show ActivityDetails of currentActivity,_unless mapTapped.
-  // }
-  // if (mapFullScreen) {
-  //   return false;
-  // }
-  // return showActivityDetails; // Here's where the flag directly applies.
 }
 
 export const dynamicTopBelowActivityList = (state: AppState): number => (
@@ -186,12 +175,12 @@ export const mapHidden = (state: AppState): boolean => (
 
 export const mapPadding = (state: AppState): [number, number] => {
   const horizontal = constants.map.fitBounds.minHorizontalPadding;
-  const showActivityList = state.flags.showActivityList && !state.flags.mapFullScreen;
-  const showTimeline = state.flags.showTimeline && !state.flags.mapFullScreen;
+  const showActivityList = shouldShowActivityList(state);
   const topClearZone = dynamicTopBelowButtons()
     + (showActivityList ? 1 : 0) * constants.activityList.height;
-  const bottomClearZone = (showTimeline ? 1 : 0) * constants.timeline.default.height;
+  const bottomClearZone = constants.timeline.default.height;
   const vertical = Math.max(topClearZone, bottomClearZone);
+
   return [vertical + constants.map.fitBounds.minVerticalPadding, horizontal];
 }
 

@@ -6,6 +6,7 @@ import TimelineControls from 'presenters/TimelineControls';
 import {
   dynamicClockBottom,
   dynamicTimelineHeight,
+  mapIsFullScreen,
 } from 'lib/selectors';
 import utils from 'lib/utils';
 
@@ -26,7 +27,7 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
     bottom: dynamicClockBottom(state),
-    mapFullScreen: state.flags.mapFullScreen,
+    mapFullScreen: mapIsFullScreen(state),
     nowMode: state.flags.timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     timelineHeight: dynamicTimelineHeight(state),
     timelineScrolling: state.flags.timelineScrolling,

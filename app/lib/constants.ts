@@ -115,9 +115,6 @@ const colors = {
     border: withOpacity(namedColors.white, 0.75),
     labelFont: withOpacity(namedColors.white, 0.75),
   },
-  activityInfo: {
-    background: withOpacity(namedColors.silver, 0),
-  },
   activityList: {
     background: 'transparent',
     backgroundMarginPast: withOpacity(namedColors.gray, 0.25),
@@ -313,11 +310,6 @@ const constants = {
     itemMarginTop: 0,
     labelFontSize: 11,
     spaceBetween: 0,
-  },
-  activityInfo: {
-    height: 200,
-    sideMargin: 5,
-    topOffset: safeAreaTop,
   },
   activityList: {
     activityHeight: initialTimelineHeight,

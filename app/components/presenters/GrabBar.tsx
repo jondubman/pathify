@@ -51,7 +51,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       snapIndex: undefined,
       top: props.snap,
     }
-    const topMin = dynamicAreaTop() - constants.buttonOffset;
+    const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
     const belowTopButtons = dynamicTopBelowButtons();
     const listDetailsBoundary = belowTopButtons + constants.activityList.height;
     const detailsRowHeight = constants.activityDetails.height;

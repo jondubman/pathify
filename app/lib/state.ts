@@ -44,7 +44,6 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
-    closeSettingsAfterFullScreenSwitch: false, // maybe include in prefs
     followingPath: false, // is map following prior locations of user on an activity path? see flags.showPastLocation.
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false,
@@ -57,9 +56,7 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    mapTapped: false, // tapping the map in mapFullScreen mode when mapTapTogglesFullScreen disabled
-                      // hides even the minimal UI, leaving nothing but map/path
-    mapTapTogglesFullScreen: false, // should tapping the map by itself toggle full screen mode; false seems better.
+    mapTapped: false,
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     receiveActivityChangeEvents: true, // TODO
@@ -78,7 +75,7 @@ export const initialAppState = {
     showGrabBar: false, // generally true
     showPathsOnMap: true, // generally true
     showPastLocation: true, // as a Pulsar on the map
-    showTimeline: true, // generally true
+    // showTimeline: true, // generally true
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
@@ -105,7 +102,7 @@ export const initialAppState = {
     currentActivityId: null as string | null, // while tracking Activity
     decelerationRate: 1, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
     grabBarSnap: constants.grabBar.initialTop, // for GrabBar component
-    grabBarSnapIndex: 0, // TODO
+    grabBarSnapIndex: 1, // TODO
     grabBarSnapPreview: constants.grabBar.initialTop, // for GrabBar component
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
@@ -142,7 +139,7 @@ export const persistedFlags = [
   'followingUser',
   'mapFullScreen',
   'showActivityList',
-  'showTimeline',
+  // 'showTimeline',
   'timelineNow',
 ]
 

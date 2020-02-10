@@ -64,7 +64,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     mapStyle: 'string',
     mapZoomLevel: 'double',
     pausedTime: 'int',
-    showTimeline: 'bool',
+    showTimeline: 'bool', // TODO no longer used
     timelineNow: 'bool',
     timelineZoomValue: 'double',
     updateTime: 'int',
@@ -86,7 +86,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   mapStyle: string,
   mapZoomLevel: number;
   pausedTime: number,
-  showTimeline: boolean,
+  showTimeline: boolean, // TODO no longer used
   timelineNow: boolean,
   timelineZoomValue: number,
   updateTime: number,
@@ -121,7 +121,7 @@ const defaultSettings = {
   mapStyle: constants.map.default.style,
   mapZoomLevel: 0,
   pausedTime: 0,
-  showTimeline: true,
+  showTimeline: true, // TODO no longer used
   timelineNow: true,
   timelineZoomValue: constants.timeline.default.zoomValue,
   updateTime: 0,

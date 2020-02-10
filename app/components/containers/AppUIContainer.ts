@@ -2,16 +2,15 @@ import { connect } from 'react-redux';
 
 import AppUI from 'presenters/AppUI';
 import {
-  selectedOrCurrentActivity,
   dynamicTimelineHeight,
-  menuOpen,
+  mapIsFullScreen,
+  shouldShowTimeline,
  } from 'lib/selectors';
 import { AppState } from 'lib/state';
 
 interface AppUIStateProps {
   mapFullScreen: boolean;
   mapTapped: boolean;
-  mapTapTogglesFullScreen: boolean;
   showActivityInfo: boolean;
   showDebugInfo: boolean;
   showTimeline: boolean;
@@ -25,20 +24,16 @@ export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
   const {
-    mapFullScreen,
     mapTapped,
-    mapTapTogglesFullScreen,
     showActivityInfo,
     showDebugInfo,
-    showTimeline
   } = state.flags;
   return {
-    mapFullScreen,
+    mapFullScreen: mapIsFullScreen(state),
     mapTapped,
-    mapTapTogglesFullScreen,
     showActivityInfo: showActivityInfo,
-    showDebugInfo: showDebugInfo && !!selectedOrCurrentActivity(state) && !menuOpen(state),
-    showTimeline: showTimeline && !mapFullScreen,
+    showDebugInfo,
+    showTimeline: shouldShowTimeline(state),
     timelineHeight: dynamicTimelineHeight(state),
   }
 }

@@ -48,8 +48,6 @@ class AppUI extends Component<AppUIProps> {
   render() {
     const {
       mapFullScreen,
-      mapTapped,
-      mapTapTogglesFullScreen,
       showActivityInfo,
       showDebugInfo,
       showTimeline,
@@ -65,7 +63,7 @@ class AppUI extends Component<AppUIProps> {
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
           {showActivityInfo ? <ActivityInfoContainer /> : null}
-          {mapFullScreen && (mapTapped && !mapTapTogglesFullScreen) ? null :
+          {mapFullScreen ? null :
             (<Fragment>
               {showTimeline ? <TimelineScrollContainer /> : null}
               {showDebugInfo ? <DebugInfoContainer /> : null}

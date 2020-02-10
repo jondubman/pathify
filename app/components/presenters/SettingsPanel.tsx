@@ -195,6 +195,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
           :
           null
         }
+        {/* TODO cleanup
         <View style={[Styles.switchContainer, { width: switchWidth }]}>
           <View style={Styles.switchView}>
             <View style={Styles.switch}>
@@ -213,6 +214,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
             </View>
           </View>
         </View>
+        */}
         <SettingsButtonContainer />
       </View>
     )

@@ -8,6 +8,7 @@ import { AppAction, newAction } from 'lib/actions';
 import {
   dynamicLowerButtonBase,
   mapHidden,
+  mapIsFullScreen,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import store from 'lib/store';
@@ -33,7 +34,6 @@ const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
   const {
     followingPath,
     followingUser,
-    mapFullScreen,
     timelineNow,
   } = state.flags;
   return {
@@ -41,22 +41,22 @@ const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
     followingUser,
     bottomOffset: dynamicLowerButtonBase(state),
     hideBoth: mapHidden(state),
-    hideFollowPath: timelineNow && mapFullScreen && !followingPath,
+    hideFollowPath: timelineNow && mapIsFullScreen(state) && !followingPath,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
   const onPressFollowPath = () => {
+    const state = store.getState();
     const {
       followingPath,
-      mapFullScreen,
       timelineNow,
-    } = store.getState().flags;
+    } = state.flags;
     if (followingPath) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingPath));
     } else {
       dispatch(newAction(AppAction.startFollowingPath));
-      if (!mapFullScreen && timelineNow) {
+      if (!mapIsFullScreen(state) && timelineNow) {
         dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
       }
     }

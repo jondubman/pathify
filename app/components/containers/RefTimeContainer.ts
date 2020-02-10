@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 
-import { AppAction, newAction } from 'lib/actions';
 import {
   dynamicTimelineHeight,
   flavorText,
