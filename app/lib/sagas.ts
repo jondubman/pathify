@@ -717,7 +717,7 @@ const sagas = {
       const { activityId } = params;
       yield call(log.info, 'saga continueActivity', activityId);
       yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
-      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomMap: false, zoomTimeline: true })); // in continueActivity
+      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomTimeline: true, zoomMap: false })); // in continueActivity
       // const scrollTime = yield select((state: AppState) => state.options.scrollTime);
       // yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in continueActivity
     } catch (err) {
@@ -1237,7 +1237,7 @@ const sagas = {
         }
         log.debug('selectActivity setting appOptions', appOptions);
         yield put(newAction(AppAction.setAppOption, appOptions));
-        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // both
+        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: true, zoomMap: true })); // both
       }
     } catch (err) {
       yield call(log.error, 'saga selectActivity', err);
@@ -1528,7 +1528,7 @@ const sagas = {
             const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
             if (activity && activity.id) {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
-              yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: false, zoomTimeline: false })); // in startupActions
+              yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: false, zoomMap: false })); // in startupActions
             }
           }
         }
@@ -1600,7 +1600,7 @@ const sagas = {
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,
           { currentActivityId: null, selectedActivityId: activityId, scrollTime: halfTime, viewTime: halfTime }));
-        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in stopActivity
+        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: true, zoomMap: true })); // in stopActivity
         yield put(newAction(AppAction.scrollActivityList, { scrollTime: halfTime })); // in stopActivity
       }
     } catch (err) {

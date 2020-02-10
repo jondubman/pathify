@@ -27,8 +27,7 @@ interface TopMenuDispatchProps {
   // Note onDeleteActivity is a function that returns a function.
   onDeleteActivity: (id: string) => ((event: GestureResponderEvent) => void);
   onDismiss: (event: GestureResponderEvent) => void;
-  onHideActivityDetails: (event: GestureResponderEvent) => void;
-  onShowActivityDetails: (event: GestureResponderEvent) => void;
+  onZoomToActivity: (id: string) => void;
 }
 
 export type TopMenuProps = TopMenuStateProps & TopMenuDispatchProps;
@@ -61,23 +60,16 @@ const mapDispatchToProps = (dispatch: Function): TopMenuDispatchProps => {
     ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
   }
-  const onHideActivityDetails = () => {
-    log.debug('TopMenu onHideActivityDetails');
+  const onZoomToActivity = (id: string) => {
+    log.debug('TopMenu onZoomToActivity');
     ReactNativeHaptic.generate('impactLight');
-    dispatch(newAction(AppAction.flagDisable, 'showActivityDetails'));
     dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
-  }
-  const onShowActivityDetails = () => {
-    log.debug('TopMenu onShowActivityDetails');
-    ReactNativeHaptic.generate('impactLight');
-    dispatch(newAction(AppAction.flagEnable, 'showActivityDetails'));
-    dispatch(newAction(AppAction.flagDisable, 'topMenuOpen'));
+    dispatch(newAction(AppAction.zoomToActivity, { id, zoomMap: true, zoomTimeline: false  }));
   }
   const dispatchers = {
     onDeleteActivity,
     onDismiss,
-    onHideActivityDetails,
-    onShowActivityDetails,
+    onZoomToActivity,
   }
   return dispatchers;
 }

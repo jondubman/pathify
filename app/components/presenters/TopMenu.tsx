@@ -1,8 +1,8 @@
 import React, {
   Fragment,
 } from 'react';
-
 import {
+  GestureResponderEvent,
   StyleProp,
   StyleSheet,
   Text,
@@ -45,6 +45,13 @@ class TopMenu extends React.Component<TopMenuProps> {
 
   constructor(props: any) {
     super(props);
+    this.onPressZoomToActivity = this.onPressZoomToActivity.bind(this);
+  }
+
+  onPressZoomToActivity(event: GestureResponderEvent) {
+    if (this.props.selectedActivityId) {
+      this.props.onZoomToActivity(this.props.selectedActivityId);
+    }
   }
 
   render() {
@@ -105,31 +112,17 @@ class TopMenu extends React.Component<TopMenuProps> {
             <Fragment>
               <View style={subpanelStyle}>
                 <View style={subpanelContentsStyle}>
-                  {props.showActivityDetails ? (
-                    <View style={menuItemContainerStyle}>
-                      <TouchableHighlight
-                        onPress={props.onHideActivityDetails}
-                        style={menuItemStyle}
-                        underlayColor={constants.colors.topMenu.menuItemUnderlay}
-                      >
-                        <Text style={Styles.text}>
-                          Hide Activity Details
-                        </Text>
-                      </TouchableHighlight>
-                    </View>
-                  ) : (
-                    <View style={menuItemContainerStyle}>
-                      <TouchableHighlight
-                        onPress={props.onShowActivityDetails}
-                        style={menuItemStyle}
-                        underlayColor={constants.colors.topMenu.menuItemUnderlay}
-                      >
-                        <Text style={Styles.text}>
-                          Show Activity Details
+                  <View style={menuItemContainerStyle}>
+                    <TouchableHighlight
+                      onPress={this.onPressZoomToActivity}
+                      style={menuItemStyle}
+                      underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                    >
+                      <Text style={Styles.text}>
+                        Zoom Map to Activity
                       </Text>
-                      </TouchableHighlight>
-                    </View>
-                  )}
+                    </TouchableHighlight>
+                  </View>
                   {(props.current || !props.selectedActivityId) ? null : (
                     <View style={menuItemContainerStyle}>
                       <TouchableHighlight
