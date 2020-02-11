@@ -106,13 +106,14 @@ class MapArea extends Component<MapAreaProps> {
         </View>
       )
     }
+    // Note contentInset must be symmetric (matching inset on top/bottom) in to avoid panning map on hide/show timeline.
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>
           <Mapbox.MapView
             attributionEnabled={true}
             compassEnabled={false}
-            contentInset={[0, 0, timelineHeight, 0]}
+            contentInset={[timelineHeight, 0, timelineHeight, 0]}
             logoEnabled={true}
             onDidFinishRenderingMapFully={this.onDidFinishRenderingMapFully}
             onPress={this.onPress}

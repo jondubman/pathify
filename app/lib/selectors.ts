@@ -109,7 +109,7 @@ export const dynamicRefTimeBottom = (state: AppState): number => (
 // TODO should this be just a constant now?
 export const dynamicLowerButtonBase = (state: AppState): number => (
   shouldShowTimeline(state) ? (constants.mapLogoHeight + constants.bottomButtonSpacing)
-                            : (/*constants.safeAreaBottom*/ + constants.mapLogoHeight + constants.bottomButtonSpacing)
+                            : (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
 )
 
 export const dynamicMapHeight = (state: AppState): number => {
