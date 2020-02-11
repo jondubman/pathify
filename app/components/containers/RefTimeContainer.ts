@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import {
-  dynamicTimelineHeight,
+  dynamicRefTimeBottom,
   flavorText,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -55,7 +55,7 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   const flavorLine3 = flavorLines[2];
 
   return {
-    bottom: dynamicTimelineHeight(state),
+    bottom: dynamicRefTimeBottom(state),
     scrollTime,
     hours,
     minutes,

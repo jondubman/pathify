@@ -8,6 +8,7 @@ import { AppAction, newAction } from 'lib/actions';
 import {
   dynamicTimelineScrollWidth,
   dynamicTimelineWidth,
+  shouldShowTimeline,
   timelineVisibleTime,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -20,6 +21,7 @@ export interface TimelineScrollStateProps {
   pinchZoom: boolean;
   scrollableWidth: number;
   scrollToX: number;
+  showTimeline: boolean;
   timelineZoomValue: number;
   visibleTime: number;
   visibleWidth: number;
@@ -53,6 +55,7 @@ const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
     pinchZoom: state.flags.timelinePinchToZoom,
     scrollableWidth,
     scrollToX: scrollPositionAtCenter,
+    showTimeline: shouldShowTimeline(state),
     timelineZoomValue,
     visibleTime,
     visibleWidth,

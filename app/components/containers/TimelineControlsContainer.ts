@@ -1,19 +1,18 @@
 import { connect } from 'react-redux';
 
-import constants from 'lib/constants';
 import { AppState } from 'lib/state';
 import TimelineControls from 'presenters/TimelineControls';
 import {
   dynamicClockBottom,
+  dynamicRefTimeBottom,
   dynamicTimelineHeight,
   mapIsFullScreen,
 } from 'lib/selectors';
-import utils from 'lib/utils';
 
 interface TimelineControlsStateProps {
-  bottom: number;
+  clockBottom: number;
   mapFullScreen: boolean;
-  nowMode: boolean;
+  refTimeBottom: number;
   timelineHeight: number;
   timelineScrolling: boolean;
   zoomClockMoved: number;
@@ -26,9 +25,9 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
-    bottom: dynamicClockBottom(state),
+    clockBottom: dynamicClockBottom(state),
     mapFullScreen: mapIsFullScreen(state),
-    nowMode: state.flags.timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
+    refTimeBottom: dynamicRefTimeBottom(state),
     timelineHeight: dynamicTimelineHeight(state),
     timelineScrolling: state.flags.timelineScrolling,
     zoomClockMoved: state.options.zoomClockMoved,

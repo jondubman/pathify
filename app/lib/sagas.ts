@@ -1406,7 +1406,6 @@ const sagas = {
           activityId = continueActivityId;
         } else {
           yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-          // yield put(newAction(AppAction.flagEnable, 'mapFullScreen'));
           yield put(newAction(AppAction.flagDisable, 'mapTapped'));
           yield put(newAction(AppAction.flagEnable, 'showActivityDetails'));
           const followingNow = yield select((state: AppState) => state.flags.followingUser);
@@ -1595,7 +1594,6 @@ const sagas = {
         }
         yield put(newAction(AppAction.flagDisable, 'showActivityDetails'));
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-        // yield put(newAction(AppAction.flagDisable, 'mapFullScreen'));
         const halfTime = activity.tStart + (now - activity.tStart) / 2;
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,

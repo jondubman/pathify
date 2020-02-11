@@ -77,6 +77,7 @@ class MapArea extends Component<MapAreaProps> {
       initialZoomLevel,
       mapHidden,
       mapStyleURL,
+      timelineHeight,
       width,
     } = this.props;
 
@@ -104,14 +105,14 @@ class MapArea extends Component<MapAreaProps> {
           </TouchableWithoutFeedback>
         </View>
       )
-   }
+    }
     return (
       <View style={{ flex: 1 }}>
         <View style={viewStyle}>
           <Mapbox.MapView
             attributionEnabled={true}
             compassEnabled={false}
-            contentInset={[0, 0, 0, 0]}
+            contentInset={[0, 0, timelineHeight, 0]}
             logoEnabled={true}
             onDidFinishRenderingMapFully={this.onDidFinishRenderingMapFully}
             onPress={this.onPress}

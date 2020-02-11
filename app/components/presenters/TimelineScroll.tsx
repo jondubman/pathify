@@ -28,7 +28,6 @@ type State = Readonly<typeof initialState>
 const TimelineStyles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'transparent',
-    opacity: 1,
     position: 'absolute',
     bottom: 0,
   },
@@ -215,8 +214,11 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       pinchZoom,
       register,
       scrollToX,
+      showTimeline,
       timelineZoomValue,
     } = this.props;
+    const opacity = showTimeline ? 1 : 0;
+    const pointerEvents = showTimeline ? 'auto' : 'none';
     return (
       <ScrollView
         centerContent={false}
@@ -232,6 +234,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         onScrollEndDrag={this.onScrollEndDrag}
         overScrollMode='never'
         pinchGestureEnabled={pinchZoom}
+        pointerEvents={pointerEvents}
         ref={(_scrollView: ScrollView) => {
           this._scrollView = _scrollView;
           register(this);
@@ -239,7 +242,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         scrollEventThrottle={16 /* msec >= 16. default 0 means event sent only once each time view is scrolled. */}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        style={TimelineStyles.scrollView}
+        style={[TimelineStyles.scrollView, { opacity }]}
         zoomScale={pinchZoom ? timelineZoomValue : 1}
       >
         <TimelineContainer />

@@ -1,8 +1,16 @@
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import { dynamicMapHeight, dynamicMapStyle, mapHidden } from 'lib/selectors';
-import { AppState, MapRegionUpdate } from 'lib/state';
+import {
+  dynamicMapHeight,
+  dynamicMapStyle,
+  dynamicTimelineHeight,
+  mapHidden,
+} from 'lib/selectors';
+import {
+  AppState,
+  MapRegionUpdate,
+} from 'lib/state';
 import utils from 'lib/utils';
 import MapArea from 'presenters/MapArea';
 import { LonLat } from 'shared/locations';
@@ -14,6 +22,7 @@ interface MapAreaStateProps {
   initialZoomLevel: number,
   mapHidden: boolean;
   mapStyleURL: string;
+  timelineHeight: number;
   width: number;
 }
 
@@ -38,6 +47,7 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
     height: dynamicMapHeight(state),
     mapHidden: mapHidden(state),
     mapStyleURL: mapStyle.url,
+    timelineHeight: dynamicTimelineHeight(state),
     width,
   }
 }

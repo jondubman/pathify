@@ -58,7 +58,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     latMin: 'double',
     lonMax: 'double',
     lonMin: 'double',
-    mapFullScreen: 'bool',
+    mapFullScreen: 'bool', // TODO no longer used
     mapHeading: 'double',
     mapOpacity: 'double',
     mapStyle: 'string',
@@ -80,7 +80,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   latMin: number,
   lonMax: number,
   lonMin: number,
-  mapFullScreen: boolean,
+  mapFullScreen: boolean, // TODO no longer used
   mapHeading: number;
   mapOpacity: number,
   mapStyle: string,
@@ -115,7 +115,7 @@ const defaultSettings = {
   latMin: bounds[1][1],
   lonMax: bounds[0][0],
   lonMin: bounds[1][0],
-  mapFullScreen: false,
+  mapFullScreen: false, // TODO no longer used
   mapHeading: heading,
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,

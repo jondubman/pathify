@@ -159,12 +159,6 @@ const colors = {
     icon: namedColors.black,
     underlay: withOpacity(namedColors.purple, defaultOpacity),
   },
-  debugInfo: {
-    backgroundColor: withOpacity(namedColors.black, 0.65),
-    borderColor: withOpacity(namedColors.gray, 0.2),
-    borderWidth: 2,
-    text: namedColors.white,
-  },
   followButtons: {
     backgroundPath: { active: colorThemes.past, inactive: namedColors.black },
     backgroundUser: { active: colorThemes.nowDark, inactive: namedColors.black },
@@ -174,8 +168,8 @@ const colors = {
     underlayUser: 'transparent',
   },
   grabBar: {
-    line: withOpacity(namedColors.silver, 0.25),
-    lineActive: withOpacity(namedColors.orange, 0.75),
+    line: withOpacity(namedColors.silver, 0.20),
+    lineActive: withOpacity(namedColors.orange, 1),
 },
   helpButton: {
     background: namedColors.white,
@@ -266,6 +260,7 @@ const colors = {
       [TimespanKind.SELECTION]: withOpacity(namedColors.white, 0.25), // spans the whole timeline vertically
     },
     centerLine: withOpacity(namedColors.white, 0.5),
+    centerLineInert: withOpacity(namedColors.white, 0.25),
     centerLineZoom: withOpacity(namedColors.orange, 1),
     topLine: withOpacity(namedColors.gray, 0.5),
   },
@@ -390,12 +385,6 @@ const constants = {
   days: [
     'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'
   ],
-  debugInfo: {
-    borderWidth: 2,
-    height: 200,
-    padding: 5,
-    width: 200,
-  },
   followButtons: {
     opacity: defaultOpacity,
     rightOffset: buttonOffset,

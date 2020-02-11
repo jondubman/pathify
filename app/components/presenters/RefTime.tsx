@@ -40,6 +40,7 @@ const Styles = StyleSheet.create({
   refTimeContainer: {
     alignSelf: 'center',
     flexDirection: 'row',
+    position: 'absolute',
   },
   refTimeFull: {
     flexDirection: 'row',

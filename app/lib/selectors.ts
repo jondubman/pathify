@@ -89,7 +89,7 @@ export const currentOrSelectedActivity = (state: AppState): Activity | undefined
 }
 
 export const mapIsFullScreen = (state: AppState): boolean => (
-  state.flags.mapFullScreen || state.options.grabBarSnapIndex === 0
+  state.options.grabBarSnapIndex === 0
 )
 
 // Note this 'selector' does not currently depend on state.
@@ -98,12 +98,18 @@ export const dynamicAreaTop = (): number => (
 )
 
 export const dynamicClockBottom = (state: AppState): number => (
-  dynamicTimelineHeight(state) + constants.refTime.height + 1
+  shouldShowTimeline(state) ? (dynamicTimelineHeight(state) + constants.refTime.height + 1) :
+    (constants.safeAreaBottom + constants.refTime.height + 1)
 )
 
+export const dynamicRefTimeBottom = (state: AppState): number => (
+  dynamicClockBottom(state) - constants.refTime.height
+)
+
+// TODO should this be just a constant now?
 export const dynamicLowerButtonBase = (state: AppState): number => (
   shouldShowTimeline(state) ? (constants.mapLogoHeight + constants.bottomButtonSpacing)
-                            : (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
+                            : (/*constants.safeAreaBottom*/ + constants.mapLogoHeight + constants.bottomButtonSpacing)
 )
 
 export const dynamicMapHeight = (state: AppState): number => {
@@ -531,7 +537,6 @@ export const getCachedPathInfo = createSelector(
 export const pulsars = (state: AppState): OptionalPulsars => {
   const {
     followingUser,
-    mapFullScreen,
     mapTapped,
     showAllPastLocations,
     showPastLocation,
@@ -540,14 +545,14 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   } = state.flags;
   const pulsars = { ...state.options.pulsars };
   const { colors } = constants;
-  if (state.userLocation && (followingUser || !mapFullScreen || !mapTapped || trackingActivity)) {
+  if (state.userLocation && (followingUser || !mapIsFullScreen(state) || !mapTapped || trackingActivity)) {
     pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
       loc: [state.userLocation.lon, state.userLocation.lat],
       color: colors.pulsars.userLocation,
       visible: true,
     }
   }
-  if (showAllPastLocations || (showPastLocation && !(mapFullScreen && mapTapped) && !timelineNow)) {
+  if (showAllPastLocations || (showPastLocation && !(mapIsFullScreen(state) && mapTapped) && !timelineNow)) {
     const info = getCachedPathInfo(state);
     if (info) {
       pulsars.pastLocation = {

@@ -15,7 +15,6 @@ interface SettingsPanelStateProps {
   mapOpacity: number;
   mapStyle: MapStyle;
   mapStyles: MapStyle[];
-  showTimeline: boolean;
 }
 
 interface SettingsPanelDispatchProps {
@@ -32,7 +31,6 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
     mapOpacity: state.options.mapOpacity, // note: not using state.options.mapOpacityPreview, to avoid stuttering slider
     mapStyle: dynamicMapStyle(state),
     mapStyles: mapStyles(state),
-    showTimeline: !state.flags.mapFullScreen,
   }
 }
 

@@ -52,7 +52,6 @@ export const initialAppState = {
     logInProductionVersion: false, // typically false
     logToDatabase: false, // applies only if logs are enabled in general (see logInDebugVersion, logInProductionVersion)
     mapEnable: false, // if false, map will not be shown at all. Hold off at startup until we know the initialBounds.
-    mapFullScreen: false, // false: timeline is visible. true: map occupies full screen and timeline is hidden
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
@@ -70,7 +69,6 @@ export const initialAppState = {
     showActivityInfo: true, // generally true
     showActivityList: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
-    showDebugInfo: false, // for debugging, obviously
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
     showGrabBar: false, // generally true
     showPathsOnMap: true, // generally true
@@ -137,9 +135,9 @@ export interface AppState extends InitialAppState {
 export const persistedFlags = [
   'followingPath',
   'followingUser',
-  'mapFullScreen',
+  // 'mapFullScreen', // TODO no longer used
   'showActivityList',
-  // 'showTimeline',
+  // 'showTimeline', // TODO no longer used
   'timelineNow',
 ]
 

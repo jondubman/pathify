@@ -17,7 +17,6 @@ import ActivityInfoContainer from 'containers/ActivityInfoContainer';
 import { AppUIProps } from 'containers/AppUIContainer';
 import StartMenuContainer from 'containers/StartMenuContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
-import DebugInfoContainer from 'containers/DebugInfoContainer';
 import FollowButtonsContainer from 'containers/FollowButtonsContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
 import MapAreaContainer from 'containers/MapAreaContainer';
@@ -49,8 +48,6 @@ class AppUI extends Component<AppUIProps> {
     const {
       mapFullScreen,
       showActivityInfo,
-      showDebugInfo,
-      showTimeline,
       timelineHeight,
     } = this.props;
     const width = utils.windowSize().width;
@@ -62,25 +59,27 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
+          <View style={{ height: 25 } /* TODO adjusts default position of Mapbox logo and attribution */ } />
           {showActivityInfo ? <ActivityInfoContainer /> : null}
-          {mapFullScreen ? null :
-            (<Fragment>
-              {showTimeline ? <TimelineScrollContainer /> : null}
-              {showDebugInfo ? <DebugInfoContainer /> : null}
-              <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-                <CompassButtonContainer />
-                <FollowButtonsContainer />
-                <StartButtonContainer />
-              </View>
-              {showTimeline ? <TimelineControlsContainer /> : null}
-              <View style={{ position: 'absolute', width }}>
-                <HelpPanelContainer />
-                <TopMenuContainer />
-                <SettingsPanelContainer />
-              </View>
-              <StartMenuContainer />
-            </Fragment>)
-          }
+          <Fragment>
+            <TimelineScrollContainer />
+            {mapFullScreen ? null : (
+              <Fragment>
+                <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+                  <CompassButtonContainer />
+                  <FollowButtonsContainer />
+                  <StartButtonContainer />
+                </View>
+                <TimelineControlsContainer />
+                <View style={{ position: 'absolute', width }}>
+                  <HelpPanelContainer />
+                  <TopMenuContainer />
+                  <SettingsPanelContainer />
+                </View>
+                <StartMenuContainer />
+              </Fragment>
+            )}
+          </Fragment>
         </View>
       </View>
     )

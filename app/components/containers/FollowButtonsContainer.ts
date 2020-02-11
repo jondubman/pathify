@@ -65,14 +65,13 @@ const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
   const onPressFollowUser = () => {
     const {
       followingUser,
-      mapFullScreen,
       timelineNow,
     } = store.getState().flags;
     if (followingUser) { // toggle the state
       dispatch(newAction(AppAction.stopFollowingUser));
     } else {
       dispatch(newAction(AppAction.startFollowingUser));
-      if (!mapFullScreen && !timelineNow) {
+      if (!timelineNow) {
         dispatch(newAction(AppAction.jumpToNow));
       }
       setTimeout(() => {

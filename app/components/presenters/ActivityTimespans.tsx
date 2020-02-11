@@ -37,7 +37,7 @@ class ActivityTimespans extends React.Component<ActivityTimespansExtendedProps> 
     const { scale } = this.props as any;
     return activities.map((activity: ActivityDataExtended, index: number) => (
       <TimelineSpan
-        key={`${scale.x(activity.tStart)}-${scale.x(activity.tLast)}`}
+        key={`${scale.x(activity.tStart)}-${scale.x(activity.tLast)}-${index}`}
         color={this.timespanColor(activity)}
         kind={TimespanKind.ACTIVITY}
         xStart={scale.x(activity.tStart)}

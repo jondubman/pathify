@@ -56,11 +56,7 @@ const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
     log.debug('TopButton onPressIn');
     ReactNativeHaptic.generate('impactLight');
     const state = store.getState();
-    const { mapFullScreen } = state.flags;
     const { selectedActivityId } = state.options;
-    if (mapFullScreen) {
-      dispatch(newAction(AppAction.flagDisable, 'mapFullScreen'));
-    }
     // TODO for now, no actual menu opens unless there is a selected activity, because it would serve no purpose.
     if (selectedActivityId !== null) {
       dispatch(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));

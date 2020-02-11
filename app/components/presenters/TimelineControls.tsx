@@ -40,9 +40,13 @@ const Styles = StyleSheet.create({
   },
 })
 
-const backgroundColorFor = (zoomClockMoved: number) => (
-  (zoomClockMoved ? colors.centerLineZoom : colors.centerLine)
-)
+const backgroundColorFor = (props: TimelineControlsProps) => {
+  if (props.timelineHeight) {
+    return (props.zoomClockMoved ? colors.centerLineZoom : colors.centerLine);
+  } else {
+    return colors.centerLineInert
+  }
+}
 
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
@@ -52,8 +56,8 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.centerLine, {
-      backgroundColor: backgroundColorFor(props.zoomClockMoved),
-      height: props.timelineHeight
+      backgroundColor: backgroundColorFor(props),
+      height: (props.timelineHeight ? props.timelineHeight : constants.safeAreaBottom)
         + refTime.height + props.zoomClockMoved
         - timeline.bottomPaddingForAxis
         + 1
@@ -62,3 +66,5 @@ const TimelineControls = (props: TimelineControlsProps) => (
 )
 
 export default React.memo(TimelineControls); // Note use of memo (optimization based on shallow comparison of props)
+
+// top: (utils.windowSize().height - props.clockBottom),
