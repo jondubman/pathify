@@ -2,14 +2,12 @@ import { connect } from 'react-redux';
 
 import {
   showActivityDetailsRows,
-  shouldShowActivityList,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ActivityInfo from 'presenters/ActivityInfo';
 
 interface ActivityInfoStateProps {
   showActivityDetails: boolean;
-  showActivityList: boolean;
   showGrabBar: boolean;
 }
 
@@ -21,7 +19,6 @@ export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchPro
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
   return {
     showActivityDetails: showActivityDetailsRows(state) > 0,
-    showActivityList: shouldShowActivityList(state),
     showGrabBar: state.flags.showGrabBar,
   }
 }

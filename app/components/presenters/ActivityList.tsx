@@ -100,7 +100,7 @@ const listFooterClockStyle = {
 
 // The basic layout of this horizontal list is simple: margins flanking N boxes, each with activityMargin.
 // marginLeft (activityMargin activityWidth)* marginRight
-const getItemLayout = (data: ActivityDataExtended[] | null, index: number) => (
+const getItemLayout = (data: ActivityDataExtended[] | null | undefined, index: number) => (
   {
     index,
     length: (activityMargin + activityWidth),
@@ -260,7 +260,8 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       selectedActivityId,
       timelineNow,
       top,
-      trackingActivity
+      trackingActivity,
+      visible,
     } = this.props;
     const { scrolledBetweenActivities } = this.state;
     const selectedIsCurrent = (selectedActivityId === currentActivityId);
@@ -273,10 +274,10 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       position: 'absolute',
       top: centerLineTop,
     } as any;
-
+    const pointerEvents = visible ? 'auto' : 'none';
     return (
       <Fragment>
-        <View style={[Styles.box, { top }]}>
+        <View pointerEvents={pointerEvents} style={[Styles.box, { top }, visible ? {} : { opacity: 0 }]}>
           <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
           <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
           <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
@@ -317,7 +318,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
                 underlayColor={colors.futureZoneUnderlay}
               >
                 <View style={listFooterClockStyle}>
-                  <NowClockContainer interactive={false} />
+                  <NowClockContainer clockStyle={{}} interactive={false} />
                 </View>
               </TouchableHighlight>
             }

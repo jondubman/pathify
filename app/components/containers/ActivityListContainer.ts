@@ -11,6 +11,7 @@ import {
 } from 'lib/actions';
 import {
   dynamicTopBelowButtons,
+  shouldShowActivityList,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
@@ -30,6 +31,7 @@ interface ActivityListStateProps {
   timelineNow: boolean;
   trackingActivity: boolean;
   top: number;
+  visible: boolean;
 }
 
 interface ActivityListDispatchProps {
@@ -59,6 +61,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     timelineNow,
     trackingActivity,
     top: dynamicTopBelowButtons(),
+    visible: shouldShowActivityList(state),
   }
 }
 

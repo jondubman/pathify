@@ -53,11 +53,13 @@ const mapDispatchToProps = (dispatch: Function): GrabBarDispatchProps => {
   }
   const onReleased = (snap: number, snapIndex: number) => {
     dispatch(newAction(AppAction.flagDisable, 'grabBarPressed'));
-    dispatch(newAction(AppAction.setAppOption, { // Snap! Now we set both.
-      grabBarSnap: snap,
-      grabBarSnapIndex: snapIndex,
-      grabBarSnapPreview: snap,
-    }))
+    setTimeout(() => {
+      dispatch(newAction(AppAction.setAppOption, { // Snap! Now we set both.
+        grabBarSnap: snap,
+        grabBarSnapIndex: snapIndex,
+        grabBarSnapPreview: snap,
+      }))
+    }, 0)
   }
   const dispatchers = {
     onMoved,
