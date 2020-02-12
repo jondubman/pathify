@@ -23,7 +23,6 @@ import log from 'shared/log';
 import { Timepoint } from 'shared/timeseries';
 
 interface ActivityListStateProps {
-  animated: boolean;
   currentActivityId: string | null;
   list: ActivityDataExtended[];
   refreshCount: number;
@@ -53,7 +52,6 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     selectedActivityId,
   } = state.options;
   return {
-    animated: false,
     currentActivityId,
     list: state.cache.activities || [], // TODO could filter activities
     refreshCount: state.cache.refreshCount,

@@ -85,7 +85,6 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
       circleStrokeOpacity: 1,
     }
     const pulsarId = id;
-
     return (
       <Mapbox.Animated.ShapeSource id={`pulsarShape-${pulsarId}`} shape={circleShape}>
         <Mapbox.Animated.CircleLayer id={`pulsarCircleLayer-${pulsarId}`} style={circleStyle} />

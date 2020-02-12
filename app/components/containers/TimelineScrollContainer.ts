@@ -21,7 +21,6 @@ export interface TimelineScrollStateProps {
   pinchZoom: boolean;
   scrollableWidth: number;
   scrollToX: number;
-  showTimeline: boolean;
   timelineZoomValue: number;
   visibleTime: number;
   visibleWidth: number;
@@ -46,16 +45,16 @@ const mapStateToProps = (state: AppState): TimelineScrollStateProps => {
   // scrollPositionAtCenter: scroll position of the left edge of the scrollArea.
   // To calculate, start at the center of the scrollable area, then back up half the width of the visible area:
   const scrollableWidth = dynamicTimelineScrollWidth(state);
-  const scrollPositionAtCenter = (scrollableWidth / 2) - (dynamicTimelineWidth(state) / 2);
   const visibleTime = timelineVisibleTime(timelineZoomValue);
   const visibleWidth = dynamicTimelineWidth(state);
+  const scrollPositionAtCenter = (scrollableWidth / 2) - (dynamicTimelineWidth(state) / 2);
+  const scrollToX = scrollPositionAtCenter;
   return {
     centerTime,
     decelerationRate,
     pinchZoom: state.flags.timelinePinchToZoom,
     scrollableWidth,
-    scrollToX: scrollPositionAtCenter,
-    showTimeline: shouldShowTimeline(state),
+    scrollToX,
     timelineZoomValue,
     visibleTime,
     visibleWidth,

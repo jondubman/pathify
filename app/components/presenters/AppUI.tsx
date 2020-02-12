@@ -48,9 +48,12 @@ class AppUI extends Component<AppUIProps> {
     const {
       mapFullScreen,
       showActivityInfo,
+      showTimeline,
       timelineHeight,
     } = this.props;
     const width = utils.windowSize().width;
+    const pointerEvents = showTimeline ? 'auto' : 'none';
+    const timelineOpacity = { opacity: showTimeline ? 1 : 0 };
     return (
       <View style={AppStyles.containingAppView}>
         <StatusBar
@@ -62,7 +65,9 @@ class AppUI extends Component<AppUIProps> {
           <View style={{ height: 12 } /* TODO lowers default position of Mapbox logo and attribution */ } />
           {showActivityInfo ? <ActivityInfoContainer /> : null}
           <Fragment>
-            <TimelineScrollContainer />
+            <View pointerEvents={pointerEvents} style={timelineOpacity}>
+              <TimelineScrollContainer />
+            </View>
             {mapFullScreen ? null : (
               <Fragment>
                 <View style={{ bottom: timelineHeight, position: 'absolute', width }}>

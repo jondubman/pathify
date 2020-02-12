@@ -4,6 +4,7 @@ import AppUI from 'presenters/AppUI';
 import {
   dynamicTimelineHeight,
   mapIsFullScreen,
+  shouldShowTimeline,
  } from 'lib/selectors';
 import { AppState } from 'lib/state';
 
@@ -11,6 +12,7 @@ interface AppUIStateProps {
   mapFullScreen: boolean;
   mapTapped: boolean;
   showActivityInfo: boolean;
+  showTimeline: boolean;
   timelineHeight: number;
 }
 
@@ -28,6 +30,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
     showActivityInfo: showActivityInfo,
+    showTimeline: shouldShowTimeline(state),
     timelineHeight: dynamicTimelineHeight(state),
   }
 }

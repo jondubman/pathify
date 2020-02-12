@@ -128,19 +128,15 @@ export const dynamicTimelineHeight = (state: AppState): number => (
 )
 
 // pixel width of entire of timeline including off-screen portion
+// TODO no more reliance on state; used to check shouldShowTimeline
 export const dynamicTimelineScrollWidth = (state: AppState): number => (
-  shouldShowTimeline(state) ?
-    utils.windowSize().width * constants.timeline.widthMultiplier
-    :
-    0
+  utils.windowSize().width * constants.timeline.widthMultiplier
 )
 
 // pixel width of on-screen portion of timeline
+// TODO no more reliance on state; used to check shouldShowTimeline
 export const dynamicTimelineWidth = (state: AppState): number => (
-  shouldShowTimeline(state) ?
-    utils.windowSize().width
-    :
-    0
+  utils.windowSize().width
 )
 
 export const shouldShowActivityList = (state: AppState): boolean => (

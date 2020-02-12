@@ -16,6 +16,7 @@ import {
 import TimelineContainer from 'containers/TimelineContainer';
 import { TimelineScrollProps } from 'containers/TimelineScrollContainer';
 import constants from 'lib/constants';
+import store from 'lib/store';
 import utils from 'lib/utils';
 import log from 'shared/log';
 import { interval } from 'shared/timeseries';
@@ -70,8 +71,11 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     if (this._scrolling) {
       log.debug('componentDidUpdate during scrolling?');
     } else {
-      const x = this.props.scrollToX;
-      this._scrollView!.scrollTo({ x, y: 0, animated: false });
+      const { scrollTime } = store.getState().options;
+      setTimeout(() => { // This setTimeout is needed for the scroll to take effect.
+        this.scrollToTime(scrollTime);
+        log.scrollEvent('timelineScroll componentDidUpdate', prevProps, this.props);
+      }, 0)
     }
   }
 
@@ -82,7 +86,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   }
 
   setZoomDomainWhileScrolling(domain: DomainPropType) {
-    log.scrollEvent('setZoomDomainWhileScrolling', domain);
+    log.trace('setZoomDomainWhileScrolling', domain);
     this.props.zoomDomainChanging(domain);
   }
 
@@ -138,6 +142,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   }
 
   onScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    log.scrollEvent('onScroll');
     if (!this._scrolling) {
       return;
     }
@@ -149,7 +154,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       visibleTime,
     } = this.props;
     const scrollableAreaTime = visibleTime * constants.timeline.widthMultiplier;
-    log.scrollEvent('onScroll', centerTime);
+    log.scrollEvent('onScroll centerTime:', centerTime);
     const { x } = event.nativeEvent.contentOffset;
     const movedX = x - scrollToX;
     const timeDelta = (movedX / scrollableWidth) * scrollableAreaTime;
@@ -214,11 +219,10 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       pinchZoom,
       register,
       scrollToX,
-      showTimeline,
       timelineZoomValue,
     } = this.props;
-    const opacity = showTimeline ? 1 : 0;
-    const pointerEvents = showTimeline ? 'auto' : 'none';
+    const opacity = 1;
+    const pointerEvents = 'auto';
     return (
       <ScrollView
         centerContent={false}

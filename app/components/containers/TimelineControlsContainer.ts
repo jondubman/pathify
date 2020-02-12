@@ -6,12 +6,10 @@ import {
   dynamicClockBottom,
   dynamicRefTimeBottom,
   dynamicTimelineHeight,
-  mapIsFullScreen,
 } from 'lib/selectors';
 
 interface TimelineControlsStateProps {
   clockBottom: number;
-  mapFullScreen: boolean;
   refTimeBottom: number;
   timelineHeight: number;
   timelineScrolling: boolean;
@@ -26,7 +24,6 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
     clockBottom: dynamicClockBottom(state),
-    mapFullScreen: mapIsFullScreen(state),
     refTimeBottom: dynamicRefTimeBottom(state),
     timelineHeight: dynamicTimelineHeight(state),
     timelineScrolling: state.flags.timelineScrolling,

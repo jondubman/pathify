@@ -276,70 +276,68 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     } as any;
     const pointerEvents = visible ? 'auto' : 'none';
     return (
-      <Fragment>
-        <View pointerEvents={pointerEvents} style={[Styles.box, { top }, visible ? {} : { opacity: 0 }]}>
-          <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
-          <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
-          {!selectedActivityId || (!selectedActivityId && scrolledBetweenActivities) || timelineNow ?
+      <View pointerEvents={pointerEvents} style={[Styles.box, { top }, visible ? {} : { opacity: 0 }]}>
+        <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
+        <View pointerEvents="none" style={[Styles.borderLine, { top: 2 }]} />
+        <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 2 }]} />
+        <View pointerEvents="none" style={[Styles.borderLine, { top: topBottomBorderHeight + activityHeight + 4 }]} />
+        {!selectedActivityId || (!selectedActivityId && scrolledBetweenActivities) || timelineNow ?
+          <View
+            pointerEvents="none"
+            style={[centerLineBase, timelineNow ? Styles.centerLineCurrent : Styles.centerLineBright]}
+          />
+          :
+          <Fragment>
             <View
               pointerEvents="none"
-              style={[centerLineBase, timelineNow ? Styles.centerLineCurrent : Styles.centerLineBright]}
+              style={[
+                centerLineBase,
+                selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
+              ]}
             />
-            :
-            <Fragment>
-              <View
-                pointerEvents="none"
-                style={[
-                  centerLineBase,
-                  selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
-                ]}
-              />
-              <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
-            </Fragment>
+            <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
+          </Fragment>
+        }
+        <FlatList<ActivityDataExtended>
+          data={list}
+          extraData={this.props /* TODO does this help? */}
+          getItemLayout={getItemLayout}
+          horizontal
+          initialNumToRender={list.length /* TODO does this help? *}
+          initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
+          ListHeaderComponent={/* on far left of ActivityList */
+            <View style={listHeaderStyle} />}
+          ListFooterComponent={/* on far right of ActivityList */
+            <TouchableHighlight
+              style={trackingActivity ?
+                listFooterTrackingStyle
+                :
+                (timelineNow ? listFooterNowNotTrackingStyle : listFooterBaseStyle) }
+              onPress={() => { this.props.onPressFutureZone() /* which will enable timelineNow mode */ }}
+              underlayColor={colors.futureZoneUnderlay}
+            >
+              <View style={listFooterClockStyle}>
+                <NowClockContainer clockStyle={{}} interactive={false} />
+              </View>
+            </TouchableHighlight>
           }
-          <FlatList<ActivityDataExtended>
-            data={list}
-            extraData={this.props /* TODO does this help? */}
-            getItemLayout={getItemLayout}
-            horizontal
-            initialNumToRender={list.length /* TODO does this help? *}
-            initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
-            ListHeaderComponent={/* on far left of ActivityList */
-              <View style={listHeaderStyle} />}
-            ListFooterComponent={/* on far right of ActivityList */
-              <TouchableHighlight
-                style={trackingActivity ?
-                  listFooterTrackingStyle
-                  :
-                  (timelineNow ? listFooterNowNotTrackingStyle : listFooterBaseStyle) }
-                onPress={() => { this.props.onPressFutureZone() /* which will enable timelineNow mode */ }}
-                underlayColor={colors.futureZoneUnderlay}
-              >
-                <View style={listFooterClockStyle}>
-                  <NowClockContainer clockStyle={{}} interactive={false} />
-                </View>
-              </TouchableHighlight>
+          onLayout={this.autoScroll}
+          onScroll={this.handleScroll}
+          onScrollBeginDrag={this.handleScrollBeginDrag}
+          onScrollEndDrag={this.handleScrollEndDrag}
+          onMomentumScrollEnd={this.handleScrollEndDrag /* experiment */}
+          ref={(ref) => {
+            if (ref) {
+              _ref = ref;
+              this.props.register && this.props.register(this);
             }
-            onLayout={this.autoScroll}
-            onScroll={this.handleScroll}
-            onScrollBeginDrag={this.handleScrollBeginDrag}
-            onScrollEndDrag={this.handleScrollEndDrag}
-            onMomentumScrollEnd={this.handleScrollEndDrag /* experiment */}
-            ref={(ref) => {
-              if (ref) {
-                _ref = ref;
-                this.props.register && this.props.register(this);
-              }
-            }}
-            renderItem={this.renderItem}
-            scrollIndicatorInsets={scrollInsets}
-            showsHorizontalScrollIndicator={true}
-            style={{ marginTop: topBottomBorderHeight }}
-          />
-        </View>
-      </Fragment>
+          }}
+          renderItem={this.renderItem}
+          scrollIndicatorInsets={scrollInsets}
+          showsHorizontalScrollIndicator={true}
+          style={{ marginTop: topBottomBorderHeight }}
+        />
+      </View>
     )
   }
 
@@ -366,7 +364,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   scrollToTime(scrollTime: number) {
     log.scrollEvent('ActivityList scrollToTime', scrollTime);
     const {
-      animated,
       list,
       trackingActivity,
     } = this.props;
@@ -424,7 +421,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       log.trace('ActivityList: scrollToTime: empty list');
     }
     const params = {
-      animated,
+      animated: false,
       offset,
     }
     log.scrollEvent('ActivityList scrollToTime scrollToOffset', params);
