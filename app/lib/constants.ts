@@ -513,7 +513,7 @@ const constants = {
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     timelineCloseToNow: 1000,
     timelineRelativeZoomStep: 20,
-        // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
+    // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.
     // 50 generates buttery smooth motion of second hand on the clock, but may drop JS frame.

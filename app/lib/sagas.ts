@@ -1753,6 +1753,7 @@ const sagas = {
   // One second is the approximate frequency of location updates
   // and it's a good frequency for updating the analog clock and the timeline.
   timerTick: function* (action: Action) {
+    const state = yield select((state: AppState) => state);
     const {
       appActive,
       followingPath,
@@ -1760,27 +1761,32 @@ const sagas = {
       mapReorienting,
       timelineNow,
       timelineScrolling,
-    } = yield select((state: AppState) => state.flags);
+      trackingActivity,
+    } = state.flags;
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
-      const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
-      if (timelineNow) {
-        options.scrollTime = now;
-        if (!timelineScrolling) { // because if timelineScrolling, user's actions are more important
-          options.viewTime = now;
+      // When trackingActivity, do significantly less work to save CPU and battery...
+      // Tick once per second instead of many times per second.
+      if (!trackingActivity || (nowTimeRounded !== state.options.nowTimeRounded)) {
+        const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
+        if (timelineNow) {
+          options.scrollTime = now;
+          if (!timelineScrolling) { // because if timelineScrolling, user's actions are more important
+            options.viewTime = now;
+          }
         }
-      }
-      yield put(newAction(AppAction.setAppOption, options));
-      if (followingPath && !mapMoving && !mapReorienting) {
-        const map = MapUtils();
-        if (map) {
-          const state: AppState = yield select((state: AppState) => state);
-          const pathInfo = yield call(getCachedPathInfo, state);
-          const bounds = state.mapBounds;
-          if (pathInfo && bounds) {
-            if (!utils.locWellBounded(pathInfo.loc, bounds)) {
-              yield put(newAction(AppAction.centerMapOnPath));
+        yield put(newAction(AppAction.setAppOption, options));
+        if (followingPath && !mapMoving && !mapReorienting) {
+          const map = MapUtils();
+          if (map) {
+            const state: AppState = yield select((state: AppState) => state);
+            const pathInfo = yield call(getCachedPathInfo, state);
+            const bounds = state.mapBounds;
+            if (pathInfo && bounds) {
+              if (!utils.locWellBounded(pathInfo.loc, bounds)) {
+                yield put(newAction(AppAction.centerMapOnPath));
+              }
             }
           }
         }
