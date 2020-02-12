@@ -65,7 +65,6 @@ export const initialAppState = {
     settingsOpen: false, // manually opened by user
     startMenuOpen: false, // if manually opened by user
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
-    showActivityDetails: true, // generally true
     showActivityInfo: true, // generally true
     showActivityList: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false

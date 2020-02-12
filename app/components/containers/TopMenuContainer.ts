@@ -18,7 +18,6 @@ interface TopMenuStateProps {
   height: number;
   open: boolean;
   selectedActivityId: string | null;
-  showActivityDetails: boolean;
   timelineHeight: number;
   width: number;
 }
@@ -42,7 +41,6 @@ const mapStateToProps = (state: AppState): TopMenuStateProps => {
     height: constants.topMenu.height,
     open: state.flags.topMenuOpen,
     selectedActivityId,
-    showActivityDetails: state.flags.showActivityDetails,
     timelineHeight: dynamicTimelineHeight(state),
     width: constants.topMenu.width,
   }

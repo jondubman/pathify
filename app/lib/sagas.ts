@@ -278,19 +278,21 @@ const sagas = {
                 speed,
                 t,
               } = event as LocationEvent;
-              // TODO this accuracy test is a bit crude, but works well enough for now.
-              if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
-                // add a single path segment
-                activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat);
-                activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat);
-                activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon);
-                activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon);
-                pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
-                pathUpdate.lats.push(lat);
-                pathUpdate.lons.push(lon);
-                pathUpdate.odo.push(odo);
-                pathUpdate.speed.push(speed);
-                pathUpdate.t.push(t);
+              if (activity.tStart && t >= activity.tStart) {
+                // TODO this accuracy test is a bit crude, but works well enough for now.
+                if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+                  // add a single path segment
+                  activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat);
+                  activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat);
+                  activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon);
+                  activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon);
+                  pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
+                  pathUpdate.lats.push(lat);
+                  pathUpdate.lons.push(lon);
+                  pathUpdate.odo.push(odo);
+                  pathUpdate.speed.push(speed);
+                  pathUpdate.t.push(t);
+                }
               }
             }
           }
@@ -991,12 +993,13 @@ const sagas = {
   },
 
   // Refresh (recreate) existing Activity/Path from the raw Events in the database (given an existing Activity id.)
+  // TODO It should not take much for this to be able to "undelete" an Activity, if the raw Events are still there.
   refreshActivity: function* (action: Action) {
     try {
       const params = action.params as RefreshActivityParams;
       let { id } = params;
       if (id === 'selectedActivityId') { // this allows you to pass the string 'selectedActivityId' as the id,
-        id  = yield select((state: AppState) => state.options.selectedActivityId); // which is used in appQuery
+        id = yield select((state: AppState) => state.options.selectedActivityId); // which is used in appQuery
       }
       yield call(log.trace, 'saga refreshActivity', id);
       const eventsForActivity = yield call(database.eventsForActivity, id);
@@ -1006,6 +1009,7 @@ const sagas = {
       const pathUpdate = yield call(database.newPathUpdate, id);
       activityUpdate.count = eventsForActivity.length;
       let prevLocEvent: LocationEvent | null = null;
+      let tStart = 0;
       for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
         const event = e as any as GenericEvent;
         if (event.type === EventType.LOC) {
@@ -1019,6 +1023,10 @@ const sagas = {
             speed,
             t,
           } = locEvent;
+          if (!tStart || t < tStart) {
+            yield call(log.trace, 'refreshActivity: ignoring t < tStart', t, tStart);
+            continue;
+          }
           if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
             // ele
             pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
@@ -1064,7 +1072,13 @@ const sagas = {
           prevLocEvent = { ...locEvent };
         } else if (event.type == EventType.MARK) {
           const markEvent = event as MarkEvent;
+          if (markEvent.subtype === MarkType.START) {
+            tStart = markEvent.t;
+            yield call(log.trace, 'refreshActivity: Found START mark at t:', tStart);
+            activityUpdate.tStart = markEvent.t;
+          }
           if (markEvent.subtype === MarkType.END) {
+            yield call(log.trace, 'refreshActivity: Found END mark at t:', markEvent.t);
             activityUpdate.tEnd = markEvent.t;
           }
         }
@@ -1407,7 +1421,6 @@ const sagas = {
         } else {
           yield put(newAction(AppAction.flagEnable, 'timelineNow'));
           yield put(newAction(AppAction.flagDisable, 'mapTapped'));
-          yield put(newAction(AppAction.flagEnable, 'showActivityDetails'));
           const followingNow = yield select((state: AppState) => state.flags.followingUser);
           if (followingNow) {
           } else {
@@ -1592,7 +1605,6 @@ const sagas = {
         } else {
           yield call(log.warn, 'Missing activity in stopActivity')
         }
-        yield put(newAction(AppAction.flagDisable, 'showActivityDetails'));
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
         const halfTime = activity.tStart + (now - activity.tStart) / 2;
         yield call(log.trace, 'stopActivity: halfTime', halfTime);
