@@ -422,7 +422,7 @@ const constants = {
     'Content-Type': 'application/json',
   },
   map: {
-    centerMapDuration: 500, // TODO not honored on iOS https://github.com/nitaliano/react-native-mapbox-gl/issues/1411
+    centerMapDuration: 300, // timing: msec
     default: {
       bounds: [ // TODO this is basically North America
         [68.45269397608266, -0.16697147646779342],
@@ -434,11 +434,10 @@ const constants = {
       zoomStartActivity: 15,
     },
     fitBounds: {
-      duration: 500,
+      duration: 500, // timing: msec
       minHorizontalPadding: 20,
       minVerticalPadding: 20,
     },
-    opacityUnderPanels: defaultOpacity, // TODO adjust
     reorientationTime: interval.seconds(1) / 2, // to reorient to heading 0 using CompassButton
   },
   mapLogoHeight,

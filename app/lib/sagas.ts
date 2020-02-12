@@ -1777,7 +1777,7 @@ const sagas = {
           }
         }
         yield put(newAction(AppAction.setAppOption, options));
-        if (followingPath && !mapMoving && !mapReorienting) {
+        if (followingPath /* && !mapMoving */ && !mapReorienting) {
           const map = MapUtils();
           if (map) {
             const state: AppState = yield select((state: AppState) => state);
