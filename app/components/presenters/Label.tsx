@@ -4,7 +4,7 @@ import {
   View,
 } from 'react-native';
 
-import { TipProps } from 'containers/TipContainer';
+import { TipProps } from 'containers/LabelContainer';
 import constants from 'lib/constants';
 
 export const tipTextStyle = {

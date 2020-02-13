@@ -241,13 +241,13 @@ const optionalStyle = (props: ClockProps): Object => {
 }
 
 const ClockMechanics = (props: ClockProps) => (
-  <View pointerEvents={"none"}>
+  <View pointerEvents="none">
     <ClockTicks />
-    <View pointerEvents={"none"} style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
-    <View pointerEvents={"none"} style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes + (props.seconds / 60))]} />
-    <View pointerEvents={"none"} style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds + (props.milliseconds / 1000))]} />
-    <View pointerEvents={"none"} style={Styles.centerCircle} />
-    <View pointerEvents={"none"} style={Styles.centerPoint} />
+    <View style={[Styles.hourHand, hourHandRotation(props.hours, props.minutes)]} />
+    <View style={[Styles.minuteHand, minuteOrSecondHandRotation(props.minutes + (props.seconds / 60))]} />
+    <View style={[Styles.secondHand, minuteOrSecondHandRotation(props.seconds + (props.milliseconds / 1000))]} />
+    <View style={Styles.centerCircle} />
+    <View style={Styles.centerPoint} />
   </View>
 )
 

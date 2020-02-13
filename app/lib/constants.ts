@@ -519,8 +519,8 @@ const constants = {
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.
     // 50 generates buttery smooth motion of second hand on the clock, but may drop JS frame.
-    // 100 is a good compromise. Above 200, the stepping motion becomes more apparent.
-    timerTickInterval: 100,
+    // 100 looks smooth but seems a bit CPU intensive. Above 200, the stepping motion becomes more apparent.
+    timerTickInterval: 200,
     // Note that every component's mapStateToProps will be called via react-redux Connect this often, so if there are
     // any perf issues there, they will rapidly reveal themselves by lowering this interval.
     vibration: 400, // TODO ignored on iOS?

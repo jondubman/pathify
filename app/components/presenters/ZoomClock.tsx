@@ -13,8 +13,8 @@ import ReactNativeHaptic from 'react-native-haptic';
 
 import PausedClockContainer from 'containers/PausedClockContainer';
 import NowClockContainer from 'containers/NowClockContainer';
-import TipContainer from 'containers/TipContainer';
-import { tipTextStyle } from 'presenters/Tip';
+import LabelContainer from 'containers/LabelContainer';
+import { tipTextStyle } from 'presenters/Label';
 import { ZoomClockProps } from 'containers/ZoomClockContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
@@ -121,11 +121,11 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           </View>
         ) : (
           <View style={[Styles.tipView, { bottom: bottom + constants.clock.height + 2 }]}>
-            <TipContainer>
+            <LabelContainer>
               <Text style={tipTextStyle}>
                 TIMELINE
               </Text>
-            </TipContainer>
+            </LabelContainer>
           </View>
         )}
         <View {...this._panResponder.panHandlers} style={[Styles.clockCenter, bottomStyle]}>

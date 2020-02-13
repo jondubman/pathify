@@ -160,11 +160,11 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         </View>
         {this.state.top === this.props.snap ? null : (
           <View pointerEvents="none" style={snapLayoutStyle}>
-            <View pointerEvents="none" style={snapStyle} />
-            <View pointerEvents="none" style={snapStyle} />
-            <View pointerEvents="none" style={snapStyle} />
-            <View pointerEvents="none" style={snapStyle} />
-            <View pointerEvents="none" style={snapStyle} />
+            <View style={snapStyle} />
+            <View style={snapStyle} />
+            <View style={snapStyle} />
+            <View style={snapStyle} />
+            <View style={snapStyle} />
           </View>
         )}
       </Fragment>

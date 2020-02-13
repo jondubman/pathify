@@ -12,8 +12,8 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { FollowButtonsProps } from 'containers/FollowButtonsContainer';
-import TipContainer from 'containers/TipContainer';
-import { tipTextStyle } from 'presenters/Tip';
+import LabelContainer from 'containers/LabelContainer';
+import { tipTextStyle } from 'presenters/Label';
 import constants from 'lib/constants';
 
 const colors = constants.colors.followButtons;
@@ -53,11 +53,11 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
     {props.hideFollowPath ? null : (
       <Fragment>
         <View style={[Styles.tipView, { bottom: props.bottomOffset + bottom1 }]}>
-          <TipContainer>
+          <LabelContainer>
             <Text style={tipTextStyle}>
               PAST
             </Text>
-          </TipContainer>
+          </LabelContainer>
         </View>
         <TouchableHighlight
           style={[Styles.button, {
@@ -76,11 +76,11 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
       </Fragment>
     )}
     <View style={[Styles.tipView, { bottom: props.bottomOffset + bottom2 }]}>
-      <TipContainer>
+      <LabelContainer>
         <Text style={tipTextStyle}>
           CURRENT
         </Text>
-      </TipContainer>
+      </LabelContainer>
     </View>
     <TouchableHighlight
       style={[Styles.button, {

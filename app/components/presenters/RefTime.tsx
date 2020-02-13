@@ -72,7 +72,7 @@ const Styles = StyleSheet.create({
 })
 
 const RefTime = (props: RefTimeProps) => (
-  <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
+  <View pointerEvents="none" style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
     <View style={Styles.leftHalf}>
       {props.showLeftSide ? (
         <TouchableHighlight

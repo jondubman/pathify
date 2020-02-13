@@ -8,30 +8,30 @@ import HelpPanel from 'presenters/HelpPanel';
 import log from 'shared/log';
 
 interface HelpPanelStateProps {
+  labelsEnabled: boolean;
   open: boolean;
-  tipsEnabled: boolean;
 }
 
 interface HelpPanelDispatchProps {
-  onSetTipsEnabled: (enabled: boolean) => void;
+  onSetLabelsEnabled: (enabled: boolean) => void;
 }
 
 export type HelpPanelProps = HelpPanelStateProps & HelpPanelDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpPanelStateProps => {
   return {
+    labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
-    tipsEnabled: state.flags.tipsEnabled,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): HelpPanelDispatchProps => {
-  const onSetTipsEnabled = (enabled: boolean) => {
-    log.debug('HelpPanel onSetTipsEnabled', enabled);
-    dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'tipsEnabled'));
+  const onSetLabelsEnabled = (enabled: boolean) => {
+    log.debug('HelpPanel onSetLabelsEnabled', enabled);
+    dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'labelsEnabled'));
   }
   const dispatchers = {
-    onSetTipsEnabled,
+    onSetLabelsEnabled,
   }
   return dispatchers;
 }

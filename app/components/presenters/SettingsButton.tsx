@@ -13,8 +13,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import constants from 'lib/constants';
 import { SettingsButtonProps } from 'containers/SettingsButtonContainer';
-import TipContainer from 'containers/TipContainer';
-import { tipTextStyle } from 'presenters/Tip';
+import LabelContainer from 'containers/LabelContainer';
+import { tipTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.settingsButton;
 const {
@@ -50,11 +50,11 @@ const SettingsButton = (props: SettingsButtonProps) => (
   <Fragment>
     {props.open ? null : (
       <View style={[Styles.tipView, { top: props.topOffset + constants.buttonSize - 1 }]}>
-        <TipContainer>
+        <LabelContainer>
           <Text style={tipTextStyle}>
             SETTINGS
           </Text>
-        </TipContainer>
+        </LabelContainer>
       </View>
     )}
     <TouchableHighlight

@@ -91,10 +91,10 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                         <View style={{ marginLeft: 2 }}>
                           <Switch
                             ios_backgroundColor={colors.background}
-                            onValueChange={props.onSetTipsEnabled}
+                            onValueChange={props.onSetLabelsEnabled}
                             thumbColor={constants.colors.helpPanel.tipsThumb}
                             trackColor={colors.track}
-                            value={props.tipsEnabled}
+                            value={props.labelsEnabled}
                           />
                         </View>
                       </View>
