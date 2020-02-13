@@ -62,6 +62,7 @@ const StartButton = (props: StartButtonProps) => (
       </LabelContainer>
     </View>
     <TouchableHighlight
+      hitSlop={constants.hitSlop}
       style={[Styles.button, {
         backgroundColor: props.trackingActivity ? colors.enabledBackground : colors.disabledBackground,
         bottom: props.bottomOffset,

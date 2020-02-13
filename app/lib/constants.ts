@@ -424,6 +424,9 @@ const constants = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
+  hitSlop: {
+    top: buttonOffset, bottom: buttonOffset, left: buttonOffset, right: buttonOffset,
+  },
   map: {
     centerMapDuration: 300, // timing: msec
     default: {

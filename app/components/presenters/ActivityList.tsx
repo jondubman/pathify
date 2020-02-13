@@ -270,7 +270,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const centerLineBase = {
       left: centerLineLeft,
       right: centerLineRight,
-      height,
+      height: height + constants.buttonOffset,
       position: 'absolute',
       top: centerLineTop,
     } as any;

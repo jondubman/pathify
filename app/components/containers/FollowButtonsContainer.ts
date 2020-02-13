@@ -34,51 +34,54 @@ const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
   const {
     followingPath,
     followingUser,
-    timelineNow,
   } = state.flags;
   return {
     followingPath,
     followingUser,
     bottomOffset: dynamicLowerButtonBase(state),
     hideBoth: mapHidden(state),
-    hideFollowPath: timelineNow && mapIsFullScreen(state) && !followingPath,
+    hideFollowPath: false,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): FollowButtonsDispatchProps => {
   const onPressFollowPath = () => {
+    ReactNativeHaptic.generate('impactLight');
     const state = store.getState();
     const {
       followingPath,
       timelineNow,
     } = state.flags;
-    if (followingPath) { // toggle the state
-      dispatch(newAction(AppAction.stopFollowingPath));
-    } else {
-      dispatch(newAction(AppAction.startFollowingPath));
-      if (!mapIsFullScreen(state) && timelineNow) {
-        dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
+    setTimeout(() => {
+      if (followingPath) { // toggle the state
+        dispatch(newAction(AppAction.stopFollowingPath));
+      } else {
+        dispatch(newAction(AppAction.startFollowingPath));
+        if (timelineNow) {
+          dispatch(newAction(AppAction.jumpToBackTime)); // When engaging followPath, you probably want to see the path.
+        }
       }
-    }
-    ReactNativeHaptic.generate('impactLight');
+    }, 0)
   }
   const onPressFollowUser = () => {
+    ReactNativeHaptic.generate('impactLight');
     const {
       followingUser,
       timelineNow,
     } = store.getState().flags;
-    if (followingUser) { // toggle the state
-      dispatch(newAction(AppAction.stopFollowingUser));
-    } else {
-      dispatch(newAction(AppAction.startFollowingUser));
-      if (!timelineNow) {
-        dispatch(newAction(AppAction.jumpToNow));
+    setTimeout(() => {
+      if (followingUser) { // toggle the state
+        dispatch(newAction(AppAction.stopFollowingUser));
+      } else {
+        dispatch(newAction(AppAction.startFollowingUser));
+        if (!timelineNow) {
+          dispatch(newAction(AppAction.jumpToNow));
+        }
+        setTimeout(() => {
+          dispatch(newAction(AppAction.centerMapOnUser));
+        }, 0)
       }
-      setTimeout(() => {
-        dispatch(newAction(AppAction.centerMapOnUser));
-      }, 0)
-    }
-    ReactNativeHaptic.generate('impactLight');
+    }, 0)
   }
   const dispatchers = {
     onPressFollowPath,

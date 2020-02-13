@@ -60,18 +60,21 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
           </LabelContainer>
         </View>
         <TouchableHighlight
+          hitSlop={constants.hitSlop}
           style={[Styles.button, {
             backgroundColor: props.followingPath ? colors.backgroundPath.active : colors.backgroundPath.inactive,
             bottom: props.bottomOffset + constants.buttonBaseOffsetPerRow,
           }]}
-          onPress={props.onPressFollowPath}
+          onPressIn={props.onPressFollowPath}
           underlayColor={colors.underlayPath}
         >
-          <FontAwesome5
-            color={props.followingPath ? colors.iconFollowPath.active : colors.iconFollowPath.inactive}
-            name='location-arrow'
-            size={constants.followButtons.size / 2}
-          />
+          <View pointerEvents="none">
+            <FontAwesome5
+              color={props.followingPath ? colors.iconFollowPath.active : colors.iconFollowPath.inactive}
+              name='location-arrow'
+              size={constants.followButtons.size / 2}
+            />
+          </View>
         </TouchableHighlight>
       </Fragment>
     )}
@@ -83,18 +86,21 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
       </LabelContainer>
     </View>
     <TouchableHighlight
+      hitSlop={constants.hitSlop}
       style={[Styles.button, {
         backgroundColor: props.followingUser ? colors.backgroundUser.active : colors.backgroundUser.inactive,
         bottom: props.bottomOffset,
       }]}
-      onPress={props.onPressFollowUser}
+      onPressIn={props.onPressFollowUser}
       underlayColor={colors.underlayUser}
     >
-      <FontAwesome5
-        color={props.followingUser ? colors.iconFollowUser.active : colors.iconFollowUser.inactive}
-        name='location-arrow'
-        size={constants.followButtons.size / 2}
-      />
+      <View pointerEvents="none">
+        <FontAwesome5
+          color={props.followingUser ? colors.iconFollowUser.active : colors.iconFollowUser.inactive}
+          name='location-arrow'
+          size={constants.followButtons.size / 2}
+        />
+      </View>
     </TouchableHighlight>
   </Fragment>
 ))
