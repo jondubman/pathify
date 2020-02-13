@@ -13,7 +13,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import LabelContainer from 'containers/LabelContainer';
 import constants from 'lib/constants';
-import { tipTextStyle } from 'presenters/Label';
+import { labelTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.startButton;
 const {
@@ -39,7 +39,7 @@ const Styles = StyleSheet.create({
     fontSize: 16,
     paddingTop: 2,
   },
-  tipView: {
+  labelView: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     position: 'absolute',
@@ -54,9 +54,9 @@ import { StartButtonProps } from 'containers/StartButtonContainer';
 
 const StartButton = (props: StartButtonProps) => (
   <Fragment>
-    <View style={[Styles.tipView, { bottom: props.bottomOffset - constants.bottomButtonSpacing }]}>
+    <View style={[Styles.labelView, { bottom: props.bottomOffset - constants.bottomButtonSpacing }]}>
       <LabelContainer>
-        <Text style={tipTextStyle}>
+        <Text style={labelTextStyle}>
           TRACKING
         </Text>
       </LabelContainer>

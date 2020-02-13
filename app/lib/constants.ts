@@ -476,7 +476,7 @@ const constants = {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
     height: 65,
     leftContentsWidth: 120,
-    topSpace: 12,
+    topSpace: 16,
     width: 160 - buttonOffset * 2, // was 126, which fits on smallest device without overlap
   },
   safeAreaBottom,

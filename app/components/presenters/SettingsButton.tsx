@@ -14,7 +14,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import constants from 'lib/constants';
 import { SettingsButtonProps } from 'containers/SettingsButtonContainer';
 import LabelContainer from 'containers/LabelContainer';
-import { tipTextStyle } from 'presenters/Label';
+import { labelTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.settingsButton;
 const {
@@ -37,7 +37,7 @@ const Styles = StyleSheet.create({
     top: topOffset,
     width: size,
   },
-  tipView: {
+  labelView: {
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
@@ -49,9 +49,9 @@ const Styles = StyleSheet.create({
 const SettingsButton = (props: SettingsButtonProps) => (
   <Fragment>
     {props.open ? null : (
-      <View style={[Styles.tipView, { top: props.topOffset + constants.buttonSize - 1 }]}>
+      <View style={[Styles.labelView, { top: props.topOffset + constants.buttonSize - 1 }]}>
         <LabelContainer>
-          <Text style={tipTextStyle}>
+          <Text style={labelTextStyle}>
             SETTINGS
           </Text>
         </LabelContainer>

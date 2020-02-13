@@ -14,10 +14,10 @@ import ReactNativeHaptic from 'react-native-haptic';
 import PausedClockContainer from 'containers/PausedClockContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import LabelContainer from 'containers/LabelContainer';
-import { tipTextStyle } from 'presenters/Label';
 import { ZoomClockProps } from 'containers/ZoomClockContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
+import { labelTextStyle } from 'presenters/Label';
 import log from 'shared/log';
 
 const clockWidth = constants.clock.height;
@@ -27,7 +27,7 @@ const Styles = StyleSheet.create({
     left: centerline() - clockWidth / 2,
     position: 'absolute',
   },
-  tipView: {
+  labelView: {
     flexDirection: 'row',
     justifyContent: 'center',
     left: 0,
@@ -120,9 +120,9 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           <View>
           </View>
         ) : (
-          <View style={[Styles.tipView, { bottom: bottom + constants.clock.height + 2 }]}>
+          <View style={[Styles.labelView, { bottom: bottom - 16 }]}>
             <LabelContainer>
-              <Text style={tipTextStyle}>
+              <Text style={labelTextStyle}>
                 TIMELINE
               </Text>
             </LabelContainer>

@@ -73,7 +73,6 @@ class AppUI extends Component<AppUIProps> {
                 <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                   <CompassButtonContainer />
                   <FollowButtonsContainer />
-                  <StartButtonContainer />
                 </View>
                 <TimelineControlsContainer />
                 <View style={{ position: 'absolute', width }}>
@@ -82,6 +81,9 @@ class AppUI extends Component<AppUIProps> {
                   <TopMenuContainer />
                 </View>
                 <StartMenuContainer />
+                <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+                  <StartButtonContainer />
+                </View>
               </Fragment>
             )}
           </Fragment>

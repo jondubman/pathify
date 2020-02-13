@@ -1,32 +1,32 @@
 import { connect } from 'react-redux';
 
 import { AppState } from 'lib/state';
-import Tip from 'presenters/Label';
+import Label from 'presenters/Label';
 
-interface TipStateProps {
+interface LabelStateProps {
   visible: boolean;
 }
 
-interface TipDispatchProps {
+interface LabelDispatchProps {
 }
 
-export type TipProps = TipStateProps & TipDispatchProps;
+export type LabelProps = LabelStateProps & LabelDispatchProps;
 
-const mapStateToProps = (state: AppState): TipStateProps => {
+const mapStateToProps = (state: AppState): LabelStateProps => {
   return {
     visible: state.flags.labelsEnabled,
   }
 }
 
-const mapDispatchToProps = (dispatch: Function): TipDispatchProps => {
+const mapDispatchToProps = (dispatch: Function): LabelDispatchProps => {
   const dispatchers = {
   }
   return dispatchers;
 }
 
-const LabelContainer = connect<TipStateProps, TipDispatchProps>(
+const LabelContainer = connect<LabelStateProps, LabelDispatchProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(Tip as any);
+)(Label as any);
 
 export default LabelContainer;

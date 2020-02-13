@@ -48,7 +48,7 @@ const Styles = StyleSheet.create({
   },
   refTimeText: {
     fontFamily: constants.fonts.family,
-    fontSize: 16,
+    fontSize: 20,
   },
   rightHalf: {
     height,
@@ -59,6 +59,11 @@ const Styles = StyleSheet.create({
     color: colors.subText,
     fontFamily: constants.fonts.family,
     fontSize: 11,
+  },
+  subTextRight: {
+    color: colors.subText,
+    fontFamily: constants.fonts.family,
+    fontSize: 12,
   },
   hoursMinutes: {
     color: colors.hoursMinutes,
@@ -113,7 +118,7 @@ const RefTime = (props: RefTimeProps) => (
           </Text>
           */}
         </View>
-        <Text style={Styles.subText}>
+        <Text style={Styles.subTextRight}>
           {props.ampm} {props.day} {props.month} {props.dayOfMonth}, {props.year}
         </Text>
       </Fragment>

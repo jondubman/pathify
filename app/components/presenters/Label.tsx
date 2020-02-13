@@ -4,17 +4,17 @@ import {
   View,
 } from 'react-native';
 
-import { TipProps } from 'containers/LabelContainer';
+import { LabelProps } from 'containers/LabelContainer';
 import constants from 'lib/constants';
 
-export const tipTextStyle = {
+export const labelTextStyle = {
   color: constants.colorThemes.tips,
   fontFamily: constants.tips.fontFamily,
   fontSize: constants.tips.fontSize,
   fontWeight: constants.tips.fontWeight,
 }
 
-class Tip extends React.Component<TipProps> {
+class Label extends React.Component<LabelProps> {
 
   constructor(props: any) {
     super(props);
@@ -29,4 +29,4 @@ class Tip extends React.Component<TipProps> {
   }
 }
 
-export default Tip;
+export default Label;

@@ -48,6 +48,7 @@ export const initialAppState = {
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false,
     helpOpen: false, // manually opened by user
+    labelsEnabled: true, // TODO add to persistedFlags
     logInDebugVersion: true, // typically true
     logInProductionVersion: false, // typically false
     logToDatabase: false, // applies only if logs are enabled in general (see logInDebugVersion, logInProductionVersion)
@@ -72,7 +73,7 @@ export const initialAppState = {
     showGrabBar: false, // generally true
     showPathsOnMap: true, // generally true
     showPastLocation: true, // as a Pulsar on the map
-    // showTimeline: true, // generally true
+    // showTimeline: true, // TODO remove
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
@@ -80,7 +81,6 @@ export const initialAppState = {
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
-    labelsEnabled: true, // TODO add to persistedFlags
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
     zoomClockPressed: false, // relates to PanResponder on the timeline clock

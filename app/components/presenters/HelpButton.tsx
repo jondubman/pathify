@@ -14,7 +14,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import constants from 'lib/constants';
 import { HelpButtonProps } from 'containers/HelpButtonContainer';
 import LabelContainer from 'containers/LabelContainer';
-import { tipTextStyle } from 'presenters/Label';
+import { labelTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.helpButton;
 const {
@@ -36,7 +36,7 @@ const Styles = StyleSheet.create({
     opacity,
     width: size,
   },
-  tipView: {
+  labelView: {
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
@@ -47,9 +47,9 @@ const Styles = StyleSheet.create({
 
 const HelpButton = (props: HelpButtonProps) => (
   <Fragment>
-    <View style={[Styles.tipView, { top: props.topOffset + constants.buttonSize - 1 }]}>
+    <View style={[Styles.labelView, { top: props.topOffset + constants.buttonSize - 1 }]}>
       <LabelContainer>
-        <Text style={tipTextStyle}>
+        <Text style={labelTextStyle}>
           INFO
         </Text>
       </LabelContainer>

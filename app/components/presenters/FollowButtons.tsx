@@ -13,8 +13,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { FollowButtonsProps } from 'containers/FollowButtonsContainer';
 import LabelContainer from 'containers/LabelContainer';
-import { tipTextStyle } from 'presenters/Label';
 import constants from 'lib/constants';
+import { labelTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.followButtons;
 const {
@@ -35,7 +35,7 @@ const Styles = StyleSheet.create({
     right: rightOffset,
     width: size,
   },
-  tipView: {
+  labelView: {
     flexDirection: 'row',
     textAlign: 'center',
     justifyContent: 'center',
@@ -52,9 +52,9 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
   <Fragment>
     {props.hideFollowPath ? null : (
       <Fragment>
-        <View style={[Styles.tipView, { bottom: props.bottomOffset + bottom1 }]}>
+        <View style={[Styles.labelView, { bottom: props.bottomOffset + bottom1 }]}>
           <LabelContainer>
-            <Text style={tipTextStyle}>
+            <Text style={labelTextStyle}>
               PAST
             </Text>
           </LabelContainer>
@@ -78,9 +78,9 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
         </TouchableHighlight>
       </Fragment>
     )}
-    <View style={[Styles.tipView, { bottom: props.bottomOffset + bottom2 }]}>
+    <View style={[Styles.labelView, { bottom: props.bottomOffset + bottom2 }]}>
       <LabelContainer>
-        <Text style={tipTextStyle}>
+        <Text style={labelTextStyle}>
           CURRENT
         </Text>
       </LabelContainer>

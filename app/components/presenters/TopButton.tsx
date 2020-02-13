@@ -15,7 +15,7 @@ import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
 import LabelContainer from 'containers/LabelContainer';
 import { TopButtonProps } from 'containers/TopButtonContainer';
-import { tipTextStyle } from 'presenters/Label';
+import { labelTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.topButton;
 const {
@@ -61,7 +61,7 @@ const Styles = StyleSheet.create({
     fontSize,
     position: 'absolute',
   },
-  tipView: {
+  labelView: {
     flexDirection: 'row',
     justifyContent: 'center',
     left: 0,
@@ -77,9 +77,9 @@ const backgroundColor = (props: TopButtonProps) => (props.selected ? (props.curr
 
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <Fragment>
-    <View style={[Styles.tipView, { top: props.topOffset + constants.buttonSize - 1 }]}>
+    <View style={[Styles.labelView, { top: props.topOffset + constants.buttonSize - 1 }]}>
       <LabelContainer>
-        <Text style={tipTextStyle}>
+        <Text style={labelTextStyle}>
           ACTIVITIES
         </Text>
       </LabelContainer>
