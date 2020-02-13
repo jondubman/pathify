@@ -80,6 +80,7 @@ export const initialAppState = {
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
+    tipsEnabled: true, // TODO add to persistedFlags
     topMenuOpen: false,
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
     zoomClockPressed: false, // relates to PanResponder on the timeline clock

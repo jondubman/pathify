@@ -143,8 +143,6 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
 
   render() {
     const { props } = this;
-    const colors = constants.colors.switch;
-    const switchWidth = centerline() - (constants.buttonSize / 2) - switchLeft;
     return (
       <View style={Styles.view}>
         {props.open ?
@@ -195,26 +193,6 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
           :
           null
         }
-        {/* TODO cleanup
-        <View style={[Styles.switchContainer, { width: switchWidth }]}>
-          <View style={Styles.switchView}>
-            <View style={Styles.switch}>
-              <View style={{ marginLeft: 2 }}>
-                <Switch
-                  ios_backgroundColor={colors.background}
-                  onValueChange={props.onSetShowTimeline}
-                  thumbColor={colors.thumb}
-                  trackColor={colors.track}
-                  value={props.showTimeline}
-                />
-              </View>
-              <Text style={Styles.choiceLabelText}>
-                TIMELINE
-              </Text>
-            </View>
-          </View>
-        </View>
-        */}
         <SettingsButtonContainer />
       </View>
     )

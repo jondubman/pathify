@@ -72,6 +72,7 @@ const colorThemes = {
   nowDarker: namedColors.darkerGreen,
   past: namedColors.blue,
   settings: namedColors.darkerGray,
+  tips: namedColors.yellow,
   topMenu: namedColors.darkerGray,
 }
 
@@ -179,6 +180,8 @@ const colors = {
   helpPanel: {
     background: withOpacity(colorThemes.background, defaultOpacity),
     border: namedColors.darkerGray,
+    tipsLabel: withOpacity(colorThemes.tips, 0.75),
+    tipsThumb: withOpacity(colorThemes.tips, 0.85),
   },
   map: {
     dimmer: namedColors.black,
@@ -414,7 +417,7 @@ const constants = {
   helpPanel: {
     height: panelHeight,
     rightOffset: buttonOffset,
-    subpanelTopOffset: buttonSize + buttonOffset,
+    subpanelTopOffset: buttonOffset,
     topOffset: safeAreaTop,
   },
   headers: {

@@ -3,6 +3,7 @@ import React, {
 
 import {
   StyleSheet,
+  Switch,
   Text,
   TouchableHighlight,
   View,
@@ -11,6 +12,7 @@ import {
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import { HelpPanelProps } from 'containers/HelpPanelContainer';
 import constants from 'lib/constants';
+import { centerline } from 'lib/selectors';
 
 const colors = constants.colors.helpPanel;
 const {
@@ -34,25 +36,28 @@ const Styles = StyleSheet.create({
     width: constants.panelWidth,
   },
   subpanel: {
-    alignSelf: 'flex-end',
-    display: 'flex',
-    flexDirection: 'row',
-    marginBottom: 10,
   },
   subpanelContents: {
-    flexDirection: 'column',
-    height: 200,
-    width: 200,
-    backgroundColor: '#1d4e89', // classic blue square TODO temporary
   },
   subpanels: {
     top: subpanelTopOffset,
   },
-  text: {
-    color: constants.fonts.colors.default,
+  switch: {
+  },
+  switchContainer: {
+    position: 'absolute',
+  },
+  switchView: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+  },
+  tipsSwitchLabel: {
+    color: colors.tipsLabel,
     fontSize: constants.fonts.sizes.choice,
     fontWeight: 'bold',
-    margin: 5,
+    marginLeft: 20,
+    margin: 10,
   },
 })
 
@@ -69,6 +74,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
   }
 
   render() {
+    const colors = constants.colors.switch;
     const { props } = this;
     return (
       <React.Fragment>
@@ -77,6 +83,24 @@ class HelpPanel extends React.Component<HelpPanelProps> {
             <View style={Styles.subpanels}>
               <View style={Styles.subpanel}>
                 <View style={Styles.subpanelContents}>
+                  <View style={Styles.switchContainer}>
+                    <View style={Styles.switchView}>
+                      <Text style={Styles.tipsSwitchLabel}>
+                        TIPS
+                      </Text>
+                      <View style={Styles.switch}>
+                        <View style={{ marginLeft: 2 }}>
+                          <Switch
+                            ios_backgroundColor={colors.background}
+                            onValueChange={props.onSetTipsEnabled}
+                            thumbColor={constants.colors.helpPanel.tipsThumb}
+                            trackColor={colors.track}
+                            value={props.tipsEnabled}
+                          />
+                        </View>
+                      </View>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
