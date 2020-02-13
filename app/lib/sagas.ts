@@ -1691,7 +1691,7 @@ const sagas = {
       scrollTime,
       timelineZoomValue,
     } = yield select((state: AppState) => state.options);
-    const multiplier = 0.01; // TODO constant
+    const multiplier = constants.timeline.relativeZoomRate;
     if (_interval) {
       clearInterval(_interval);
       _interval = null;

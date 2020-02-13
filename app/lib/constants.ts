@@ -516,8 +516,8 @@ const constants = {
     paceMeasurement: interval.seconds(20),
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
-    timelineCloseToNow: 1000,
-    timelineRelativeZoomStep: 20,
+    timelineCloseToNow: 3000,
+    timelineRelativeZoomStep: 25,
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.
@@ -541,6 +541,7 @@ const constants = {
     miniBarHeight: 15,
     minimumZoomMsec: 1000, // 1 second
     nearTimeThreshold: interval.seconds(10), // TODO
+    relativeZoomRate: 0.012,
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     widthMultiplier: 10, // >1, important for smooth panning of the timeline. Larger means harder to reach the edge.
