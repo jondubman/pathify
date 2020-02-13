@@ -6,12 +6,15 @@ import {
   PanResponder,
   PanResponderInstance,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 import ReactNativeHaptic from 'react-native-haptic';
 
 import PausedClockContainer from 'containers/PausedClockContainer';
 import NowClockContainer from 'containers/NowClockContainer';
+import TipContainer from 'containers/TipContainer';
+import { tipTextStyle } from 'presenters/Tip';
 import { ZoomClockProps } from 'containers/ZoomClockContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
@@ -23,6 +26,13 @@ const Styles = StyleSheet.create({
   clockCenter: {
     left: centerline() - clockWidth / 2,
     position: 'absolute',
+  },
+  tipView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
   },
 })
 
@@ -109,7 +119,15 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
         {pressed ? (
           <View>
           </View>
-        ) : null}
+        ) : (
+          <View style={[Styles.tipView, { bottom: bottom + constants.clock.height + 2 }]}>
+            <TipContainer>
+              <Text style={tipTextStyle}>
+                TIMELINE
+              </Text>
+            </TipContainer>
+          </View>
+        )}
         <View {...this._panResponder.panHandlers} style={[Styles.clockCenter, bottomStyle]}>
           {nowMode ? <NowClockContainer clockStyle={pressedStyle} interactive={true} key='NowClock' />
             : <PausedClockContainer clockStyle={pressedStyle} interactive={true} key='PausedClock' />}

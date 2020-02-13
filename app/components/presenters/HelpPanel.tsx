@@ -5,14 +5,12 @@ import {
   StyleSheet,
   Switch,
   Text,
-  TouchableHighlight,
   View,
 } from 'react-native';
 
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import { HelpPanelProps } from 'containers/HelpPanelContainer';
 import constants from 'lib/constants';
-import { centerline } from 'lib/selectors';
 
 const colors = constants.colors.helpPanel;
 const {
@@ -54,8 +52,9 @@ const Styles = StyleSheet.create({
   },
   tipsSwitchLabel: {
     color: colors.tipsLabel,
-    fontSize: constants.fonts.sizes.choice,
-    fontWeight: 'bold',
+    fontFamily: constants.tips.fontFamily,
+    fontSize: constants.tips.fontSize,
+    fontWeight: constants.tips.fontWeight,
     marginLeft: 20,
     margin: 10,
   },
@@ -86,7 +85,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                   <View style={Styles.switchContainer}>
                     <View style={Styles.switchView}>
                       <Text style={Styles.tipsSwitchLabel}>
-                        TIPS
+                        YELLOW LABELS
                       </Text>
                       <View style={Styles.switch}>
                         <View style={{ marginLeft: 2 }}>

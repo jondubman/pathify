@@ -19,7 +19,6 @@ import Slider from '@react-native-community/slider';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
 import constants, { MapStyle } from 'lib/constants';
-import { centerline } from 'lib/selectors';
 
 const colors = constants.colors.settingsPanel;
 const {
@@ -41,6 +40,7 @@ const Styles = StyleSheet.create({
   },
   choiceLabelText: {
     color: constants.colors.byName.gray,
+    fontFamily: constants.fonts.family,
     fontSize: constants.fonts.sizes.choiceLabel,
     fontWeight: 'normal',
   },

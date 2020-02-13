@@ -85,7 +85,7 @@ const schemaVersion = 29;
 const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
 const borderRadiusSmall = 5;
-const bottomButtonSpacing = 12;
+const bottomButtonSpacing = 15;
 const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
@@ -316,7 +316,7 @@ const constants = {
     borderLineHeight: 1,
     borderRadius: borderRadiusSmall,
     borderWidth: 1,
-    centerLineTop: -buttonOffset,
+    centerLineTop: -buttonOffset * 2,
     centerLineWidth: 2,
     height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight, // list items match timeline height
     nowClockMarginLeft: activityListMargin,
@@ -633,6 +633,11 @@ const constants = {
         visibleTime: interval.seconds(5), // lower limit (maximum zoom)
       },
     ],
+  },
+  tips: {
+    fontFamily,
+    fontSize: 12,
+    fontWeight: 'bold' as any, // bold as any!
   },
   topButton: {
     fontFamily,

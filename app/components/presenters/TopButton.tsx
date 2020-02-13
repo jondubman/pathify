@@ -13,7 +13,9 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
+import TipContainer from 'containers/TipContainer';
 import { TopButtonProps } from 'containers/TopButtonContainer';
+import { tipTextStyle } from 'presenters/Tip';
 
 const colors = constants.colors.topButton;
 const {
@@ -58,7 +60,14 @@ const Styles = StyleSheet.create({
     fontFamily,
     fontSize,
     position: 'absolute',
-  }
+  },
+  tipView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
 })
 
 const backgroundColor = (props: TopButtonProps) => (props.selected ? (props.current ? colors.backgroundCurrentSelected :
@@ -68,6 +77,13 @@ const backgroundColor = (props: TopButtonProps) => (props.selected ? (props.curr
 
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <Fragment>
+    <View style={[Styles.tipView, { top: props.topOffset + constants.buttonSize - 1 }]}>
+      <TipContainer>
+        <Text style={tipTextStyle}>
+          ACTIVITIES
+        </Text>
+      </TipContainer>
+    </View>
     {props.activityCount.length ? (<View
       style={[Styles.bubble, {
         backgroundColor: props.selected ? (props.current ? colors.bubbleNow : colors.bubblePast) : colors.bubble,

@@ -64,6 +64,7 @@ const Styles = StyleSheet.create({
   text: {
     color: colors.text,
     fontSize: 16,
+    fontFamily: constants.fonts.family,
   },
   textEmphasize: {
     fontWeight: 'bold',

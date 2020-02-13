@@ -4,12 +4,14 @@ import {
 import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
+import { dynamicAreaTop } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import log from 'shared/log';
 import SettingsButton from 'presenters/SettingsButton';
 
 interface SettingsButtonStateProps {
   open: boolean;
+  topOffset: number;
 }
 
 interface SettingsButtonDispatchProps {
@@ -21,6 +23,7 @@ export type SettingsButtonProps = SettingsButtonStateProps & SettingsButtonDispa
 const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
   return {
     open: state.flags.settingsOpen,
+    topOffset: dynamicAreaTop(),
   }
 }
 

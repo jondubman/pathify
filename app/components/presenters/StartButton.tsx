@@ -1,14 +1,20 @@
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import React, {
+  Fragment,
 } from 'react';
 
 import {
   StyleSheet,
   Text,
   TouchableHighlight,
+  View,
 } from 'react-native';
 
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
+import TipContainer from 'containers/TipContainer';
 import constants from 'lib/constants';
+import { tipTextStyle } from 'presenters/Tip';
+
 const colors = constants.colors.startButton;
 const {
   leftOffset,
@@ -33,6 +39,13 @@ const Styles = StyleSheet.create({
     fontSize: 16,
     paddingTop: 2,
   },
+  tipView: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    position: 'absolute',
+    left: 0,
+    width: 100,
+  },
 })
 
 // const modeIcons = ['ghost', 'bullseye', 'running', 'bolt']; // also 'play'
@@ -40,27 +53,36 @@ const Styles = StyleSheet.create({
 import { StartButtonProps } from 'containers/StartButtonContainer';
 
 const StartButton = (props: StartButtonProps) => (
-  <TouchableHighlight
-    style={[Styles.button, {
-      backgroundColor: props.trackingActivity ? colors.enabledBackground : colors.disabledBackground,
-      bottom: props.bottomOffset,
-      left: leftOffset,
-    }]}
-    onPressIn={props.onPressIn}
-    underlayColor={props.trackingActivity ? colors.enabledUnderlay : colors.disabledUnderlay}
-  >
-    {props.trackingActivity ? (
-      <FontAwesome5
-        color={constants.colors.byName.black}
-        name={'stop'}
-        size={constants.startButton.size / 2}
-      />
-    ) : (
-      <Text style={Styles.label}>
-        {'START'}
-      </Text>
-    )}
-  </TouchableHighlight>
+  <Fragment>
+    <View style={[Styles.tipView, { bottom: props.bottomOffset - constants.bottomButtonSpacing }]}>
+      <TipContainer>
+        <Text style={tipTextStyle}>
+          TRACKING
+        </Text>
+      </TipContainer>
+    </View>
+    <TouchableHighlight
+      style={[Styles.button, {
+        backgroundColor: props.trackingActivity ? colors.enabledBackground : colors.disabledBackground,
+        bottom: props.bottomOffset,
+        left: leftOffset,
+      }]}
+      onPressIn={props.onPressIn}
+      underlayColor={props.trackingActivity ? colors.enabledUnderlay : colors.disabledUnderlay}
+    >
+      {props.trackingActivity ? (
+        <FontAwesome5
+          color={constants.colors.byName.black}
+          name={'stop'}
+          size={constants.startButton.size / 2}
+        />
+      ) : (
+        <Text style={Styles.label}>
+          {'START'}
+        </Text>
+      )}
+    </TouchableHighlight>
+  </Fragment>
 )
 
 export default StartButton;

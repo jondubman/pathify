@@ -157,7 +157,7 @@ export const dynamicTopBelowActivityList = (state: AppState): number => (
 )
 
 export const dynamicTopBelowButtons = (): number => (
-  dynamicAreaTop() + constants.buttonSize + constants.buttonOffset
+  dynamicAreaTop() + constants.buttonSize + constants.buttonOffset * 2
 )
 
 export const loggableOptions = (state: AppState) => {
