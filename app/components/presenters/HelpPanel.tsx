@@ -20,6 +20,14 @@ const {
 } = constants.helpPanel;
 
 const Styles = StyleSheet.create({
+  labelsSwitchLabel: {
+    color: colors.labelsLabel,
+    fontFamily: constants.labels.fontFamily,
+    fontSize: constants.labels.fontSize,
+    fontWeight: constants.labels.fontWeight,
+    marginLeft: 20,
+    margin: 10,
+  },
   panel: {
     backgroundColor: colors.background,
     borderRadius: constants.buttonSize / 2,
@@ -50,14 +58,6 @@ const Styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
   },
-  tipsSwitchLabel: {
-    color: colors.tipsLabel,
-    fontFamily: constants.tips.fontFamily,
-    fontSize: constants.tips.fontSize,
-    fontWeight: constants.tips.fontWeight,
-    marginLeft: 20,
-    margin: 10,
-  },
 })
 
 const initialState = {
@@ -84,7 +84,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                 <View style={Styles.subpanelContents}>
                   <View style={Styles.switchContainer}>
                     <View style={Styles.switchView}>
-                      <Text style={Styles.tipsSwitchLabel}>
+                      <Text style={Styles.labelsSwitchLabel}>
                         YELLOW LABELS
                       </Text>
                       <View style={Styles.switch}>
@@ -92,7 +92,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                           <Switch
                             ios_backgroundColor={colors.background}
                             onValueChange={props.onSetLabelsEnabled}
-                            thumbColor={constants.colors.helpPanel.tipsThumb}
+                            thumbColor={constants.colors.helpPanel.labelsThumb}
                             trackColor={colors.track}
                             value={props.labelsEnabled}
                           />

@@ -20,11 +20,12 @@ import { centerline } from 'lib/selectors';
 import { labelTextStyle } from 'presenters/Label';
 import log from 'shared/log';
 
-const clockWidth = constants.clock.height;
+const clockDiameter = constants.clock.height;
+const deltaMax = constants.refTime.height - 5;
 
 const Styles = StyleSheet.create({
   clockCenter: {
-    left: centerline() - clockWidth / 2,
+    left: centerline() - clockDiameter / 2,
     position: 'absolute',
   },
   labelView: {
@@ -33,6 +34,14 @@ const Styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
+  },
+  verticalTrack: {
+    backgroundColor: constants.colors.zoomClock.verticalTrack,
+    borderRadius: clockDiameter,
+    height: deltaMax * 2 + clockDiameter,
+    left: centerline() - clockDiameter / 2,
+    position: 'absolute',
+    width: clockDiameter,
   },
 })
 
@@ -68,7 +77,6 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
         log.trace('onPanResponderMove', gestureState.dx, gestureState.dy);
         let delta = -gestureState.dy;
         // deltaMax is the room we have to slide the clock down. For symmetry the upside should be identical.
-        const deltaMax = constants.refTime.height - 5;
         if (delta > 0) {
           delta = Math.min(delta, deltaMax); // max delta is deltaMax
         } else {
@@ -117,7 +125,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     return (
       <Fragment>
         {pressed ? (
-          <View>
+          <View pointerEvents="none" style={[Styles.verticalTrack, { bottom: bottom - deltaMax }]}>
           </View>
         ) : (
           <View style={[Styles.labelView, { bottom: bottom - 16 }]}>

@@ -65,6 +65,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
 const colorThemes = {
   background: namedColors.black,
   help: namedColors.yellow,
+  labels: namedColors.yellow,
   now: namedColors.green,
   nowSelected: namedColors.azure,
   nowSelectedDark: namedColors.azure_dark,
@@ -72,8 +73,8 @@ const colorThemes = {
   nowDarker: namedColors.darkerGreen,
   past: namedColors.blue,
   settings: namedColors.darkerGray,
-  tips: namedColors.yellow,
   topMenu: namedColors.darkerGray,
+  zooming: namedColors.orange,
 }
 
 // For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
@@ -170,7 +171,7 @@ const colors = {
   },
   grabBar: {
     line: withOpacity(namedColors.silver, 0.20),
-    lineActive: withOpacity(namedColors.orange, 1),
+    lineActive: withOpacity(colorThemes.zooming, 1),
 },
   helpButton: {
     background: namedColors.white,
@@ -180,8 +181,8 @@ const colors = {
   helpPanel: {
     background: withOpacity(colorThemes.background, defaultOpacity),
     border: namedColors.darkerGray,
-    tipsLabel: withOpacity(colorThemes.tips, 0.75),
-    tipsThumb: withOpacity(colorThemes.tips, 0.85),
+    labelsLabel: withOpacity(colorThemes.labels, 0.75),
+    labelsThumb: withOpacity(colorThemes.labels, 0.85),
   },
   map: {
     dimmer: namedColors.black,
@@ -264,7 +265,7 @@ const colors = {
     },
     centerLine: withOpacity(namedColors.white, 0.5),
     centerLineInert: withOpacity(namedColors.white, 0.25),
-    centerLineZoom: withOpacity(namedColors.orange, 1),
+    centerLineZoom: withOpacity(colorThemes.zooming, 1),
     topLine: withOpacity(namedColors.gray, 0.5),
   },
   topButton: {
@@ -291,7 +292,8 @@ const colors = {
   },
   user: colorThemes.now,
   zoomClock: {
-    border: withOpacity(namedColors.orange, 1),
+    border: withOpacity(colorThemes.zooming, 1),
+    verticalTrack: withOpacity(colorThemes.zooming, 0.35),
   }
 }
 
@@ -427,6 +429,11 @@ const constants = {
   },
   hitSlop: {
     top: buttonOffset, bottom: buttonOffset, left: buttonOffset, right: buttonOffset,
+  },
+  labels: {
+    fontFamily,
+    fontSize: 12,
+    fontWeight: 'bold' as any, // bold as any!
   },
   map: {
     centerMapDuration: 300, // timing: msec
@@ -638,11 +645,6 @@ const constants = {
         visibleTime: interval.seconds(5), // lower limit (maximum zoom)
       },
     ],
-  },
-  tips: {
-    fontFamily,
-    fontSize: 12,
-    fontWeight: 'bold' as any, // bold as any!
   },
   topButton: {
     fontFamily,

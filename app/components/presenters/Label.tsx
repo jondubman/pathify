@@ -8,10 +8,10 @@ import { LabelProps } from 'containers/LabelContainer';
 import constants from 'lib/constants';
 
 export const labelTextStyle = {
-  color: constants.colorThemes.tips,
-  fontFamily: constants.tips.fontFamily,
-  fontSize: constants.tips.fontSize,
-  fontWeight: constants.tips.fontWeight,
+  color: constants.colorThemes.labels,
+  fontFamily: constants.labels.fontFamily,
+  fontSize: constants.labels.fontSize,
+  fontWeight: constants.labels.fontWeight,
 }
 
 class Label extends React.Component<LabelProps> {
