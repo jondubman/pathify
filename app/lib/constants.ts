@@ -320,6 +320,7 @@ const constants = {
     centerLineWidth: 2,
     height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight, // list items match timeline height
     nowClockMarginLeft: activityListMargin,
+    nowClockLabelBottom: 5,
     scrollbarHeight,
     topBottomBorderHeight: activityTopBottomBorderHeight,
   },

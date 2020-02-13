@@ -24,6 +24,7 @@ import { Timepoint } from 'shared/timeseries';
 
 interface ActivityListStateProps {
   currentActivityId: string | null;
+  labelsEnabled: boolean;
   list: ActivityDataExtended[];
   refreshCount: number;
   selectedActivityId: string | null;
@@ -44,6 +45,7 @@ export type ActivityListProps = ActivityListStateProps & ActivityListDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   const {
+    labelsEnabled,
     timelineNow,
     trackingActivity,
   } = state.flags;
@@ -53,6 +55,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   } = state.options;
   return {
     currentActivityId,
+    labelsEnabled,
     list: state.cache.activities || [], // TODO could filter activities
     refreshCount: state.cache.refreshCount,
     selectedActivityId,

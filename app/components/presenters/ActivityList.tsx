@@ -8,17 +8,20 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
+  Text,
   TouchableHighlight,
   View,
 } from 'react-native';
 
 import { ActivityListProps } from 'containers/ActivityListContainer';
+import LabelContainer from 'containers/LabelContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import ActivityListItem from 'presenters/ActivityListItem';
+import { labelTextStyle } from 'presenters/Label';
 import { ActivityDataExtended } from 'shared/activities';
 import log from 'shared/log';
 import { Timepoint } from 'shared/timeseries';
@@ -66,6 +69,10 @@ const Styles = StyleSheet.create({
   },
   centerLineSelected:{
     backgroundColor: colors.centerLineSelected,
+  },
+  labelView: {
+    left: constants.clock.width / 2 - 1, // TODO this is the right place, though it's a brittle calculation
+    bottom: 5,
   },
 })
 
@@ -256,6 +263,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
     const {
       currentActivityId,
+      labelsEnabled,
       list,
       selectedActivityId,
       timelineNow,
@@ -274,6 +282,9 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       position: 'absolute',
       top: centerLineTop,
     } as any;
+    // Finesse position of NowClock when labels enabled vs disabled.
+    const labelBottom = constants.activityList.nowClockLabelBottom;
+    const clockBottom = labelsEnabled ? labelBottom : -1.5;
     const pointerEvents = visible ? 'auto' : 'none';
     return (
       <View pointerEvents={pointerEvents} style={[Styles.box, { top }, visible ? {} : { opacity: 0 }]}>
@@ -317,7 +328,14 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
               underlayColor={colors.futureZoneUnderlay}
             >
               <View style={listFooterClockStyle}>
-                <NowClockContainer clockStyle={{}} interactive={false} />
+                <NowClockContainer clockStyle={{ bottom: clockBottom }} interactive={false} />
+                <View style={Styles.labelView}>
+                  <LabelContainer>
+                    <Text style={labelTextStyle}>
+                      NOW
+                    </Text>
+                  </LabelContainer>
+                </View>
               </View>
             </TouchableHighlight>
           }
