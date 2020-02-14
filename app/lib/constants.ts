@@ -292,8 +292,13 @@ const colors = {
   },
   user: colorThemes.now,
   zoomClock: {
+    backTrack: withOpacity(colorThemes.past, 0.35),
+    backTrackActive: withOpacity(colorThemes.past, 0.65),
     border: withOpacity(colorThemes.zooming, 1),
+    nowTrack: withOpacity(colorThemes.now, 0.35),
+    nowTrackActive: withOpacity(colorThemes.now, 0.65),
     verticalTrack: withOpacity(colorThemes.zooming, 0.35),
+    verticalTrackActive: withOpacity(colorThemes.zooming, 0.65),
   }
 }
 

@@ -7,6 +7,7 @@ import {
 import constants from 'lib/constants';
 import {
   dynamicClockBottom,
+  shouldShowTimeline,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
@@ -14,12 +15,15 @@ import ZoomClock from 'presenters/ZoomClock';
 import log from 'shared/log';
 
 interface ZoomClockStateProps {
+  allowZoom: boolean;
   bottom: number;
   nowMode: boolean;
   pressed: boolean;
 }
 
 interface ZoomClockDispatchProps {
+  onBackSelected: () => void;
+  onNowSelected: () => void;
   onPressed: () => void;
   onReleased: () => void;
   onZoom: (rate: number, distanceMoved: number) => void;
@@ -33,6 +37,7 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
     zoomClockPressed,
   } = state.flags;
   return {
+    allowZoom: shouldShowTimeline(state),
     bottom: dynamicClockBottom(state),
     nowMode: timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     pressed: zoomClockPressed,
@@ -40,6 +45,14 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): ZoomClockDispatchProps => {
+  const onBackSelected = () => {
+    log.trace('ZoomClock onBackSelected');
+    dispatch(newAction(AppAction.jumpToBackTime));
+  }
+  const onNowSelected = () => {
+    log.trace('ZoomClock onNowSelected');
+    dispatch(newAction(AppAction.jumpToNow));
+  }
   const onPressed = () => {
     log.trace('ZoomClock onPressed');
     dispatch(newAction(AppAction.flagEnable, 'zoomClockPressed'));
@@ -54,6 +67,8 @@ const mapDispatchToProps = (dispatch: Function): ZoomClockDispatchProps => {
     dispatch(newAction(AppAction.setAppOption, { zoomClockMoved: distanceMoved }));
   }
   const dispatchers = {
+    onBackSelected,
+    onNowSelected,
     onPressed,
     onReleased,
     onZoom,
