@@ -6,7 +6,6 @@ import {
   PanResponder,
   PanResponderInstance,
   StyleProp,
-  Text,
   View,
   ViewStyle,
 } from 'react-native';
@@ -34,23 +33,17 @@ const lineStyleActive = {
 } as StyleProp<ViewStyle>;
 
 interface GrabBarState {
-  snap: number | undefined;
-  snapIndex: number | undefined;
-  top: number | undefined;
 }
 
 class GrabBar extends Component<GrabBarProps, GrabBarState> {
 
   _panResponder: PanResponderInstance;
+  _snap: number | undefined;
+  _snapIndex: number | undefined;
+  _top: number | undefined;
 
   constructor(props: GrabBarProps) {
     super(props);
-    this.state = {
-      snap: undefined,
-      snapIndex: undefined,
-      top: undefined,
-    }
-    const snaps = snapPositions();
     this._panResponder = PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
@@ -61,18 +54,19 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       onPanResponderGrant: (evt, gestureState) => {
         // The gesture has started. gestureState.d{x,y} will be set to zero now
         ReactNativeHaptic.generate('impactMedium');
-        log.trace('onPanResponderGrant');
+        log.scrollEvent('onPanResponderGrant', 'props', this.props, this._snap, this._snapIndex, this._top);
         this.props.onPressed();
       },
       onPanResponderMove: (evt, gestureState) => {
         // The most recent move distance is gestureState.move{X,Y}
         // The accumulated gesture distance since becoming responder is gestureState.d{x,y}
-        log.trace('onPanResponderMove', this.props.snap, gestureState.dx, gestureState.dy);
+        log.scrollEvent('onPanResponderMove', gestureState.dx, gestureState.dy, this._snap, this._snapIndex, this._top);
         let delta = gestureState.dy;
         const currentPosition = this.props.snap + delta;
         let containedPosition: number | undefined;
         let snap: number | undefined;
         let snapIndex: number | undefined;
+        const snaps = snapPositions();
         const lastIndex = snaps.length - 1;
         if (currentPosition <= snaps[0]) {
           snap = snaps[0];
@@ -99,49 +93,51 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           }
         }
         if (containedPosition && snap) {
-          const previousSnap = this.state.snap;
-          if (snap !== previousSnap) {
+          const previousSnapIndex = (this._snapIndex === undefined) ? this.props.snapIndex : this._snapIndex;
+          if (snapIndex !== previousSnapIndex) {
             ReactNativeHaptic.generate('selection');
           }
           const top = containedPosition;
-          this.setState({
-            snap,
-            snapIndex,
-            top,
-          })
+          // snap = this.props.snapBack ? this.props.snapBackTo : snap;
+          this._snap = snap;
+          this._snapIndex = snapIndex;
+          this._top = top;
+          log.scrollEvent('onPanResponderMove now', this._snap, this._snapIndex, this._top);
+          this.forceUpdate(); // TODO
           this.props.onMoved(snap, snapIndex!);
         }
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         // User has released all touches while this view is the responder. This typically means a gesture has succeeded.
+        log.scrollEvent('onPanResponderRelease');
         ReactNativeHaptic.generate('notificationSuccess');
-        log.trace('onPanResponderRelease', this.props.snap);
-        const snapped = this.state.snap || this.props.snap;
-        this.setState({
-          snap: snapped,
-          top: snapped,
-        })
-        this.props.onReleased(snapped, this.state.snapIndex!);
+        // const snapped = (this.props.snapBack || !this._snap) ? this.props.snapBackTo : this._snap;
+        this.props.onReleased((this._snapIndex === undefined) ? this.props.snapIndex : this._snapIndex);
+        this._snap = undefined;
+        this._snapIndex = undefined;
+        this._top = undefined;
+        // this.forceUpdate(); // TODO
       },
       onPanResponderTerminate: (evt, gestureState) => {
-        log.trace('onPanResponderTerminate');
+        log.scrollEvent('onPanResponderTerminate');
         // Another component has become the responder, so this gesture should be cancelled
       },
     })
   }
 
   render() {
+    log.debug('GrabBar render', this._snap, this._snapIndex, this._top);
     const dragLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
-      top: this.state.top || this.props.snap,
+      top: (this._snap === undefined) ? this.props.snap : this._snap,
     } as StyleProp<ViewStyle>;
 
     const snapLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
-      top: this.state.snap || this.props.snap,
+      top: (this._top === undefined) ? this.props.snap : this._top,
     } as StyleProp<ViewStyle>;
 
     const {
@@ -158,7 +154,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           <View pointerEvents="none" style={dragStyle} />
           <View pointerEvents="none" style={dragStyle} />
         </View>
-        {this.state.top === this.props.snap ? null : (
+        {this._top === this.props.snap ? null : (
           <View pointerEvents="none" style={snapLayoutStyle}>
             <View style={snapStyle} />
             <View style={snapStyle} />

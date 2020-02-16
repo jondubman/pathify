@@ -60,8 +60,8 @@ export const EventSchema: Realm.ObjectSchema = {
     odo: 'float?',
     speed: 'float?',
     // + derived properties:
-    gain: 'float?', // cumulative elevation gain within activity TODO2
-    loss: 'float?', // cumulative elevation gain within activity TODO2
+    gain: 'float?', // cumulative elevation gain within activity TODO not implemented
+    loss: 'float?', // cumulative elevation gain within activity TODO not implemented
 
     // MarkEvent
     subtype: 'string?',
@@ -70,7 +70,7 @@ export const EventSchema: Realm.ObjectSchema = {
     // MotionEvent
     isMoving: 'bool?',
 
-    // ModeChangeEvent (also rolled into LocationEvent)
+    // ModeChangeEvent
     mode: 'string?',
     confidence: 'int?',
   }

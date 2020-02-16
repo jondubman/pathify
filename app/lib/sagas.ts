@@ -81,7 +81,6 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
-  dynamicTopBelowButtons,
   getCachedPathInfo,
   getStoredLocationEvent,
   loggableOptions,
@@ -89,6 +88,7 @@ import {
   menuOpen,
   pulsars,
   selectedActivity,
+  snapPositions,
   timelineVisibleTime,
   timelineZoomValue,
 } from 'lib/selectors';
@@ -271,13 +271,16 @@ const sagas = {
             if (event.type == EventType.LOC) {
               const {
                 accuracy,
+                confidence,
                 ele,
                 lon,
                 lat,
+                mode,
                 odo,
                 speed,
                 t,
               } = event as LocationEvent;
+              const modeNumeric = 0; // TODO2
               if (activity.tStart && t >= activity.tStart) {
                 // TODO this accuracy test is a bit crude, but works well enough for now.
                 if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
@@ -289,6 +292,7 @@ const sagas = {
                   pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
                   pathUpdate.lats.push(lat);
                   pathUpdate.lons.push(lon);
+                  pathUpdate.mode.push(modeNumeric);
                   pathUpdate.odo.push(odo);
                   pathUpdate.speed.push(speed);
                   pathUpdate.t.push(t);
@@ -1016,9 +1020,11 @@ const sagas = {
           const locEvent = event as LocationEvent;
           const {
             accuracy,
+            confidence,
             ele,
             lon,
             lat,
+            mode,
             odo,
             speed,
             t,
@@ -1038,6 +1044,9 @@ const sagas = {
             pathUpdate.lons.push(lon);
             activityUpdate.lonMax = Math.max(activityUpdate.lonMax || -Infinity, lon);
             activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
+            // mode
+            const modeNumeric = 0; // TODO2
+            pathUpdate.mode.push(modeNumeric);
             // odo
             pathUpdate.odo.push(odo);
             // speed
@@ -1465,7 +1474,7 @@ const sagas = {
       const { recoveryMode, startupAction_clearStorage } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
       if (startupAction_clearStorage) {
-        yield put(newAction(AppAction.clearStorage));
+        yield put(newAction(AppAction.clearStorage)); // BOOM!
       }
       const settings = (yield call(database.settings)) as SettingsObject;
       yield call(log.info, 'Saved App settings', settings);
@@ -1480,7 +1489,7 @@ const sagas = {
       for (let propName of persistedFlags) {
         if (settings[propName] !== undefined) {
           const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
-          yield put(newAction(actionType, propName));
+          yield put(newAction(actionType, propName)); // TODO any reason not to set these all at once?
         }
       }
       const propagatedSettings = {} as any; // TODO really mean type of AppState options
@@ -1500,6 +1509,7 @@ const sagas = {
         latMin,
         lonMax,
         lonMin,
+        grabBarSnapIndex,
         mapHeading,
         mapZoomLevel,
         timelineNow,
@@ -1508,10 +1518,9 @@ const sagas = {
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
-      const grabBarSnap = dynamicTopBelowButtons(); // TODO
+      const grabBarSnapIndexPreview = grabBarSnapIndex;
       yield put(newAction(AppAction.setAppOption, {
-        grabBarSnap: grabBarSnap,
-        grabBarSnapPreview: grabBarSnap,
+        grabBarSnapIndexPreview,
       }))
       yield put(newAction(AppAction.flagEnable, 'showGrabBar'));
       if (pausedTime) {

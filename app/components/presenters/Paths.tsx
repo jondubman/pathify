@@ -87,5 +87,3 @@ class Paths extends PureComponent<PathsProps> {
 }
 
 export default Paths;
-
-//                 style={(activity.pathType === PathType.CURRENT) ? lineLayerStyleCurrent : lineLayerStyleDefault}

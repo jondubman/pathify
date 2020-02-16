@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   dynamicTopBelowActivityList,
   getCachedPathInfo,
-  showActivityDetailsRows,
+  showActivityDetailsRowsPreview,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import ActivityDetails from 'presenters/ActivityDetails';
@@ -81,7 +81,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       scrollTime,
     } = state.options;
     if (info) {
-      const rows = showActivityDetailsRows(state);
+      const rows = showActivityDetailsRowsPreview(state);
       const activity = info.activity as ActivityDataExtended;
       const isCurrent = activity && (activity.id === currentActivityId);
       if (activity) {

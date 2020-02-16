@@ -83,8 +83,8 @@ export interface ActivityData {
   maxGapDistance?: number; // meters
   tMaxGapDistance?: number; // timestamp
 
-  gain?: number; // total elevation gain
-  loss?: number; // total elevation loss
+  gain?: number; // total elevation gain TODO
+  loss?: number; // total elevation loss TODO
 
   // bounds
   latMax?: number;

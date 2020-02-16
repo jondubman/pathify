@@ -89,7 +89,7 @@ export const currentOrSelectedActivity = (state: AppState): Activity | undefined
 }
 
 export const mapIsFullScreen = (state: AppState): boolean => (
-  state.options.grabBarSnapIndex === 0
+  state.options.grabBarSnapIndexPreview === 0
 )
 
 // Note this 'selector' does not currently depend on state.
@@ -140,7 +140,7 @@ export const dynamicTimelineWidth = (state: AppState): number => (
 )
 
 export const shouldShowActivityList = (state: AppState): boolean => (
-  (state.options.grabBarSnapIndex > 1)
+  (state.options.grabBarSnapIndexPreview >= constants.snapIndex.activityList)
 )
 
 export const shouldShowTimeline = (state: AppState): boolean => (
@@ -148,7 +148,14 @@ export const shouldShowTimeline = (state: AppState): boolean => (
 )
 
 export const showActivityDetailsRows = (state: AppState): number => {
-  const rows = Math.max(0, state.options.grabBarSnapIndex - 2);
+  // below ActivityList
+  const rows = Math.max(0, state.options.grabBarSnapIndex - constants.snapIndex.activityList);
+  return rows;
+}
+
+export const showActivityDetailsRowsPreview = (state: AppState): number => {
+  // below ActivityList
+  const rows = Math.max(0, state.options.grabBarSnapIndexPreview - constants.snapIndex.activityList)
   return rows;
 }
 
@@ -587,6 +594,7 @@ export const snapPositions = (): number[] => {
     const detailsRow2 = detailsRow1 + detailsRowHeight;
     const detailsRow3 = detailsRow2 + detailsRowHeight;
     const detailsRow4 = detailsRow3 + detailsRowHeight;
+    const detailsRow5 = detailsRow4 + detailsRowHeight;
     const snapPositions = [
       topMin,
       belowTopButtons,
@@ -595,6 +603,7 @@ export const snapPositions = (): number[] => {
       detailsRow2,
       detailsRow3,
       detailsRow4,
+      detailsRow5,
     ]
     return snapPositions;
 }

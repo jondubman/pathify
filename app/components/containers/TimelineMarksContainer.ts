@@ -22,12 +22,12 @@ export type TimelineMarksProps = TimelineMarksStateProps & TimelineMarksDispatch
 
 const mapStateToProps = (state: AppState): TimelineMarksStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
-  const marks: MarkEvents = markList(database.events()); // TODO4 remove this dependency
+  const marks: MarkEvents = markList(database.events()); // TODO remove this dependency
   // const marks: MarkEvents = [];
   return {
-    currentActivityId,
+    currentActivityId: currentActivityId || '',
     data: marks,
-    selectedActivityId,
+    selectedActivityId: selectedActivityId || '',
   }
 }
 

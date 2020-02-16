@@ -4,8 +4,10 @@ import {
   AppAction,
   newAction,
 } from 'lib/actions';
+import constants from 'lib/constants';
 import {
   getCachedPathInfo,
+  showActivityDetailsRows,
   snapPositions,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -16,48 +18,69 @@ interface GrabBarStateProps {
   key: string;
   pressed: boolean;
   snap: number;
+  snapBack: boolean;
+  snapBackTo: number;
+  snapIndex: number;
 }
 
 interface GrabBarDispatchProps {
   onMoved: (snap: number, snapIndex: number) => void;
   onPressed: () => void;
-  onReleased: (snap: number, snapIndex: number) => void;
+  onReleased: (snapIndex: number) => void;
 }
 
 export type GrabBarProps = GrabBarStateProps & GrabBarDispatchProps;
 
+const snapPosition = (state: AppState) => (snapPositions()[state.options.grabBarSnapIndex || 0])
+const snapBack = (snap: number) => (
+  Math.min(snap, snapPositions()[constants.snapIndex.activityList])
+)
+const shouldSnapBack = (state: AppState) => (
+  !showActivityDetailsRows(state) ||
+  !state.options.selectedActivityId ||
+  !getCachedPathInfo(state)
+)
+const snapIfNeeded = (state: AppState, snap: number) => (
+  shouldSnapBack(state) ? snapBack(snap) : snap
+)
+
 const mapStateToProps = (state: AppState): GrabBarStateProps => {
-  let snap = state.options.grabBarSnap; // not grabBarSnapPreview! That changes while dragging.
-  // This is the same trick used with the mapOpacity slider to avoid redundant updates.
-  if (!state.options.selectedActivityId || !getCachedPathInfo(state)) {
-    const snaps = snapPositions();
-    snap = Math.min(snap, snaps[2]); // TODO constants.layout.snapIndex...
-  }
+  const snap = snapIfNeeded(state, snapPosition(state));
+  // That is the same trick used with the mapOpacity slider to avoid redundant updates.
   return {
     key: snap.toString(),
     pressed: state.flags.grabBarPressed,
     snap,
+    snapBack: shouldSnapBack(state),
+    snapBackTo: snapBack(snap),
+    snapIndex: state.options.grabBarSnapIndex,
   }
 }
 
 const mapDispatchToProps = (dispatch: Function): GrabBarDispatchProps => {
   const onMoved = (snap: number, snapIndex: number) => {
-    dispatch(newAction(AppAction.setAppOption, {
-     // grabBarSnap no touch! only set preview. See mapStateToProps.
-     grabBarSnapIndex: snapIndex,
-     grabBarSnapPreview: snap,
-    }))
+    log.debug('onMoved', snap, snapIndex);
+    setTimeout(() => {
+      dispatch(newAction(AppAction.setAppOption, {
+        grabBarSnapIndexPreview: snapIndex,
+      }))
+    }, 0)
   }
   const onPressed = () => {
-    dispatch(newAction(AppAction.flagEnable, 'grabBarPressed'));
-  }
-  const onReleased = (snap: number, snapIndex: number) => {
-    dispatch(newAction(AppAction.flagDisable, 'grabBarPressed'));
+    log.debug('onPressed');
     setTimeout(() => {
+      log.debug('onPressed timeout');
+      dispatch(newAction(AppAction.flagEnable, 'grabBarPressed'));
+    }, 0)
+  }
+  const onReleased = (snapIndex: number) => {
+    log.debug('onReleased', snapIndex);
+    setTimeout(() => {
+      log.debug('onReleased timeout');
+      dispatch(newAction(AppAction.flagDisable, 'grabBarPressed'));
       dispatch(newAction(AppAction.setAppOption, { // Snap! Now we set both.
-        grabBarSnap: snap,
         grabBarSnapIndex: snapIndex,
-        grabBarSnapPreview: snap,
+        grabBarSnapIndexPreview: snapIndex,
       }))
     }, 0)
   }

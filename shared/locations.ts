@@ -1,10 +1,8 @@
-// Shared code (client + server) having to do specifically with location events and locations themselves.
-
+// Shared code (client + server) having to do specifically with LocationEvents, ModeChangeEvents and MotionEvents.
 export type Lon = number;
 export type Lat = number;
 export type LonLat = [Lon, Lat];
 
-import log from './log';
 import timeseries, {
   Events,
   EventFilter,
@@ -30,15 +28,13 @@ export interface LocationEvent extends GenericEvent {
   speed?: number; // mph (converted from meters per second)
 
   // properties derived from other events, but known at creation time of LocationEvent:
-  gain?: number; // cumulative within activity
-  loss?: number; // cumulative within activity
+  gain?: number; // cumulative within activity TODO not implemented
+  loss?: number; // cumulative within activity TODO not implemented
 }
 
 export type LocationEvents = LocationEvent[];
 
-export interface MotionEvent extends GenericEvent {
-  isMoving: boolean;
-}
+const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
 
 export enum ModeType {
   'BICYCLE' = 'BICYCLE',
@@ -53,12 +49,9 @@ export interface ModeChangeEvent extends GenericEvent {
   confidence: number;
 }
 
-export enum PathType {
-  'CURRENT' = 'CURRENT',
-  'DEFAULT' = 'DEFAULT',
+export interface MotionEvent extends GenericEvent {
+  isMoving: boolean;
 }
-
-const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
 
 const locations = {
 

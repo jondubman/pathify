@@ -110,7 +110,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
       onPanResponderGrant: (evt, gestureState) => {
         // The gesture has started. gestureState.d{x,y} will be set to zero now
-        ReactNativeHaptic.generate('impactMedium');
+        ReactNativeHaptic.generate('impactLight');
         log.trace('onPanResponderGrant');
         props.onPressed();
       },
@@ -170,7 +170,9 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         // User has released all touches while this view is the responder. This typically means a gesture has succeeded.
-        ReactNativeHaptic.generate('notificationSuccess');
+        if (this.state.verticalLock) {
+          ReactNativeHaptic.generate('notificationSuccess');
+        }
         log.trace('onPanResponderRelease');
         this.setState(initialState);
         props.onZoom(0, 0); // stop zooming
@@ -201,6 +203,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       horizontalLock,
       verticalLock,
     } = this.state;
+    log.trace('zoomClock render');
     const bottomStyle = {
       bottom: verticalLock ? bottom + deltaY : bottom,
     }

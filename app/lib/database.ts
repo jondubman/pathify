@@ -52,41 +52,45 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
   primaryKey: 'id',
   properties: {
     id: 'int', // singleton, always 1
+    backTime: 'double',
     currentActivityId: 'string?',
     followingUser: 'bool',
+    grabBarSnapIndex: 'int',
+    labelsEnabled: 'bool',
     latMax: 'double',
     latMin: 'double',
     lonMax: 'double',
     lonMin: 'double',
-    mapFullScreen: 'bool', // TODO no longer used
     mapHeading: 'double',
     mapOpacity: 'double',
     mapStyle: 'string',
     mapZoomLevel: 'double',
-    pausedTime: 'int',
-    showTimeline: 'bool', // TODO no longer used
+    pausedTime: 'double',
+    selectedActivityId: 'string?',
     timelineNow: 'bool',
     timelineZoomValue: 'double',
-    updateTime: 'int',
+    updateTime: 'double',
   }
 }
 
 export interface SettingsObject extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
   id: number,
+  backTime: number;
   currentActivityId?: string,
   followingPath: boolean,
   followingUser: boolean,
+  grabBarSnapIndex: number,
+  labelsEnabled: boolean;
   latMax: number,
   latMin: number,
   lonMax: number,
   lonMin: number,
-  mapFullScreen: boolean, // TODO no longer used
   mapHeading: number;
   mapOpacity: number,
   mapStyle: string,
   mapZoomLevel: number;
   pausedTime: number,
-  showTimeline: boolean, // TODO no longer used
+  selectedActivityId: string,
   timelineNow: boolean,
   timelineZoomValue: number,
   updateTime: number,
@@ -108,20 +112,21 @@ const { bounds, heading } = constants.map.default;
 
 const defaultSettings = {
   id: 1,
+  backTime: 0,
   currentActivityId: undefined,
   followingPath: false,
   followingUser: false,
-  latMax: bounds[0][0],
+  grabBarSnapIndex: 1,
+  latMax: bounds[0][0], // defaults
   latMin: bounds[1][1],
   lonMax: bounds[0][0],
   lonMin: bounds[1][0],
-  mapFullScreen: false, // TODO no longer used
   mapHeading: heading,
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
   mapZoomLevel: 0,
   pausedTime: 0,
-  showTimeline: true, // TODO no longer used
+  selectedActivityId: undefined,
   timelineNow: true,
   timelineZoomValue: constants.timeline.default.zoomValue,
   updateTime: 0,
@@ -373,6 +378,7 @@ const database = {
         path.ele.push(...update.ele || constants.paths.elevationUnvailable);
         path.lats.push(...update.lats);
         path.lons.push(...update.lons);
+        path.mode.push(...update.mode);
         path.odo.push(...update.odo);
         path.speed.push(...update.speed);
         path.t.push(...update.t);
@@ -385,6 +391,7 @@ const database = {
     id,
     lats: [],
     lons: [],
+    mode: [],
     odo: [],
     schemaVersion,
     speed: [],

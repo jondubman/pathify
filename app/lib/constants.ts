@@ -80,7 +80,7 @@ const colorThemes = {
 // For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
 // It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
 // as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
-const schemaVersion = 29;
+const schemaVersion = 30;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
@@ -172,7 +172,7 @@ const colors = {
   grabBar: {
     line: withOpacity(namedColors.silver, 0.20),
     lineActive: withOpacity(colorThemes.zooming, 1),
-},
+  },
   helpButton: {
     background: namedColors.white,
     icon: namedColors.black,
@@ -296,9 +296,9 @@ const colors = {
     backTrackActive: withOpacity(colorThemes.past, 0.65),
     border: withOpacity(colorThemes.zooming, 1),
     nowTrack: withOpacity(colorThemes.now, 0.35),
-    nowTrackActive: withOpacity(colorThemes.now, 0.65),
+    nowTrackActive: withOpacity(colorThemes.now, 0.5),
     verticalTrack: withOpacity(colorThemes.zooming, 0.35),
-    verticalTrackActive: withOpacity(colorThemes.zooming, 0.65),
+    verticalTrackActive: withOpacity(colorThemes.zooming, 0.5),
   }
 }
 
@@ -413,7 +413,6 @@ const constants = {
     },
   },
   grabBar: {
-    initialTop: -1,
     lineHeight: 2,
     spacing: 2,
   },
@@ -509,6 +508,10 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset,
     topOffset: safeAreaTop,
   },
+  snapIndex: {
+    topButtons: 1,
+    activityList: 2,
+  },
   startButton: {
     leftOffset: buttonOffset,
     opacity: defaultOpacity,
@@ -523,14 +526,13 @@ const constants = {
   },
   timing: { // msec
     activityListDelayReadjustmentAfterStartup: 500, // TODO would be better not to need this
-    activityListAnimationCompletion: 600,
     menuFade: 300,
     opacitySliderThrottle: 50,
     paceMeasurement: interval.seconds(20),
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     timelineCloseToNow: 3000,
-    timelineRelativeZoomStep: 25,
+    timelineRelativeZoomStep: 30,
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.

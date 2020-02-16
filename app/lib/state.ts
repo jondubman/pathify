@@ -44,7 +44,7 @@ export const initialAppState = {
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
-    followingPath: false, // is map following prior locations of user on an activity path? see flags.showPastLocation.
+    followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false,
     helpOpen: false, // manually opened by user
@@ -67,13 +67,11 @@ export const initialAppState = {
     startMenuOpen: false, // if manually opened by user
     startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     showActivityInfo: true, // generally true
-    showActivityList: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
     showGrabBar: false, // generally true
     showPathsOnMap: true, // generally true
     showPastLocation: true, // as a Pulsar on the map
-    // showTimeline: true, // TODO remove
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
@@ -99,9 +97,8 @@ export const initialAppState = {
     clientAlias: __DEV__ ? 'app' : 'device', // TODO should be unique in production, if specified
     currentActivityId: null as string | null, // while tracking Activity
     decelerationRate: 1, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
-    grabBarSnap: constants.grabBar.initialTop, // for GrabBar component
-    grabBarSnapIndex: 1, // TODO
-    grabBarSnapPreview: constants.grabBar.initialTop, // for GrabBar component
+    grabBarSnapIndex: constants.snapIndex.topButtons,
+    grabBarSnapIndexPreview: constants.snapIndex.topButtons,
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
@@ -135,16 +132,17 @@ export interface AppState extends InitialAppState {
 export const persistedFlags = [
   'followingPath',
   'followingUser',
-  // 'mapFullScreen', // TODO no longer used
-  'showActivityList',
-  // 'showTimeline', // TODO no longer used
+  'labelsEnabled',
   'timelineNow',
 ]
 
 export const persistedOptions = [
+  'backTime',
   'currentActivityId',
+  'grabBarSnapIndex',
   'mapOpacity',
   'mapStyle',
   'pausedTime',
+  'selectedActivityId',
   'timelineZoomValue',
 ]
