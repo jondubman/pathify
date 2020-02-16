@@ -86,114 +86,72 @@ const itemBackgroundStyle = (props: ActivityDetailsProps) => (
   props.isCurrent ? (props.timelineNow ? Styles.itemCurrentNow : Styles.itemCurrentSelected) : Styles.itemPast
 )
 
-// TODO Refactor into an assembly of smaller, actionable, customizable, reconfigurable components.
+const ActivityDetailsRow = ({ props, rowIndex, text1, caption1, text2, caption2 }) => (
+  (props.rows < rowIndex) ? null : (
+    <View style={Styles.row}>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {text1}
+          </Text>
+          <Text style={Styles.labelText}>
+            {caption1}
+          </Text>
+        </View>
+      </View>
+      <View style={Styles.bufferZone}>
+      </View>
+      <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
+        <View style={Styles.itemContents}>
+          <Text style={Styles.bigText}>
+            {text2}
+          </Text>
+          <Text style={Styles.labelText}>
+            {caption2}
+          </Text>
+        </View>
+      </View>
+    </View>
+  )
+)
 
 const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
   <View pointerEvents="none" style={[Styles.box, { top: props.top }]}>
-    {props.rows < 1 ? null : (
-      <View style={Styles.row}>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.timeText}
-            </Text>
-            <Text style={Styles.labelText}>
-              ELAPSED TIME HH:MM:SS
-            </Text>
-          </View>
-        </View>
-        <View style={Styles.bufferZone}>
-        </View>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.distanceText}
-            </Text>
-            <Text style={Styles.labelText}>
-              DISTANCE (mi)
-            </Text>
-          </View>
-        </View>
-      </View>
-    )}
-    {props.rows < 2 ? null : (
-      <View style={Styles.row}>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.speedPaceText}
-            </Text>
-            <Text style={Styles.labelText}>
-              PACE (min/mi)
-            </Text>
-          </View>
-        </View>
-        <View style={Styles.bufferZone}>
-        </View>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.speedText}
-            </Text>
-            <Text style={Styles.labelText}>
-              SPEED (mph)
-            </Text>
-          </View>
-        </View>
-      </View>
-    )}
-    {props.rows < 3 ? null : (
-      <View style={Styles.row}>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.averagePaceText}
-            </Text>
-            <Text style={Styles.labelText}>
-              AVERAGE PACE (min/mi)
-            </Text>
-          </View>
-        </View>
-        <View style={Styles.bufferZone}>
-        </View>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.averageSpeedText}
-            </Text>
-            <Text style={Styles.labelText}>
-              AVERAGE SPEED (mph)
-            </Text>
-          </View>
-        </View>
-      </View>
-    )}
-    {props.rows < 4 ? null : (
-      <View style={Styles.row}>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemLeft]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.index === props.length ? props.length.toString() : `${props.index}/${props.length}`}
-            </Text>
-            <Text style={Styles.labelText}>
-              # OF LOCATIONS
-            </Text>
-          </View>
-        </View>
-        <View style={Styles.bufferZone}>
-        </View>
-        <View style={[Styles.item, itemBackgroundStyle(props), Styles.itemRight]}>
-          <View style={Styles.itemContents}>
-            <Text style={Styles.bigText}>
-              {props.elevationText}
-            </Text>
-            <Text style={Styles.labelText}>
-              ELEVATION (feet)
-            </Text>
-          </View>
-        </View>
-      </View>
-    )}
+    <ActivityDetailsRow
+      props={props} rowIndex={1}
+      text1={props.timeText}
+        caption1={props.timelineNow ? 'ELAPSED TIME HH:MM:SS' : 'TIME IN ACTIVITY HH:MM:SS'}
+      text2={props.distanceText}
+      caption2={props.timelineNow ? 'TOTAL DISTANCE (mi)' : 'DISTANCE @TIMEPOINT (mi)'}
+    />
+    <ActivityDetailsRow
+      props={props} rowIndex={2}
+      text1={props.averagePaceText}
+        caption1="AVERAGE PACE (min/mi)"
+      text2={props.averageSpeedText}
+        caption2="AVERAGE SPEED (mph)"
+    />
+    <ActivityDetailsRow
+      props={props} rowIndex={3}
+      text1={props.speedPaceText}
+        caption1="PACE @TIMEPOINT (min/mi)"
+      text2={props.speedText}
+        caption2="SPEED @TIMEPOINT (mph)"
+    />
+    <ActivityDetailsRow
+      props={props} rowIndex={4}
+      text1={props.index === props.length ? props.length.toString() : `${props.index}/${props.length}`}
+        caption1="# OF LOCATIONS"
+      text2={props.elevationText}
+        caption2="ELEVATION (feet)"
+    />
+    <ActivityDetailsRow
+      props={props} rowIndex={5}
+      text1=""
+        caption1="MODE"
+      text2=""
+        caption2="TBD"
+    />
   </View>
 ) : null)
 

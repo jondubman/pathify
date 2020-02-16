@@ -514,7 +514,7 @@ const sagas = {
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { manual, newState } = params; // manual param not currently used for anything but logging
-    const appStartupCompleted = yield select((state: AppState) => state.flags.appStartupCompleted);
+    const { appStartupCompleted } = yield select((state: AppState) => state.flags);
     if (!appStartupCompleted) {
       yield take(AppAction.appStartupCompleted); // Wait for startup to complete if needed.
     }
@@ -528,7 +528,11 @@ const sagas = {
       newState,
     })
     yield put(newAction(AppAction.addEvents, { events: [newAppStateChangeEvent(newState)] }));
-    const { recoveryMode, setPaceAfterStart, trackingActivity } = yield select((state: AppState) => state.flags);
+    const {
+      recoveryMode,
+      setPaceAfterStart,
+      trackingActivity,
+    } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
       yield call(Geo.countLocations);
       if (!recoveryMode) {
