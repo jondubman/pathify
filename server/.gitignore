@@ -9,6 +9,3 @@ secrets
 ref.txt
 sample
 shared
-generated
-src/prisma-client
-prisma/queries.txt

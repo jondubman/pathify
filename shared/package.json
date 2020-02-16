@@ -5,8 +5,8 @@
   "dependencies": {
     "@turf/distance": "^6.0.1",
     "@turf/helpers": "^6.1.4",
-    "realm": "^2.29.2",
-    "util": "^0.12.0"
+    "realm": "3.6.3",
+    "util": "^0.12.1"
   },
   "scripts": {
     "share": "ls *.ts*; rm -rf ../web/src/shared; mkdir ../web/src/shared; cp -R *.ts* ../web/src/shared; rm -rf ../server/src/shared; mkdir ../server/src/shared; cp -R *.ts* ../server/src/shared; rm -rf ../app/shared; mkdir ../app/shared; cp -R *.ts* ../app/shared; cp package.json ../app/shared",

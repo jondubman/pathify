@@ -60,9 +60,6 @@
         "routers/*": [
             "src/routers/*"
         ],
-        "prisma-client/*": [
-            "src/prisma-client/*"
-        ],
         "shared/*": [
             "src/shared/*"
         ],
