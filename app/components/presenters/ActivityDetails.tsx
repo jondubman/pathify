@@ -35,7 +35,7 @@ const Styles = StyleSheet.create({
     fontFamily: constants.fonts.family,
     fontSize: labelFontSize,
     marginBottom: constants.buttonOffset,
-    opacity: 0.5,
+    opacity: 0.75,
   },
   box: {
     backgroundColor: 'transparent',
@@ -120,9 +120,9 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
     <ActivityDetailsRow
       props={props} rowIndex={1}
       text1={props.timeText}
-        caption1={props.timelineNow ? 'ELAPSED TIME HH:MM:SS' : 'TIME IN ACTIVITY HH:MM:SS'}
+      caption1={props.timelineNow ? 'ELAPSED TIME HH:MM:SS' : ' HH:MM:SS FROM START'}
       text2={props.distanceText}
-      caption2={props.timelineNow ? 'TOTAL DISTANCE (mi)' : 'DISTANCE @TIMEPOINT (mi)'}
+      caption2={props.timelineNow ? 'TOTAL DISTANCE (mi)' : 'DISTANCE @ TIMEPOINT (mi)'}
     />
     <ActivityDetailsRow
       props={props} rowIndex={2}
@@ -134,9 +134,9 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
     <ActivityDetailsRow
       props={props} rowIndex={3}
       text1={props.speedPaceText}
-        caption1="PACE @TIMEPOINT (min/mi)"
+        caption1="PACE @ TIMEPOINT (min/mi)"
       text2={props.speedText}
-        caption2="SPEED @TIMEPOINT (mph)"
+        caption2="SPEED @ TIMEPOINT (mph)"
     />
     <ActivityDetailsRow
       props={props} rowIndex={4}
