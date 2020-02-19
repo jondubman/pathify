@@ -50,6 +50,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   yellow: '#ffdc00',
 
   black: '#000000',
+  blueGreen: '#127e6f', // darker version of '#17A08D'
   brightGreen: '#08f222',
   darkerGray: '#888888',
   darkGreen: '#239c31',
@@ -58,8 +59,17 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   darkerRed: '#840700',
   darkerYellow: '#ffdc00',
   lighterBlue: '#77c0ff',
+  niceRed: '#c40027',
   white: '#ffffff',
 }
+
+// helper: pad with zeros as needed
+const zeroPrefix = (s: string) => (s.length ? (s.length === 1 ? '0' + s : s) : '00')
+// helper: dec should be between 0 and 1; e.g. 0.8 => 'cc'
+const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(16));
+
+// 0 <= opacity <= 1
+export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
 
 // colorThemes is pretty simple right now; just colors that are reused
 const colorThemes = {
@@ -67,11 +77,11 @@ const colorThemes = {
   help: namedColors.yellow,
   labels: namedColors.yellow,
   now: namedColors.green,
-  nowSelected: namedColors.azure,
-  nowSelectedDark: namedColors.azure_dark,
+  nowSelected: namedColors.niceRed,
   nowDark: namedColors.darkGreen,
   nowDarker: namedColors.darkerGreen,
   past: namedColors.blue,
+  pastSelected: namedColors.azure_dark,
   settings: namedColors.darkerGray,
   topMenu: namedColors.darkerGray,
   zooming: namedColors.orange,
@@ -100,18 +110,10 @@ const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline
 const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activities
 const clockHeight = 70;
 
-// helper: pad with zeros as needed
-const zeroPrefix = (s: string) => (s.length ? (s.length === 1 ? '0' + s : s) : '00')
-// helper: dec should be between 0 and 1; e.g. 0.8 => 'cc'
-const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(16));
-
-// 0 <= opacity <= 1
-export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
-
 const colors = {
   activityDetails: {
     backgroundCurrentNow: withOpacity(colorThemes.now, 0.25),
-    backgroundCurrentSelected: withOpacity(colorThemes.nowSelected, 0.5),
+    backgroundCurrentSelected: withOpacity(colorThemes.nowSelected, 0.25),
     backgroundPast: withOpacity(colorThemes.past, 0.35),
     bigFont: withOpacity(namedColors.white, 1),
     border: withOpacity(namedColors.white, 0.75),
@@ -150,7 +152,7 @@ const colors = {
     background: withOpacity(namedColors.black, 0.7),
     backgroundNow: withOpacity(colorThemes.nowDark, 0.65),
     backgroundPast: withOpacity(namedColors.black, 0.75),
-    backgroundPastSelected: withOpacity(colorThemes.nowSelectedDark, 0.75),
+    backgroundPastSelected: withOpacity(colorThemes.pastSelected, 0.75),
     backgroundPastCurrent: withOpacity(colorThemes.nowSelected, 0.75),
     backgroundStopped: withOpacity(namedColors.yellow, 0.65), // debug-only
     backgroundStoppedPast: withOpacity(namedColors.darkRed, 0.65), // debug-only

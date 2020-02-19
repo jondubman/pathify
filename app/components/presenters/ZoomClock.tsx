@@ -22,7 +22,7 @@ import log from 'shared/log';
 
 const clockDiameter = constants.clock.height;
 const deltaXMax = clockDiameter;
-const deltaXChoiceThreshold = deltaXMax * 0.9;
+const deltaXChoiceThreshold = deltaXMax * 0.9; // When you pan 90% of the way, we consider the choice made.
 
 const deltaYMax = constants.refTime.height - 5;
 const lockThreshold = 5; // pixels
@@ -145,7 +145,6 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
             deltaX: deltaX,
             horizontalLock,
           })
-          // TODO: stuff
         }
         if (this.props.allowZoom && !horizontalLock) {
           let deltaY = -gestureState.dy;
