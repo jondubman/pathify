@@ -14,6 +14,7 @@ import ReactNativeHaptic from 'react-native-haptic';
 import { GrabBarProps } from 'containers/GrabBarContainer';
 import constants from 'lib/constants';
 import {
+  maxGrabBarSnapIndex,
   snapPositions,
 } from 'lib/selectors';
 import utils from 'lib/utils';
@@ -98,9 +99,8 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
             ReactNativeHaptic.generate('selection');
           }
           const top = containedPosition;
-          // snap = this.props.snapBack ? this.props.snapBackTo : snap;
           this._snap = snap;
-          this._snapIndex = snapIndex;
+          this._snapIndex = snapIndex ? Math.min(snapIndex, maxGrabBarSnapIndex()) : snapIndex;
           this._top = top;
           log.scrollEvent('onPanResponderMove now', this._snap, this._snapIndex, this._top);
           this.forceUpdate(); // TODO

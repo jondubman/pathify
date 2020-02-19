@@ -585,25 +585,31 @@ export const selectedActivityPath = createSelector(
 
 // Layout
 
+// TODO smallest devices (iPhone 5s, 5E) are too short to see the very last row of ActiityDetails with current layout.
+// This is not ideal, but there are few of those devices and the view should soon be customizable.
+export const maxGrabBarSnapIndex = (): number => (
+  (utils.windowSize().height > 600) ? 7 : 6
+)
+
 export const snapPositions = (): number[] => {
-    const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
-    const belowTopButtons = dynamicTopBelowButtons();
-    const listDetailsBoundary = belowTopButtons + constants.activityList.height;
-    const detailsRowHeight = constants.activityDetails.height;
-    const detailsRow1 = listDetailsBoundary + detailsRowHeight;
-    const detailsRow2 = detailsRow1 + detailsRowHeight;
-    const detailsRow3 = detailsRow2 + detailsRowHeight;
-    const detailsRow4 = detailsRow3 + detailsRowHeight;
-    const detailsRow5 = detailsRow4 + detailsRowHeight;
-    const snapPositions = [
-      topMin,
-      belowTopButtons,
-      listDetailsBoundary,
-      detailsRow1,
-      detailsRow2,
-      detailsRow3,
-      detailsRow4,
-      detailsRow5,
-    ]
-    return snapPositions;
+  const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
+  const belowTopButtons = dynamicTopBelowButtons();
+  const listDetailsBoundary = belowTopButtons + constants.activityList.height;
+  const detailsRowHeight = constants.activityDetails.height;
+  const detailsRow1 = listDetailsBoundary + detailsRowHeight;
+  const detailsRow2 = detailsRow1 + detailsRowHeight;
+  const detailsRow3 = detailsRow2 + detailsRowHeight;
+  const detailsRow4 = detailsRow3 + detailsRowHeight;
+  const detailsRow5 = detailsRow4 + detailsRowHeight;
+  const snapPositions = [
+    topMin,
+    belowTopButtons,
+    listDetailsBoundary,
+    detailsRow1,
+    detailsRow2,
+    detailsRow3,
+    detailsRow4,
+    detailsRow5,
+  ]
+  return snapPositions;
 }

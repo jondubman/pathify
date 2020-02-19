@@ -112,9 +112,9 @@ const clockHeight = 70;
 
 const colors = {
   activityDetails: {
-    backgroundCurrentNow: withOpacity(colorThemes.now, 0.25),
-    backgroundCurrentSelected: withOpacity(colorThemes.nowSelected, 0.25),
-    backgroundPast: withOpacity(colorThemes.past, 0.35),
+    backgroundCurrentNow: withOpacity(colorThemes.now, 0.20),
+    backgroundCurrentSelected: withOpacity(colorThemes.nowSelected, 0.20),
+    backgroundPast: withOpacity(colorThemes.past, 0.20),
     bigFont: withOpacity(namedColors.white, 1),
     border: withOpacity(namedColors.white, 0.75),
     labelFont: withOpacity(namedColors.white, 0.75),

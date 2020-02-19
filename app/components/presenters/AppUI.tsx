@@ -62,7 +62,7 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
-          <View style={{ height: 20 } /* TODO higher# lowers default position of Mapbox logo and attribution */ } />
+          <View style={{ height: 30 } /* TODO higher# lowers default position of Mapbox logo and attribution */ } />
           {showActivityInfo ? <ActivityInfoContainer /> : null}
           <Fragment>
             <View pointerEvents={pointerEvents} style={timelineOpacity}>
