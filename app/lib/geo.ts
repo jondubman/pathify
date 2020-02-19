@@ -248,26 +248,22 @@ export const Geo = {
       // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app.
       // In the app, it's a tracking session with associated metadata. Here, it is walking, bicycling, etc. which we
       // refer to as a "mode" change.
+      //
+      // Note this is run whether appActive or not, unlike the location events which can be stored in the plugin's
+      // SQLite DB when app is running in the background.
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
         const {
-          appActive,
           receiveActivityChangeEvents,
           trackingActivity,
         } = state.flags;
         if (!trackingActivity || !receiveActivityChangeEvents) {
           return;
         }
-        if (appActive) {
-          const activityId = state.options.currentActivityId;
-          if (activityId) {
-            const modeChangeEvent = newModeChangeEvent(event.activity, event.confidence, activityId);
-            store.dispatch(newAction(AppAction.modeChange, modeChangeEvent));
-          }
-        } else {
-          // Running in background
-          // TODO we do not save these events in the background, but the mode/confidence are included in location
-          // updates that we do save, so we should be covered.
+        const activityId = state.options.currentActivityId;
+        if (activityId) {
+          const modeChangeEvent = newModeChangeEvent(event.activity, event.confidence, activityId);
+          store.dispatch(newAction(AppAction.modeChange, modeChangeEvent));
         }
       }
       const onEnabledChange = (isEnabled: boolean) => {

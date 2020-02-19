@@ -10,6 +10,9 @@ import ActivityDetails from 'presenters/ActivityDetails';
 import {
   ActivityDataExtended,
 } from 'shared/activities';
+import {
+  numberToModeText,
+} from 'shared/locations';
 import log from 'shared/log';
 import {
   metersPerSecondToMilesPerHour,
@@ -29,6 +32,7 @@ interface ActivityDetailsStateProps {
   isCurrent: boolean;
   index: number;
   length: number;
+  modeText: string;
   rows: number;
   speedPaceText: string;
   speedText: string;
@@ -49,6 +53,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   let averageSpeedText = missing;
   let distanceText = missing;
   let elevationText = missing;
+  let modeText = missing;
   let partialDistance = 0;
   let speedPaceText = missing
   let speedText = missing
@@ -65,6 +70,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     isCurrent: false,
     index: 0,
     length: 0,
+    modeText,
     rows: 0,
     speedPaceText,
     speedText,
@@ -112,6 +118,9 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
           averagePaceText = minutesToString(averagePace);
           averageSpeedText = metersPerSecondToMilesPerHour(mps).toFixed(1);
         }
+        if (info.mode) {
+          modeText = numberToModeText(info.mode);
+        }
       }
       return {
         averagePaceText,
@@ -121,6 +130,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         index: info.index,
         isCurrent,
         length: info.length,
+        modeText,
         rows,
         speedPaceText,
         speedText,

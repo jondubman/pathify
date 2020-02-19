@@ -88,7 +88,7 @@ import {
   menuOpen,
   pulsars,
   selectedActivity,
-  snapPositions,
+  selectedActivityPath,
   timelineVisibleTime,
   timelineZoomValue,
 } from 'lib/selectors';
@@ -124,6 +124,7 @@ import locations, {
   LocationEvent,
   LonLat,
   ModeChangeEvent,
+  modeChangeToNumber,
   MotionEvent,
 } from 'shared/locations';
 import log from 'shared/log';
@@ -224,7 +225,7 @@ const sagas = {
           activityId = id;
         }
       }
-      if (event.type ==  EventType.LOC) {
+      if (event.type === EventType.LOC) {
         if (!firstNewLoc) {
           firstNewLoc = event as LocationEvent;
         }
@@ -266,21 +267,26 @@ const sagas = {
           }
           // Scan through the events.
           const pathUpdate = yield call(database.newPathUpdate, activityId);
+          let modeNumeric = 0;
           for (let i = 0; i < events.length; i++) {
             const event = events[i];
-            if (event.type == EventType.LOC) {
+            if (event.type == EventType.MODE) {
+              const {
+                mode,
+                confidence,
+              } = event as ModeChangeEvent;
+              modeNumeric = (mode && confidence) ? modeChangeToNumber({ mode, confidence }) : 0;
+            }
+            if (event.type === EventType.LOC) {
               const {
                 accuracy,
-                confidence,
                 ele,
                 lon,
                 lat,
-                mode,
                 odo,
                 speed,
                 t,
               } = event as LocationEvent;
-              const modeNumeric = 0; // TODO2
               if (activity.tStart && t >= activity.tStart) {
                 // TODO this accuracy test is a bit crude, but works well enough for now.
                 if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
@@ -437,6 +443,11 @@ const sagas = {
         }
         case 'options': {
           response = yield call(loggableOptions, state);
+          break;
+        }
+        case 'pathMode': {
+          const path = selectedActivityPath(state);
+          response = path && path.mode && Array.from(path.mode);
           break;
         }
         case 'ping': {
@@ -979,24 +990,36 @@ const sagas = {
   },
 
   modeChange: function* (action: Action) {
-    const modeChangeEvent = action.params as ModeChangeEvent;
-    const appActive = yield select((state: AppState) => state.flags.appActive);
-    if (appActive) {
-      yield call(log.trace, 'saga modeChange - adding event', modeChangeEvent);
-      yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent] }));
-    } else {
-      yield call(log.trace, 'saga modeChange - ignoring event in background', modeChangeEvent);
+    try {
+      const modeChangeEvent = action.params as ModeChangeEvent;
+      const { appActive } = yield select((state: AppState) => state.flags);
+      if (appActive) {
+        yield call(log.trace, 'saga modeChange - adding event', modeChangeEvent);
+        yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent] }));
+      } else {
+        // Note we are bypassing all side effects of addEvents when running in the background.
+        yield call(log.trace, 'saga modeChange - handling event in background', modeChangeEvent);
+        yield call(database.createEvents, [modeChangeEvent]);
+      }
+    } catch(err) {
+      yield call(log.error, 'saga modeChange', err);
     }
   },
 
   motionChange: function* (action: Action) {
-    const motionEvent = action.params as MotionEvent;
-    const appActive = yield select((state: AppState) => state.flags.appActive);
-    if (appActive) {
-      yield call(log.trace, 'saga motionChange - adding event', motionEvent);
-      yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
-    } else {
-      yield call(log.trace, 'saga motionChange - ignoring event in background', motionEvent);
+    try {
+      const motionEvent = action.params as MotionEvent;
+      const { appActive } = yield select((state: AppState) => state.flags);
+      if (appActive) {
+        yield call(log.trace, 'saga motionChange - adding event', motionEvent);
+        yield put(newAction(AppAction.addEvents, { events: [motionEvent] }));
+      } else {
+        // Note we are bypassing all side effects of addEvents when running in the background.
+        yield call(log.trace, 'saga motionChange - handling event in background', motionEvent);
+        yield call(database.createEvents, [motionEvent]);
+      }
+    } catch (err) {
+      yield call(log.error, 'saga motionChange', err);
     }
   },
 
@@ -1018,17 +1041,23 @@ const sagas = {
       activityUpdate.count = eventsForActivity.length;
       let prevLocEvent: LocationEvent | null = null;
       let tStart = 0;
+      let modeNumeric = 0;
       for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
         const event = e as any as GenericEvent;
+        if (event.type == EventType.MODE) {
+          const {
+            mode,
+            confidence,
+          } = event as ModeChangeEvent;
+          modeNumeric = (mode && confidence) ? modeChangeToNumber({ mode, confidence }) : 0;
+        }
         if (event.type === EventType.LOC) {
           const locEvent = event as LocationEvent;
           const {
             accuracy,
-            confidence,
             ele,
             lon,
             lat,
-            mode,
             odo,
             speed,
             t,
@@ -1049,7 +1078,6 @@ const sagas = {
             activityUpdate.lonMax = Math.max(activityUpdate.lonMax || -Infinity, lon);
             activityUpdate.lonMin = Math.min(activityUpdate.lonMin || Infinity, lon);
             // mode
-            const modeNumeric = 0; // TODO2
             pathUpdate.mode.push(modeNumeric);
             // odo
             pathUpdate.odo.push(odo);
@@ -1345,7 +1373,7 @@ const sagas = {
       // If viewTime is too far from the current timeline center, re-center timeline around viewTime.
       const {
         centerTime,
-        timelineZoomValue
+        timelineZoomValue,
       } = state.options;
       const visibleTime = yield call(timelineVisibleTime, timelineZoomValue);
       const timeGap = Math.abs(centerTime - t);
@@ -1457,7 +1485,7 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption,
           { currentActivityId: activityId, selectedActivityId: activityId }));
         yield put(newAction(AppAction.refreshCachedActivity, { activityId }));
-        yield delay(0); // TODO seems required to allow ActivityList to get itself ready to scroll... race condition?
+        yield delay(0); // TODO was required to allow ActivityList to ready itself to scroll... race condition? still?
         const scrollTime = utils.now();
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startActivity
       }

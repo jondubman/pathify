@@ -134,9 +134,9 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
     <ActivityDetailsRow
       props={props} rowIndex={3}
       text1={props.speedPaceText}
-        caption1="PACE @ TIMEPOINT (min/mi)"
+        caption1={props.timelineNow ? 'CURRENT PACE (min/mi)' : 'PACE @ TIMEPOINT (min/mi)'}
       text2={props.speedText}
-        caption2="SPEED @ TIMEPOINT (mph)"
+        caption2={props.timelineNow ? 'CURRENT SPEED (mph)' : 'SPEED @ TIMEPOINT (mph)'}
     />
     <ActivityDetailsRow
       props={props} rowIndex={4}
@@ -147,7 +147,7 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
     />
     <ActivityDetailsRow
       props={props} rowIndex={5}
-      text1=""
+      text1={props.modeText}
         caption1="MODE"
       text2=""
         caption2="TBD"

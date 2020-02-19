@@ -429,6 +429,7 @@ export interface PathInfo {
   index: number;
   length: number;
   loc: LonLat;
+  mode: number;
   odo: number;
   speed: number;
 }
@@ -467,6 +468,7 @@ export const getCachedPathInfo = createSelector(
             index: length,
             length,
             loc: [path.lons[lastIndex], path.lats[lastIndex]] as LonLat,
+            mode: path.mode[lastIndex],
             odo: path.odo[lastIndex],
             speed: path.speed[lastIndex],
           }
@@ -502,12 +504,16 @@ export const getCachedPathInfo = createSelector(
             const speed2 = path.speed[i + 1];
             speed = (speed2 - speed1) * proportion + speed1;
 
+            // retrieve mode
+            const mode = path.mode[i + 1];
+
             return {
               activity,
               ele,
               index: i,
               length,
               loc: [lon, lat] as LonLat,
+              mode,
               odo,
               speed,
             }
@@ -517,6 +523,7 @@ export const getCachedPathInfo = createSelector(
           const lastEle = path.ele[lastIndex];
           const lastLat = path.lats[lastIndex];
           const lastLon = path.lons[lastIndex];
+          const lastMode = path.mode[lastIndex];
           const lastOdo = path.odo[lastIndex];
           return {
             activity,
@@ -524,6 +531,7 @@ export const getCachedPathInfo = createSelector(
             index: length,
             length,
             loc: [lastLon, lastLat],
+            mode: lastMode,
             odo: lastOdo,
             speed,
           }

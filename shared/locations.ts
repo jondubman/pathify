@@ -44,10 +44,50 @@ export enum ModeType {
   'VEHICLE' = 'VEHICLE',
 }
 
-export interface ModeChangeEvent extends GenericEvent {
+// These are (sort of) from slower to faster.
+const modeToNumber = {
+  [ModeType.STILL]: 0,
+  [ModeType.ON_FOOT]: 1,
+  [ModeType.RUNNING]: 2,
+  [ModeType.BICYCLE]: 3,
+  [ModeType.VEHICLE]: 4,
+}
+
+// Inverse lookup
+const numberToModeType = (num: number) => ([
+  [ModeType.STILL],
+  [ModeType.ON_FOOT],
+  [ModeType.RUNNING],
+  [ModeType.BICYCLE],
+  [ModeType.VEHICLE]
+][Math.floor(num)])
+
+// This is the human-readable version of mode.
+export const numberToModeText = (num: number) => ([
+  'Still',
+  'On Foot',
+  'Running',
+  'Bicycle',
+  'Vehicle',
+][Math.floor(num)])
+
+export interface ModeChange {
   mode: ModeType;
   confidence: number;
 }
+
+export interface ModeChangeEvent extends GenericEvent, ModeChange {
+}
+
+// Note confidence is between 0 and 100, inclusive. So 100% confidence for running maps to the number 2.1.
+export const modeChangeToNumber = (modeChange: ModeChange): number => (
+  modeToNumber[modeChange.mode] + (modeChange.confidence / 1000)
+)
+
+export const numberToModeChange = (num: number): ModeChange => ({
+  mode: numberToModeType[num],
+  confidence: Math.round((num - Math.floor(num)) * 1000),
+})
 
 export interface MotionEvent extends GenericEvent {
   isMoving: boolean;
