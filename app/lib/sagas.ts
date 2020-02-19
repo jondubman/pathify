@@ -1762,9 +1762,9 @@ const sagas = {
     yield call(log.scrollEvent, 'timelineZooming', scrollTime, activityListScrolling, timelineScrolling);
   },
 
-  // This goes off once a second like the tick of a mechanical watch.
-  // One second is the approximate frequency of location updates
-  // and it's a good frequency for updating the analog clock and the timeline.
+  // This goes off at least once a second like the tick of a mechanical watch.
+  // One second is the approximate frequency of location updates and it's the minimum for updating the analog clock
+  // and the timeline. More frequent timer ticks make the second hand move more smoothly.
   timerTick: function* (action: Action) {
     const state = yield select((state: AppState) => state);
     const {
@@ -1779,9 +1779,9 @@ const sagas = {
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
-      // When trackingActivity, do significantly less work to save CPU and battery...
-      // Tick once per second instead of many times per second.
-      if (!trackingActivity || (nowTimeRounded !== state.options.nowTimeRounded)) {
+      if (nowTimeRounded === state.options.nowTimeRounded) {
+        yield put(newAction(AppAction.setAppOption, { nowTime: now }));
+      } else {
         const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
         if (timelineNow) {
           options.scrollTime = now;
