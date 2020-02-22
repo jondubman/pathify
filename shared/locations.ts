@@ -36,25 +36,29 @@ export type LocationEvents = LocationEvent[];
 
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
 
+// These are stored with Locations in Realm.
 export enum ModeType {
   'BICYCLE' = 'BICYCLE',
   'ON_FOOT' = 'ON_FOOT',
   'RUNNING' = 'RUNNING',
   'STILL' = 'STILL',
+  'UNKNOWN' = 'UNKNOWN',
   'VEHICLE' = 'VEHICLE',
 }
 
-// These are (sort of) from slower to faster.
+// From enum to ordinal. The ordering of modes is (sort of) from slower to faster.
 const modeToNumber = {
-  [ModeType.STILL]: 0,
-  [ModeType.ON_FOOT]: 1,
-  [ModeType.RUNNING]: 2,
-  [ModeType.BICYCLE]: 3,
-  [ModeType.VEHICLE]: 4,
+  [ModeType.UNKNOWN]: 0,
+  [ModeType.STILL]: 1,
+  [ModeType.ON_FOOT]: 2,
+  [ModeType.RUNNING]: 3,
+  [ModeType.BICYCLE]: 4,
+  [ModeType.VEHICLE]: 5,
 }
 
-// Inverse lookup
+// From the ordinal, back to the enum...
 const numberToModeType = (num: number) => ([
+  [ModeType.UNKNOWN],
   [ModeType.STILL],
   [ModeType.ON_FOOT],
   [ModeType.RUNNING],
@@ -62,8 +66,9 @@ const numberToModeType = (num: number) => ([
   [ModeType.VEHICLE]
 ][Math.floor(num)])
 
-// This is the human-readable version of mode.
+// This is the human-readable version of mode displayed in ActivityDetails.
 export const numberToModeText = (num: number) => ([
+  'Unknown',
   'Still',
   'On Foot',
   'Running',
@@ -76,8 +81,7 @@ export interface ModeChange {
   confidence: number;
 }
 
-export interface ModeChangeEvent extends GenericEvent, ModeChange {
-}
+export interface ModeChangeEvent extends GenericEvent, ModeChange { /* extending those two, adding no more */ }
 
 // Note confidence is between 0 and 100, inclusive. So 100% confidence for running maps to the number 2.1.
 export const modeChangeToNumber = (modeChange: ModeChange): number => (
