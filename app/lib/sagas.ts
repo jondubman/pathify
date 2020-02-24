@@ -96,6 +96,7 @@ import { postToServer } from 'lib/server';
 import {
   AppState,
   CacheInfo,
+  Current,
   MapRegionUpdate,
   persistedFlags,
   persistedOptions,
@@ -125,6 +126,7 @@ import locations, {
   LonLat,
   ModeChangeEvent,
   modeChangeToNumber,
+  modeIsMoving,
   MotionEvent,
 } from 'shared/locations';
 import log from 'shared/log';
@@ -193,145 +195,169 @@ const sagas = {
 
   // Note: To keep this simple it's currently required that added events be sorted by t and consistent in activityId.
   addEvents: function* (action: Action) {
-    const params = action.params as AddEventsParams;
-    const { events } = params;
-    // First, add the given events. This is the easy part. The rest is side effects.
-    if (events && events.length) {
-      yield call(database.createEvents, events);
-    }
-    // Now update any Activity/Activities related to the added events.
-    // The Activity is essentially a redundant, persisted summary of events with the same activityId.
-    // Activities are then cached in Redux state in "extended" form with additional properties that make it more
-    // readily consumable. (See ActivityDataExtended.) It would/should be possible to reconstruct these from the events.
-    let activityId: string | undefined;
-    let firstNewLoc: LocationEvent | undefined;
-    let firstNewOdo: number = 0;
-    let lastNewLoc: LocationEvent | undefined;
-    let previousEventTimestamp = 0;
+    try {
+      const params = action.params as AddEventsParams;
+      const { events } = params;
+      // First, add the given events. This is the easy part. The rest is side effects.
+      if (events && events.length) {
+        yield call(database.createEvents, events);
+      }
+      // Now update any Activity/Activities related to the added events.
+      // The Activity is essentially a redundant, persisted summary of events with the same activityId.
+      // Activities are then cached in Redux state in "extended" form with additional properties that make it more
+      // readily consumable. (See ActivityDataExtended.) It would/should be possible to reconstruct these from the events.
+      let activityId: string | undefined;
+      let firstNewLoc: LocationEvent | undefined;
+      let firstNewOdo: number = 0;
+      let lastNewLoc: LocationEvent | undefined;
+      let previousEventTimestamp = 0;
 
-    // Scan through the new events. This is a simple loop.
-    for (let i = 0; i < events.length; i++) {
-      const event = events[i];
-      const id = event.activityId;
-      if (event.t < previousEventTimestamp) {
-        yield call(log.warn, 'addEvents: added events are out of order');
-      } else {
-        previousEventTimestamp = event.t;
-      }
-      if (activityId && id && id !== activityId) {
-        yield call(log.warn, 'addEvents: multiple activityIds detected (not yet supported)');
-      } else {
-        if (id) {
-          activityId = id;
+      // Scan through the new events. This is a simple loop.
+      for (let i = 0; i < events.length; i++) {
+        const event = events[i];
+        const id = event.activityId;
+        if (event.t < previousEventTimestamp) {
+          yield call(log.warn, 'addEvents: added events are out of order');
+        } else {
+          previousEventTimestamp = event.t;
         }
-      }
-      if (event.type === EventType.LOC) {
-        if (!firstNewLoc) {
-          firstNewLoc = event as LocationEvent;
-        }
-        const locEvent = event as LocationEvent;
-        if (locEvent.odo && !firstNewOdo) {
-          firstNewOdo = locEvent.odo;
-        }
-        lastNewLoc = event as LocationEvent;
-      }
-    }
-    if (activityId) {
-      const activity: Activity = yield call(database.activityById, activityId);
-      if (activity) {
-        const { schemaVersion } = constants.database;
-        const activityUpdate: ActivityData = {
-          id: activity.id,
-          schemaVersion,
-          count: (activity.count || 0) + events.length,
-        }
-        if (firstNewLoc && !activity.tFirstLoc) {
-          activityUpdate.tFirstLoc = firstNewLoc.t;
-        }
-        // If the firstNewLoc comes before activity's tLastUpdate, we are not simply appending. !! converts to boolean.
-        // The typical case of simply appending one or more events to an Activity is handled here with little work.
-        // We simply append to the path and avoid reformulating it entirely.
-        // The case of inserting events in the middle of an existing Activity is handled by the else block below.
-        const appending: boolean = !!(!firstNewLoc || (activity.tLastUpdate && firstNewLoc.t > activity.tLastUpdate));
-        if (appending) {
-          // odoStart
-          if (firstNewOdo) {
-            if (!activity.odoStart || firstNewOdo < activity.odoStart) {
-              activityUpdate.odoStart = firstNewOdo;
-            }
+        if (activityId && id && id !== activityId) {
+          yield call(log.warn, 'addEvents: multiple activityIds detected (not yet supported)');
+          return;
+        } else {
+          if (id) {
+            activityId = id;
           }
-          // odo
-          if (lastNewLoc) {
-            activityUpdate.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
-            activityUpdate.odo = lastNewLoc.odo;
+        }
+        if (event.type === EventType.LOC) {
+          if (!firstNewLoc) {
+            firstNewLoc = event as LocationEvent;
           }
-          // Scan through the events.
-          const pathUpdate = yield call(database.newPathUpdate, activityId);
-          let modeNumeric = 0;
-          for (let i = 0; i < events.length; i++) {
-            const event = events[i];
-            if (event.type == EventType.MODE) {
-              const {
-                mode,
-                confidence,
-              } = event as ModeChangeEvent;
-              modeNumeric = (mode && confidence) ? modeChangeToNumber({ mode, confidence }) : 0;
+          const locEvent = event as LocationEvent;
+          if (locEvent.odo && !firstNewOdo) {
+            firstNewOdo = locEvent.odo;
+          }
+          lastNewLoc = event as LocationEvent;
+        }
+      }
+      if (activityId) {
+        const activity: Activity = yield call(database.activityById, activityId);
+        if (activity) {
+          const { schemaVersion } = constants.database;
+          const activityUpdate: ActivityData = {
+            id: activity.id,
+            schemaVersion,
+            count: (activity.count || 0) + events.length,
+          }
+          if (firstNewLoc && !activity.tFirstLoc) {
+            activityUpdate.tFirstLoc = firstNewLoc.t;
+          }
+          // If the firstNewLoc comes after activity's tLastUpdate, we are simply appending. !! converts to boolean.
+          // The typical case of simply appending one or more events to an Activity is handled here with little work.
+          // We simply append to the path and avoid reformulating it entirely.
+          // The case of inserting events in the middle of an existing Activity is handled by the else block below.
+          const appending: boolean = !!(!firstNewLoc || (activity.tLastUpdate && firstNewLoc.t > activity.tLastUpdate));
+          if (appending) {
+            let latestLocEvent: LocationEvent | undefined = undefined; // TODO need to remember this
+            // odoStart
+            if (firstNewOdo) {
+              if (!activity.odoStart || firstNewOdo < activity.odoStart) {
+                activityUpdate.odoStart = firstNewOdo;
+              }
             }
-            if (event.type === EventType.LOC) {
-              const {
-                accuracy,
-                ele,
-                lon,
-                lat,
-                odo,
-                speed,
-                t,
-              } = event as LocationEvent;
-              if (activity.tStart && t >= activity.tStart) {
-                // TODO this accuracy test is a bit crude, but works well enough for now.
-                if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
-                  // add a single path segment
-                  activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat);
-                  activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat);
-                  activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon);
-                  activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon);
-                  pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
-                  pathUpdate.lats.push(lat);
-                  pathUpdate.lons.push(lon);
-                  pathUpdate.mode.push(modeNumeric);
-                  pathUpdate.odo.push(odo);
-                  pathUpdate.speed.push(speed);
-                  pathUpdate.t.push(t);
+            // odo
+            if (lastNewLoc) {
+              activityUpdate.tLastLoc = Math.max(activity.tLastLoc || 0, lastNewLoc.t);
+              activityUpdate.odo = lastNewLoc.odo;
+            }
+            // Scan through the new events.
+            const pathUpdate = yield call(database.newPathUpdate, activityId);
+            let ele: number | undefined,
+                lon: number | undefined,
+                lat: number | undefined,
+                odo: number | undefined,
+                speed: number | undefined,
+                t: number | undefined,
+                modeNumeric: number = 0;
+
+            for (let i = 0; i < events.length; i++) {
+              const event = events[i];
+              const { type } = event;
+              if (type === EventType.LOC) { // take whatever info we can from this LOC event
+                latestLocEvent = event as LocationEvent;
+                if (latestLocEvent.accuracy  && latestLocEvent.accuracy > constants.paths.metersAccuracyRequired) {
+                  continue;
+                }
+                ele = latestLocEvent.ele;
+                lon = latestLocEvent.lon;
+                lat = latestLocEvent.lat;
+                odo = latestLocEvent.odo;
+                speed = latestLocEvent.speed;
+                t = latestLocEvent.t;
+                // modeNumeric left alone
+              } else {
+                const current: Current = yield select((state: AppState) => state.current);
+                if (current.ele && current.lon && current.lat && current.odo && current.speed && current.tChangedMoving) {
+                  ele = current.ele;
+                  lon = current.lon;
+                  lat = current.lat;
+                  odo = current.odo;
+                  speed = current.speed;
+                  t = current.tChangedMoving;
+                  modeNumeric = current.modeNumeric || 0; // may be overwritten below
+                }
+              }
+              if (type === EventType.MODE) {
+                const {
+                  mode,
+                  confidence,
+                } = event as ModeChangeEvent;
+                modeNumeric = (mode && confidence) ? modeChangeToNumber({ mode, confidence }) : 0;
+              }
+              if ((type == EventType.LOC || type == EventType.MODE) &&
+                 ((t !== undefined) && (lat !== undefined) && (lon !== undefined)))
+              {
+                // add a single path segment
+                activityUpdate.latMax = Math.max(activity.latMax || -Infinity, lat!);
+                activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat!);
+                activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon!);
+                activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon!);
+                pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
+                pathUpdate.lats.push(lat);
+                pathUpdate.lons.push(lon);
+                pathUpdate.mode.push(modeNumeric);
+                pathUpdate.odo.push(odo);
+                pathUpdate.speed.push(speed || 0);
+                pathUpdate.t.push(t);
+              }
+            }
+            yield call(database.appendToPath, pathUpdate);
+
+            // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
+            if (activity.tLastLoc && firstNewLoc) {
+              const gapTime = firstNewLoc.t - activity.tLastLoc;
+              if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
+                activityUpdate.maxGapTime = gapTime;
+                activityUpdate.tMaxGapTime = activity.tLastLoc;
+              }
+              if (firstNewLoc.odo && activity.odo) {
+                const gapDistance = firstNewLoc.odo - activity.odo;
+                if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
+                  activityUpdate.maxGapDistance = gapDistance;
+                  activityUpdate.tMaxGapDistance = activity.tLastLoc;
                 }
               }
             }
+            activityUpdate.tLastUpdate = utils.now();
+            yield call(database.updateActivity, activityUpdate);
+          } /* appending */ else {
+            // not simply appending events; recalc entire path et al (note new events were already added above)
+            yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
           }
-          yield call(database.appendToPath, pathUpdate);
-
-          // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
-          if (activity.tLastLoc && firstNewLoc) {
-            const gapTime = firstNewLoc.t - activity.tLastLoc;
-            if (!activity.maxGapTime || gapTime > activity.maxGapTime) {
-              activityUpdate.maxGapTime = gapTime;
-              activityUpdate.tMaxGapTime = activity.tLastLoc;
-            }
-            if (firstNewLoc.odo && activity.odo) {
-              const gapDistance = firstNewLoc.odo - activity.odo;
-              if (!activity.maxGapDistance || gapDistance > activity.maxGapDistance) {
-                activityUpdate.maxGapDistance = gapDistance;
-                activityUpdate.tMaxGapDistance = activity.tLastLoc;
-              }
-            }
-          }
-          activityUpdate.tLastUpdate = utils.now();
-          yield call(database.updateActivity, activityUpdate);
-        } else {
-          // not simply appending events; recalc entire path et al (note new events were already added above)
-          // yield call(log.trace, 'firstNewLoc.t', firstNewLoc && firstNewLoc.t,
-          //                       'activity.tLastUpdate', activity.tLastUpdate);
-          yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
         }
       }
+    } catch (err) {
+      yield call(log.error, 'addEvents', err);
     }
   },
 
@@ -399,6 +425,10 @@ const sagas = {
             schemaVersion: constants.database.schemaVersion,
             timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
           }
+          break;
+        }
+        case 'current': {
+          response = state.current;
           break;
         }
         case 'emailLog': {
@@ -495,6 +525,7 @@ const sagas = {
               schemaVersion: constants.database.schemaVersion,
               timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
             },
+            current: state.current,
             flags: state.flags,
             isDebugVersion: utils.isDebugVersion,
             options: yield call(loggableOptions, state),
@@ -875,8 +906,18 @@ const sagas = {
   geolocation: function* (action: Action) {
     try {
       const geoloc = action.params as GeolocationParams;
-      // yield call(log.trace, 'saga geolocation', geoloc);
       const { locationEvent, recheckMapBounds } = geoloc;
+      const current = {
+        ele: locationEvent.ele,
+        lon: locationEvent.lon,
+        lat: locationEvent.lat,
+        odo: locationEvent.odo,
+        speed: locationEvent.speed,
+        t: locationEvent.t,
+        moving: !!locationEvent.speed,
+      } as any as Current;
+      yield put(newAction(ReducerAction.SET_CURRENT, current));
+
       const { lat, lon } = locationEvent;
       const previousUserLocation = yield select((state: AppState) => state.userLocation);
       const { mapMoving } = yield select((state: AppState) => state.flags);
@@ -992,12 +1033,25 @@ const sagas = {
   modeChange: function* (action: Action) {
     try {
       const modeChangeEvent = action.params as ModeChangeEvent;
+      const { current } = yield select((state: AppState) => state);
+      const moving = modeIsMoving(modeChangeEvent.mode);
+      const currentRevised = {
+        modeNumeric: modeChangeToNumber({ confidence: modeChangeEvent.confidence, mode: modeChangeEvent.mode }),
+        moving,
+        t: modeChangeEvent.t,
+      } as any as Current;
+      if (current.moving === undefined || moving !== current.moving) {
+        currentRevised.tChangedMoving = modeChangeEvent.t;
+      }
+      yield put(newAction(ReducerAction.SET_CURRENT, currentRevised));
+
       const { appActive } = yield select((state: AppState) => state.flags);
       if (appActive) {
         yield call(log.trace, 'saga modeChange - adding event', modeChangeEvent);
         yield put(newAction(AppAction.addEvents, { events: [modeChangeEvent] }));
       } else {
         // Note we are bypassing all side effects of addEvents when running in the background.
+        // TODO consider storing modeChange events as SQLite locations in react-native-background-geolocation plugin.
         yield call(log.trace, 'saga modeChange - handling event in background', modeChangeEvent);
         yield call(database.createEvents, [modeChangeEvent]);
       }
@@ -1006,6 +1060,7 @@ const sagas = {
     }
   },
 
+  // TODO motionChange not fully integrated into the app; these events are largely redundant to modeChange.
   motionChange: function* (action: Action) {
     try {
       const motionEvent = action.params as MotionEvent;
@@ -1024,7 +1079,9 @@ const sagas = {
   },
 
   // Refresh (recreate) existing Activity/Path from the raw Events in the database (given an existing Activity id.)
-  // TODO It should not take much for this to be able to "undelete" an Activity, if the raw Events are still there.
+  // Note that Paths contain "redundant" location data when there are MODE events, just as they contain "redundant" mode
+  // data for LOC events.
+  // TODO It would not take much for this to be able to "undelete" an Activity, if the raw Events are still there.
   refreshActivity: function* (action: Action) {
     try {
       const params = action.params as RefreshActivityParams;
@@ -1041,18 +1098,22 @@ const sagas = {
       activityUpdate.count = eventsForActivity.length;
       let prevLocEvent: LocationEvent | null = null;
       let tStart = 0;
+      let latestLocEvent: LocationEvent | undefined = undefined;
       let modeNumeric = 0;
       for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
         const event = e as any as GenericEvent;
-        if (event.type == EventType.MODE) {
+        const { type } = event;
+        if (type === EventType.LOC) {
+          latestLocEvent = event as LocationEvent;
+        }
+        if (type == EventType.MODE) {
           const {
             mode,
             confidence,
           } = event as ModeChangeEvent;
-          modeNumeric = (mode && confidence) ? modeChangeToNumber({ mode, confidence }) : 0;
+          modeNumeric = (confidence && mode) ? modeChangeToNumber({ confidence, mode }) : 0;
         }
-        if (event.type === EventType.LOC) {
-          const locEvent = event as LocationEvent;
+        if (latestLocEvent && (type == EventType.LOC || type == EventType.MODE)) {
           const {
             accuracy,
             ele,
@@ -1061,12 +1122,12 @@ const sagas = {
             odo,
             speed,
             t,
-          } = locEvent;
+          } = latestLocEvent;
           if (!tStart || t < tStart) {
             yield call(log.trace, 'refreshActivity: ignoring t < tStart', t, tStart);
             continue;
           }
-          if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) {
+          if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) { // if sufficiently accurate
             // ele
             pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
             // lats
@@ -1093,15 +1154,15 @@ const sagas = {
 
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
           if (prevLocEvent !== null) {
-            const gapTime = locEvent.t - prevLocEvent.t;
+            const gapTime = latestLocEvent.t - prevLocEvent.t;
             if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
               if (!activityUpdate.maxGapTime || gapTime > activityUpdate.maxGapTime) {
                 activityUpdate.maxGapTime = gapTime;
                 activityUpdate.tMaxGapTime = prevLocEvent.t;
               }
             }
-            if (locEvent.odo && prevLocEvent.odo) {
-              const gapDistance = locEvent.odo - prevLocEvent.odo;
+            if (latestLocEvent.odo && prevLocEvent.odo) {
+              const gapDistance = latestLocEvent.odo - prevLocEvent.odo;
               if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
                 if (!activityUpdate.maxGapDistance || gapDistance > activityUpdate.maxGapDistance) {
                   activityUpdate.maxGapDistance = gapDistance;
@@ -1110,7 +1171,7 @@ const sagas = {
               }
             }
           }
-          prevLocEvent = { ...locEvent };
+          prevLocEvent = latestLocEvent;
         } else if (event.type == EventType.MARK) {
           const markEvent = event as MarkEvent;
           if (markEvent.subtype === MarkType.START) {
@@ -1617,7 +1678,7 @@ const sagas = {
 
   stopActivity: function* () {
     try {
-      const trackingActivity = yield select((state: AppState) => state.flags.trackingActivity);
+      const { refreshActivityOnStop, trackingActivity } = yield select((state: AppState) => state.flags);
       if (trackingActivity) {
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
         yield call(Vibration.vibrate, constants.timing.vibration);
@@ -1653,6 +1714,9 @@ const sagas = {
           { currentActivityId: null, selectedActivityId: activityId, scrollTime: halfTime, viewTime: halfTime }));
         yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: true, zoomMap: true })); // in stopActivity
         yield put(newAction(AppAction.scrollActivityList, { scrollTime: halfTime })); // in stopActivity
+        if (refreshActivityOnStop) {
+          yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
+        }
       }
     } catch (err) {
       yield call(log.error, 'saga stopActivity', err);

@@ -5,12 +5,15 @@ import { createSelector } from 'reselect'
 import { AppState } from 'lib/state';
 import constants, {
   MapStyle,
-  // TimespanKind,
 } from 'lib/constants';
 import database from 'lib/database';
 import utils from 'lib/utils';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
-import locations from 'shared/locations';
+import locations, {
+  modeIsMoving,
+  ModeType,
+  numberToModeType,
+} from 'shared/locations';
 import {
   Activity,
   ActivityDataExtended,
@@ -425,19 +428,22 @@ export const getStoredLocationEvent = createSelector(
 )
 export interface PathInfo {
   activity: ActivityDataExtended;
-  ele: number;
-  index: number;
+  ele: number; // meters
+  index: number; // how many locations into the path is the corresponding timepoint
   length: number;
   loc: LonLat;
   mode: number;
-  odo: number;
-  speed: number;
+  modeDuration: number; // elapsed time since mode change (or, since start of activity)
+  modeTypePrevious: ModeType;
+  odo: number; // meters
+  speed: number; // meters per second
+  t: number; // timepoint for this info
 }
 export const getScrollTimeRounded = (state: AppState) => utils.roundTime(state.options.scrollTime);
 export const getTimelineNow = (state: AppState) => state.flags.timelineNow;
 export const getTrackingActivity = (state: AppState) => state.flags.trackingActivity;
 const getCachedActivities = (state: AppState) => state.cache.activities;
-// PathInfo here means info derived from the Path that includes scrollTime.
+// PathInfo here means info derived from a Path that includes scrollTime as a timepoint - basically, stats right then.
 // getScrollTimeRounded is rounded in order to minimize redundant recalculations, as the clock ticks
 // many times per second in timelineNow mode. Path timestamps are rounded for comparison against getScrollTimeRounded.
 export const getCachedPathInfo = createSelector(
@@ -448,20 +454,24 @@ export const getCachedPathInfo = createSelector(
         return null;
       }
       const t = scrollTimeRounded;
-      let length = 0;
-      let odo = 0;
-      let speed = 0;
       const activity = cachedActivities.find(activity =>
         (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
       )
       if (activity) {
+        let length = 0;
+        let modeChangeTimepoint = activity.tStart;
+        let modeDuration = Math.max(0, t - modeChangeTimepoint);
+        let modeTypePrevious = ModeType.UNKNOWN;
+        let odo = 0;
+        let speed = 0;
         const path = database.pathById(activity.id);
         if (!path) {
           return null;
         }
         length = path.t.length;
-        const lastIndex = length - 1;
-        if ((timelineNow && trackingActivity) || t >= utils.roundTime(path.t[lastIndex])) { // special case the end
+        const lastIndex = length - 1; // last valid index into path
+        // special case the end
+        if ((timelineNow && trackingActivity) || t >= utils.roundTime(path.t[lastIndex])) {
           return {
             activity,
             ele: path.ele[lastIndex],
@@ -469,14 +479,26 @@ export const getCachedPathInfo = createSelector(
             length,
             loc: [path.lons[lastIndex], path.lats[lastIndex]] as LonLat,
             mode: path.mode[lastIndex],
+            modeDuration,
+            modeTypePrevious,
             odo: path.odo[lastIndex],
             speed: path.speed[lastIndex],
+            t,
           }
         }
         for (let i = 0; i < lastIndex; i++) {
           // Smoothly (linearly) interpolate between points we know, rounding all times to nearest second.
           const t1 = utils.roundTime(path.t[i]);
           const t2 = utils.roundTime((i === lastIndex - 1) ? activity.tLastLoc! : path.t[i + 1]);
+          const mode_t1 = path.mode[i];
+          const mode_t2 = path.mode[i + 1];
+          const modeType_t1 = mode_t1 ? numberToModeType(mode_t1) : ModeType.UNKNOWN;
+          const modeType_t2 = mode_t2 ? numberToModeType(mode_t2) : ModeType.UNKNOWN;
+          if (modeIsMoving(modeType_t2) !== modeIsMoving(modeType_t1)) {
+            modeChangeTimepoint = t2;
+            modeDuration = Math.max(0, t - modeChangeTimepoint); // recalc
+            modeTypePrevious = modeType_t1;
+          }
           if (t1 <= t && t <= t2) {
             const tDiff = t2 - t1;
             const proportion = (t - t1) / tDiff;
@@ -504,18 +526,18 @@ export const getCachedPathInfo = createSelector(
             const speed2 = path.speed[i + 1];
             speed = (speed2 - speed1) * proportion + speed1;
 
-            // retrieve mode
-            const mode = path.mode[i + 1];
-
             return {
               activity,
               ele,
               index: i,
               length,
               loc: [lon, lat] as LonLat,
-              mode,
+              mode: mode_t2, // note this is mode_t2 not mode_t1
+              modeDuration,
+              modeTypePrevious,
               odo,
               speed,
+              t,
             }
           } // t between t1 and t2
         } // path loop
@@ -532,8 +554,11 @@ export const getCachedPathInfo = createSelector(
             length,
             loc: [lastLon, lastLat],
             mode: lastMode,
+            modeDuration,
+            modeTypePrevious,
             odo: lastOdo,
             speed,
+            t,
           }
         }
       } // if activity

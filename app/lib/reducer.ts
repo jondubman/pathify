@@ -8,6 +8,7 @@ import {
 import {
   AppState,
   CacheInfo,
+  Current,
   initialAppState,
   MapRegionUpdate,
 } from 'lib/state';
@@ -73,6 +74,15 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
             ...state.options,
             ...params, // TODO watch out; zero validation of incoming params!
           }
+        }
+        break;
+
+      case ReducerAction.SET_CURRENT:
+        {
+          newState.current = {
+            ...state.current,
+            ...params, // TODO watch out; zero validation of incoming params!
+          } as Current;
         }
         break;
 

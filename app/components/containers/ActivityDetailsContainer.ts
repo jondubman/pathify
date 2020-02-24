@@ -5,13 +5,18 @@ import {
   getCachedPathInfo,
   showActivityDetailsRowsPreview,
 } from 'lib/selectors';
-import { AppState } from 'lib/state';
+import {
+  AppState,
+  noCurrentLocation,
+} from 'lib/state';
 import ActivityDetails from 'presenters/ActivityDetails';
 import {
   ActivityDataExtended,
 } from 'shared/activities';
 import {
+  ModeType,
   numberToModeText,
+  numberToModeType,
 } from 'shared/locations';
 import log from 'shared/log';
 import {
@@ -32,6 +37,8 @@ interface ActivityDetailsStateProps {
   isCurrent: boolean;
   index: number;
   length: number;
+  modeDurationLabel: string;
+  modeDurationText: string;
   modeText: string;
   rows: number;
   speedPaceText: string;
@@ -53,6 +60,8 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
   let averageSpeedText = missing;
   let distanceText = missing;
   let elevationText = missing;
+  let modeDurationLabel = '';
+  let modeDurationText = '';
   let modeText = missing;
   let partialDistance = 0;
   let speedPaceText = missing
@@ -70,6 +79,8 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     isCurrent: false,
     index: 0,
     length: 0,
+    modeDurationLabel,
+    modeDurationText,
     modeText,
     rows: 0,
     speedPaceText,
@@ -80,6 +91,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     visible: false,
   }
   try {
+    const { current } = state;
     top = dynamicTopBelowActivityList(state);
     const info = getCachedPathInfo(state);
     const {
@@ -107,7 +119,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
             speedPaceText = missing;
           }
           const mph = metersPerSecondToMilesPerHour(info.speed);
-          speedText = mph.toFixed(1);
+          speedText = mph.toFixed(1); // That's 1 digit after the decimal point, not 1 mph!
         }
         // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.
         elevationText = (!info.ele || info.ele < 0) ? missing : metersToFeet(info.ele).toFixed(0);
@@ -118,8 +130,27 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
           averagePaceText = minutesToString(averagePace);
           averageSpeedText = metersPerSecondToMilesPerHour(mps).toFixed(1);
         }
-        if (info.mode) {
-          modeText = numberToModeText(info.mode);
+        const mode = timelineNow ? current.modeNumeric : info.mode;
+        if (mode) {
+          modeText = numberToModeText(mode);
+          const modeType = numberToModeType(mode);
+          const mapModeTypePreviousToModeDurationLabel = {
+            [ModeType.UNKNOWN]: (modeType === ModeType.STILL) ? 'SINCE STOPPED' : 'SINCE STARTING',
+            [ModeType.STILL]: 'SINCE STOPPED',
+            [ModeType.ON_FOOT]: 'SINCE MOVING',
+            [ModeType.RUNNING]: 'SINCE MOVING',
+            [ModeType.BICYCLE]: 'SINCE MOVING',
+            [ModeType.VEHICLE]: 'SINCE MOVING',
+          }
+          const modeTypePrevious = timelineNow ? current.modeTypePrevious : info.modeTypePrevious;
+          if (modeTypePrevious) {
+            const modeDuration = (timelineNow && current.tChangedMoving && current.t) ?
+              current.t - Math.max(activity.tStart, current.tChangedMoving)
+              :
+              info.modeDuration;
+            modeDurationLabel = modeDuration ? `TIME ${mapModeTypePreviousToModeDurationLabel[modeTypePrevious]}` : '';
+            modeDurationText = modeDuration ? msecToTimeString(modeDuration) : '';
+          }
         }
       }
       return {
@@ -130,6 +161,8 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         index: info.index,
         isCurrent,
         length: info.length,
+        modeDurationLabel,
+        modeDurationText,
         modeText,
         rows,
         speedPaceText,

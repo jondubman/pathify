@@ -120,9 +120,9 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
     <ActivityDetailsRow
       props={props} rowIndex={1}
       text1={props.timeText}
-      caption1={props.timelineNow ? 'ELAPSED TIME HH:MM:SS' : ' HH:MM:SS FROM START'}
+        caption1={props.timelineNow ? 'ELAPSED TIME HH:MM:SS' : ' HH:MM:SS FROM START'}
       text2={props.distanceText}
-      caption2={props.timelineNow ? 'TOTAL DISTANCE (mi)' : 'DISTANCE @ TIMEPOINT (mi)'}
+        caption2={props.timelineNow ? 'TOTAL DISTANCE (mi)' : 'DISTANCE @ TIMEPOINT (mi)'}
     />
     <ActivityDetailsRow
       props={props} rowIndex={2}
@@ -140,17 +140,17 @@ const ActivityDetails = (props: ActivityDetailsProps) => (props.visible ? (
     />
     <ActivityDetailsRow
       props={props} rowIndex={4}
-      text1={props.index === props.length ? props.length.toString() : `${props.index}/${props.length}`}
-        caption1="# OF LOCATIONS"
+      text1={props.modeText}
+        caption1="MODE"
       text2={props.elevationText}
         caption2="ELEVATION (feet)"
     />
     <ActivityDetailsRow
       props={props} rowIndex={5}
-      text1={props.modeText}
-        caption1="MODE"
-      text2=""
-        caption2="TBD"
+      text1={props.modeDurationText}
+        caption1={props.modeDurationLabel}
+      text2={props.index === props.length ? props.length.toString() : `${props.index}/${props.length}`}
+        caption2="# OF TIMEPOINTS"
     />
   </View>
 ) : null)

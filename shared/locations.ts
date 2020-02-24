@@ -36,6 +36,8 @@ export type LocationEvents = LocationEvent[];
 
 const locEventFilter: EventFilter = (event: GenericEvent) => (event.type === EventType.LOC);
 
+export const modeIsMoving = (modeType: ModeType) => (modeType !== ModeType.UNKNOWN && modeType !== ModeType.STILL);
+
 // These are stored with Locations in Realm.
 export enum ModeType {
   'BICYCLE' = 'BICYCLE',
@@ -57,19 +59,19 @@ const modeToNumber = {
 }
 
 // From the ordinal, back to the enum...
-const numberToModeType = (num: number) => ([
-  [ModeType.UNKNOWN],
-  [ModeType.STILL],
-  [ModeType.ON_FOOT],
-  [ModeType.RUNNING],
-  [ModeType.BICYCLE],
-  [ModeType.VEHICLE]
+export const numberToModeType = (num: number) => ([
+  ModeType.UNKNOWN,
+  ModeType.STILL,
+  ModeType.ON_FOOT,
+  ModeType.RUNNING,
+  ModeType.BICYCLE,
+  ModeType.VEHICLE
 ][Math.floor(num)])
 
 // This is the human-readable version of mode displayed in ActivityDetails.
 export const numberToModeText = (num: number) => ([
   'Unknown',
-  'Still',
+  'Stopped', // was: Still
   'On Foot',
   'Running',
   'Bicycle',

@@ -7,7 +7,11 @@ import constants from 'lib/constants';
 import utils from 'lib/utils';
 import { ActivityDataExtended } from 'shared/activities';
 import { AppStateChange } from 'shared/appEvents';
-import { LocationEvent, LonLat } from 'shared/locations';
+import {
+  LocationEvent,
+  LonLat,
+  ModeType,
+} from 'shared/locations';
 
 // Note events and persistent settings are external to this (in Realm) - see database module
 
@@ -28,6 +32,24 @@ export interface MapRegionUpdate {
 
 const now = utils.now();
 
+export const noCurrentLocation = {
+  ele: undefined as number | undefined,
+  lon: undefined as number | undefined,
+  lat: undefined as number | undefined,
+  odo: undefined as number | undefined,
+  speed: undefined as number | undefined,
+  modeNumeric: 0 as number,
+  modeTypePrevious: undefined as number | undefined,
+  moving: false as boolean,
+  t: undefined as number | undefined,
+  tChangedMoving: undefined as number | undefined,
+}
+// current is basically a Redux Store cache of recent values from geolocation callbacks.
+// If trackingActivity, much of the same should end up in the Activity's Path.
+// TODO persist this across app invocations so ActivityDetails calculates current info (particularly mode) correctly.
+// TODO This and state.userLocation are largely redundant, but combining them wouldn't buy much.
+export type Current = typeof noCurrentLocation;
+
 export const initialAppState = {
   cache: {
     activities: [],
@@ -37,6 +59,7 @@ export const initialAppState = {
   counts: {
     refreshedActivities: 0,
   },
+  current: noCurrentLocation, // TODO persist last values, restore on restart? Have timestamp.
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     allowMapStyleNone: false, // really only useful for debugging / perf
     activityListScrolling: false, // is the activityList currently actively being scrolled?
@@ -48,7 +71,7 @@ export const initialAppState = {
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false,
     helpOpen: false, // manually opened by user
-    labelsEnabled: true, // TODO add to persistedFlags
+    labelsEnabled: true,
     logInDebugVersion: true, // typically true
     logInProductionVersion: false, // typically false
     logToDatabase: false, // applies only if logs are enabled in general (see logInDebugVersion, logInProductionVersion)
@@ -62,6 +85,7 @@ export const initialAppState = {
     receiveActivityChangeEvents: true, // TODO
     receiveHeartbeatEvents: false, // TODO
     receiveMotionChangeEvents: false, // TODO
+    refreshActivityOnStop: true, // Should refreshActivity be performed after stopActivity? TODO inefficient, fail-safe.
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // manually opened by user
     startMenuOpen: false, // if manually opened by user
@@ -124,7 +148,7 @@ export const initialAppState = {
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
-  userLocation?: LocationEvent;
+  userLocation?: LocationEvent; // TODO This is now redundant; replace this with equivalent info from state.current.
 }
 
 // TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema.

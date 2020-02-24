@@ -29,8 +29,12 @@ const lineStyleBase = {
   width: utils.windowSize().width,
 } as StyleProp<ViewStyle>;
 
-const lineStyleActive = {
-  backgroundColor: constants.colors.grabBar.lineActive,
+const lineStyleSnapping = {
+  backgroundColor: constants.colors.grabBar.lineSnapping,
+} as StyleProp<ViewStyle>;
+
+const lineStyleDragging = {
+  backgroundColor: constants.colors.grabBar.lineDragging,
 } as StyleProp<ViewStyle>;
 
 interface GrabBarState {
@@ -128,41 +132,45 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
 
   render() {
     log.debug('GrabBar render', this._snap, this._snapIndex, this._top);
-    const dragLayoutStyle = {
-      flexDirection: 'column',
-      position: 'absolute',
-      top: (this._snap === undefined) ? this.props.snap : this._snap,
-    } as StyleProp<ViewStyle>;
-
-    const snapLayoutStyle = {
+    const topLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
       top: (this._top === undefined) ? this.props.snap : this._top,
     } as StyleProp<ViewStyle>;
 
+    const snapLayoutStyle = {
+      flexDirection: 'column',
+      position: 'absolute',
+      top: (this._snap === undefined) ? this.props.snap : this._snap,
+    } as StyleProp<ViewStyle>;
+
     const {
       pressed,
     } = this.props;
-    const dragStyle = pressed ? [lineStyleBase, lineStyleActive] : lineStyleBase;
-    const snapStyle = lineStyleBase;
+    // The styles & layout here may be confusing. The intent is, the grabBar appears subtle unless pressed (grabbed).
+    // When pressed, it turns color. When dragged, the grabBar itself remains that color, plus a "snap bar" that shows
+    // where things will end up (see snapPositions) is also rendered (without zooming theme color, at medium intensity.)
+    const dragStyle = pressed ? [lineStyleBase, lineStyleDragging] : lineStyleBase;
+    const snapStyle = pressed ? [lineStyleBase, lineStyleSnapping] : lineStyleBase;
+    const snapStyleIfPressed = pressed ? snapStyle : dragStyle;
     return (
       <Fragment key={this.props.key}>
-        <View {...this._panResponder.panHandlers} style={dragLayoutStyle}>
-          <View pointerEvents="none" style={dragStyle} />
-          <View pointerEvents="none" style={dragStyle} />
-          <View pointerEvents="none" style={dragStyle} />
-          <View pointerEvents="none" style={dragStyle} />
-          <View pointerEvents="none" style={dragStyle} />
-        </View>
-        {this._top === this.props.snap ? null : (
+        {pressed ? (
           <View pointerEvents="none" style={snapLayoutStyle}>
-            <View style={snapStyle} />
-            <View style={snapStyle} />
-            <View style={snapStyle} />
-            <View style={snapStyle} />
-            <View style={snapStyle} />
+            <View style={dragStyle} />
+            <View style={dragStyle} />
+            <View style={dragStyle} />
+            <View style={dragStyle} />
+            <View style={dragStyle} />
           </View>
-        )}
+        ) : null}
+        <View {...this._panResponder.panHandlers} style={topLayoutStyle}>
+          <View pointerEvents="none" style={snapStyleIfPressed} />
+          <View pointerEvents="none" style={snapStyleIfPressed} />
+          <View pointerEvents="none" style={snapStyleIfPressed} />
+          <View pointerEvents="none" style={snapStyleIfPressed} />
+          <View pointerEvents="none" style={snapStyleIfPressed} />
+        </View>
       </Fragment>
     )
   }

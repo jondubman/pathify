@@ -117,6 +117,7 @@ const defaultSettings = {
   followingPath: false,
   followingUser: false,
   grabBarSnapIndex: 1,
+  labelsEnabled: true,
   latMax: bounds[0][0], // defaults
   latMin: bounds[1][1],
   lonMax: bounds[0][0],

@@ -172,8 +172,9 @@ const colors = {
     underlayUser: 'transparent',
   },
   grabBar: {
-    line: withOpacity(namedColors.silver, 0.20),
-    lineActive: withOpacity(colorThemes.zooming, 1),
+    line: withOpacity(namedColors.silver, 0.25), // inert
+    lineDragging: withOpacity(namedColors.silver, 0.5),
+    lineSnapping: withOpacity(colorThemes.zooming, 1),
   },
   helpButton: {
     background: namedColors.white,

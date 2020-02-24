@@ -25,7 +25,11 @@ import BackgroundGeolocation, {
   // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
-import { AppAction, GeolocationParams, newAction } from 'lib/actions';
+import {
+  AppAction,
+  GeolocationParams,
+  newAction,
+} from 'lib/actions';
 import store, { Store } from 'lib/store';
 import utils from 'lib/utils';
 import {
@@ -58,9 +62,6 @@ const geoconfig_default: Config = {
   // number of minutes to wait before turning off location-services after the
   // ActivityRecognition System (ARS) detects the device is STILL.
   // stopTimeout: 3, // minutes
-
-  // desired % confidence to trigger an activity state-change
-  minimumActivityRecognitionConfidence: 32,
 
   // defaults to 0. Delays stop-detection system, in which location-services is turned off and only the accelerometer is monitored.
   // Stop-detection will only engage if this timer expires. The timer is cancelled if any movement is detected before expiration.
@@ -140,10 +141,6 @@ const geoconfig_default: Config = {
 const geoconfig_tracking: Config = {
   ...geoconfig_default,
 
-  // desired time between activity detections.
-  // Larger values will result in fewer activity detections while improving battery life.
-  // A value of 0 will result in activity detections at the fastest possible rate.
-  activityRecognitionInterval: 5000,
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION, // higher than DESIRED_ACCURACY_HIGH, on iOS
   disableStopDetection: false, // using false is vastly more power-efficient!
   distanceFilter: 1, // meters device must move to generate update event, default 10
@@ -245,12 +242,13 @@ export const Geo = {
     try {
       log.debug('initializeGeolocation: tracking', tracking);
 
-      // Remember "Activity" in the context of this plugin is a very different notion from Activity in the app.
-      // In the app, it's a tracking session with associated metadata. Here, it is walking, bicycling, etc. which we
-      // refer to as a "mode" change.
+      // Important: "Activity" in the context of this plugin is a very different notion from Activity in the app!
+      // In the app, it's a whole tracking session with associated metadata.
+      // Here, it is walking, bicycling, etc. which we refer to as a "mode" change.
       //
       // Note this is run whether appActive or not, unlike the location events which can be stored in the plugin's
       // SQLite DB when app is running in the background.
+      // Caution: Use too much CPU in the background, and the app will be terminated by the OS CPU watchdog!
       const onActivityChange = (event: MotionActivityEvent) => {
         const state = store.getState();
         const {

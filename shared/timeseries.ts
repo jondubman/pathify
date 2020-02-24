@@ -125,9 +125,11 @@ const timeseries = {
   // after: whether to consider events after Timepoint t (default true)
   // near: maximum time gap to consider "near" (default unrestricted)
   // eventFilter is optional.
+  // TODO confusingly many parameters here; instead, Instead, pass one param with named properties.
   findEventsNearestTimepoint: (events: Events, t: Timepoint,
     before: Boolean = true, after: Boolean = true,
     near: number = Infinity, eventFilter: EventFilter | null = null): GenericEvents => {
+
     let gap = Infinity;
     let results: GenericEvents = [];
     for (let e of events) {
