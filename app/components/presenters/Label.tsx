@@ -14,6 +14,9 @@ export const labelTextStyle = {
   fontWeight: constants.labels.fontWeight,
 }
 
+const hideStyle = { opacity: 0 };
+const showStyle = { opacity: 1 };
+
 class Label extends React.Component<LabelProps> {
 
   constructor(props: any) {
@@ -22,7 +25,7 @@ class Label extends React.Component<LabelProps> {
 
   render() {
     return (
-      <View pointerEvents="none" style={{ opacity: this.props.visible ? 1 : 0}}>
+      <View pointerEvents="none" style={this.props.visible ? showStyle : hideStyle}>
         {this.props.children}
       </View>
     )

@@ -49,6 +49,7 @@ const Styles = StyleSheet.create({
     top: subpanelTopOffset,
   },
   switch: {
+    marginLeft: 2,
   },
   switchContainer: {
     position: 'absolute',
@@ -88,15 +89,13 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                         YELLOW LABELS
                       </Text>
                       <View style={Styles.switch}>
-                        <View style={{ marginLeft: 2 }}>
-                          <Switch
-                            ios_backgroundColor={colors.background}
-                            onValueChange={props.onSetLabelsEnabled}
-                            thumbColor={constants.colors.helpPanel.labelsThumb}
-                            trackColor={colors.track}
-                            value={props.labelsEnabled}
-                          />
-                        </View>
+                        <Switch
+                          ios_backgroundColor={colors.background}
+                          onValueChange={props.onSetLabelsEnabled}
+                          thumbColor={constants.colors.helpPanel.labelsThumb}
+                          trackColor={colors.track}
+                          value={props.labelsEnabled}
+                        />
                       </View>
                     </View>
                   </View>

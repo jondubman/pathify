@@ -31,6 +31,9 @@ const AppStyles = StyleSheet.create({
     backgroundColor: constants.colors.appBackground,
     flex: 1,
   },
+  logo: {
+    height: 30, // TODO higher# lowers default position of Mapbox logo and attribution
+  },
   mainAppView: {
     flex: 1,
     flexDirection: 'column',
@@ -62,7 +65,7 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
-          <View style={{ height: 30 } /* TODO higher# lowers default position of Mapbox logo and attribution */ } />
+          <View style={AppStyles.logo} />
           {showActivityInfo ? <ActivityInfoContainer /> : null}
           <Fragment>
             <View pointerEvents={pointerEvents} style={timelineOpacity}>

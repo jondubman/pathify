@@ -28,6 +28,8 @@ import { LonLat } from 'shared/locations';
 export type Bounds = [LonLat, LonLat] | null; // NE, SW
 export type BoundsWithHeading = [LonLat, LonLat, number] | null; // NE, SW, heading
 
+const flexStyle = { flex: 1 };
+
 // For now this is intended to be a singleton component. TODO enforce via ref function.
 
 class MapArea extends Component<MapAreaProps> {
@@ -97,7 +99,7 @@ class MapArea extends Component<MapAreaProps> {
       // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
       // onPressIn is instantaneous, unlike onPress which waits for the tap to end.
       return (
-        <View style={{ flex: 1 }}>
+        <View style={flexStyle}>
           <TouchableWithoutFeedback
             onPressIn={backgroundTapped}
           >
@@ -108,7 +110,7 @@ class MapArea extends Component<MapAreaProps> {
     }
     // Note contentInset must be symmetric (matching inset on top/bottom) in to avoid panning map on hide/show timeline.
     return (
-      <View style={{ flex: 1 }}>
+      <View style={flexStyle}>
         <View style={viewStyle}>
           <Mapbox.MapView
             attributionEnabled={true}
