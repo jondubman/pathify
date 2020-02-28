@@ -1,4 +1,3 @@
-// Shared code (client + server) having to do specifically with LocationEvents, ModeChangeEvents and MotionEvents.
 export type Lon = number;
 export type Lat = number;
 export type LonLat = [Lon, Lat];

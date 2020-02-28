@@ -7,9 +7,7 @@ export interface AppQueryDescriptor {
 
   activityId: string; // applies to activity, events
   count?: boolean; // applies to events
-  exclude?: boolean;
   events: boolean; // applies to activity (true: include events)
-  filterTypes?: string[]; // applies to events
   level?: number; // applies to logs (default 0)
   limit?: number; // applies to events
   pageSize: number; // applies to logs, works with startIndex

@@ -15,7 +15,11 @@ class Pulsars extends Component<PulsarsProps> {
       <Fragment>
         {Object.keys(pulsars).map((key => {
           const pulsar = pulsars[key]; // key here is like 'pastLocation' or 'userLocation'.
-          const { loc, color, visible } = pulsar;
+          const {
+            loc,
+            color,
+            visible,
+          } = pulsar;
           const compoundKey = `${key}`;
           return visible ?
             <Pulsar key={compoundKey} id={compoundKey} loc={loc} color={color} />

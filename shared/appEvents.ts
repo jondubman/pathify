@@ -1,4 +1,4 @@
-import { Events, GenericEvent, Timepoint, EventType } from './timeseries';
+import { GenericEvent } from './timeseries';
 
 export enum AppStateChange {
   'NONE' = 'NONE',
@@ -9,17 +9,14 @@ export enum AppStateChange {
 }
 
 export interface AppStateChangeEvent extends GenericEvent {
-  // type: EventType.APP;
   newState: AppStateChange;
 }
 
 export enum AppUserAction {
-  // 'MENU_ITEM_SELECTED' = 'MENU_ITEM_SELECTED',
   'START' = 'START',
   'STOP' = 'STOP',
 }
 
 export interface AppUserActionEvent extends GenericEvent {
-  // type: EventType.USER_ACTION;
   userAction: AppUserAction,
 }

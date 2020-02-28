@@ -1,4 +1,3 @@
-// Shared code (client + server) to support activities that collect events that occur between START and STOP actions.
 import Realm from 'realm';
 
 import log from './log';
