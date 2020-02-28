@@ -7,7 +7,7 @@ import { AppState } from 'lib/state';
 import ActivityTimespans from 'presenters/ActivityTimespans';
 import {
   ActivityDataExtended,
-} from 'shared/activities';
+} from 'lib/activities';
 
 export interface ActivityTimespansStateProps {
   activities: ActivityDataExtended[];

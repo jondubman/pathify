@@ -7,7 +7,7 @@ import { AppState } from 'lib/state';
 import {
   MarkEvents,
   markList,
-} from 'shared/marks';
+} from 'lib/marks';
 
 export interface TimelineMarksStateProps extends Victory.VictoryCommonProps, Victory.VictoryDatableProps {
   currentActivityId: string;

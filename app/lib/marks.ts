@@ -1,7 +1,7 @@
 import {
   Events,
   GenericEvent,
-} from './timeseries';
+} from 'lib/timeseries';
 
 export enum MarkType {
   'NONE' = 'NONE',

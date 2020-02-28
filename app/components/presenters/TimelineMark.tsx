@@ -7,9 +7,9 @@ import constants from 'lib/constants';
 import {
   MarkEvent,
   MarkType
-} from 'shared/marks';
+} from 'lib/marks';
 import { activityIncludesMark } from 'lib/selectors';
-import { Timepoint } from 'shared/timeseries';
+import { Timepoint } from 'lib/timeseries';
 
 interface TimelineMarkProps {
   currentActivityId: string;

@@ -9,7 +9,7 @@ import Mapbox from '@react-native-mapbox-gl/maps';
 
 import { PathsProps } from 'containers/PathsContainer';
 import constants from 'lib/constants';
-import { LonLat } from 'shared/locations';
+import { LonLat } from 'lib/locations';
 import log from 'shared/log';
 
 const lineLayerStyleBase = {

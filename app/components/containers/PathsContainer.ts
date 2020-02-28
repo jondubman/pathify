@@ -4,7 +4,7 @@ import database from 'lib/database';
 import { selectedActivityPath } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
-import { Path } from 'shared/paths';
+import { Path } from 'lib/paths';
 
 interface PathsStateProps {
   currentActivityId: string | null;

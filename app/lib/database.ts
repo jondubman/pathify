@@ -12,13 +12,13 @@ import {
   Activity,
   ActivityData,
   ActivitySchema,
-} from 'shared/activities';
+} from 'lib/activities';
 import log from 'shared/log';
 import {
   Path,
   PathSchema,
   PathUpdate,
-} from 'shared/paths';
+} from 'lib/paths';
 import sharedConstants from 'shared/sharedConstants';
 import {
   Events,
@@ -26,7 +26,7 @@ import {
   GenericEvent,
   GenericEvents,
   Timepoint,
-} from 'shared/timeseries';
+} from 'lib/timeseries';
 
 export const LogSchema: Realm.ObjectSchema = {
   name: 'Log',

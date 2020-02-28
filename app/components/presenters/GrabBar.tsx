@@ -116,12 +116,10 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         // User has released all touches while this view is the responder. This typically means a gesture has succeeded.
         log.scrollEvent('onPanResponderRelease');
         ReactNativeHaptic.generate('notificationSuccess');
-        // const snapped = (this.props.snapBack || !this._snap) ? this.props.snapBackTo : this._snap;
         this.props.onReleased((this._snapIndex === undefined) ? this.props.snapIndex : this._snapIndex);
         this._snap = undefined;
         this._snapIndex = undefined;
         this._top = undefined;
-        // this.forceUpdate(); // TODO
       },
       onPanResponderTerminate: (evt, gestureState) => {
         log.scrollEvent('onPanResponderTerminate');

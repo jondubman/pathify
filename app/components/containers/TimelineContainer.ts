@@ -14,7 +14,7 @@ import {
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Timeline from 'presenters/Timeline';
-import { TimeRange } from 'shared/timeseries';
+import { TimeRange } from 'lib/timeseries';
 
 export interface Timespan {
   kind: TimespanKind;

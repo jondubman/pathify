@@ -8,7 +8,7 @@ import timeseries, {
   EventType,
   GenericEvent,
   Timepoint,
-} from './timeseries';
+} from 'lib/timeseries';
 
 export interface LocationEvent extends GenericEvent {
   accuracy?: number; // meters

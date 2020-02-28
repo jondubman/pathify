@@ -14,7 +14,7 @@ import {
 import Mapbox from '@react-native-mapbox-gl/maps';
 
 import constants from 'lib/constants';
-import { LonLat } from 'shared/locations';
+import { LonLat } from 'lib/locations';
 
 const pulseMin = 1;
 const pulseMax = 4;

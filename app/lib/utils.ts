@@ -3,7 +3,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-import { LonLat } from 'shared/locations';
+import { LonLat } from 'lib/locations';
 
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
 

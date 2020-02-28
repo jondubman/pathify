@@ -24,7 +24,7 @@ import ActivityTimespansContainer from 'containers/ActivityTimespansContainer';
 import TimelineMarksContainer from 'containers/TimelineMarksContainer';
 import constants from 'lib/constants';
 import utils from 'lib/utils';
-import timeseries, { interval } from 'shared/timeseries';
+import timeseries, { interval } from 'lib/timeseries';
 
 const initialState = {
 }

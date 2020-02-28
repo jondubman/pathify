@@ -110,13 +110,13 @@ import {
   ActivityDataExtended,
   extendedActivities,
   loggableActivity,
-} from 'shared/activities';
+} from 'lib/activities';
 import {
   AppUserActionEvent,
   AppStateChange,
   AppStateChangeEvent,
   AppUserAction,
-} from 'shared/appEvents';
+} from 'lib/appEvents';
 import {
   AppQueryParams,
   AppQueryResponse
@@ -128,18 +128,18 @@ import locations, {
   modeChangeToNumber,
   modeIsMoving,
   MotionEvent,
-} from 'shared/locations';
+} from 'lib/locations';
 import log from 'shared/log';
 import {
   MarkEvent,
   MarkType
-} from 'shared/marks';
+} from 'lib/marks';
 import timeseries, {
   EventType,
   GenericEvent,
   TimeRange,
-} from 'shared/timeseries';
-import { msecToString } from 'shared/units';
+} from 'lib/timeseries';
+import { msecToString } from 'lib/units';
 
 let _interval; // used by timelineRelativeZoom saga
 

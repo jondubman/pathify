@@ -134,9 +134,9 @@ export enum AbsoluteRelativeOption {
   'relative' = 'relative',
 }
 
-import { LocationEvent, LonLat } from 'shared/locations';
-import { AppStateChange } from 'shared/appEvents';
-import { GenericEvents } from 'shared/timeseries';
+import { LocationEvent, LonLat } from 'lib/locations';
+import { AppStateChange } from 'lib/appEvents';
+import { GenericEvents } from 'lib/timeseries';
 
 export interface ActivityListScrolledParams {
   t: number;

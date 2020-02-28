@@ -24,7 +24,7 @@ import utils from 'lib/utils';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
-import { LonLat } from 'shared/locations';
+import { LonLat } from 'lib/locations';
 export type Bounds = [LonLat, LonLat] | null; // NE, SW
 export type BoundsWithHeading = [LonLat, LonLat, number] | null; // NE, SW, heading
 

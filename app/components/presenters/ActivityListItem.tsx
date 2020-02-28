@@ -11,9 +11,9 @@ import constants from 'lib/constants';
 import {
   metersToMilesText,
   msecToTimeString,
-} from 'shared/units';
+} from 'lib/units';
 
-import { ActivityDataExtended } from 'shared/activities';
+import { ActivityDataExtended } from 'lib/activities';
 
 interface ActivityListItemProps {
   activity: ActivityDataExtended;

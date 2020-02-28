@@ -1,4 +1,4 @@
-import { GenericEvent } from './timeseries';
+import { GenericEvent } from 'lib/timeseries';
 
 export enum AppStateChange {
   'NONE' = 'NONE',

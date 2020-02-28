@@ -18,9 +18,9 @@ import utils from 'lib/utils';
 import ActivityList from 'presenters/ActivityList';
 import {
   ActivityDataExtended,
-} from 'shared/activities';
+} from 'lib/activities';
 import log from 'shared/log';
-import { Timepoint } from 'shared/timeseries';
+import { Timepoint } from 'lib/timeseries';
 
 interface ActivityListStateProps {
   currentActivityId: string | null;

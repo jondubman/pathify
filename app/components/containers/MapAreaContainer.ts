@@ -13,7 +13,7 @@ import {
 } from 'lib/state';
 import utils from 'lib/utils';
 import MapArea from 'presenters/MapArea';
-import { LonLat } from 'shared/locations';
+import { LonLat } from 'lib/locations';
 
 interface MapAreaStateProps {
   height: number;

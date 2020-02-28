@@ -10,7 +10,7 @@ const safeAreaTop =  getInset('top');
 const safeAreaBottom = getInset('bottom');
 const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized for displays with/without home button
 
-import { interval } from 'shared/timeseries';
+import { interval } from 'lib/timeseries';
 
 export enum TimespanKind {
   'ACTIVITY' = 'ACTIVITY',

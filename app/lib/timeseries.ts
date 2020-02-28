@@ -1,5 +1,3 @@
-// Shared code (client + server) to support time series of events.
-
 import Realm from 'realm';
 
 export type Events = Realm.Results<Realm.Object>;

@@ -1,7 +1,5 @@
 // server can query a running app by pushing an appQuery message to the app
 
-import { TimeRange } from './timeseries';
-
 export interface AppQueryDescriptor {
   type: string; // activities, activity, events, eventCount, options, etc. - see appQuery saga.
 
@@ -13,7 +11,7 @@ export interface AppQueryDescriptor {
   pageSize: number; // applies to logs, works with startIndex
   since: number; // timestamp, applies to events
   startIndex?: number; // applies to logs and events
-  timeRange?: TimeRange; // applies to events
+  timeRange?: [number, number]; // applies to events
 }
 
 export interface AppQueryParams {

@@ -22,9 +22,9 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import ActivityListItem from 'presenters/ActivityListItem';
 import { labelTextStyle } from 'presenters/Label';
-import { ActivityDataExtended } from 'shared/activities';
+import { ActivityDataExtended } from 'lib/activities';
 import log from 'shared/log';
-import { Timepoint } from 'shared/timeseries';
+import { Timepoint } from 'lib/timeseries';
 
 const colors = constants.colors.activityList;
 const {

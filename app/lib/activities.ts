@@ -1,12 +1,12 @@
 import Realm from 'realm';
 
-import log from './log';
-import { Timepoint } from './timeseries';
+import { Timepoint } from 'lib/timeseries';
 import {
   metersToMiles,
   msecToTimeString,
-} from './units';
-import utils from './sharedUtils';
+} from 'lib/units';
+import utils from 'lib/utils';
+import log from 'shared/log';
 
 export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
   name: 'Activity',

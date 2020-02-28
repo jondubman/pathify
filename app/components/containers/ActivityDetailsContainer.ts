@@ -12,12 +12,12 @@ import {
 import ActivityDetails from 'presenters/ActivityDetails';
 import {
   ActivityDataExtended,
-} from 'shared/activities';
+} from 'lib/activities';
 import {
   ModeType,
   numberToModeText,
   numberToModeType,
-} from 'shared/locations';
+} from 'lib/locations';
 import log from 'shared/log';
 import {
   metersPerSecondToMilesPerHour,
@@ -27,7 +27,7 @@ import {
   metersToMilesText,
   minutesToString,
   msecToTimeString,
-} from 'shared/units';
+} from 'lib/units';
 
 interface ActivityDetailsStateProps {
   averagePaceText: string;

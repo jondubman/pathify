@@ -7,7 +7,7 @@ import constants, {
 } from 'lib/constants';
 import utils from 'lib/utils';
 import TimelineSpan from 'presenters/TimelineSpan';
-import { interval } from 'shared/timeseries';
+import { interval } from 'lib/timeseries';
 
 interface TimelineFutureSpanExtendedProps extends TimelineFutureSpanProps,
   Victory.VictoryCommonProps, Victory.VictoryDatableProps {

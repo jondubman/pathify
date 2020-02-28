@@ -19,7 +19,7 @@ import constants from 'lib/constants';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import log from 'shared/log';
-import { interval } from 'shared/timeseries';
+import { interval } from 'lib/timeseries';
 
 const initialState = {
   zoomDomain: null as any,

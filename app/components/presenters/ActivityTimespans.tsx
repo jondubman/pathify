@@ -7,7 +7,7 @@ import constants, {
 } from 'lib/constants';
 import utils from 'lib/utils';
 import TimelineSpan from 'presenters/TimelineSpan';
-import { ActivityDataExtended } from 'shared/activities';
+import { ActivityDataExtended } from 'lib/activities';
 
 interface ActivityTimespansExtendedProps extends ActivityTimespansProps,
   Victory.VictoryCommonProps, Victory.VictoryDatableProps {

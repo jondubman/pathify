@@ -13,21 +13,21 @@ import locations, {
   modeIsMoving,
   ModeType,
   numberToModeType,
-} from 'shared/locations';
+} from 'lib/locations';
 import {
   Activity,
   ActivityDataExtended,
-} from 'shared/activities';
-import { LonLat } from 'shared/locations';
+} from 'lib/activities';
+import { LonLat } from 'lib/locations';
 import log from 'shared/log';
-import { MarkEvent } from 'shared/marks';
+import { MarkEvent } from 'lib/marks';
 import {
   interval,
   Timepoint,
-} from 'shared/timeseries';
+} from 'lib/timeseries';
 import {
   msecToString,
-} from 'shared/units';
+} from 'lib/units';
 
 // TODO review
 export const activityIncludesMark = (activityId: string, mark: MarkEvent): boolean => {

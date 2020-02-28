@@ -14,7 +14,7 @@ import {
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Pulsars from 'presenters/Pulsars';
-import { LonLat } from 'shared/locations';
+import { LonLat } from 'lib/locations';
 
 export interface OptionalPulsar {
   loc: LonLat;

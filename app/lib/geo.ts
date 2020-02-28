@@ -1,8 +1,4 @@
 // Geo: Configuration and support code related to react-native-background-geolocation.
-// Includes LocationEvent interface.
-
-// import * as turf from '@turf/helpers';
-// import distance from '@turf/distance';
 
 // For posting to tracker.transistorsoft.com
 // import DeviceInfo from 'react-native-device-info';
@@ -38,9 +34,9 @@ import {
   ModeChangeEvent,
   ModeType,
   MotionEvent
-} from 'shared/locations';
+} from 'lib/locations';
 import log from 'shared/log';
-import timeseries, { EventType } from 'shared/timeseries';
+import timeseries, { EventType } from 'lib/timeseries';
 
 // pausesLocationUpdatesAutomatically: true, (sets disableStopDetection: true and prevents preventSuspend from working)
 

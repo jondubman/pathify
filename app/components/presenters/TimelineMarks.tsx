@@ -4,7 +4,7 @@ import { TimelineMarksProps } from 'containers/TimelineMarksContainer';
 import TimelineMark from 'presenters/TimelineMark';
 import {
   MarkEvent,
-} from 'shared/marks';
+} from 'lib/marks';
 
 class TimelineMarks extends React.Component<TimelineMarksProps> {
 

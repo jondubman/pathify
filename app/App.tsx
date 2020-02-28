@@ -23,7 +23,7 @@ import database, { LogMessageData } from 'lib/database';
 import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
-import { AppStateChange } from 'shared/appEvents';
+import { AppStateChange } from 'lib/appEvents';
 import log from 'shared/log';
 
 import AppUIContainer from 'containers/AppUIContainer';
