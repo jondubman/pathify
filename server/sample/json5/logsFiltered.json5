@@ -1,0 +1,11 @@
+{
+  type: 'appQuery',
+  params: {
+    query: {
+      type: 'logs',
+      level: 0,
+      pageSize: 1000,
+      timeRange: [1578005865767, 1578006156176],
+    },
+  }
+}

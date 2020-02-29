@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+// usage:
+//
+// json-compose commandFile.json
+//   logs output to console
+
+// TODO this must currently be run from the sample root folder
+
+const fs = require('fs');
+const parseArgs = require('minimist');
+
+const commandLineOpts = {
+}
+const argv = parseArgs(process.argv, commandLineOpts);
+const commandFilename = argv._[2];
+const inputFilename = argv._[3];
+
+if (commandFilename) {
+  const commandJson = fs.readFileSync(commandFilename, 'utf8');
+  const command = JSON.parse(commandJson);
+  const include = command.params && command.params.include;
+  if (include === true && inputFilename) {
+    const inputJson = fs.readFileSync(inputFilename, 'utf8');
+    const input = JSON.parse(inputJson);
+    command.params.include = input;
+  } else if (typeof(include) === 'string') {
+    command.params.include = JSON.parse(fs.readFileSync(include, 'utf8'));
+  }
+  const output = JSON.stringify(command);
+  console.log(output);
+} else {
+  const help = `usage:
+json-compose commandFile.json inputFile.json
+  logs output to console
+`;
+  console.log(help);
+}

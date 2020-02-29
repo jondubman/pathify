@@ -1,0 +1,12 @@
+{
+  type: 'appQuery',
+  params: {
+    query: {
+      type: 'activity',
+      events: true,
+      startIndex: 0,
+      limit: 2000,
+      count: false,
+    },
+  }
+}

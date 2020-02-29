@@ -1,0 +1,7 @@
+{
+  type: 'appQuery',
+  params: {
+    query: {
+      type: 'ping',
+    },
+  }}

@@ -1,0 +1,10 @@
+{
+  type: 'appQuery',
+  params: {
+    query: {
+      limit: 10000,
+      startIndex: 30000,
+      type: 'events'
+    },
+  }
+}

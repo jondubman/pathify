@@ -14,7 +14,8 @@
     "log-warn": "tail -f logs/complete.log | bunyan -l warn",
     "test": "NODE_ENV=development mocha dist/test/*.js",
     "restart": "yarn build; yarn launch",
-    "start": "yarn; yarn build-test; yarn launch"
+    "start": "yarn; yarn build; yarn launch",
+    "start-test": "yarn; yarn build-test; yarn launch"
   },
   "author": "Jonathan Dubman",
   "license": "ISC",

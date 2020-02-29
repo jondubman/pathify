@@ -1,0 +1,20 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "description": "sample data for Pathify",
+  "private": true,
+  "scripts": {
+    "clean": "rm -f json5-convert.js; rm -f json/*",
+    "convert": "yarn clean; tsc; node json5-convert.js json5/*",
+    "reconvert": "node json5-convert.js json5/*",
+    "watch": "watch.sh",
+    "unwatch": "unwatch.sh"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/json5": "^0.0.30",
+    "@types/node": "^13.7.6",
+    "fs": "^0.0.1-security",
+    "json5": "^2.1.1"
+  }
+}

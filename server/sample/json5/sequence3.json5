@@ -1,0 +1,79 @@
+{
+  type: 'sequence',
+  params: [
+    {
+      type: 'centerMap',
+      params: {
+        center: [ 0, 0.01 ], // go north
+        option: 'relative'
+      }
+    },
+    {
+      type: 'log',
+      params: {
+        level: 'debug',
+        message: 'went north'
+      },
+    },
+    {
+      type: 'sleep',
+      params: {
+        for: 5000
+      }
+    },
+    {
+      type: 'centerMap',
+      params: {
+        center: [ 0.01, 0 ], // go east
+        option: 'relative'
+      }
+    },
+    {
+      type: 'log',
+      params: {
+        level: 'debug',
+        message: 'went east'
+      },
+    },
+    {
+      type: 'sleep',
+      params: {
+        for: 5000
+      }
+    },
+    {
+      type: 'centerMap',
+      params: {
+        center: [ 0, -0.01 ], // go south
+        option: 'relative'
+      }
+    },
+    {
+      type: 'log',
+      params: {
+        level: 'debug',
+        message: 'went south'
+      },
+    },
+    {
+      type: 'sleep',
+      params: {
+        for: 5000
+      }
+    },
+    {
+      type: 'centerMap',
+      params: {
+        center: [ -0.01, 0 ], // go west
+        option: 'relative'
+      }
+    },
+    {
+      type: 'log',
+      params: {
+        level: 'debug',
+        message: 'went west - DONE!'
+      },
+    },
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  type: 'appQuery',
+  params: {
+    query: { type: 'activities' },
+  }
+}

@@ -1,0 +1,31 @@
+{
+  type: 'repeatedAction',
+  params: {
+    repeat: {
+      type: 'sequence',
+      params: [
+        {
+          type: 'centerMap',
+          params: {
+            center: [ 0, 0.01 ], // go north
+            option: 'relative'
+          }
+        },
+        {
+          type: 'sleep',
+          params: {
+            for: 5000
+          }
+        },
+        {
+          type: 'log',
+          params: {
+            level: 'debug',
+            message: 'This is sequence1'
+          },
+        },
+      ]
+    },
+    for: 3
+  }
+}

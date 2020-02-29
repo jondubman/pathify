@@ -1,0 +1,23 @@
+// This little script goes north, east, south, and west, in a sequence, sleeping for 5 seconds after each move,
+// repeating this routine a total of 3 times, demonstrating use of nested sequences with repeatedAction and sleep.
+
+{ type: 'sequence', params: [
+  { type: 'repeatedAction', params: { times: 3, repeat:
+    { type: 'sequence', params: [ // nested sequence
+        { type: 'centerMap', params: { center: [ 0, 0.01 ], option: 'relative' }},
+        { type: 'log', params: { level: 'debug', message: 'went north' }},
+        { type: 'sleep', params: { for: 5000 }},
+        { type: 'centerMap', params: { center: [ 0.01, 0 ], option: 'relative' }},
+        { type: 'log', params: { level: 'debug', message: 'went east' }},
+        { type: 'sleep', params: { for: 5000 }},
+        { type: 'centerMap', params: { center: [ 0, -0.01 ], option: 'relative' }},
+        { type: 'log', params: { level: 'debug', message: 'went south' }},
+        { type: 'sleep', params: { for: 5000 }},
+        { type: 'centerMap', params: { center: [ -0.01, 0], option: 'relative' }},
+        { type: 'log', params: { level: 'debug', message: 'went west' }},
+        { type: 'sleep', params: { for: 5000 }},
+    ]}
+  }},
+  // { type: 'someAction2' }
+  // { type: 'someAction3' }
+]}

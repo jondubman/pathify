@@ -1,0 +1,11 @@
+{
+  type: 'sequence',
+  params: [
+    {
+      type: 'stopFollowingUser',
+    },
+    {
+      type: 'mapTapped',
+    }
+  ],
+}

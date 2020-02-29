@@ -1,0 +1,9 @@
+[
+  "trigger",
+  "./json5",
+  {
+    "name": "reconvert",
+    "suffix": ["json5"],
+    "command": ["yarn", "reconvert"]
+  }
+]

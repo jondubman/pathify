@@ -1,0 +1,9 @@
+[
+  "trigger",
+  "./src",
+  {
+    "name": "convert",
+    "suffix": ["ts"],
+    "command": ["yarn", "convert"]
+  }
+]

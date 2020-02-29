@@ -1,4 +1,5 @@
 dist
+json
 local.json5
 gpx
 *.gpx
@@ -7,5 +8,4 @@ logs
 node_modules
 secrets
 ref.txt
-sample
 shared

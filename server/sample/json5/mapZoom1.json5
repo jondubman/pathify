@@ -1,0 +1,8 @@
+{
+  type: 'centerMap',
+  params: {
+    center: [ 0, 0 ],
+    option: 'relative',
+    zoom: 1,
+  }
+}
