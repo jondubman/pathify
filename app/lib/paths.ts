@@ -8,7 +8,7 @@ import Realm from 'realm';
 // The array properties of Paths are aligned by index and each must be the same length.
 // The timestamp corresponding to each index is stored in the t array. So:
 //    path[0].t is the timestamp of the first path update.
-//    path[0].odo is the odometer reading of the first path update, at time path[0].t.
+//    path[0].odo is the odometer reading of the first path update, at time path[0].t., et cetera.
 // As a result, for any given Activity, it's fast and easy to construct any time-series based on path info at runtime.
 
 export const PathSchema: Realm.ObjectSchema = { // Note: keep PathSchema and Path in sync, below!
@@ -27,9 +27,9 @@ export const PathSchema: Realm.ObjectSchema = { // Note: keep PathSchema and Pat
   },
 }
 
-export interface PathUpdate {
+export interface PathUpdate { // does not extend Realm.Object
   id: string; // should match id of corresponding Activity
-  ele: number[];
+  ele: number[]; // elevation
   lats: number[]; // required, may be empty, should have same length as lons
   lons: number[]; // required, may be empty
   mode: number[];

@@ -28,6 +28,12 @@ import {
   Timepoint,
 } from 'lib/timeseries';
 
+export interface ActivityIdsResults {
+  deleted: string[]; // activityIds mentioned in events without a corresponding Activity
+  kept: string[]; // activityIds mentioned in events with a corresponding Activity
+  orphaned: string[]; // activityIds of any Activities that lack corresponding events
+}
+
 export const LogSchema: Realm.ObjectSchema = {
   name: 'Log',
   properties: {
@@ -185,22 +191,20 @@ const database = {
     return null;
   },
 
-  // Return the activityIds that remain in active use in the app (i.e. have the events, plus the corresponding Activity)
-  activityIds: (): string[] => {
+  activityIds: (): ActivityIdsResults => {
+    // Note TRUEPREDICATE filter lets everything through, though DISTINCT will massively cull the results.
     const eventsWithDistinctActivityIds = realm.objects('Event')
       .filtered('TRUEPREDICATE SORT(t ASC, activityId ASC) DISTINCT(activityId)');
     const activityIdsOfEvents: string[] = eventsWithDistinctActivityIds
       .map((e => (e as any as GenericEvent).activityId))
       .filter((id: string | undefined) => !!(id && id.length > 0)) as string[];
-    // log.trace(activityIdsOfEvents.length, 'activityIdsOfEvents', activityIdsOfEvents);
 
     const activityIds = database.activities().sorted('tStart').map((activity: Activity) => activity.id);
-    // log.trace(activityIds.length, 'activityIds', activityIds);
 
     // If an id is in both of those lists (activityIds, activityIdsOfEvents)
     // then we can recreate the Activity, Path, etc. from the underlying events.
     // If an id in activityIdsOfEvents is missing from activityIds, it has been deleted.
-    const deletedActivityIds = [] as string[]; // TODO not currently used
+    const deletedActivityIds = [] as string[];
     const keptActivityIds = [] as string[]; // activityIds mentioned in events whose activity exists
     const orphanedActivityIds = [] as string[]; // activityIds mentioned in events but whose activity was deleted
     activityIdsOfEvents.map((id: string) => {
@@ -218,7 +222,11 @@ const database = {
     log.trace(deletedActivityIds.length, 'deletedActivityIds', deletedActivityIds);
     log.trace(keptActivityIds.length, 'keptActivityIds', keptActivityIds);
     log.trace(orphanedActivityIds.length, 'orphanedActivityIds', orphanedActivityIds);
-    return keptActivityIds;
+    return {
+      deleted: deletedActivityIds,
+      kept: keptActivityIds,
+      orphaned: orphanedActivityIds,
+    }
   },
 
   // It's quite likely that a minor schema change in the DB will not require any migration of Activities or Paths.
@@ -228,7 +236,7 @@ const database = {
       log.info('database.completeMigration');
 
       // Migrate Activities and Paths, based on underlying Events
-      // TODO full refresh is not currently needed in the general case. Should this change:
+      // TODO full refresh is expensive and not required in the general case. Should this change:
       // store.dispatch(newAction(AppAction.refreshAllActivities));
     }
   },

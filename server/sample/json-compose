@@ -1,8 +1,12 @@
-#!/usr/bin/env node
-// usage:
+#!/usr/bin/env ts-node
+
+// Usage:
+//    json-compose commandFile inputFile
 //
-// json-compose commandFile.json
-//   logs output to console
+// Both commandFile and inputFile should be valid JSON. commandFile is read from the filesystem.
+// If inputFile is not specified, commandFile is output, unchanged (a simple pass-through).
+// If inputFile is specified, its entire contents are inserted as the 'include' property at the top level.
+// The JSON files are thus 'composed' into JSON that is sent to the server which may be forwarded to the app.
 
 // TODO this must currently be run from the sample root folder
 

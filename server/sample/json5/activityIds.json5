@@ -1,3 +1,6 @@
 {
-  type: 'activityIds',
+  type: 'appQuery',
+  params: {
+    query: { type: 'activityIds' },
+  }
 }

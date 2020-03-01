@@ -401,6 +401,18 @@ const sagas = {
           }
           break;
         }
+        case 'activityIds': {
+          const activityIds = yield call(database.activityIds);
+          response = {
+            activityIds,
+            counts: {
+              deleted: (activityIds.deleted).length,
+              kept: (activityIds.kept).length,
+              orphaned: (activityIds.orphaned).length,
+            },
+          }
+          break;
+        }
         case 'bounds': {
           const { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
           response = { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial };
@@ -1205,14 +1217,20 @@ const sagas = {
     yield call(log.trace, 'refreshActivityDone');
   },
 
+  // Note this is potentially time-consuming and might "hang up" the app for a while.
+  // With order 1M events on a modern device - a few months of activities - it could take maybe a minute to complete.
+  // This isn't actually used in production.
   refreshAllActivities: function* (action: Action) {
     const activityIds = yield call(database.activityIds);
-    let count = 0;
-    for (let id of activityIds) {
-      yield put(newAction(AppAction.refreshActivity, { id })); // initiate activity refresh
-      yield take(AppAction.refreshActivityDone); // wait for it to finish
-      count++;
-      yield call(log.trace, 'refreshAllActivities: refreshActivityDone', count, id);
+    if (activityIds) {
+      let count = 0;
+      for (let id of activityIds.kept) {
+        yield put(newAction(AppAction.refreshActivity, { id })); // initiate activity refresh
+        yield take(AppAction.refreshActivityDone); // wait for it to finish
+        // TODO could pause here
+        count++;
+        yield call(log.trace, 'refreshAllActivities: refreshActivityDone', count, id);
+      }
     }
   },
 
