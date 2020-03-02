@@ -20,11 +20,11 @@ import { MapAreaProps } from 'containers/MapAreaContainer';
 import MapDimmerContainer from 'containers/MapDimmerContainer';
 import PathsContainer from 'containers/PathsContainer';
 import PulsarsContainer from 'containers/PulsarsContainer';
+import { LonLat } from 'lib/locations';
 import utils from 'lib/utils';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
-import { LonLat } from 'lib/locations';
 export type Bounds = [LonLat, LonLat] | null; // NE, SW
 export type BoundsWithHeading = [LonLat, LonLat, number] | null; // NE, SW, heading
 

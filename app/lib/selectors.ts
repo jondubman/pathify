@@ -2,25 +2,23 @@
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { createSelector } from 'reselect'
 
-import { AppState } from 'lib/state';
-import constants, {
-  MapStyle,
-} from 'lib/constants';
-import database from 'lib/database';
-import utils from 'lib/utils';
 import { OptionalPulsars } from 'containers/PulsarsContainer';
-import locations, {
-  modeIsMoving,
-  ModeType,
-  numberToModeType,
-} from 'lib/locations';
 import {
   Activity,
   ActivityDataExtended,
 } from 'lib/activities';
-import { LonLat } from 'lib/locations';
-import log from 'shared/log';
+import constants, {
+  MapStyle,
+} from 'lib/constants';
+import database from 'lib/database';
+import locations, {
+  LonLat,
+  modeIsMoving,
+  ModeType,
+  numberToModeType,
+} from 'lib/locations';
 import { MarkEvent } from 'lib/marks';
+import { AppState } from 'lib/state';
 import {
   interval,
   Timepoint,
@@ -28,6 +26,8 @@ import {
 import {
   msecToString,
 } from 'lib/units';
+import utils from 'lib/utils';
+import log from 'shared/log';
 
 // TODO review
 export const activityIncludesMark = (activityId: string, mark: MarkEvent): boolean => {

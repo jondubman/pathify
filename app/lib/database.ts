@@ -5,14 +5,14 @@ import {
   AppAction,
   newAction,
 } from 'lib/actions';
-import constants from 'lib/constants';
-import store from 'lib/store';
-import utils from 'lib/utils';
 import {
   Activity,
   ActivityData,
   ActivitySchema,
 } from 'lib/activities';
+import constants from 'lib/constants';
+import store from 'lib/store';
+import utils from 'lib/utils';
 import log from 'shared/log';
 import {
   Path,
@@ -271,20 +271,6 @@ const database = {
     return database.events().filtered('activityId == $0', id);
   },
 
-  // Update both the Activity and its corresponding Path
-  updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
-    let activity: Activity | null = null;
-    realm.write(() => {
-      activity = realm.create('Activity', activityUpdate, Realm.UpdateMode.Modified) as Activity; // true: update
-      if (pathUpdate) { // otherwise leave it alone
-        const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
-      }
-    })
-    if (activity) {
-      store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: activity!.id }));
-    }
-  },
-
   // Delete both the Activity and its corresponding Path
   deleteActivity: (activityId: string): void => {
     let existingActivity = realm.objects('Activity')
@@ -300,6 +286,20 @@ const database = {
           realm.delete(existingPath);
         }
       })
+    }
+  },
+
+  // Update both the Activity and its corresponding Path
+  updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
+    let activity: Activity | null = null;
+    realm.write(() => {
+      activity = realm.create('Activity', activityUpdate, Realm.UpdateMode.Modified) as Activity; // true: update
+      if (pathUpdate) { // otherwise leave it alone
+        const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
+      }
+    })
+    if (activity) {
+      store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: activity!.id }));
     }
   },
 
@@ -379,7 +379,7 @@ const database = {
 
   // Paths
 
-  // TODO always keep this in sync with PathSchema
+  // TODO always keep appendToPath in sync with PathSchema
   appendToPath: (update: PathUpdate) => {
     const path = database.pathById(update.id);
     if (path && update.lats && update.lons && update.lats.length === update.lons.length) {
@@ -395,6 +395,7 @@ const database = {
     }
   },
 
+  // TODO always keep newPathUpdate in sync with PathSchema
   newPathUpdate: (id: string): PathUpdate => ({
     ele: [],
     id,
@@ -413,6 +414,24 @@ const database = {
       return undefined;
     }
     return realm.objectForPrimaryKey('Path', id);
+  },
+
+  pathUpdateById: (id: string): PathUpdate | undefined => {
+    const path = database.pathById(id);
+    if (!path) {
+      return undefined;
+    }
+    return {
+      ele: Array.from(path.ele),
+      id,
+      lats: Array.from(path.lats),
+      lons: Array.from(path.lons),
+      mode: Array.from(path.mode),
+      odo: Array.from(path.odo),
+      schemaVersion,
+      speed: Array.from(path.speed),
+      t: Array.from(path.t),
+    }
   },
 
   paths: (): any => (

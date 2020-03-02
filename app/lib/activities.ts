@@ -1,5 +1,7 @@
 import Realm from 'realm';
 
+import database from 'lib/database';
+import { PathUpdate } from 'lib/paths';
 import { Timepoint } from 'lib/timeseries';
 import {
   metersToMiles,
@@ -108,8 +110,24 @@ export interface ActivityDataExtended extends ActivityData { // these are the 'E
   tTotalText?: string;
 }
 
+export interface ExportedActivity {
+  activity: ActivityData;
+  path: PathUpdate;
+}
+
 export const extendedActivities = (activities: ActivityData[]) => {
   return activities.map((activityData) => extendActivity(activityData));
+}
+
+export const exportActivity = (activity: ActivityData): ExportedActivity | null => {
+  const pathUpdate = database.pathUpdateById(activity.id);
+  if (pathUpdate) {
+    return {
+      activity,
+      path: pathUpdate,
+    }
+  }
+  return null;
 }
 
 export const extendActivity = (activity: ActivityData): ActivityDataExtended => {

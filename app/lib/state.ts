@@ -3,15 +3,14 @@
 import ActivityList from 'presenters/ActivityList'
 import TimelineScroll from 'presenters/TimelineScroll'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
-import constants from 'lib/constants';
-import utils from 'lib/utils';
 import { ActivityDataExtended } from 'lib/activities';
 import { AppStateChange } from 'lib/appEvents';
+import constants from 'lib/constants';
 import {
   LocationEvent,
   LonLat,
-  ModeType,
 } from 'lib/locations';
+import utils from 'lib/utils';
 
 // Note events and persistent settings are external to this (in Realm) - see database module
 

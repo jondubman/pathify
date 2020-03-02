@@ -9,6 +9,7 @@
 // The JSON files are thus 'composed' into JSON that is sent to the server which may be forwarded to the app.
 
 // TODO this must currently be run from the sample root folder
+// TODO add TS typings
 
 const fs = require('fs');
 const parseArgs = require('minimist');
@@ -22,8 +23,8 @@ const inputFilename = argv._[3];
 if (commandFilename) {
   const commandJson = fs.readFileSync(commandFilename, 'utf8');
   const command = JSON.parse(commandJson);
-  const include = command.params && command.params.include;
-  if (include === true && inputFilename) {
+  const include = (command.params !== undefined) && (command.params.include !== undefined);
+  if (include && inputFilename) {
     const inputJson = fs.readFileSync(inputFilename, 'utf8');
     const input = JSON.parse(inputJson);
     command.params.include = input;

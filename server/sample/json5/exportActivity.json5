@@ -1,0 +1,9 @@
+{
+  type: 'appQuery',
+  params: {
+    include: {},
+    query: {
+      type: 'exportActivity',
+    },
+  }
+}

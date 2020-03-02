@@ -1,16 +1,6 @@
 import { connect } from 'react-redux';
 
 import {
-  dynamicTopBelowActivityList,
-  getCachedPathInfo,
-  showActivityDetailsRowsPreview,
-} from 'lib/selectors';
-import {
-  AppState,
-  noCurrentLocation,
-} from 'lib/state';
-import ActivityDetails from 'presenters/ActivityDetails';
-import {
   ActivityDataExtended,
 } from 'lib/activities';
 import {
@@ -18,7 +8,14 @@ import {
   numberToModeText,
   numberToModeType,
 } from 'lib/locations';
-import log from 'shared/log';
+import {
+  dynamicTopBelowActivityList,
+  getCachedPathInfo,
+  showActivityDetailsRowsPreview,
+} from 'lib/selectors';
+import {
+  AppState,
+} from 'lib/state';
 import {
   metersPerSecondToMilesPerHour,
   metersPerSecondToMinutesPerMile,
@@ -28,6 +25,8 @@ import {
   minutesToString,
   msecToTimeString,
 } from 'lib/units';
+import ActivityDetails from 'presenters/ActivityDetails';
+import log from 'shared/log';
 
 interface ActivityDetailsStateProps {
   averagePaceText: string;

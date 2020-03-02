@@ -5,10 +5,16 @@ import * as uuid from 'uuid/v4';
 var router = express.Router()
 
 import log from 'shared/log';
-import { clientIdForAlias, pushToClient } from 'lib/client';
+import {
+  clientIdForAlias,
+  pushToClient,
+} from 'lib/client';
 import { setTimeout } from 'timers';
 import { constants } from 'lib/constants';
-import { AppQueryParams, AppQueryResponse } from 'shared/appQuery';
+import {
+  AppQueryParams,
+  AppQueryResponse,
+} from 'shared/appQuery';
 import { messageToLog } from 'shared/log';
 
 interface AppQueryPromise {

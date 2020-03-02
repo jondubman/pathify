@@ -58,8 +58,9 @@ import {
   ContinueActivityParams,
   DelayedActionParams,
   DeleteActivityParams,
+  ExportActivityParams,
   GeolocationParams,
-  ImportEventsParams,
+  ImportActivityParams,
   LogActionParams,
   RefreshActivityParams,
   RefreshCachedActivityParams,
@@ -74,9 +75,45 @@ import {
   UserMovedMapParams,
   ZoomToActivityParams,
 } from 'lib/actions'
+import {
+  Activity,
+  ActivityData,
+  ActivityDataExtended,
+  exportActivity,
+  extendedActivities,
+  loggableActivity,
+} from 'lib/activities';
+import {
+  AppUserActionEvent,
+  AppStateChange,
+  AppStateChangeEvent,
+  AppUserAction,
+} from 'lib/appEvents';
 import constants from 'lib/constants';
-import database, { LogMessage, SettingsObject } from 'lib/database';
+import database, {
+  LogMessage,
+  SettingsObject
+} from 'lib/database';
 import { Geo } from 'lib/geo';
+import locations, {
+  LocationEvent,
+  LonLat,
+  ModeChangeEvent,
+  modeChangeToNumber,
+  modeIsMoving,
+  MotionEvent,
+} from 'lib/locations';
+import log from 'shared/log';
+import {
+  MarkEvent,
+  MarkType
+} from 'lib/marks';
+import timeseries, {
+  EventType,
+  GenericEvent,
+  TimeRange,
+} from 'lib/timeseries';
+import { msecToString } from 'lib/units';
 import {
   cachedActivity,
   cachedActivityForTimepoint,
@@ -105,41 +142,9 @@ import store from 'lib/store';
 import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import {
-  Activity,
-  ActivityData,
-  ActivityDataExtended,
-  extendedActivities,
-  loggableActivity,
-} from 'lib/activities';
-import {
-  AppUserActionEvent,
-  AppStateChange,
-  AppStateChangeEvent,
-  AppUserAction,
-} from 'lib/appEvents';
-import {
   AppQueryParams,
   AppQueryResponse
 } from 'shared/appQuery';
-import locations, {
-  LocationEvent,
-  LonLat,
-  ModeChangeEvent,
-  modeChangeToNumber,
-  modeIsMoving,
-  MotionEvent,
-} from 'lib/locations';
-import log from 'shared/log';
-import {
-  MarkEvent,
-  MarkType
-} from 'lib/marks';
-import timeseries, {
-  EventType,
-  GenericEvent,
-  TimeRange,
-} from 'lib/timeseries';
-import { msecToString } from 'lib/units';
 
 let _interval; // used by timelineRelativeZoom saga
 
@@ -361,7 +366,7 @@ const sagas = {
     }
   },
 
-  // appQuery is used for debugging
+  // appQuery is used for debugging and (currently) internal import/export.
   // TODO disable for production
   appQuery: function* (action: Action) {
     try {
@@ -454,6 +459,26 @@ const sagas = {
         }
         case 'eventCount': { // quick count of the total, no overhead
           response = (yield call(database.events)).length;
+          break;
+        }
+        case 'exportActivity': {
+          const { include } = params;
+          yield call(log.debug, 'exportActivity', include);
+          if (include === undefined) {
+            response = 'missing include object; activityId is required';
+          } else {
+            const { activityId } = include as ExportActivityParams;
+            if (activityId) {
+              const activity = yield call(database.activityById, activityId);
+              if (activity) {
+                response = yield call(exportActivity, activity);
+              } else  {
+                response = `activityId not found: ${activityId}`;
+              }
+            } else {
+              response = 'no activityId included';
+            }
+          }
           break;
         }
         case 'flags': { // quick count of the total, no overhead
@@ -979,15 +1004,15 @@ const sagas = {
     }
   },
 
-  // TODO
-  importEvents: function* (action: Action) {
+  importActivity: function* (action: Action) {
     try {
-      const params = action.params as ImportEventsParams;
-      yield call(log.info, 'importEvents', params.include);
+      const params = action.params as ImportActivityParams;
+      yield call(log.info, 'importActivity', params.include);
     } catch (err) {
-      yield call(log.error, 'importEvents', err);
+      yield call(log.error, 'importActivity', err);
     }
   },
+
   // Generate a client-side log with an Action
   log: function* (action: Action) {
     try {

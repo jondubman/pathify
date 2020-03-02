@@ -15,6 +15,7 @@ export interface AppQueryDescriptor {
 }
 
 export interface AppQueryParams {
+  include?: object;
   query: AppQueryDescriptor;
   timeout?: number;
   uuid: string;

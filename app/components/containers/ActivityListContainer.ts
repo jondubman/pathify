@@ -10,15 +10,15 @@ import {
   newAction,
 } from 'lib/actions';
 import {
+  ActivityDataExtended,
+} from 'lib/activities';
+import {
   dynamicTopBelowButtons,
   shouldShowActivityList,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import ActivityList from 'presenters/ActivityList';
-import {
-  ActivityDataExtended,
-} from 'lib/activities';
 import log from 'shared/log';
 import { Timepoint } from 'lib/timeseries';
 

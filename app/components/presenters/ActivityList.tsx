@@ -16,13 +16,13 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import LabelContainer from 'containers/LabelContainer';
 import NowClockContainer from 'containers/NowClockContainer';
+import { ActivityDataExtended } from 'lib/activities';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import ActivityListItem from 'presenters/ActivityListItem';
 import { labelTextStyle } from 'presenters/Label';
-import { ActivityDataExtended } from 'lib/activities';
 import log from 'shared/log';
 import { Timepoint } from 'lib/timeseries';
 

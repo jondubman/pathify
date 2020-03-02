@@ -26,8 +26,6 @@ import {
   GeolocationParams,
   newAction,
 } from 'lib/actions';
-import store, { Store } from 'lib/store';
-import utils from 'lib/utils';
 import {
   LocationEvent,
   LocationEvents,
@@ -35,6 +33,8 @@ import {
   ModeType,
   MotionEvent
 } from 'lib/locations';
+import store, { Store } from 'lib/store';
+import utils from 'lib/utils';
 import log from 'shared/log';
 import timeseries, { EventType } from 'lib/timeseries';
 

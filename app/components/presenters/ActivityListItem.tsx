@@ -7,13 +7,12 @@ import {
   View,
 } from 'react-native';
 
+import { ActivityDataExtended } from 'lib/activities';
 import constants from 'lib/constants';
 import {
   metersToMilesText,
   msecToTimeString,
 } from 'lib/units';
-
-import { ActivityDataExtended } from 'lib/activities';
 
 interface ActivityListItemProps {
   activity: ActivityDataExtended;

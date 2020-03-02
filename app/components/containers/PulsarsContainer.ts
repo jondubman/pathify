@@ -8,13 +8,13 @@
 
 import { connect } from 'react-redux';
 
+import { LonLat } from 'lib/locations';
 import {
   cachedActivity,
   pulsars,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Pulsars from 'presenters/Pulsars';
-import { LonLat } from 'lib/locations';
 
 export interface OptionalPulsar {
   loc: LonLat;

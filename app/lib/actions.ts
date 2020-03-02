@@ -53,7 +53,7 @@ export enum AppAction {
   'flagEnable' = 'flagEnable',
   'flagToggle' = 'flagToggle',
   'geolocation' = 'geolocation',
-  'importEvents' = 'importEvents',
+  'importActivity' = 'importActivity',
   'jumpToBackTime' = 'jumpToBackTime',
   'jumpToNow' = 'jumpToNow',
   'log' = 'log',
@@ -134,8 +134,8 @@ export enum AbsoluteRelativeOption {
   'relative' = 'relative',
 }
 
-import { LocationEvent, LonLat } from 'lib/locations';
 import { AppStateChange } from 'lib/appEvents';
+import { LocationEvent, LonLat } from 'lib/locations';
 import { GenericEvents } from 'lib/timeseries';
 
 export interface ActivityListScrolledParams {
@@ -178,14 +178,18 @@ export interface DeleteActivityParams {
   id: string,
 }
 
+export interface ExportActivityParams {
+  activityId: string,
+}
+
 export interface GeolocationParams {
   locationEvent: LocationEvent;
   recheckMapBounds: boolean; // applies only when app is active
   t: number;
 }
 
-export interface ImportEventsParams {
-  include: object; // TODO
+export interface ImportActivityParams {
+  include: object;
 }
 
 export interface LogActionParams {
