@@ -134,6 +134,7 @@ export enum AbsoluteRelativeOption {
   'relative' = 'relative',
 }
 
+import { ExportedActivity } from 'lib/activities';
 import { AppStateChange } from 'lib/appEvents';
 import { LocationEvent, LonLat } from 'lib/locations';
 import { GenericEvents } from 'lib/timeseries';
@@ -189,7 +190,7 @@ export interface GeolocationParams {
 }
 
 export interface ImportActivityParams {
-  include: object;
+  include: ExportedActivity;
 }
 
 export interface LogActionParams {

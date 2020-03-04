@@ -43,6 +43,7 @@ const Styles = StyleSheet.create({
     position: 'absolute',
   },
   refTimeFull: {
+    alignSelf: 'flex-start',
     flexDirection: 'row',
     marginTop: topSpace - 2,
   },
@@ -52,7 +53,7 @@ const Styles = StyleSheet.create({
   },
   rightHalf: {
     height,
-    paddingLeft: 5,
+    paddingLeft: 7,
     width,
   },
   subText: {

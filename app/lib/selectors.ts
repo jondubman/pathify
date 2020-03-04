@@ -414,6 +414,9 @@ export const flavorText = (state: AppState): string[] => {
 
 // Selectors memozied using reselect / createSelector:
 
+// This is not currently needed for the production app as locations are generally retrieved from an Activity's Path,
+// which is derived from underlying events (mostly, from LocationEvents), and locations outside of an Activity
+// are not generally saved or shown in production.
 const getScrollTime = (state: AppState) => state.options.scrollTime;
 export const getStoredLocationEvent = createSelector(
   [getScrollTime],
