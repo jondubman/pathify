@@ -21,7 +21,7 @@
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
-            buildForTesting = "YES"
+            buildForTesting = "NO"
             buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
@@ -52,12 +52,12 @@
       </MacroExpansion>
       <Testables>
          <TestableReference
-            skipped = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "PathifyTests.xctest"
-               BlueprintName = "PathifyTests"
+               BlueprintIdentifier = "ABFBED642410C61600A2E0D3"
+               BuildableName = "PathifyUITests.xctest"
+               BlueprintName = "PathifyUITests"
                ReferencedContainer = "container:Pathify.xcodeproj">
             </BuildableReference>
          </TestableReference>
