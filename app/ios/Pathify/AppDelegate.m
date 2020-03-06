@@ -36,9 +36,11 @@
 [bridge moduleForClass:[RCTDevLoadingView class]];
 #endif
 
+  // Custom code for Pathify: retrieve the environment variables for the running app and pass them to the RCTRootView.
+  NSDictionary *environment = [[NSProcessInfo processInfo] environment];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Pathify"
-                                               initialProperties:nil
+                                               initialProperties:environment
                                                    launchOptions:launchOptions];
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 

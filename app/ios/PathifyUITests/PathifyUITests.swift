@@ -1,10 +1,4 @@
-//
 //  PathifyUITests.swift
-//  PathifyUITests
-//
-//  Created by Jonathan Dubman on 3/4/20.
-//  Copyright © 2020 Facebook. All rights reserved.
-//
 
 import XCTest
 
@@ -26,10 +20,17 @@ class PathifyUITests: XCTestCase {
     func testExample() {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
+        app.launchEnvironment = ["pathifyEnv" : "TODO"]
+        setupSnapshot(app)
         app.launch()
 
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+
+        sleep(10)
+        snapshot("uitest1")
+        sleep(5)
+        snapshot("uitest2")
     }
 
     // func testLaunchPerformance() {

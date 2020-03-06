@@ -48,6 +48,10 @@ export default class App extends Component {
 
       // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
+
+      // Log incoming properties TODO
+      log.info('TODO pathifyEnv', (this.props as any).pathifyEnv);
+
       if (flags.logToDatabase) {
         log.registerCallback((level: string, ...args) => {
           const message: LogMessageData = {
