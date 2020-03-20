@@ -53,7 +53,7 @@ const Styles = StyleSheet.create({
   },
   rightHalf: {
     height,
-    paddingLeft: 7,
+    paddingLeft: 5,
     width,
   },
   subText: {

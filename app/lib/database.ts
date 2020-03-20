@@ -289,7 +289,7 @@ const database = {
     }
   },
 
-  // Update both the Activity and its corresponding Path
+  // Update (creating, if necessary) both the Activity and its corresponding Path.
   updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
     let activity: Activity | null = null;
     realm.write(() => {

@@ -61,6 +61,10 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   lighterBlue: '#77c0ff',
   niceRed: '#c40027',
   white: '#ffffff',
+
+  // Colors inspired by human monoclonal antibody 47D11 that blocks SARS-COV-2:
+  darkLimeGreen: '#047d11',
+  strongGreen: '#47d110',
 }
 
 // helper: pad with zeros as needed

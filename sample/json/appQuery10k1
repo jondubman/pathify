@@ -1,0 +1,1 @@
+{"type":"appQuery","params":{"query":{"limit":10000,"startIndex":0,"type":"events"}}}

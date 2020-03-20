@@ -1,0 +1,1 @@
+{"type":"sequence","params":[{"type":"log","params":{"level":"debug","message":"message1"}},{"type":"delayedAction","params":{"run":{"type":"log","params":{"level":"warn","message":"message2"}},"after":10000}}]}

@@ -1007,7 +1007,28 @@ const sagas = {
   importActivity: function* (action: Action) {
     try {
       const params = action.params as ImportActivityParams;
-      yield call(log.info, 'importActivity', params.include);
+      const { include } = params;
+      const { activity, path } = include;
+      const { id } = activity;
+      const pathLengths = {
+        ele: path.ele.length,
+        lats: path.lats.length,
+        lons: path.lons.length,
+        mode: path.mode.length,
+        odo: path.odo.length,
+        speed: path.speed.length,
+        t: path.t.length,
+      }
+      yield call(log.info, 'importActivity', activity, pathLengths);
+
+      // Guard against existing activity with same id
+      const existingActivity = yield call(database.activityById, id);
+      if (existingActivity) {
+        yield call(log.warn, 'importActivity: activityId already exists', id);
+      } else {
+        yield call(database.updateActivity, activity, path);
+        yield call(log.debug, 'imported');
+      }
     } catch (err) {
       yield call(log.error, 'importActivity', err);
     }
@@ -1990,15 +2011,16 @@ const sagas = {
       const map = MapUtils();
       if (zoomMap && map && map.fitBounds) {
         yield put(newAction(AppAction.stopFollowing));
-        yield take(AppAction.stoppedFollowing); // wait for that to complete so map doesn't get yanked by geolocation
         const { latMax, latMin, lonMax, lonMin } = activity;
-        yield call(log.trace, 'saga zoomToActivity', { latMax, latMin, lonMax, lonMin });
+        yield call(log.trace, 'saga zoomToActivity',
+          { latMax, latMin, lonMax, lonMin, zoomMap, zoomTimeline });
         if (!state.flags.mapRendered) {
           yield call(log.info, 'saga zoomToActivity: waiting for mapRendered');
           yield take(AppAction.mapRendered);
         }
         if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
           map.fitBounds([lonMax, latMax], [lonMin, latMin], mapPadding(state), duration);
+          yield call(log.trace, 'saga zoomToActivity: did fitBounds');
         }
       }
       if (zoomTimeline) {
