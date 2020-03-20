@@ -1,6 +1,6 @@
 {
   type: 'refreshActivity',
   params: {
-    id: 'selectedActivityId',
+    id: 'selected',
   }
 }

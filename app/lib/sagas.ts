@@ -408,6 +408,7 @@ const sagas = {
         }
         case 'activityIds': {
           const activityIds = yield call(database.activityIds);
+          const { currentActivityId, selectedActivityId } = state.options;
           response = {
             activityIds,
             counts: {
@@ -415,6 +416,8 @@ const sagas = {
               kept: (activityIds.kept).length,
               orphaned: (activityIds.orphaned).length,
             },
+            currentActivityId,
+            selectedActivityId,
           }
           break;
         }
@@ -462,12 +465,11 @@ const sagas = {
           break;
         }
         case 'exportActivity': {
-          const { include } = params;
-          yield call(log.debug, 'exportActivity', include);
-          if (include === undefined) {
-            response = 'missing include object; activityId is required';
+          const { activityId } = params.query as ExportActivityParams;
+          yield call(log.debug, 'exportActivity', activityId);
+          if (activityId === undefined) {
+            response = 'missing activityId';
           } else {
-            const { activityId } = include as ExportActivityParams;
             if (activityId) {
               const activity = yield call(database.activityById, activityId);
               if (activity) {
@@ -1140,11 +1142,12 @@ const sagas = {
   // Note that Paths contain "redundant" location data when there are MODE events, just as they contain "redundant" mode
   // data for LOC events.
   // TODO It would not take much for this to be able to "undelete" an Activity, if the raw Events are still there.
+  // Note: This relies on the underlying events, which are currently missing from imported activities.
   refreshActivity: function* (action: Action) {
     try {
       const params = action.params as RefreshActivityParams;
       let { id } = params;
-      if (id === 'selectedActivityId') { // this allows you to pass the string 'selectedActivityId' as the id,
+      if (id === 'selected') { // special case
         id = yield select((state: AppState) => state.options.selectedActivityId); // which is used in appQuery
       }
       yield call(log.trace, 'saga refreshActivity', id);
@@ -1200,6 +1203,13 @@ const sagas = {
             pathUpdate.mode.push(modeNumeric);
             // odo
             pathUpdate.odo.push(odo);
+            if (odo) {
+              if (!activityUpdate.odo || odo > activityUpdate.odo) {
+                yield call(log.trace, odo);
+              }
+              activityUpdate.odo = Math.max(activityUpdate.odo || -Infinity, odo);
+              activityUpdate.odoStart = Math.min(activityUpdate.odoStart || Infinity, odo);
+            }
             // speed
             pathUpdate.speed.push(speed);
             // t

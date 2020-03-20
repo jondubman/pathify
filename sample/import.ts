@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 
+// To use stdin:
 // import * as getStdin from 'get-stdin';
 // const input = await getStdin();
 // log('input:', input);
@@ -17,13 +18,6 @@ const stringify = (obj: any, indent = 2) => (
 
 // This is essentially a Redux action creator.
 // TODO data is actually of type ExportedActivity; should import that.
-// const importActivity = (data: any) => ({
-//   type: 'importActivity',
-//   params: {
-//     include: data,
-//   },
-// })
-
 const importActivity = (data: any) => (`{
   "type": "importActivity",
   "params": {

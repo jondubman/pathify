@@ -80,7 +80,7 @@ export interface ActivityData {
   maxGapTime?: number; // msec
   tMaxGapTime?: number; //timestamp
 
-  odo?: number; // total distance
+  odo?: number; // most recent odometer reading
   maxGapDistance?: number; // meters
   tMaxGapDistance?: number; // timestamp
 
