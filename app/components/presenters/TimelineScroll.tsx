@@ -44,8 +44,6 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   constructor(props: any) {
     super(props);
     this.clearTimer = this.clearTimer.bind(this);
-    this.scrollToTime = this.scrollToTime.bind(this);
-    this.setZoomDomainWhileScrolling = this.setZoomDomainWhileScrolling.bind(this);
     this.onContentSizeChange = this.onContentSizeChange.bind(this);
     this.onFinishScrolling = this.onFinishScrolling.bind(this);
     this.onMomentumScrollBegin = this.onMomentumScrollBegin.bind(this);
@@ -53,6 +51,9 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     this.onScroll = this.onScroll.bind(this);
     this.onScrollBeginDrag = this.onScrollBeginDrag.bind(this);
     this.onScrollEndDrag = this.onScrollEndDrag.bind(this);
+    this.refHandler = this.refHandler.bind(this);
+    this.scrollToTime = this.scrollToTime.bind(this);
+    this.setZoomDomainWhileScrolling = this.setZoomDomainWhileScrolling.bind(this);
   }
 
   private clearTimer() {
@@ -212,12 +213,16 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     }, constants.timing.scrollViewWaitForMomentumScroll)
   }
 
+  refHandler(_scrollView: ScrollView) {
+    this._scrollView = _scrollView;
+    this.props.register(this);
+  }
+
   render() {
     utils.addToCount('renderTimelineScroll');
     const {
       decelerationRate,
       pinchZoom,
-      register,
       scrollToX,
       timelineZoomValue,
     } = this.props;
@@ -239,10 +244,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         overScrollMode='never'
         pinchGestureEnabled={pinchZoom}
         pointerEvents={pointerEvents}
-        ref={(_scrollView: ScrollView) => {
-          this._scrollView = _scrollView;
-          register(this);
-        }}
+        ref={this.refHandler}
         scrollEventThrottle={16 /* msec >= 16. default 0 means event sent only once each time view is scrolled. */}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}

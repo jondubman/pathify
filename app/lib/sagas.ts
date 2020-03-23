@@ -1204,9 +1204,6 @@ const sagas = {
             // odo
             pathUpdate.odo.push(odo);
             if (odo) {
-              if (!activityUpdate.odo || odo > activityUpdate.odo) {
-                yield call(log.trace, odo);
-              }
               activityUpdate.odo = Math.max(activityUpdate.odo || -Infinity, odo);
               activityUpdate.odoStart = Math.min(activityUpdate.odoStart || Infinity, odo);
             }

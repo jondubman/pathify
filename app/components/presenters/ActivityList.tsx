@@ -5,6 +5,7 @@ import React, {
 
 import {
   FlatList,
+  GestureResponderEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -31,6 +32,8 @@ const {
   activityHeight,
   activityMargin,
   activityWidth,
+  borderLineHeight,
+  borderRadius,
   centerLineTop,
   centerLineWidth,
   height,
@@ -56,7 +59,7 @@ const Styles = StyleSheet.create({
     backgroundColor: colors.borderLine,
     position: 'absolute',
     width: utils.windowSize().width,
-    height: constants.activityList.borderLineHeight,
+    height: borderLineHeight,
   },
   centerLine: { // These are vertical.
     backgroundColor: colors.centerLine,
@@ -70,9 +73,16 @@ const Styles = StyleSheet.create({
   centerLineSelected:{
     backgroundColor: colors.centerLineSelected,
   },
+  itemView: {
+    borderRadius,
+    overflow: 'hidden',
+  },
   labelView: {
     left: constants.clock.width / 2 - 1, // TODO this is the right place, though it's a brittle calculation
     bottom: 5,
+  },
+  list: {
+    marginTop: topBottomBorderHeight,
   },
 })
 
@@ -129,6 +139,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     this.autoScroll = this.autoScroll.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.handleScrollEndDrag = this.handleScrollEndDrag.bind(this);
+    this.refHandler = this.refHandler.bind(this);
     this.renderItem = this.renderItem.bind(this);
     this.scrollToTime = this.scrollToTime.bind(this);
     this.state = {
@@ -251,6 +262,13 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     }
   }
 
+  refHandler(ref: FlatList<ActivityDataExtended>) {
+    if (ref) {
+      _ref = ref;
+      this.props.register && this.props.register(this);
+    }
+  }
+
   // Note the layout of this component currently assumes each activity (with the possible exception of currentActivity)
   // is of equal width, height, etc., and all activities are flanked on the left by a header component and on the right
   // by a footer component. There are pairs of fixed borderLines and a centerLine that has slight variations in color
@@ -311,7 +329,6 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
         }
         <FlatList<ActivityDataExtended>
           data={list}
-          extraData={this.props /* TODO does this help? */}
           getItemLayout={getItemLayout}
           horizontal
           initialNumToRender={list.length /* TODO does this help? *}
@@ -344,16 +361,11 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           onScrollBeginDrag={this.handleScrollBeginDrag}
           onScrollEndDrag={this.handleScrollEndDrag}
           onMomentumScrollEnd={this.handleScrollEndDrag /* experiment */}
-          ref={(ref) => {
-            if (ref) {
-              _ref = ref;
-              this.props.register && this.props.register(this);
-            }
-          }}
+          ref={this.refHandler}
           renderItem={this.renderItem}
           scrollIndicatorInsets={scrollInsets}
           showsHorizontalScrollIndicator={true}
-          style={{ marginTop: topBottomBorderHeight }}
+          style={Styles.list}
         />
       </View>
     )
@@ -361,10 +373,11 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
 
   // item in this case is the cached ActivityDataExtended and index is just an index into the same list.
   // Note the rounding is so we don't update this component more often than once per second, worst case, to show time.
+  // TODO anonymous function here always constructs new function; use something like reselect to optimize.
   renderItem({ item, index, separators }) {
     const activity = item as ActivityDataExtended;
     return (
-      <View style={{ borderRadius: constants.activityList.borderRadius, overflow: 'hidden' }}>
+      <View style={Styles.itemView}>
         <ActivityListItem
           activity={activity}
           selected={activity.id === this.props.selectedActivityId}
