@@ -1,4 +1,5 @@
-// Note: This currently uses long-polling which is reliable but not the most efficient. TODO upgrade to WebSockets.
+// This is intended for development use only (not for production.)
+// This currently uses long-polling which is reliable but not the most efficient. TODO upgrade to WebSockets.
 
 import { newAction } from 'lib/actions';
 import constants from 'lib/constants';
@@ -12,7 +13,7 @@ const {
 } = constants;
 
 // This handles the server response to /poll, which is a server push.
-export const handleServerPush = async (data: any) => {
+const handleServerPush = async (data: any) => {
   try {
     // Custom string messages are handled here
     if (data === 'handshake') {

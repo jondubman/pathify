@@ -152,7 +152,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const snapStyle = pressed ? [lineStyleBase, lineStyleSnapping] : lineStyleBase;
     const snapStyleIfPressed = pressed ? snapStyle : dragStyle;
     return (
-      <Fragment key={this.props.key}>
+      <Fragment key={this.props.keyName}>
         {pressed ? (
           <View pointerEvents="none" style={snapLayoutStyle}>
             <View style={dragStyle} />

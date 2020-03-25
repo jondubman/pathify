@@ -367,7 +367,6 @@ const sagas = {
   },
 
   // appQuery is used for debugging and (currently) internal import/export.
-  // TODO disable for production
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
@@ -1355,11 +1354,13 @@ const sagas = {
   repeatedAction: function* () {
   },
 
-  // TODO not for production use
   restartApp: function* () {
-    yield call(log.warn, 'saga restartApp');
-    yield call(log.info, RNRestart);
-    yield call(RNRestart.Restart);
+    const { devMode } = yield select((state: AppState) => state.flags);
+    if (devMode) {
+      yield call(log.warn, 'saga restartApp');
+      yield call(log.info, RNRestart);
+      yield call(RNRestart.Restart);
+    }
   },
 
   scrollActivityList: function* (action: Action) {

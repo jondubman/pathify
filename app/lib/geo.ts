@@ -516,7 +516,7 @@ export const Geo = {
     }
   },
 
-  // Do not do this in production; it would confuse the odometer for activities. As all the odometer calculation is
+  // Never do this in production; it would confuse the odometer for activities. As all the odometer calculation is
   // relative, it shouldn't matter anyway; this may be useful only for testing.
   //
   // resetOdometer: async () => {

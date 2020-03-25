@@ -88,8 +88,10 @@ export default class App extends Component {
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
-      // Attempt to contact the Pathify server.
-      setTimeout(pollServer, 0); // TODO always do this in the background?
+      if (flags.devMode) {
+        // Attempt to contact the Pathify server in devMode.
+        setTimeout(pollServer, 0);
+      }
     } catch (err) {
       log.warn('App componentDidMount err', err);
     }
@@ -97,7 +99,7 @@ export default class App extends Component {
 
   // TODO does this ever really happen?
   componentWillUnmount() {
-    log.info('removing event listener for handleAppStateChange');
+    log.info('componentWillUnmount; removing event listener for handleAppStateChange');
     // RNAppState.removeEventListener('change', this.handleAppStateChange);
   }
 
