@@ -163,25 +163,16 @@ const timeseries = {
     return results;
   },
 
-  // local/private by default (i.e. not synced with the server)
+  // local/private by default (i.e. not synced with any server)
   // timestamped now unless a timestamp is provided.
   newEvent: (t: Timepoint, activityId: string | undefined): GenericEvent => {
     const timestamp = t || utils.now();
     return {
       activityId,
+      source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
       t: Math.round(timestamp), // TODO for now, avoid creating events with sub-millisecond precision timestamps
       // The following are placeholders, to be overridden:
       type: EventType.NONE,
-    }
-  },
-
-  // A synced event will be synchronized with the server (i.e. not private)
-  // timestamped now, unless a timestamp is provided.
-  newSyncedEvent: (t: Timepoint, activityId: string | undefined): GenericEvent => {
-    const timestamp = t || utils.now();
-    return {
-      ...timeseries.newEvent(timestamp, activityId),
-      source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
     }
   },
 

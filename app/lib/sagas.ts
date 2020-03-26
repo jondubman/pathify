@@ -1605,12 +1605,12 @@ const sagas = {
           const newActivity = yield call(database.createActivity, now);
           activityId = newActivity.id;
           const startEvent: AppUserActionEvent = {
-            ...timeseries.newSyncedEvent(now, activityId),
+            ...timeseries.newEvent(now, activityId),
             type: EventType.USER_ACTION,
             userAction: AppUserAction.START,
           }
           const startMark: MarkEvent = {
-            ...timeseries.newSyncedEvent(now, activityId),
+            ...timeseries.newEvent(now, activityId),
             activityId,
             type: EventType.MARK,
             subtype: MarkType.START,
@@ -1759,12 +1759,12 @@ const sagas = {
         const activityId = yield select((state: AppState) => state.options.currentActivityId);
         const now = utils.now();
         const stopEvent: AppUserActionEvent = {
-          ...timeseries.newSyncedEvent(now, activityId),
+          ...timeseries.newEvent(now, activityId),
           type: EventType.USER_ACTION,
           userAction: AppUserAction.STOP,
         }
         const endMark: MarkEvent = {
-          ...timeseries.newSyncedEvent(now, activityId),
+          ...timeseries.newEvent(now, activityId),
           type: EventType.MARK,
           subtype: MarkType.END,
         }

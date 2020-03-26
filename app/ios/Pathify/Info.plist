@@ -46,7 +46,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>TODO CHANGEME: NSLocationAlwaysUsageDescription</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>TODO CHANGEME: NSLocationWhenInUseUsageDescription&gt;</string>
+	<string>TODO CHANGEME: NSLocationWhenInUseUsageDescription</string>
 	<key>NSMotionUsageDescription</key>
 	<string>TODO CHANGEME: NSMotionUsageDescription</string>
 	<key>UIAppFonts</key>

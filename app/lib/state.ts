@@ -69,9 +69,10 @@ export const initialAppState = {
     devMode: true, // if set to true, app can be remotely controlled and queried; false for public release to App Store.
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
-    grabBarPressed: false,
+    grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
     helpOpen: false, // manually opened by user
-    labelsEnabled: true,
+    labelsEnabled: true, // yellow UI labels (like training wheels) that can be switched on/off on the Help menu
+    locationAuthorized: false, // TODO
     logInDebugVersion: true, // typically true
     logInProductionVersion: false, // typically false
     logToDatabase: false, // applies only if logs are enabled in general (see logInDebugVersion, logInProductionVersion)
@@ -103,7 +104,7 @@ export const initialAppState = {
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
     timelinePinchToZoom: false, // should the timeline component support pinch-to-zoom (which is too hard to control)
-    topMenuOpen: false,
+    topMenuOpen: false, // topMenu is a hamburger menu at the top center of the screen related to ActivityList.
     trackingActivity: false, // are we currently tracking an Activity? Note: use startTracking, stopTracking AppActions.
     zoomClockPressed: false, // relates to PanResponder on the timeline clock
   },

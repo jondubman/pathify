@@ -89,7 +89,7 @@ export default class App extends Component {
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
       if (flags.devMode) {
-        // Attempt to contact the Pathify server in devMode.
+        // Attempt to contact the Pathify server (only in devMode)
         setTimeout(pollServer, 0);
       }
     } catch (err) {

@@ -189,8 +189,7 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
   const confidence = info.activity ? info.activity.confidence : 0;
   const mode = info.activity ? (mapActivityToMode[info.activity.activity] || null) : null;
   return {
-    ...timeseries.newSyncedEvent(t),
-    activityId,
+    ...timeseries.newEvent(t, activityId),
     type: EventType.LOC,
     accuracy: info.coords.accuracy,
     battery: info.battery.level,
@@ -211,8 +210,7 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
 const newMotionEvent = (info: Location, isMoving: boolean, activityId: string | undefined): MotionEvent => {
   const t = new Date(info.timestamp).getTime();
   return {
-    ...timeseries.newSyncedEvent(t),
-    activityId,
+    ...timeseries.newEvent(t, activityId),
     type: EventType.MOTION,
     isMoving,
   }
@@ -223,8 +221,7 @@ const newModeChangeEvent = (activity: string, confidence: number, activityId: st
   const mode = mapActivityToMode[activity] || `unknown activity: ${activity}`;
   log.trace('newModeChangeEvent', activity, mode);
   return {
-    ...timeseries.newSyncedEvent(t),
-    activityId,
+    ...timeseries.newEvent(t, activityId),
     type: EventType.MODE,
     mode,
     confidence,
