@@ -881,7 +881,7 @@ const sagas = {
     const { flags, options } = yield select((state: AppState) => state);
     const enabledNow = flags[flagName];
     const { appStartupCompleted } = flags;
-    const { viewTime } = options;
+    const { pausedTime, viewTime } = options;
     // Avoid changing settings during startup (instead, we apply previous.)
     if (appStartupCompleted) {
       // Persist persistedFlags in Settings.
@@ -891,16 +891,14 @@ const sagas = {
       if (flagName === 'timelineNow') {
         if (enabledNow) { // this means we just enabled it
           const now = utils.now();
-          const pausedTime = viewTime; // the current viewTime (which is about to be changed)
-          if (!flags.activityListScrolling && !flags.timelineScrolling) {
-            yield put(newAction(AppAction.setAppOption, {
-              pausedTime,
-              centerTime: now,
-              scrollTime: now,
-              viewTime: now,
-            }))
-            yield put(newAction(AppAction.timerTick, now));
+          const setOptions = { centerTime: now } as any;
+          if (Math.abs(viewTime - pausedTime) > constants.timing.timelineCloseToNow) {
+            setOptions.pausedTime = viewTime;
           }
+          if (!flags.activityListScrolling && !flags.timelineScrolling) {
+            yield put(newAction(AppAction.setAppOption, setOptions));
+            yield put(newAction(AppAction.timerTick, now));
+          } // TODO else?
         }
       }
       if (flagName === 'trackingActivity') {
@@ -1425,7 +1423,11 @@ const sagas = {
         }
         log.debug('selectActivity setting appOptions', appOptions);
         yield put(newAction(AppAction.setAppOption, appOptions));
-        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: true, zoomMap: true })); // both
+        yield put(newAction(AppAction.zoomToActivity, {
+          id: activity.id,
+          zoomTimeline: true,
+          zoomMap: true,
+         }))
       }
     } catch (err) {
       yield call(log.error, 'saga selectActivity', err);
@@ -1938,7 +1940,6 @@ const sagas = {
       mapReorienting,
       timelineNow,
       timelineScrolling,
-      trackingActivity,
     } = state.flags;
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.

@@ -1,5 +1,7 @@
 import Realm from 'realm';
 
+import utils from 'lib/utils';
+
 export type Events = Realm.Results<Realm.Object>;
 
 // TimeRange tuple is always inclusive of its endpoints.
@@ -163,8 +165,8 @@ const timeseries = {
 
   // local/private by default (i.e. not synced with the server)
   // timestamped now unless a timestamp is provided.
-  newEvent: (t: Timepoint, activityId: string = null): GenericEvent => {
-    const timestamp = t || Date.now();
+  newEvent: (t: Timepoint, activityId: string | undefined): GenericEvent => {
+    const timestamp = t || utils.now();
     return {
       activityId,
       t: Math.round(timestamp), // TODO for now, avoid creating events with sub-millisecond precision timestamps
@@ -175,8 +177,8 @@ const timeseries = {
 
   // A synced event will be synchronized with the server (i.e. not private)
   // timestamped now, unless a timestamp is provided.
-  newSyncedEvent: (t: Timepoint, activityId: string = null): GenericEvent => {
-    const timestamp = t || Date.now();
+  newSyncedEvent: (t: Timepoint, activityId: string | undefined): GenericEvent => {
+    const timestamp = t || utils.now();
     return {
       ...timeseries.newEvent(timestamp, activityId),
       source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation

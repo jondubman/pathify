@@ -13,13 +13,11 @@ import {
 import constants from 'lib/constants';
 import store from 'lib/store';
 import utils from 'lib/utils';
-import log from 'shared/log';
 import {
   Path,
   PathSchema,
   PathUpdate,
 } from 'lib/paths';
-import sharedConstants from 'shared/sharedConstants';
 import {
   Events,
   EventSchema,
@@ -27,6 +25,8 @@ import {
   GenericEvents,
   Timepoint,
 } from 'lib/timeseries';
+import log from 'shared/log';
+import sharedConstants from 'shared/sharedConstants';
 
 export interface ActivityIdsResults {
   deleted: string[]; // activityIds mentioned in events without a corresponding Activity
@@ -169,7 +169,7 @@ const database = {
 
   activities: (): Realm.Results<Activity> => (
     realm.objects('Activity')
-      .filtered('tStart >= $0', Math.max(0, Date.now() - sharedConstants.maxAgeEvents))
+      .filtered('tStart >= $0', Math.max(0, utils.now() - sharedConstants.maxAgeEvents))
       .sorted('tStart') as Realm.Results<Activity>
   ),
 
@@ -322,7 +322,7 @@ const database = {
                   .sorted('t'); // always sort by time (which is indexed) first
     }
     return realm.objects('Event')
-                .filtered('tStart >= $0', Math.max(0, Date.now() - sharedConstants.maxAgeEvents))
+                .filtered('tStart >= $0', Math.max(0, utils.now() - sharedConstants.maxAgeEvents))
                 .sorted('t'); // always sort by time (which is indexed) first
   },
 
