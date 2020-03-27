@@ -15,13 +15,14 @@ import log from 'shared/log';
 
 import ActivityInfoContainer from 'containers/ActivityInfoContainer';
 import { AppUIProps } from 'containers/AppUIContainer';
-import StartMenuContainer from 'containers/StartMenuContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import FollowButtonsContainer from 'containers/FollowButtonsContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
+import IntroContainer from 'containers/IntroContainer';
 import MapAreaContainer from 'containers/MapAreaContainer';
 import SettingsPanelContainer from 'containers/SettingsPanelContainer';
 import StartButtonContainer from 'containers/StartButtonContainer';
+import StartMenuContainer from 'containers/StartMenuContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 import TimelineScrollContainer from 'containers/TimelineScrollContainer';
 import TopMenuContainer from 'containers/TopMenuContainer';
@@ -49,6 +50,7 @@ class AppUI extends Component<AppUIProps> {
 
   render() {
     const {
+      introMode,
       mapFullScreen,
       showActivityInfo,
       showTimeline,
@@ -63,34 +65,37 @@ class AppUI extends Component<AppUIProps> {
           backgroundColor={constants.colors.appBackground}
           barStyle="light-content"
         />
-        <View style={AppStyles.mainAppView}>
-          <MapAreaContainer />
-          <View style={AppStyles.logo} />
-          {showActivityInfo ? <ActivityInfoContainer /> : null}
-          <Fragment>
-            <View pointerEvents={pointerEvents} style={timelineOpacity}>
-              <TimelineScrollContainer />
-            </View>
-            {mapFullScreen ? null : (
-              <Fragment>
-                <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-                  <CompassButtonContainer />
-                  <FollowButtonsContainer />
-                </View>
-                <TimelineControlsContainer />
-                <View style={{ position: 'absolute', width }}>
-                  <HelpPanelContainer />
-                  <SettingsPanelContainer />
-                  <TopMenuContainer />
-                </View>
-                <StartMenuContainer />
-                <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-                  <StartButtonContainer />
-                </View>
-              </Fragment>
-            )}
-          </Fragment>
-        </View>
+        {introMode ? <IntroContainer /> : (
+          <View style={AppStyles.mainAppView}>
+            <MapAreaContainer />
+            <View style={AppStyles.logo} />
+            {showActivityInfo ? <ActivityInfoContainer /> : null}
+            <Fragment>
+              <View pointerEvents={pointerEvents} style={timelineOpacity}>
+                <TimelineScrollContainer />
+              </View>
+              {mapFullScreen ? null : (
+                <Fragment>
+                  <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+                    <CompassButtonContainer />
+                    <FollowButtonsContainer />
+                  </View>
+                  <TimelineControlsContainer />
+                  <View style={{ position: 'absolute', width }}>
+                    <HelpPanelContainer />
+                    <SettingsPanelContainer />
+                    <TopMenuContainer />
+                  </View>
+                  <StartMenuContainer />
+                  <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+                    <StartButtonContainer />
+                  </View>
+                </Fragment>
+              )}
+            </Fragment>
+          </View>
+        )
+      }
       </View>
     )
   }
