@@ -3,6 +3,7 @@ package com.pathify;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.realm.react.RealmReactPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.reactnativecommunity.slider.ReactSliderPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RealmReactPackage(),
             new ReactNativeRestartPackage(),
             new ReactSliderPackage(),
             new RCTMGLPackage(),

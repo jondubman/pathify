@@ -44,13 +44,15 @@ target 'Pathify' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RealmJS', :path => '../node_modules/realm'
+
   target 'PathifyTests' do
     inherit! :search_paths
     # Pods for testing
   end
 
   require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-  use_native_modules!('../')
+  use_native_modules!
 
   post_install do |installer|
     installer.generated_projects.each do |project|
@@ -85,17 +87,5 @@ target 'Pathify' do
         target.remove_from_project
       end
     end
-  end
-end
-
-target 'Pathify-tvOS' do
-  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
-  # use_frameworks!
-
-  # Pods for Pathify-tvOS
-
-  target 'Pathify-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
   end
 end

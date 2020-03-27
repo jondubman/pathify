@@ -10,6 +10,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+#import <TSBackgroundFetch/TSBackgroundFetch.h>
+
 // https://medium.com/@hr.hseyin_80381/rctbridge-required-dispatch-sync-to-load-rctdevloadingview-error-fix-ba734cced787
 #if RCT_DEV
 #import <React/RCTDevLoadingView.h>
@@ -58,6 +60,9 @@
   UIView* launchScreenView = [[[NSBundle mainBundle] loadNibNamed:@"LaunchScreen" owner:self options:nil] objectAtIndex:0];
   launchScreenView.frame = self.window.bounds;
   rootView.loadingView = launchScreenView;
+
+ // [REQUIRED] Register BackgroundFetch
+ [[TSBackgroundFetch sharedInstance] didFinishLaunching];
 
   return YES;
 }

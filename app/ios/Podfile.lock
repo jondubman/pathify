@@ -194,7 +194,7 @@ PODS:
     - React
   - react-native-mapbox-gl (7.0.9):
     - React
-  - react-native-slider (2.0.8):
+  - react-native-slider (2.0.9):
     - React
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
@@ -231,15 +231,15 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RealmJS (3.6.3):
+  - RealmJS (3.6.5):
     - GCDWebServer
     - React
-  - RNBackgroundFetch (2.7.1):
+  - RNBackgroundFetch (3.0.4):
     - React
   - RNBackgroundGeolocation (3.4.2):
     - CocoaLumberjack (~> 3.5.1)
     - React
-  - RNDeviceInfo (5.5.1):
+  - RNDeviceInfo (5.5.3):
     - React
   - RNSVG (11.0.1):
     - React
@@ -386,7 +386,7 @@ SPEC CHECKSUMS:
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-haptic: d90a0a661333a22cb2b434c7094a65f27aed773d
   react-native-mapbox-gl: 7d6dda14fda15b680f70ade65e47b2d39cb976d1
-  react-native-slider: 3a1cfd00c9c31068251b536822f7192e8d1d6b6f
+  react-native-slider: e51492f1264d882a8815b71c5870f8978e52887d
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72
@@ -397,14 +397,14 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RealmJS: c19d60dbe21606dade0f6217f4dd0d1fb8bb4e3a
-  RNBackgroundFetch: 8d8d66b47eafcb9e772b2eb95057939038b3ef95
+  RealmJS: b103c28012b1abfe13396ac82e76b4f4d9d47c0d
+  RNBackgroundFetch: 388cf1595934d22fed275b8db9b48a28bb4eb7b6
   RNBackgroundGeolocation: 8f0a20788100fbf08987d80f2053ae6eba79c566
-  RNDeviceInfo: 017aa2fd29a437fba26807cbe2fa51a149da70cd
+  RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 2be5290208cea41c1a99a999ca14e0c2f092e79a
+PODFILE CHECKSUM: 8fe377e0e7043c94a8b41dabb9ebefa10fad8ba5
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1
