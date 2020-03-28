@@ -43,8 +43,6 @@
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>TODO CHANGEME: NSLocationAlwaysAndWhenInUseUsageDescription</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>TODO CHANGEME: NSLocationAlwaysUsageDescription</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>TODO CHANGEME: NSLocationWhenInUseUsageDescription</string>
 	<key>NSMotionUsageDescription</key>

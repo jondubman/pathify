@@ -7,9 +7,11 @@ import {
 } from 'react-native';
 
 import { IntroProps } from 'containers/IntroContainer';
+import constants from 'lib/constants';
 import log from 'shared/log';
 
 import Swiper from 'react-native-swiper';
+const { swiper } = constants.colors;
 
 const Styles = StyleSheet.create({
   containingView: {
@@ -19,19 +21,25 @@ const Styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9DD6EB'
+    backgroundColor: swiper.p1,
   },
   slide2: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#97CAE5'
+    backgroundColor: swiper.p2,
   },
   slide3: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#92BBD9'
+    backgroundColor: swiper.p3,
+  },
+  slide4: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: swiper.p4,
   },
   text: {
     color: '#fff',
@@ -54,13 +62,16 @@ const Intro = (props: IntroProps) => (
       style={Styles.swiper}
     >
       <View style={Styles.slide1}>
-        <Text style={Styles.text}>Hello Swiper</Text>
+        <Text style={Styles.text}>Pathify</Text>
       </View>
       <View style={Styles.slide2}>
-        <Text style={Styles.text}>Beautiful</Text>
+        <Text style={Styles.text}>Privacy-first</Text>
       </View>
       <View style={Styles.slide3}>
-        <Text style={Styles.text}>And simple</Text>
+        <Text style={Styles.text}>Activity Tracker</Text>
+      </View>
+      <View style={Styles.slide4}>
+        <Text style={Styles.text}>and Timeline</Text>
       </View>
     </Swiper>
   </View>

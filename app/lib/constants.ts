@@ -113,6 +113,7 @@ const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
 const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activities
 const clockHeight = 70;
+const swiperOpacity = 0.25;
 
 const colors = {
   activityDetails: {
@@ -253,6 +254,12 @@ const colors = {
       false: withOpacity(namedColors.black, 1),
       true: withOpacity(namedColors.blue, 0.75),
     }
+  },
+  swiper: {
+    p1: withOpacity(namedColors.blue, swiperOpacity),
+    p2: withOpacity(namedColors.darkRed, swiperOpacity),
+    p3: withOpacity(namedColors.darkLimeGreen, swiperOpacity),
+    p4: withOpacity(namedColors.gray, swiperOpacity),
   },
   timeline: {
     axis: namedColors.darkerGray,

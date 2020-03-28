@@ -8,8 +8,6 @@
     "**/package-lock.json": true,
     "**/server/src/shared": true,
     "**/server/src/shared/**": true,
-    "**/web/**": true,
-    "**/web/build": true,
     "**/yarn.lock": true,
     "app/shared/**": true,
     "server/src/shared/**": true,
