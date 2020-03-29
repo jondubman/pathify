@@ -7,10 +7,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
-  ViewStyle,
 } from 'react-native';
-
-import { createSelector } from 'reselect'
 
 import constants from 'lib/constants';
 import utils from 'lib/utils';
@@ -41,39 +38,10 @@ const AppStyles = StyleSheet.create({
   mainAppView: {
     flex: 1,
     flexDirection: 'column',
-    position: 'absolute',
   },
 })
 
-// Using reselect to cache dynamic styles and avoid using inline styles (which force redundant renders.)
-
-const makeFullScreenStyle = () => ({
-  position: 'absolute',
-  width: utils.windowSize().width,
-})
-export const fullScreenStyle = createSelector(
-  [makeFullScreenStyle],
-  (ignore) => (makeFullScreenStyle())
-)
-
-const makeAboveTimelineStyle = (props: AppUIProps): any => ({
-  bottom: props.timelineHeight,
-  position: 'absolute',
-  width: utils.windowSize().width,
-})
-export const aboveTimelineStyle = createSelector(
-  [makeAboveTimelineStyle],
-  (props: AppUIProps) => (makeAboveTimelineStyle(props))
-)
-
 class AppUI extends Component<AppUIProps> {
-
-  constructor(props: any) {
-    super(props);
-  }
-
-  componentDidMount() {
-  }
 
   // TODO is this helpful?
   componentDidCatch(error: any, info: any) {
@@ -86,9 +54,11 @@ class AppUI extends Component<AppUIProps> {
       mapFullScreen,
       showActivityInfo,
       showTimeline,
+      timelineHeight,
     } = this.props;
     const pointerEvents = showTimeline ? 'auto' : 'none';
     const timelineOpacity = { opacity: showTimeline ? 1 : 0 };
+    const width = utils.windowSize().width;
     return (
       <View style={AppStyles.containingAppView}>
         <StatusBar
@@ -104,18 +74,18 @@ class AppUI extends Component<AppUIProps> {
           </View>
           {mapFullScreen ? null : (
             <Fragment>
-              <View style={aboveTimelineStyle(this.props) as ViewStyle}>
+              <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <CompassButtonContainer />
                 <FollowButtonsContainer />
               </View>
               <TimelineControlsContainer />
-              <View style={fullScreenStyle(this.props) as ViewStyle}>
+              <View style={{ position: 'absolute', width }}>
                 <HelpPanelContainer />
                 <SettingsPanelContainer />
                 <TopMenuContainer />
               </View>
               <StartMenuContainer />
-              <View style={aboveTimelineStyle(this.props) as ViewStyle}>
+              <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <StartButtonContainer />
               </View>
             </Fragment>
