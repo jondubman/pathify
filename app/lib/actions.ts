@@ -69,6 +69,7 @@ export enum AppAction {
   'refreshCache' = 'refreshCache',
   'refreshCacheDone' = 'refreshCacheDone',
   'refreshCachedActivity' = 'refreshCachedActivity',
+  'refreshCachedCurrentActivity' = 'refreshCachedCurrentActivity',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction',
   'restartApp' = 'restartApp',

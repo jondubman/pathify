@@ -25,6 +25,7 @@ import {
   minutesToString,
   msecToTimeString,
 } from 'lib/units';
+import utils from 'lib/utils';
 import ActivityDetails from 'presenters/ActivityDetails';
 import log from 'shared/log';
 
@@ -102,11 +103,12 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       const activity = info.activity as ActivityDataExtended;
       const isCurrent = activity && (activity.id === currentActivityId);
       if (activity) {
+        const calcTime = activity.tEnd ? scrollTime : utils.now();
         if (activity.odo && activity.odoStart) {
           totalDistance = Math.max(activity.odo - activity.odoStart, 0);
         }
         if (activity.tStart) {
-          timeText = msecToTimeString(scrollTime - activity.tStart);
+          timeText = msecToTimeString(calcTime - activity.tStart);
         }
         if (info.odo && activity.odoStart) {
           partialDistance = Math.max(info.odo - activity.odoStart, 0); // meters
@@ -114,7 +116,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
         }
         if (info.speed) {
           speedPaceText = minutesToString(metersPerSecondToPace(info.speed));
-          if (speedPaceText.indexOf(':') !== speedPaceText.lastIndexOf(':')) {
+          if (info.speed < 0 || speedPaceText.indexOf(':') !== speedPaceText.lastIndexOf(':')) {
             speedPaceText = missing;
           }
           const mph = metersPerSecondToMilesPerHour(info.speed);

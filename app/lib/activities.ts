@@ -139,7 +139,7 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
     }
     if (a.tStart) {
       a.tStartText = new Date(a.tStart).toLocaleString();
-      const tEnd = a.tEnd || a.tLastLoc || a.tLastUpdate;
+      const tEnd = a.tEnd || utils.now();
       if (tEnd) {
         a.tLast = tEnd || utils.now();
         a.tTotal = tEnd - a.tStart;

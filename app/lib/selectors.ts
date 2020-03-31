@@ -87,6 +87,13 @@ export const currentActivity = (state: AppState): Activity | undefined => {
   return undefined;
 }
 
+export const currentCachedActivity = (state: AppState): ActivityDataExtended | undefined => {
+  if (state.options.currentActivityId) {
+    return cachedActivity(state, state.options.currentActivityId!);
+  }
+  return undefined;
+}
+
 export const currentOrSelectedActivity = (state: AppState): Activity | undefined => {
   return currentActivity(state) || selectedActivity(state);
 }

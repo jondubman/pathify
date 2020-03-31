@@ -118,6 +118,7 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
+  currentCachedActivity,
   getCachedPathInfo,
   getStoredLocationEvent,
   loggableOptions,
@@ -1336,6 +1337,16 @@ const sagas = {
     }
   },
 
+  // This is a low-impact (nothing persistent), cache-only action that "re-extends" any currentActivity so the time-
+  // based calculations are correct whether or not there is any new location data coming in.
+  refreshCachedCurrentActivity: function* (action: Action) {
+    const state = yield select((state: AppState) => state);
+    const cca = yield call(currentCachedActivity, state);
+    if (cca) {
+      yield put(newAction(AppAction.refreshCachedActivity, { activityId: cca.id }));
+    }
+  },
+
   // Set map bearing to 0 (true north) typically in response to user action (button).
   reorientMap: function* () {
     const map = MapUtils();
@@ -1946,6 +1957,7 @@ const sagas = {
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
       if (nowTimeRounded === state.options.nowTimeRounded) {
         yield put(newAction(AppAction.setAppOption, { nowTime: now }));
+        yield put(newAction(AppAction.refreshCachedCurrentActivity));
       } else {
         const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
         if (timelineNow) {
