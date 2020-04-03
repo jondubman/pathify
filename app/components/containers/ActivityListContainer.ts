@@ -37,8 +37,8 @@ interface ActivityListStateProps {
 interface ActivityListDispatchProps {
   onPressActivity: (id: string) => void;
   onPressFutureZone: () => void;
-  onScrollTimeline: (t: Timepoint) => void;
   register: (component: Component) => void;
+  scrollTimeline: (t: Timepoint) => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
@@ -78,22 +78,22 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     const now = utils.now();
     dispatch(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in onPressFutureZone
   }
-  const onScrollTimeline = (t: Timepoint) => {
-    log.scrollEvent('ActivityListContainer onScrollTimeline', t);
-    dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
-    dispatch(newAction(AppAction.activityListScrolled, { t }));
-    dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
-  }
   const register = (component) => {
     setTimeout(() => {
       dispatch(newAction(AppAction.setRef, { activityList: component }));
     }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the ActivityList.
   }
+  const scrollTimeline = (t: Timepoint) => {
+    log.scrollEvent('ActivityListContainer scrollTimeline', t);
+    dispatch(newAction(AppAction.flagEnable, 'activityListScrolling'));
+    dispatch(newAction(AppAction.activityListScrolled, { t }));
+    dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
+  }
   const dispatchers = {
     onPressActivity,
     onPressFutureZone,
-    onScrollTimeline,
     register,
+    scrollTimeline,
   }
   return dispatchers;
 }

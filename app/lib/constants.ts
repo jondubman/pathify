@@ -100,6 +100,7 @@ const schemaVersion = 30;
 const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
 const borderRadiusSmall = 5;
+const borderRadiusMedium = 10;
 const bottomButtonSpacing = 15;
 const buttonOffset = 6;
 const buttonSize = 50;
@@ -335,7 +336,7 @@ const constants = {
     activityMargin: activityListMargin, // applied on left of each activity
     activityWidth: initialTimelineHeight, // < minDeviceWidth / 3
     borderLineHeight: 1,
-    borderRadius: borderRadiusSmall,
+    borderRadius: borderRadiusMedium,
     borderWidth: 1,
     centerLineTop: -buttonOffset * 2,
     centerLineWidth: 2,
@@ -347,6 +348,7 @@ const constants = {
   },
   appName: 'Pathify',
   borderRadiusSmall,
+  borderRadiusMedium,
   bottomButtonSpacing,
   buttonBaseOffsetPerRow: (buttonSize + buttonOffset * 2) + bottomButtonSpacing,
   buttonOffset,

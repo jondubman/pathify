@@ -82,6 +82,7 @@ const Styles = StyleSheet.create({
     fontSize: 11,
   },
   touchableActivity: {
+    borderRadius,
     height: activityHeight,
     marginLeft: activityMargin, // Note activityMargin is applied only on the left. Important for offset calculations.
   },

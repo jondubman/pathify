@@ -997,10 +997,10 @@ const sagas = {
     const { viewTime } = yield select((state: AppState) => state.options);
     if (!timelineNow) {
       yield put(newAction(AppAction.setAppOption, { backTime: viewTime })); // TODO might actually want history feature
-      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
       const now = utils.now() + constants.timing.timelineCloseToNow; // TODO should not need this fudge factor
       yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in jumpToNow
       yield put(newAction(AppAction.scrollTimeline, { scrollTime: now })); // in jumpToNow
+      yield put(newAction(AppAction.flagEnable, 'timelineNow'));
     }
   },
 
@@ -1211,7 +1211,7 @@ const sagas = {
             pathUpdate.t.push(t);
           }
           activityUpdate.tFirstLoc = Math.min(activityUpdate.tFirstLoc || t, t);
-          activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max is redundant when events sorted by t
+          activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max redundant when events sorted by t
           activityUpdate.tLastRefresh = utils.now();
           activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
 
@@ -1403,9 +1403,10 @@ const sagas = {
   },
 
   // This is used when tapping an activity in the ActivityList. It zooms both the map and the timeline, neither of which
-  // is done in the general case of simply scrolling the Timeline or ActivityList. The midpoint of the activity is used
-  // as the reference timepoint;. This is intended for most intentional type of selection, configuring the app UI to
-  // focus on the specified activity.
+  // is done in the general case of simply scrolling the Timeline or ActivityList.
+  //
+  // The midpoint of the activity is used as the reference timepoint.
+  // This is intended for most intentional type of selection, configuring the app UI to focus on the specified activity.
   selectActivity: function* (action: Action) {
     try {
       const params = action.params as SelectActivityParams;
@@ -1424,7 +1425,8 @@ const sagas = {
         } else {
           // Pressing the currentActivity.
           log.debug('selectActivity: Pressing the currentActivity', new Date(newTime).toString());
-          yield put(newAction(AppAction.scrollActivityList, { scrollTime: newTime })); // in selectActivity
+          const now = yield call(utils.now);
+          yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
         }
         const appOptions = {
           centerTime: newTime, // TODO is it necessary to set this here?
@@ -1439,6 +1441,9 @@ const sagas = {
           zoomTimeline: true,
           zoomMap: true,
          }))
+        if (!activity.tEnd) {
+          yield put(newAction(AppAction.flagEnable, 'timelineNow')); // This shouldn't happen before setting scrollTime.
+        }
       }
     } catch (err) {
       yield call(log.error, 'saga selectActivity', err);
@@ -1956,9 +1961,11 @@ const sagas = {
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
       if (nowTimeRounded === state.options.nowTimeRounded) {
+        // Most of the time, only this happens:
         yield put(newAction(AppAction.setAppOption, { nowTime: now }));
-        yield put(newAction(AppAction.refreshCachedCurrentActivity));
       } else {
+        // But when nowTimeRounded bumps up to the next whole second, we do this:
+        yield put(newAction(AppAction.refreshCachedCurrentActivity));
         const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
         if (timelineNow) {
           options.scrollTime = now;
@@ -1967,6 +1974,8 @@ const sagas = {
           }
         }
         yield put(newAction(AppAction.setAppOption, options));
+
+        // Possibly re-center map as well.
         if (followingPath /* && !mapMoving */ && !mapReorienting) {
           const map = MapUtils();
           if (map) {

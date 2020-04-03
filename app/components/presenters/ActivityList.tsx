@@ -186,7 +186,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       const timeWithinActivity = proportion * activity.tTotal;
       const t: Timepoint = activity.tStart + timeWithinActivity;
       log.scrollEvent('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
-      this.props.onScrollTimeline(t);
+      this.props.scrollTimeline(t);
       this.setState({ scrolledBetweenActivities: false });
     } else {
       log.scrollEvent('handleScroll outside activity', baseX, ratio, index, proportion);
@@ -207,7 +207,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       if (activity && activity.tEnd && (xScrolledAfterActivity <= xLeftSelectStart)) {
         const { tLast } = activity;
         if (tLast) {
-          this.props.onScrollTimeline(tLast); // This may change selectedActivityId.
+          this.props.scrollTimeline(tLast); // This may change selectedActivityId.
           this.setState({ scrolledBetweenActivities: false });
         }
       } else if ((activity || index === -1) && xScrolledAfterActivity >= xRightSelectEnd) {
@@ -217,7 +217,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           if (nextActivity) {
             const tStart = nextActivity.tStart;
             if (tStart) {
-              this.props.onScrollTimeline(tStart); // This may change selectedActivityId.
+              this.props.scrollTimeline(tStart); // This may change selectedActivityId.
               this.setState({ scrolledBetweenActivities: false });
             }
           } else {
@@ -253,7 +253,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     if (index >= list.length || ((index === list.length - 1) && (proportion > 1))) {
       const { list } = this.props;
       if ((index === list.length - 1) && (xScrolledAfterActivity <= xRightSelectEnd && list[index].tEnd)) {
-        this.props.onScrollTimeline(list[list.length - 1].tLast); // This may change selectedActivityId.
+        this.props.scrollTimeline(list[list.length - 1].tLast); // This may change selectedActivityId.
         this.setState({ scrolledBetweenActivities: false });
       } else {
         this.props.onPressFutureZone();
