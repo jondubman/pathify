@@ -1416,8 +1416,12 @@ const sagas = {
       const activity = yield call(cachedActivity, state, id);
       if (activity) {
         yield call(log.debug, 'saga selectActivity: activity found', id);
-        const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 :
-          (activity.tStart + utils.now()) / 2;
+        yield put(newAction(AppAction.zoomToActivity, {
+          id: activity.id,
+          zoomTimeline: true,
+          zoomMap: true,
+        }))
+        const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 : utils.now();
         if (activity.tEnd) {
           // Pressing some prior activity.
           yield put(newAction(AppAction.flagDisable, 'timelineNow'));
@@ -1425,24 +1429,21 @@ const sagas = {
         } else {
           // Pressing the currentActivity.
           log.debug('selectActivity: Pressing the currentActivity', new Date(newTime).toString());
-          const now = yield call(utils.now);
-          yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
         }
-        const appOptions = {
-          centerTime: newTime, // TODO is it necessary to set this here?
-          scrollTime: newTime,
-          selectedActivityId: activity.id,
-          viewTime: newTime,
-        }
-        log.debug('selectActivity setting appOptions', appOptions);
-        yield put(newAction(AppAction.setAppOption, appOptions));
-        yield put(newAction(AppAction.zoomToActivity, {
-          id: activity.id,
-          zoomTimeline: true,
-          zoomMap: true,
-         }))
-        if (!activity.tEnd) {
-          yield put(newAction(AppAction.flagEnable, 'timelineNow')); // This shouldn't happen before setting scrollTime.
+        if (!state.flags.timelineNow) {
+          const appOptions = {
+            centerTime: newTime, // TODO is it necessary to set this here?
+            scrollTime: newTime,
+            selectedActivityId: activity.id,
+            viewTime: newTime,
+          }
+          log.debug('selectActivity setting appOptions', appOptions);
+          yield put(newAction(AppAction.setAppOption, appOptions));
+          if (!activity.tEnd) {
+            const now = yield call(utils.now);
+            yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
+            yield put(newAction(AppAction.flagEnable, 'timelineNow')); // This shouldn't happen before setting scrollTime.
+          }
         }
       }
     } catch (err) {
@@ -1611,7 +1612,6 @@ const sagas = {
           // should already have the AppUserActionEvent and MarkEvent from before; just set currentActivityId.
           activityId = continueActivityId;
         } else {
-          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
           yield put(newAction(AppAction.flagDisable, 'mapTapped'));
           const followingNow = yield select((state: AppState) => state.flags.followingUser);
           if (followingNow) {
@@ -1639,6 +1639,9 @@ const sagas = {
         yield delay(0); // TODO was required to allow ActivityList to ready itself to scroll... race condition? still?
         const scrollTime = utils.now();
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startActivity
+        if (!continueActivityId) {
+          yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+        }
       }
     } catch (err) {
       yield call(log.error, 'saga startActivity', err);
