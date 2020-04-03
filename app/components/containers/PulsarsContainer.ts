@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 
 import { LonLat } from 'lib/locations';
 import {
-  cachedActivity,
   pulsars,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -27,27 +26,22 @@ export type OptionalPulsars = { [key: string]: OptionalPulsar }
 
 interface PulsarsStateProps {
   pulsars: OptionalPulsars;
-  revision: number;
+  revision: string;
 }
 
 interface PulsarsDispatchProps {
+  // They are not currently actionable.
 }
 
 export type PulsarsProps = PulsarsStateProps & PulsarsDispatchProps;
 
 const mapStateToProps = (state: AppState): PulsarsStateProps => {
   const { flags, options } = state;
-  const { currentActivityId, scrollTime } = options;
-  let revision = 0;
-  if (currentActivityId) {
-    const activity = cachedActivity(state, currentActivityId);
-    if (activity) {
-      revision = activity.tLast + scrollTime;
-    }
-  }
+  const { currentActivityId, selectedActivityId } = options;
+  const revision = `${currentActivityId}-${selectedActivityId}`; // The point here is, revision is a function of both.
   return {
-    pulsars: flags.appActive ? pulsars(state) : {}, // hide pulsars when app is in background to save resources
-    revision,
+    pulsars: flags.appActive ? pulsars(state) : {}, // Hide pulsars when app is in background to save resources.
+    revision, // If this changes, a new rendered instance is created, keeping z-order correct relative to paths on map.
   }
 }
 

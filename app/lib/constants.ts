@@ -541,14 +541,12 @@ const constants = {
     width: 240,
   },
   timing: { // msec
-    activityListDelayReadjustmentAfterStartup: 500, // TODO would be better not to need this
-    menuFade: 300,
+    activityListDelayReadjustmentAfterStartup: 1000, // TODO would be better not to need this
     opacitySliderThrottle: 50,
-    paceMeasurement: interval.seconds(20),
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     timelineCloseToNow: 3000,
-    timelineRelativeZoomStep: 30,
+    timelineRelativeZoomStep: 30, // bigger zooms faster
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.

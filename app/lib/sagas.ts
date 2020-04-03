@@ -1614,8 +1614,7 @@ const sagas = {
         } else {
           yield put(newAction(AppAction.flagDisable, 'mapTapped'));
           const followingNow = yield select((state: AppState) => state.flags.followingUser);
-          if (followingNow) {
-          } else {
+          if (!followingNow) {
             yield put(newAction(AppAction.startFollowingUser));
           }
           const newActivity = yield call(database.createActivity, now);
@@ -1640,6 +1639,7 @@ const sagas = {
         const scrollTime = utils.now();
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startActivity
         if (!continueActivityId) {
+          yield delay(0); // TODO for race condition
           yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         }
       }
@@ -1671,13 +1671,6 @@ const sagas = {
           newSettings[propName] = settings[propName];
         }
       }
-      // restore app flags from settings
-      for (let propName of persistedFlags) {
-        if (settings[propName] !== undefined) {
-          const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
-          yield put(newAction(actionType, propName)); // TODO any reason not to set these all at once?
-        }
-      }
       const propagatedSettings = {} as any; // TODO really mean type of AppState options
       if (newSettings.pausedTime) {
         propagatedSettings.centerTime = newSettings.pausedTime;
@@ -1687,6 +1680,13 @@ const sagas = {
       if (Object.entries(newSettings).length) {
         yield call(log.debug, 'Reading settings from database', newSettings);
         yield put(newAction(AppAction.setAppOption, { ...newSettings, ...propagatedSettings }));
+      }
+      // restore app flags from settings
+      for (let propName of persistedFlags) {
+        if (settings[propName] !== undefined) {
+          const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
+          yield put(newAction(actionType, propName)); // TODO any reason not to set these all at once?
+        }
       }
       const {
         currentActivityId,
