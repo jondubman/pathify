@@ -111,13 +111,13 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       onPanResponderGrant: (evt, gestureState) => {
         // The gesture has started. gestureState.d{x,y} will be set to zero now
         ReactNativeHaptic.generate('impactLight');
-        log.trace('onPanResponderGrant');
+        log.scrollEvent('onPanResponderGrant');
         props.onPressed();
       },
       onPanResponderMove: (evt, gestureState) => {
         // The most recent move distance is gestureState.move{X,Y}
         // The accumulated gesture distance since becoming responder is gestureState.d{x,y}
-        log.trace('onPanResponderMove', gestureState.dx, gestureState.dy);
+        log.scrollEvent('onPanResponderMove', gestureState.dx, gestureState.dy);
         let { horizontalLock } = this.state;
         const { nowMode } = this.props;
         if (!this.state.verticalLock) {
@@ -127,7 +127,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           } else {
             deltaX = Math.max(deltaX, nowMode ? 0 : -deltaXMax); // min deltaX is -deltaXMax
           }
-          log.trace('onPanResponderMove deltaX', deltaX);
+          log.scrollEvent('onPanResponderMove deltaX', deltaX);
           horizontalLock = this.state.horizontalLock || Math.abs(deltaX) > lockThreshold;
           let choiceMade = false;
           if (deltaX > deltaXChoiceThreshold) {
@@ -154,7 +154,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           } else {
             deltaY = Math.max(deltaY, -deltaYMax); // min deltaY is -deltaYMax
           }
-          log.trace('onPanResponderMove deltaY', deltaY);
+          log.scrollEvent('onPanResponderMove deltaY', deltaY);
           const verticalLock = this.state.verticalLock || Math.abs(deltaY) > lockThreshold;
           this.setState({
             deltaY: deltaY,
@@ -172,13 +172,13 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
         if (this.state.verticalLock) {
           ReactNativeHaptic.generate('notificationSuccess');
         }
-        log.trace('onPanResponderRelease');
+        log.scrollEvent('onPanResponderRelease');
         this.setState(initialState);
         props.onZoom(0, 0); // stop zooming
         props.onReleased();
       },
       onPanResponderTerminate: (evt, gestureState) => {
-        log.trace('onPanResponderTerminate');
+        log.scrollEvent('onPanResponderTerminate');
         props.onReleased();
         // Another component has become the responder, so this gesture should be cancelled
       },

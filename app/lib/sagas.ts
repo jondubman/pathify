@@ -193,7 +193,7 @@ const sagas = {
     const params = action.params as ActivityListScrolledParams;
     const { t } = params;
     const { timelineScrolling } = yield select((state: AppState) => state.flags);
-    yield call(log.scrollEvent, 'activityListScrolled', timelineScrolling, t);
+    yield call(log.trace, 'activityListScrolled, timelineScrolling:', timelineScrolling, 't:', t);
     if (!timelineScrolling) {
       yield put(newAction(AppAction.setAppOption, { scrollTime: t, viewTime: t }));
     }
@@ -919,6 +919,7 @@ const sagas = {
     if (flags[flagName]) {
       yield put(newAction(ReducerAction.FLAG_DISABLE, flagName));
       yield sagas.flag_sideEffects(flagName);
+      yield call(log.trace, 'saga flagDisable', flagName);
     }
   },
 
@@ -928,12 +929,14 @@ const sagas = {
     if (!flags[flagName]) {
       yield put(newAction(ReducerAction.FLAG_ENABLE, flagName));
       yield sagas.flag_sideEffects(flagName);
+      yield call(log.trace, 'saga flagEnable', flagName);
     }
   },
 
   flagToggle: function* (action: Action) {
     const flagName: string = action.params;
     yield put(newAction(ReducerAction.FLAG_TOGGLE, flagName));
+    yield call(log.trace, 'saga flagToggle', flagName);
     yield sagas.flag_sideEffects(flagName);
   },
 
@@ -1303,9 +1306,7 @@ const sagas = {
   },
 
   refreshCacheDone: function* (action: Action) {
-    yield call(log.trace, 'refreshCacheDone');
-    const scrollTime = yield select((state: AppState) => state.options.scrollTime);
-    yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in refreshCacheDone
+    // Used with yield take
   },
 
   // updates, or removes stale entry from cache, as needed
@@ -1439,10 +1440,12 @@ const sagas = {
           }
           log.debug('selectActivity setting appOptions', appOptions);
           yield put(newAction(AppAction.setAppOption, appOptions));
-          if (!activity.tEnd) {
+          if (activity.tEnd) {
+            yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+          } else {
             const now = yield call(utils.now);
             yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
-            yield put(newAction(AppAction.flagEnable, 'timelineNow')); // This shouldn't happen before setting scrollTime.
+            yield put(newAction(AppAction.flagEnable, 'timelineNow'));
           }
         }
       }
@@ -1511,12 +1514,7 @@ const sagas = {
     // Note that the AppAction.setAppOption within this block recurses back into this saga, but only one level deep.
     if (params.viewTime !== undefined) {
       const t = params.viewTime;
-      if (timelineNow) {
-        if (t < utils.now() - constants.timing.timelineCloseToNow) {
-          yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-          yield call(log.scrollEvent, 'setAppOption: disabled timelineNow as side effect of setting viewtime');
-        }
-      } else {
+      if (!timelineNow) {
         // Setting viewTime when timeline is paused updates pausedTime.
         // pausedTime is used to 'jump back' to a previous timepoint. This could easily be turned into a history stack.
         yield call(log.scrollEvent, 'Setting viewTime when timeline is paused updates pausedTime:', t);
@@ -1731,7 +1729,7 @@ const sagas = {
           yield call(log.info, 'Continuing previous activity...');
           yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId })); // this will follow user
         } else {
-          if (pausedTime) {
+          if (pausedTime && !timelineNow) {
             const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
             if (activity && activity.id) {
               yield call(log.trace, 'startupActions: activity.id', activity.id);
@@ -1743,29 +1741,41 @@ const sagas = {
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
+      const flagsNow = yield select((state: AppState) => state.flags);
+      yield call(log.trace, 'timelineNow was', timelineNow, 'and is', flagsNow.timelineNow);
+      const scrollTime = timelineNow ? utils.now() : pausedTime;
+      yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
       yield put(newAction(AppAction.completeAppStartup));
-      yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (as the above is async)
-      if (timelineNow) {
-        const { flags } = yield select((state: AppState) => state);
-        if (!flags.timelineNow) {
-          yield call(log.trace, 'timelineNow was enabled in settings but got disabled during startup - re-enabling');
-          setTimeout(() => {
-            store.dispatch(newAction(AppAction.flagEnable, 'timelineNow'));
-          }, constants.timing.activityListDelayReadjustmentAfterStartup);
-        }
-      } else if (pausedTime) {
-        setTimeout(() => {
-          store.dispatch(newAction(AppAction.setAppOption, { // TODO somehow these are drifting slightly - investigate.
-            pausedTime,
-            centerTime: pausedTime,
-            scrollTime: pausedTime,
-            viewTime: pausedTime,
-          }))
-          store.dispatch(newAction(AppAction.scrollActivityList, { scrollTime: pausedTime })); // in startupActions
-        }, constants.timing.activityListDelayReadjustmentAfterStartup);
-      }
+      yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (TODO still needed?)
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
+    }
+  },
+
+  // Follow the path, recentering map right away.
+  startFollowingPath: function* () {
+    try {
+      yield call(log.debug, 'saga startFollowingPath');
+      const { followingPath } = yield select((state: AppState) => state.flags);
+      if (!followingPath) {
+        yield put(newAction(AppAction.flagDisable, 'followingUser')); // mutual exclusion
+        yield put(newAction(AppAction.flagEnable, 'followingPath'));
+      }
+    } catch (err) {
+      yield call(log.error, 'saga startFollowingPath', err);
+    }
+  },
+
+  startFollowingUser: function* (action: Action) {
+    try {
+      yield call(log.debug, 'saga startFollowingUser');
+      const { followingUser } = yield select((state: AppState) => state.flags);
+      if (!followingUser) {
+        yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
+        yield put(newAction(AppAction.flagEnable, 'followingUser'));
+      }
+    } catch (err) {
+      yield call(log.error, 'saga startFollowingUser', err);
     }
   },
 
@@ -1813,33 +1823,6 @@ const sagas = {
       }
     } catch (err) {
       yield call(log.error, 'saga stopActivity', err);
-    }
-  },
-
-  // Follow the path, recentering map right away.
-  startFollowingPath: function* () {
-    try {
-      yield call(log.debug, 'saga startFollowingPath');
-      const { followingPath } = yield select((state: AppState) => state.flags);
-      if (!followingPath) {
-        yield put(newAction(AppAction.flagDisable, 'followingUser')); // mutual exclusion
-        yield put(newAction(AppAction.flagEnable, 'followingPath'));
-      }
-    } catch (err) {
-      yield call(log.error, 'saga startFollowingPath', err);
-    }
-  },
-
-  startFollowingUser: function* (action: Action) {
-    try {
-      yield call(log.debug, 'saga startFollowingUser');
-      const { followingUser } = yield select((state: AppState) => state.flags);
-      if (!followingUser) {
-        yield put(newAction(AppAction.flagDisable, 'followingPath')); // mutual exclusion
-        yield put(newAction(AppAction.flagEnable, 'followingUser'));
-      }
-    } catch (err) {
-      yield call(log.error, 'saga startFollowingUser', err);
     }
   },
 
@@ -1907,7 +1890,7 @@ const sagas = {
         }
         // Note the following avoids Realm side effects while zooming, but we still want to persist at the end.
         store.dispatch(newAction(ReducerAction.SET_APP_OPTION, { timelineZoomValue: newZoom }));
-        log.trace('timelineRelativeZoom', newZoom);
+        log.scrollEvent('timelineRelativeZoom', newZoom);
       }, constants.timing.timelineRelativeZoomStep);
     } else {
       yield put(newAction(AppAction.setAppOptionASAP, { timelineZoomValue : newZoom }));
@@ -1928,6 +1911,9 @@ const sagas = {
     if (timelineScrolling && !activityListScrolling) {
       yield call(log.scrollEvent, 'timelineZoomed', scrollTime);
       yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
+      if (scrollTime < utils.now() - constants.timing.timelineCloseToNow) {
+        yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+      }
     }
     yield call(log.scrollEvent, 'timelineZoomed', scrollTime, activityListScrolling, timelineScrolling);
   },

@@ -39,6 +39,7 @@ interface ActivityListDispatchProps {
   onPressFutureZone: () => void;
   register: (component: Component) => void;
   scrollTimeline: (t: Timepoint) => void;
+  setTimelineNow: (enabled: boolean) => void;
 }
 
 export type ActivityListProps = ActivityListStateProps & ActivityListDispatchProps;
@@ -89,11 +90,16 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
     dispatch(newAction(AppAction.activityListScrolled, { t }));
     dispatch(newAction(AppAction.flagDisable, 'activityListScrolling'));
   }
+  const setTimelineNow = (enabled: boolean) => {
+    log.trace('ActivityListContainer: setTimelineNow', enabled);
+    dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'timelineNow'));
+  }
   const dispatchers = {
     onPressActivity,
     onPressFutureZone,
     register,
     scrollTimeline,
+    setTimelineNow,
   }
   return dispatchers;
 }

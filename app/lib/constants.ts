@@ -541,7 +541,6 @@ const constants = {
     width: 240,
   },
   timing: { // msec
-    activityListDelayReadjustmentAfterStartup: 1000, // TODO would be better not to need this
     opacitySliderThrottle: 50,
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.

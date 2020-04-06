@@ -17,6 +17,10 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import LabelContainer from 'containers/LabelContainer';
 import NowClockContainer from 'containers/NowClockContainer';
+import {
+  AppAction,
+  newAction,
+} from 'lib/actions';
 import { ActivityDataExtended } from 'lib/activities';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
@@ -148,13 +152,13 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   }
 
   autoScroll() {
-    const state = store.getState(); // TODO not great form to grab state straight from here but
-    const scrollTime = state.options.scrollTime; // this may change rapidly and we just want the latest we can get.
-    if (scrollTime) {
-      log.scrollEvent('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
-        'length', this.props.list.length);
+    log.scrollEvent('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
+      'length', this.props.list.length);
+    const state = store.getState(); // TODO not great form, but this yields fresh state.
+    const scrollTime = state.flags.timelineNow ? utils.now() : state.options.scrollTime;
+    setTimeout(() => {
       this.scrollToTime(scrollTime);
-    }
+    }, 0)
   }
 
   // TODO factor out the code that computes offsets from the code that does scrolling imperatively.
@@ -240,7 +244,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
 
   handleScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
     const { x } = event.nativeEvent.contentOffset;
-    log.scrollEvent('ActivityList handleScrollEndDrag', x);
+    log.trace('ActivityList handleScrollEndDrag', x);
     const { list } = this.props;
     const totalWidthPerActivity = activityMargin + activityWidth;
     const baseX = x - activityMargin;
@@ -255,10 +259,13 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       if ((index === list.length - 1) && (xScrolledAfterActivity <= xRightSelectEnd && list[index].tEnd)) {
         this.props.scrollTimeline(list[list.length - 1].tLast); // This may change selectedActivityId.
         this.setState({ scrolledBetweenActivities: false });
+        this.props.setTimelineNow(false);
       } else {
         this.props.onPressFutureZone();
         this.setState({ scrolledBetweenActivities: false });
       }
+    } else {
+      this.props.setTimelineNow(false);
     }
   }
 
@@ -360,7 +367,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           onScroll={this.handleScroll}
           onScrollBeginDrag={this.handleScrollBeginDrag}
           onScrollEndDrag={this.handleScrollEndDrag}
-          onMomentumScrollEnd={this.handleScrollEndDrag /* experiment */}
+          onMomentumScrollEnd={this.handleScrollEndDrag /* TODO was experiment */}
           ref={this.refHandler}
           renderItem={this.renderItem}
           scrollIndicatorInsets={scrollInsets}
@@ -450,6 +457,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       }
     } else { // empty list
       log.trace('ActivityList: scrollToTime: empty list');
+      return; // TODO
     }
     const params = {
       animated: false,

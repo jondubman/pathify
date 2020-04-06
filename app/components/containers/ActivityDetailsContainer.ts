@@ -103,7 +103,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
       const activity = info.activity as ActivityDataExtended;
       const isCurrent = activity && (activity.id === currentActivityId);
       if (activity) {
-        const calcTime = activity.tEnd ? scrollTime : utils.now();
+        const calcTime = (activity.tEnd || !timelineNow) ? scrollTime : utils.now();
         if (activity.odo && activity.odoStart) {
           totalDistance = Math.max(activity.odo - activity.odoStart, 0);
         }

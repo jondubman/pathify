@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 
 import {
   DomainPropType,
@@ -87,7 +88,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   }
 
   setZoomDomainWhileScrolling(domain: DomainPropType) {
-    log.trace('setZoomDomainWhileScrolling', domain);
+    log.scrollEvent('setZoomDomainWhileScrolling', domain);
     this.props.zoomDomainChanging(domain);
   }
 
@@ -107,6 +108,10 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
     const x = (domain as any).x as [number, number];
     const newTime = Math.min(utils.now(), (x[0] + x[1]) / 2);
     const rightNow = utils.now();
+    const enableTimelineNow = newTime >= rightNow - constants.timing.timelineCloseToNow;
+    if (enableTimelineNow) {
+      ReactNativeHaptic.generate('notificationSuccess');
+    }
     setTimelineNow(newTime >= rightNow - constants.timing.timelineCloseToNow);
     zoomDomainChanged(domain);
     setTimelineScrolling(false);

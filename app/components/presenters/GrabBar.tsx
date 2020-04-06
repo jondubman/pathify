@@ -107,7 +107,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           this._snapIndex = snapIndex ? Math.min(snapIndex, maxGrabBarSnapIndex()) : snapIndex;
           this._top = top;
           log.scrollEvent('onPanResponderMove now', this._snap, this._snapIndex, this._top);
-          this.forceUpdate(); // TODO
+          this.forceUpdate(); // TODO is this needed?
           this.props.onMoved(snap, snapIndex!);
         }
       },
