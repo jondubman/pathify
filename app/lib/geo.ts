@@ -101,7 +101,7 @@ const geoconfig_default: Config = {
   // stationaryRadius: 1,
   useSignificantChangesOnly: false, // default false
   locationAuthorizationRequest: 'Always', // either Always or WhenInUse
-  // locationAuthorizationAlert: {}, // default {}
+  // locationAuthorizationAlert: {}, // default {} TODO can customize
 
   // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype
   // default 'Other'

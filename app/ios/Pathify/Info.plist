@@ -44,11 +44,11 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>TODO CHANGEME: NSLocationAlwaysAndWhenInUseUsageDescription</string>
+	<string>Choose Always Allow to enable you to privately track your own activities in the background, at your request.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>TODO CHANGEME: NSLocationWhenInUseUsageDescription</string>
+	<string>Choose When In Use to allow you to track your own location, privately and securely, within this app.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>TODO CHANGEME: NSMotionUsageDescription</string>
+	<string>This is needed to maximize battery efficiency, and to determine the transportation mode of activities, as they are tracked.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
