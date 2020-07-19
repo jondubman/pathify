@@ -1457,15 +1457,11 @@ const sagas = {
           }
           log.debug('selectActivity setting appOptions', appOptions);
           yield put(newAction(AppAction.setAppOption, appOptions));
-          // TODO cleanup
-          //
-          // if (activity.tEnd) {
-          //   yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-          // } else {
-          //   const now = yield call(utils.now);
-          //   yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
-          //   yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-          // }
+          if (!activity.tEnd) { // current activity
+            const now = yield call(utils.now);
+            yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
+            yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+          }
         }
       }
     } catch (err) {
