@@ -91,14 +91,14 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     visible: false,
   }
   try {
-    const { current } = state;
     top = dynamicTopBelowActivityList(state);
     const info = getCachedPathInfo(state);
-    const {
-      currentActivityId,
-      scrollTime,
-    } = state.options;
     if (info) {
+      const { current } = state;
+      const {
+        currentActivityId,
+        scrollTime,
+      } = state.options;
       const rows = showActivityDetailsRowsPreview(state);
       const activity = info.activity as ActivityDataExtended;
       const isCurrent = activity && (activity.id === currentActivityId);

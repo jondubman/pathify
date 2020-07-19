@@ -92,7 +92,9 @@ const utils = {
     return Math.round(num * factor) / factor;
   },
 
+  floorTime: (t: number) => (Math.floor(t / 1000) * 1000),
   roundTime: (t: number) => (Math.round(t / 1000) * 1000),
+  ceilTime: (t: number) => (Math.ceil(t / 1000) * 1000),
 
   twoDigitString: (n: number) => {
     if (!n) return '00';

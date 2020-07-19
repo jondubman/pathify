@@ -449,23 +449,23 @@ export interface PathInfo {
   speed: number; // meters per second
   t: number; // timepoint for this info
 }
-export const getScrollTimeRounded = (state: AppState) => utils.roundTime(state.options.scrollTime);
+export const getScrollTimeFloor = (state: AppState) => utils.floorTime(state.options.scrollTime);
 export const getTimelineNow = (state: AppState) => state.flags.timelineNow;
 export const getTrackingActivity = (state: AppState) => state.flags.trackingActivity;
 const getCachedActivities = (state: AppState) => state.cache.activities;
 // PathInfo here means info derived from a Path that includes scrollTime as a timepoint - basically, stats right then.
-// getScrollTimeRounded is rounded in order to minimize redundant recalculations, as the clock ticks
-// many times per second in timelineNow mode. Path timestamps are rounded for comparison against getScrollTimeRounded.
+// getScrollTimeFloor helps to minimize redundant recalculations, as the clock ticks many times per second in
+// timelineNow mode. Path timestamps are rounded down for comparison against getScrollTimeFloor.
 export const getCachedPathInfo = createSelector(
-  [getScrollTimeRounded, getTimelineNow, getTrackingActivity, getCachedActivities],
-  (scrollTimeRounded, timelineNow, trackingActivity, cachedActivities): PathInfo | null => {
+  [getScrollTimeFloor, getTimelineNow, getTrackingActivity, getCachedActivities],
+  (scrollTimeFloor, timelineNow, trackingActivity, cachedActivities): PathInfo | null => {
     try {
       if (!cachedActivities) {
         return null;
       }
-      const t = scrollTimeRounded;
+      const t = scrollTimeFloor;
       const activity = cachedActivities.find(activity =>
-        (activity.tStart <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
+        (utils.floorTime(activity.tStart) <= t) && (!activity.tEnd || (t <= activity.tLast && activity.tEnd))
       )
       if (activity) {
         let length = 0;
@@ -481,7 +481,7 @@ export const getCachedPathInfo = createSelector(
         length = path.t.length;
         const lastIndex = length - 1; // last valid index into path
         // special case the end
-        if ((timelineNow && trackingActivity) || t >= utils.roundTime(path.t[lastIndex])) {
+        if ((timelineNow && trackingActivity) || t >= utils.floorTime(path.t[lastIndex])) {
           return {
             activity,
             ele: path.ele[lastIndex],
@@ -497,9 +497,9 @@ export const getCachedPathInfo = createSelector(
           }
         }
         for (let i = 0; i < lastIndex; i++) {
-          // Smoothly (linearly) interpolate between points we know, rounding all times to nearest second.
-          const t1 = utils.roundTime(path.t[i]);
-          const t2 = utils.roundTime((i === lastIndex - 1) ? activity.tLastLoc! : path.t[i + 1]);
+          // Smoothly (linearly) interpolate between points we know.
+          const t1 = i ? utils.floorTime(path.t[i]) : utils.floorTime(activity.tStart);
+          const t2 = utils.ceilTime((i === lastIndex - 1) ? activity.tLastLoc! : path.t[i + 1]);
           const mode_t1 = path.mode[i];
           const mode_t2 = path.mode[i + 1];
           const modeType_t1 = mode_t1 ? numberToModeType(mode_t1) : ModeType.UNKNOWN;

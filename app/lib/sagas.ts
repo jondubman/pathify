@@ -1406,12 +1406,14 @@ const sagas = {
   // This is used when tapping an activity in the ActivityList. It zooms both the map and the timeline, neither of which
   // is done in the general case of simply scrolling the Timeline or ActivityList.
   //
-  // The midpoint of the activity is used as the reference timepoint.
-  // This is intended for most intentional type of selection, configuring the app UI to focus on the specified activity.
+  // If proportion is not provided, the intent is to cycle thus: from tLast --> tStart --> midpoint --> tLast ...
+  // each time this saga is run.
+  //
+  // This is intended for most intentional type of selection, configuring the app UI to focus on a specific activity.
   selectActivity: function* (action: Action) {
     try {
       const params = action.params as SelectActivityParams;
-      const id = params.id;
+      const { id } = params;
       yield call(log.debug, 'saga selectActivity', id);
       const state = yield select((state: AppState) => state);
       const activity = yield call(cachedActivity, state, id);
@@ -1422,7 +1424,19 @@ const sagas = {
           zoomTimeline: true,
           zoomMap: true,
         }))
-        const newTime = activity.tEnd ? (activity.tStart + activity.tEnd) / 2 : utils.now();
+        let proportion = params.proportion;
+        if (!proportion) {
+          const { scrollTime } = state.options;
+          if (scrollTime === activity.tStart) {
+            proportion = 0.5;
+          } else if (scrollTime === activity.tLast) {
+            proportion = 0;
+          } else {
+            proportion = 1; // default
+          }
+        }
+        log.trace('proportion', proportion);
+        const newTime = activity.tStart + (activity.tLast - activity.tStart) * proportion
         if (activity.tEnd) {
           // Pressing some prior activity.
           yield put(newAction(AppAction.flagDisable, 'timelineNow'));
@@ -1430,6 +1444,9 @@ const sagas = {
         } else {
           // Pressing the currentActivity.
           log.debug('selectActivity: Pressing the currentActivity', new Date(newTime).toString());
+          if (newTime === activity.tLast) {
+            yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+          }
         }
         if (!state.flags.timelineNow) {
           const appOptions = {
@@ -1440,13 +1457,15 @@ const sagas = {
           }
           log.debug('selectActivity setting appOptions', appOptions);
           yield put(newAction(AppAction.setAppOption, appOptions));
-          if (activity.tEnd) {
-            yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-          } else {
-            const now = yield call(utils.now);
-            yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
-            yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-          }
+          // TODO cleanup
+          //
+          // if (activity.tEnd) {
+          //   yield put(newAction(AppAction.flagDisable, 'timelineNow'));
+          // } else {
+          //   const now = yield call(utils.now);
+          //   yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
+          //   yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+          // }
         }
       }
     } catch (err) {
@@ -1811,12 +1830,10 @@ const sagas = {
           yield call(log.warn, 'Missing activity in stopActivity')
         }
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
-        const halfTime = activity.tStart + (now - activity.tStart) / 2;
-        yield call(log.trace, 'stopActivity: halfTime', halfTime);
         yield put(newAction(AppAction.setAppOption,
-          { currentActivityId: null, selectedActivityId: activityId, scrollTime: halfTime, viewTime: halfTime }));
+          { currentActivityId: null, selectedActivityId: activityId, scrollTime: now, viewTime: now }));
         yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: true, zoomMap: true })); // in stopActivity
-        yield put(newAction(AppAction.scrollActivityList, { scrollTime: halfTime })); // in stopActivity
+        yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in stopActivity
         if (refreshActivityOnStop) {
           yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
         }

@@ -8,11 +8,13 @@ import { connect } from 'react-redux';
 import {
   AppAction,
   newAction,
+  SelectActivityParams,
 } from 'lib/actions';
 import {
   ActivityDataExtended,
 } from 'lib/activities';
 import {
+  cachedActivity,
   dynamicTopBelowButtons,
   shouldShowActivityList,
 } from 'lib/selectors';
@@ -70,7 +72,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (id: string): void => {
     ReactNativeHaptic.generate('impactLight');
-    dispatch(newAction(AppAction.selectActivity, { id }));
+    dispatch(newAction(AppAction.selectActivity, { id } as SelectActivityParams));
   }
   const onPressFutureZone = (): void => {
     ReactNativeHaptic.generate('impactHeavy');

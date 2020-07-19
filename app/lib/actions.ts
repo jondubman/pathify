@@ -223,6 +223,7 @@ export interface ScrollTimelineParams {
 
 export interface SelectActivityParams {
   id: string;
+  proportion?: number; // 0 means start, 1 means end (or NOW for currentActivity), 0.5 means midpoint
 }
 
 export type SequenceParams = Action[];
