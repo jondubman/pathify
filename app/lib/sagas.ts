@@ -628,6 +628,12 @@ const sagas = {
       if (!populated) {
         yield put(newAction(AppAction.refreshCache));
       }
+      // Follow user, and jump to NOW mode, when reactivating app while tracking.
+      // TODO add flag to make these actions optional?
+      if (trackingActivity) {
+        yield put(newAction(AppAction.startFollowingUser));
+        yield put(newAction(AppAction.jumpToNow));
+      }
     } else {
       if (newState === AppStateChange.BACKGROUND) {
         yield call(Geo.setConfig, trackingActivity, true); // background true
