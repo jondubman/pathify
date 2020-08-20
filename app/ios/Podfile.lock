@@ -21,9 +21,9 @@ PODS:
     - boost-for-react-native
     - DoubleConversion
     - glog
-  - GCDWebServer (3.5.3):
-    - GCDWebServer/Core (= 3.5.3)
-  - GCDWebServer/Core (3.5.3)
+  - GCDWebServer (3.5.4):
+    - GCDWebServer/Core (= 3.5.4)
+  - GCDWebServer/Core (3.5.4)
   - glog (0.3.5)
   - RCTRequired (0.61.5)
   - RCTRestart (0.0.13):
@@ -234,12 +234,12 @@ PODS:
   - RealmJS (3.6.5):
     - GCDWebServer
     - React
-  - RNBackgroundFetch (3.0.4):
+  - RNBackgroundFetch (3.1.0):
     - React
-  - RNBackgroundGeolocation (3.4.2):
+  - RNBackgroundGeolocation (3.8.1):
     - CocoaLumberjack (~> 3.5.1)
     - React
-  - RNDeviceInfo (5.5.3):
+  - RNDeviceInfo (5.6.5):
     - React
   - RNSVG (11.0.1):
     - React
@@ -372,7 +372,7 @@ SPEC CHECKSUMS:
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
-  GCDWebServer: c0ab22c73e1b84f358d1e2f74bf6afd1c60829f2
+  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
   RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
@@ -398,13 +398,13 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   RealmJS: b103c28012b1abfe13396ac82e76b4f4d9d47c0d
-  RNBackgroundFetch: 388cf1595934d22fed275b8db9b48a28bb4eb7b6
-  RNBackgroundGeolocation: 8f0a20788100fbf08987d80f2053ae6eba79c566
-  RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
+  RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
+  RNBackgroundGeolocation: dc849f37ad483aa318364c85bab2309077cd2071
+  RNDeviceInfo: c5f8f3a456adcbba405ace475254b08febc4c095
   RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: 8fe377e0e7043c94a8b41dabb9ebefa10fad8ba5
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3

@@ -23,7 +23,7 @@
     "@types/radium": "^0.24.2",
     "@types/react-native-vector-icons": "^6.4.5",
     "@types/react-redux": "^7.1.9",
-    "@types/uuid": "^3.4.7",
+    "@types/uuid": "3.4.9",
     "@types/victory": "^33.1.4",
     "d3": "^5.15.0",
     "eslint": "^6.8.0",
