@@ -153,6 +153,7 @@ const geoconfig_tracking: Config = {
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   // stopOnTerminate: false, // TODO
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
+  showsBackgroundLocationIndicator: true,
 
   // TODO for diagnosis via HTTP POST
   // batchSync: true,
@@ -299,8 +300,9 @@ export const Geo = {
       }
       BackgroundGeolocation.onActivityChange(onActivityChange);
       BackgroundGeolocation.onEnabledChange(onEnabledChange);
-      BackgroundGeolocation.onGeofence(onGeofence);
-      BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
+      // TODO Geofences having issues with plugin version 3.9.0. As these are just stubs, removing for now.
+      // BackgroundGeolocation.onGeofence(onGeofence);
+      // BackgroundGeolocation.onGeofencesChange(onGeofencesChange);
       BackgroundGeolocation.onHeartbeat(onHeartbeat);
       BackgroundGeolocation.onHttp(onHttp);
       BackgroundGeolocation.onLocation(Geo.onLocation, Geo.onLocationError);
