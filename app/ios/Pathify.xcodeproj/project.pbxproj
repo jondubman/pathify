@@ -346,6 +346,7 @@
 		AB9807D723EA6BCE00477115 /* ReactNativeHaptic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeHaptic.xcodeproj; path = "../node_modules/react-native-haptic/ios/ReactNativeHaptic.xcodeproj"; sourceTree = "<group>"; };
 		ABC3E6E221EBFA3E00663856 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABE839962410C7960051DA47 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
+		ABF33C3024F0A71D007FD7C9 /* Pathify-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Pathify-Bridging-Header.h"; sourceTree = "<group>"; };
 		ABFBED652410C61600A2E0D3 /* PathifyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PathifyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABFBED672410C61600A2E0D3 /* PathifyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathifyUITests.swift; sourceTree = "<group>"; };
 		ABFBED692410C61600A2E0D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -470,6 +471,7 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				ABF33C3024F0A71D007FD7C9 /* Pathify-Bridging-Header.h */,
 			);
 			name = Pathify;
 			sourceTree = "<group>";
@@ -749,12 +751,15 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
 				LastUpgradeCheck = 940;
-				ORGANIZATIONNAME = Facebook;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = KDB2MK77BH;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1160;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1390,8 +1395,9 @@
 			baseConfigurationReference = D969705402707E37230BD515 /* Pods-Pathify.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 1.0.0.6;
-				DEAD_CODE_STRIPPING = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1.0.0.7;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1405,8 +1411,14 @@
 				INFOPLIST_FILE = Pathify/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+					"$(inherited)",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1415,6 +1427,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.pathify;
 				PRODUCT_NAME = Pathify;
+				SWIFT_OBJC_BRIDGING_HEADER = "Pathify-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "arm64 arm64e";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1426,7 +1441,8 @@
 			baseConfigurationReference = 905DCE60B7E5EAA4C215751D /* Pods-Pathify.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 1.0.0.6;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1.0.0.7;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1440,8 +1456,14 @@
 				INFOPLIST_FILE = Pathify/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+					"$(inherited)",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -1451,6 +1473,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = app.pathify;
 				PRODUCT_NAME = Pathify;
+				SWIFT_OBJC_BRIDGING_HEADER = "Pathify-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "arm64 arm64e";
 				VERSIONING_SYSTEM = "apple-generic";

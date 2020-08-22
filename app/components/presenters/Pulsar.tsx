@@ -48,10 +48,12 @@ class Pulsar extends Component<PulsarProps, PulsarState> {
     const pulseOutAnimation = Animated.timing(pulse, {
       duration: pulseMsec,
       toValue: pulseMax,
+      useNativeDriver: false,
     })
     const pulseInAnimation = Animated.timing(pulse, {
       duration: pulseMsec,
       toValue: pulseMin,
+      useNativeDriver: false,
     })
     this._pulseAnimation = Animated.loop( // indefinitely
       Animated.sequence([pulseOutAnimation, pulseInAnimation]),

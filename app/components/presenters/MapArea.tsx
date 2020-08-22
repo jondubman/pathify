@@ -237,7 +237,7 @@ class MapArea extends Component<MapAreaProps> {
   onRegionIsChanging(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
     const { isUserInteraction } = args.properties;
     if (isUserInteraction) {
-      log.info('onRegionIsChanging', args.geometry.coordinates);
+      log.trace('onRegionIsChanging', args.geometry.coordinates);
     }
     this.props.mapRegionChanging();
   }
