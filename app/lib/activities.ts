@@ -131,7 +131,15 @@ export const exportActivity = (activity: ActivityData): ExportedActivity | null 
 }
 
 export const extendActivity = (activity: ActivityData): ActivityDataExtended => {
-  const a = { ...activity } as ActivityDataExtended;
+  // Note this no longer works in Realm v>3 now that it uses NAPI... spread operator is broken.
+  // See https://github.com/realm/realm-js/issues/2844
+  // const a = { ...activity } as ActivityDataExtended;
+  // Workaround:
+  let a = { id: activity.id } as ActivityDataExtended;
+  for (const key of Object.keys(ActivitySchema.properties)) {
+    a[key] = activity[key];
+  }
+
   try {
     if (a.odo && a.odoStart) {
       a.distance = a.odo - a.odoStart;
