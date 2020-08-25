@@ -25,6 +25,7 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC774D0FF4A84A63B4A92DE9 /* libz.tbd */; };
+		AB10087424F5B0EE003D31C8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */; };
 		AB666CE624F09F1E00063DA1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */; };
 		ABE839982410C7970051DA47 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE839962410C7960051DA47 /* SnapshotHelper.swift */; };
 		ABFBED682410C61600A2E0D3 /* PathifyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABFBED672410C61600A2E0D3 /* PathifyUITests.swift */; };
@@ -340,6 +341,7 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		905DCE60B7E5EAA4C215751D /* Pods-Pathify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.release.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.release.xcconfig"; sourceTree = "<group>"; };
 		AB04EBE821D9C9CC00396798 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
+		AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB9807D723EA6BCE00477115 /* ReactNativeHaptic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeHaptic.xcodeproj; path = "../node_modules/react-native-haptic/ios/ReactNativeHaptic.xcodeproj"; sourceTree = "<group>"; };
 		ABC3E6E221EBFA3E00663856 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -467,6 +469,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */,
+				AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				ABF33C3024F0A71D007FD7C9 /* Pathify-Bridging-Header.h */,
 			);
@@ -1127,6 +1130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB666CE624F09F1E00063DA1 /* LaunchScreen.storyboard in Resources */,
+				AB10087424F5B0EE003D31C8 /* LaunchScreen.xib in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1380,7 +1384,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1.0.0.8;
+				CURRENT_PROJECT_VERSION = 1.0.0.9;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
@@ -1426,7 +1430,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1.0.0.8;
+				CURRENT_PROJECT_VERSION = 1.0.0.9;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
