@@ -8,7 +8,7 @@ import { handlePollRequest } from 'lib/client';
 
 router.get('/', function (req, res) {
   const { clientAlias, clientId, timeout } = req.query;
-  const timeoutMsec = timeout || constants.serverPollTimeout;
+  const timeoutMsec = (timeout && parseInt(timeout.toString())) || constants.serverPollTimeout;
   log.debug(`poll from clientId ${clientId} (${clientAlias}) timeout=${timeoutMsec}`);
   handlePollRequest(req, res, timeoutMsec);
 })

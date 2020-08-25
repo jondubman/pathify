@@ -28,7 +28,7 @@ let appQueryPromises: AppQueryPromises = {};
 router.get('/', function (req, res) {
   const { clientAlias, clientId, message } = req.query;
   log.debug(`push text clientAlias ${clientAlias}, clientId ${clientId}, message ${message}`);
-  pushToClient(message, clientId, clientAlias);
+  pushToClient(message, clientId.toString(), clientAlias.toString());
   res.send({ message: 'done' });
 })
 
@@ -40,7 +40,7 @@ router.post('/', function (req, res) {
   // OK for clientId to be missing if we have clientAlias
   // If both are provided by mistake, clientAlias overrides.
   if (clientAlias) {
-    clientId = clientIdForAlias(clientAlias);
+    clientId = clientIdForAlias(clientAlias.toString());
   }
   if (!clientId) {
     res.send({ message: 'No client specified; set environment variable CA for client alias or CID for client ID' });
@@ -85,7 +85,7 @@ router.post('/', function (req, res) {
     }
   }
   log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message`, messageToLog(message));
-  pushToClient(message, clientId, clientAlias);
+  pushToClient(message, clientId.toString(), clientAlias.toString());
 
   if (message.type !== 'appQuery') { // The handler for POST to /appQueryResponse above should respond to an appQuery.
     res.send({ message: 'OK' }); // typical
