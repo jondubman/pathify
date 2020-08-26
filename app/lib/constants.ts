@@ -1,7 +1,7 @@
 // constants module
 
-import * as uuid from 'uuid/v4';
-const clientId = uuid.default(); // TODO perist
+import { v4 as uuidv4 } from 'uuid';
+const clientId = uuidv4(); // TODO perist
 
 import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
 import { DomainTuple } from 'victory-native';

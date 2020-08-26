@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as util from 'util'
-import * as uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 var router = express.Router()
 
@@ -56,7 +56,7 @@ router.post('/', function (req, res) {
   //   then server forwards the app's response to the original requester by responding to this request
 
   if (message.type === 'appQuery') {
-    const appQueryUuid = uuid();
+    const appQueryUuid = uuidv4();
     message.params = { ...message.params, uuid: appQueryUuid } as AppQueryParams;
     if (appQueryPromises[appQueryUuid]) {
       log.warn('call to appQuery with existing uuid'); // not likely!

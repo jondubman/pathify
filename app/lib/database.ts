@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import * as uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   AppAction,
@@ -244,7 +244,7 @@ const database = {
   // Return new Activity. Creates Path with corresponding id.
   createActivity: (now: number, odoStart: number = 0): Activity => {
     const newActivityTemplate: ActivityData = {
-      id: uuid.default(),
+      id: uuidv4(),
       schemaVersion,
       count: 0,
       gain: 0,
