@@ -752,21 +752,21 @@ const sagas = {
     log.info('logs cleared');
   },
 
-  // Caution: clearStorage is highly destructive, without warning or confirmation!
-  clearStorage: function* () {
-    try {
-      if (utils.isDebugVersion) { // No way should we do this on production version. With confirmation, if ever...
-        yield call(log.warn, 'saga clearStorage on debug version of app - deleting all persisted data!');
-        yield call(database.reset); // including Settings
-        yield call(Geo.destroyLocations);
-        yield call(Geo.destroyLog);
-      } else {
-        yield call(log.warn, 'saga clearStorage - taking no action, production version!');
-      }
-    } catch (err) {
-      yield call(log.error, 'saga clearStorage', err);
-    }
-  },
+  // // Caution: clearStorage is highly destructive, without warning or confirmation!
+  // clearStorage: function* () {
+  //   try {
+  //     if (utils.isDebugVersion) { // No way should we do this on production version. With confirmation, if ever...
+  //       yield call(log.warn, 'saga clearStorage on debug version of app - deleting all persisted data!');
+  //       yield call(database.reset); // including Settings
+  //       yield call(Geo.destroyLocations);
+  //       yield call(Geo.destroyLog);
+  //     } else {
+  //       yield call(log.warn, 'saga clearStorage - taking no action, production version!');
+  //     }
+  //   } catch (err) {
+  //     yield call(log.error, 'saga clearStorage', err);
+  //   }
+  // },
 
   clockPress: function* (action: Action) {
     const params = action.params as ClockPressParams;
@@ -1676,11 +1676,8 @@ const sagas = {
     try {
       const runningInBackgroundNow = utils.appInBackground();
       yield call(database.completeAnyMigration);
-      const { recoveryMode, startupAction_clearStorage } = yield select((state: AppState) => state.flags);
+      const { recoveryMode } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
-      if (startupAction_clearStorage) {
-        yield put(newAction(AppAction.clearStorage)); // BOOM!
-      }
       const settings = (yield call(database.settings)) as SettingsObject;
       yield call(log.info, 'Saved App settings', settings);
       // restore app options from settings
@@ -1690,7 +1687,7 @@ const sagas = {
           newSettings[propName] = settings[propName];
         }
       }
-      const propagatedSettings = {} as any; // TODO really mean type of AppState options
+      const propagatedSettings = {} as any; // TODO use the type of AppState options
       if (newSettings.pausedTime) {
         propagatedSettings.centerTime = newSettings.pausedTime;
         propagatedSettings.scrollTime = newSettings.pausedTime;

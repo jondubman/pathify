@@ -91,7 +91,6 @@ export const initialAppState = {
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // manually opened by user
     startMenuOpen: false, // if manually opened by user
-    startupAction_clearStorage: false, // whether to clear storage when starting up the app (NOTE: true is destructive!)
     showActivityInfo: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline

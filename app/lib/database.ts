@@ -267,10 +267,6 @@ const database = {
     return newActivity;
   },
 
-  eventsForActivity: (id: string): Events => {
-    return database.events().filtered('activityId == $0', id);
-  },
-
   // Delete both the Activity and its corresponding Path
   deleteActivity: (activityId: string): void => {
     let existingActivity = realm.objects('Activity')
@@ -289,6 +285,10 @@ const database = {
     }
   },
 
+  eventsForActivity: (id: string): Events => {
+    return database.events().filtered('activityId == $0', id);
+  },
+
   // Update (creating, if necessary) both the Activity and its corresponding Path.
   updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
     let activity: Activity | null = null;
@@ -302,8 +302,6 @@ const database = {
       store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: activity!.id }));
     }
   },
-
-  // events
 
   createEvents: async (events: GenericEvents) => {
     realm.write(() => {
@@ -354,24 +352,24 @@ const database = {
     try {
       const now = utils.now();
       const settings = realm.objects('Settings') as Realm.Results<SettingsObject>;
-      if (settings.length) {
+      if (settings.length) { // If we already have saved settings
         realm.write(() => {
           for (let [key, value] of Object.entries(changes)) {
             settings[0][key] = value;
           }
           settings[0].updateTime = now;
-          // log.debug('changeSettings changes:', changes);
         })
+        const newSettings = realm.objects('Settings') as Realm.Results<SettingsObject>;
       } else {
         // Note id is always 1 (Settings is a singleton)
-        // Initialize settings:
+        // Initialize settings (which must be done for a newly installed app)
         const settings = { ...defaultSettings, ...changes, updateTime: now }; // merge any changes
         realm.write(() => {
           realm.create('Settings', settings, true); // true: update
         })
         log.debug('changeSettings wrote:', settings);
       }
-      // log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
+      log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
     } catch (err) {
       log.error('changeSettings error', err);
     }
@@ -441,8 +439,21 @@ const database = {
   settings: (): any => {
     try {
       const currentState = realm.objects('Settings') as Realm.Results<SettingsObject>;
+      log.trace('settings currentState', currentState[0].toJSON());
+      let r = {} as any;
       if (currentState.length) {
-        return { ...currentState[0], schemaVersion }; // return a copy of all the settings plus schemaVersion
+          // Return a copy of all the settings plus schemaVersion.
+          // Note spread operators no longer work for Realm objects so we resort to Object.entries.
+          const savedSettings = currentState[0];
+          const keys = Object.keys(currentState[0].toJSON()); // TODO this is ugly but needed for Realm to obtain keys
+          for (const key of keys) {
+            const value = savedSettings[key];
+            log.trace('key', key, 'value',  value);
+            r[key] = value;
+          }
+          r.schemaVersion = schemaVersion;
+          log.trace('returning', r);
+          return r;
       }
       return {};
     } catch (err) {
@@ -451,12 +462,12 @@ const database = {
   },
 
   // Caution: This will simply, instantly delete EVERYTHING in the database! There is no undo!
-  reset: async () => {
-    log.debug('Resetting Realm database!');
-    realm.write(() => {
-      realm.deleteAll(); // Boom!
-    })
-  },
+  // reset: async () => {
+  //   log.debug('Resetting Realm database!');
+  //   realm.write(() => {
+  //     realm.deleteAll(); // Boom!
+  //   })
+  // },
 }
 
 export default database;

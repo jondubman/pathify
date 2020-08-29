@@ -42,7 +42,6 @@ export enum AppAction {
   'centerMapOnPath' = 'centerMapOnPath',
   'centerMapOnUser' = 'centerMapOnUser',
   'clearLogs' = 'clearLogs',
-  'clearStorage' = 'clearStorage',
   'clockPress' = 'clockPress',
   'closePanels' = 'closePanels',
   'completeAppStartup' = 'completeAppStartup',

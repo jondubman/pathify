@@ -477,9 +477,9 @@ const constants = {
   mapLogoHeight,
   mapStyles: [
     { name: 'None', opacity: 1, url: '' }, // see flags.allowMapStyleNone
-    { name: 'Trails', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnrhnz000d2rqkgscnpycp' },
-    { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/cjgsnuof2000q2rpqejq83nq0' },
-    { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/cjgsp7p4g00102rs3w4wcr655' },
+    { name: 'Trails', opacity: 1, url: 'mapbox://styles/jdubman/ckeeumup108ux19ry42q8wrbc' },
+    { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/ckefxdhc12b6819nsb2cwiqyt' },
+    { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/ckeeuptx719hg19oy8ane401t' },
   ] as MapStyle[],
   marks: {
     centerlineWidthDefault: 1.5,
