@@ -268,11 +268,12 @@ const database = {
   },
 
   // Delete both the Activity and its corresponding Path
-  deleteActivity: (activityId: string): void => {
-    let existingActivity = realm.objects('Activity')
+  deleteActivity: (activityId: string, deleteEvents: boolean = false): void => {
+    const existingActivity = realm.objects('Activity')
                                 .filtered(`id == "${activityId}"`);
-    let existingPath = realm.objects('Path')
+    const existingPath = realm.objects('Path')
                             .filtered(`id == "${activityId}"`);
+    const existingEvents = database.eventsForActivity(activityId);
     if (existingActivity || existingPath) {
       realm.write(() => {
         if (existingActivity) {
@@ -280,6 +281,10 @@ const database = {
         }
         if (existingPath) {
           realm.delete(existingPath);
+        }
+        if (existingEvents && existingEvents.length && deleteEvents) {
+          log.trace(`deleting ${existingEvents.length} events`);
+          realm.delete(existingEvents);
         }
       })
     }

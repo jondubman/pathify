@@ -834,7 +834,6 @@ const sagas = {
 
   // TODO paint this activity red on the ActivityList while on the chopping block so it's clear which it is.
   // TODO consider an option to avoid the confirmation alert, at least for testing.
-  // TODO delete underlying events?
   deleteActivity: function* (action: Action) {
     try {
       const params = action.params as DeleteActivityParams;
@@ -844,6 +843,9 @@ const sagas = {
         scrollTime,
         selectedActivityId,
       } = yield select((state: AppState) => state.options);
+      const {
+        deleteEventsWhenDeletingActivity,
+      } = yield select((state: AppState) => state.flags);
       let deleteButton: AlertButton = {
         onPress: () => {
           log.info('Delete activity', id);
@@ -856,7 +858,7 @@ const sagas = {
             store.dispatch(newAction(AppAction.setAppOption, { selectedActivityId: null }));
           }
           setTimeout(() => {
-            database.deleteActivity(id);
+            database.deleteActivity(id, deleteEventsWhenDeletingActivity);
             Vibration.vibrate(constants.timing.vibration);
             const { activityList } = store.getState().refs;
             if (activityList) {
