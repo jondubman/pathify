@@ -35,6 +35,9 @@ const snapPosition = (state: AppState) => (snapPositions()[state.options.grabBar
 const snapBack = (snap: number) => (
   Math.min(snap, snapPositions()[constants.snapIndex.activityList])
 )
+
+// GrabBar "snaps back" up if you drag it down to show details when there are none to show...
+// But should that change, details are shown -- the user's preference is remembered.
 const shouldSnapBack = (state: AppState) => (
   !showActivityDetailsRows(state) ||
   !state.options.selectedActivityId ||

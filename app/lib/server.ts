@@ -23,7 +23,7 @@ const handleServerPush = async (data: any) => {
     // TODO Handle other kinds of incoming JSON
     if (typeof data === 'object') {
       // log.info(`serverPush: message count ${data.length}`);
-      for (let message of data) {
+      for (const message of data) {
         log.debug('serverPush message', messageToLog(message));
         const action = message.type;
         const params = message.params;

@@ -645,14 +645,14 @@ export const snapPositions = (): number[] => {
   const detailsRow4 = detailsRow3 + detailsRowHeight;
   const detailsRow5 = detailsRow4 + detailsRowHeight;
   const snapPositions = [
-    topMin,
-    belowTopButtons,
-    listDetailsBoundary,
-    detailsRow1,
-    detailsRow2,
-    detailsRow3,
-    detailsRow4,
-    detailsRow5,
+    topMin, // 0
+    belowTopButtons, // 1
+    listDetailsBoundary, // 2
+    detailsRow1, // 3
+    detailsRow2, // 4
+    detailsRow3, // 5
+    detailsRow4, // 6
+    detailsRow5, // 7
   ]
   return snapPositions;
 }

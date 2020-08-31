@@ -359,22 +359,20 @@ const database = {
       const settings = realm.objects('Settings') as Realm.Results<SettingsObject>;
       if (settings.length) { // If we already have saved settings
         realm.write(() => {
-          for (let [key, value] of Object.entries(changes)) {
+          for (const [key, value] of Object.entries(changes)) {
             settings[0][key] = value;
           }
           settings[0].updateTime = now;
         })
-        const newSettings = realm.objects('Settings') as Realm.Results<SettingsObject>;
-      } else {
-        // Note id is always 1 (Settings is a singleton)
-        // Initialize settings (which must be done for a newly installed app)
-        const settings = { ...defaultSettings, ...changes, updateTime: now }; // merge any changes
+        log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
+      } else { // This case happens first after installing the app, but it should only happen once.
+        // Note id is always 1 (Settings is a singleton.) Apply changes to defaultSettings:
+        const initialSettings = { ...defaultSettings, ...changes, updateTime: now }; // merge any changes
         realm.write(() => {
-          realm.create('Settings', settings, true); // true: update
+          realm.create('Settings', initialSettings, true); // true: update
         })
-        log.debug('changeSettings wrote:', settings);
+        log.debug('changeSettings wrote:', initialSettings);
       }
-      log.trace('changeSettings', 'changes', changes, 'new settings', settings[0]);
     } catch (err) {
       log.error('changeSettings error', err);
     }

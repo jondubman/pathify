@@ -488,7 +488,7 @@ export const Geo = {
       if (locations.length && activityId) {
         // AppAction.addEvents
         const locationEvents: LocationEvents = [];
-        for (let location of locations) {
+        for (const location of locations) {
           if (location.sample) {
             continue; // ignore sample locations
           }

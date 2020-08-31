@@ -132,7 +132,7 @@ const timeseries = {
 
     let gap = Infinity;
     let results: GenericEvents = [];
-    for (let e of events) {
+    for (const e of events) {
       const event = e as any as GenericEvent;
       if (eventFilter && !eventFilter(event)) {
         continue; // ignore events rejected by the filter

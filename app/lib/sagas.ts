@@ -154,7 +154,7 @@ const sagas = {
   // root saga wires things up
   root: function* () {
     // Avoid boilerplate by automatically yielding takeEvery for each AppAction
-    for (let action in AppAction) {
+    for (const action in AppAction) {
       if (AppAction[action]) {
         // yield call(log.trace, 'configuring saga for AppAction', action);
         if (action === AppAction.setAppOptionASAP || action === AppAction.timerTick) { // special case
@@ -1170,7 +1170,7 @@ const sagas = {
       let tStart = 0;
       let latestLocEvent: LocationEvent | undefined = undefined;
       let modeNumeric = 0;
-      for (let e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
+      for (const e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
         const event = e as any as GenericEvent;
         const { type } = event;
         if (type === EventType.LOC) {
@@ -1581,7 +1581,7 @@ const sagas = {
     // Write through to settings in database.
     // Note that if starting up (the early return above), we avoid writing the same settings we just read.
     const newSettings = {} as any;
-    for (let propName of persistedOptions) {
+    for (const propName of persistedOptions) {
       if (params[propName] !== undefined) {
         newSettings[propName] = params[propName];
       }
@@ -1699,8 +1699,8 @@ const sagas = {
         yield call(log.debug, 'Reading settings from database', newSettings);
         yield put(newAction(AppAction.setAppOption, { ...newSettings, ...propagatedSettings }));
       }
-      // restore app flags from settings
-      for (let propName of persistedFlags) {
+      // Restore app flags from settings
+      for (const propName of persistedFlags) {
         if (settings[propName] !== undefined) {
           const actionType = (settings[propName] ? AppAction.flagEnable : AppAction.flagDisable);
           yield put(newAction(actionType, propName)); // TODO any reason not to set these all at once?
