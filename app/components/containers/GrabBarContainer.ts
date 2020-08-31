@@ -21,6 +21,7 @@ interface GrabBarStateProps {
   snapBack: boolean;
   snapBackTo: number;
   snapIndex: number;
+  topMenuOpen: boolean;
 }
 
 interface GrabBarDispatchProps {
@@ -41,7 +42,8 @@ const snapBack = (snap: number) => (
 const shouldSnapBack = (state: AppState) => (
   !showActivityDetailsRows(state) ||
   !state.options.selectedActivityId ||
-  !getCachedPathInfo(state)
+  !getCachedPathInfo(state) ||
+  state.flags.topMenuOpen
 )
 const snapIfNeeded = (state: AppState, snap: number) => (
   shouldSnapBack(state) ? snapBack(snap) : snap
@@ -57,6 +59,7 @@ const mapStateToProps = (state: AppState): GrabBarStateProps => {
     snapBack: shouldSnapBack(state),
     snapBackTo: snapBack(snap),
     snapIndex: state.options.grabBarSnapIndex,
+    topMenuOpen: state.flags.topMenuOpen,
   }
 }
 

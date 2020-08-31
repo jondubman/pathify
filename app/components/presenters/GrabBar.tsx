@@ -144,6 +144,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
 
     const {
       pressed,
+      topMenuOpen,
     } = this.props;
     // The styles & layout here may be confusing. The intent is, the grabBar appears subtle unless pressed (grabbed).
     // When pressed, it turns color. When dragged, the grabBar itself remains that color, plus a "snap bar" that shows
@@ -151,6 +152,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const dragStyle = pressed ? [lineStyleBase, lineStyleDragging] : lineStyleBase;
     const snapStyle = pressed ? [lineStyleBase, lineStyleSnapping] : lineStyleBase;
     const snapStyleIfPressed = pressed ? snapStyle : dragStyle;
+    const pointerEvents = topMenuOpen ? 'none' : 'auto';
     return (
       <Fragment key={this.props.keyName}>
         {pressed ? (
@@ -162,12 +164,14 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
             <View style={dragStyle} />
           </View>
         ) : null}
-        <View {...this._panResponder.panHandlers} style={topLayoutStyle}>
-          <View pointerEvents="none" style={snapStyleIfPressed} />
-          <View pointerEvents="none" style={snapStyleIfPressed} />
-          <View pointerEvents="none" style={snapStyleIfPressed} />
-          <View pointerEvents="none" style={snapStyleIfPressed} />
-          <View pointerEvents="none" style={snapStyleIfPressed} />
+        <View pointerEvents={pointerEvents} style={topLayoutStyle}>
+          <View {...this._panResponder.panHandlers} >
+            <View pointerEvents="none" style={snapStyleIfPressed} />
+            <View pointerEvents="none" style={snapStyleIfPressed} />
+            <View pointerEvents="none" style={snapStyleIfPressed} />
+            <View pointerEvents="none" style={snapStyleIfPressed} />
+            <View pointerEvents="none" style={snapStyleIfPressed} />
+          </View>
         </View>
       </Fragment>
     )

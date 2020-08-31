@@ -1959,7 +1959,6 @@ const sagas = {
     const {
       appActive,
       followingPath,
-      mapMoving,
       mapReorienting,
       timelineNow,
       timelineScrolling,
@@ -2000,6 +1999,23 @@ const sagas = {
     }
   },
 
+  topButtonPressed: function* (action: Action) {
+    const state = yield select((state: AppState) => state);
+    const { grabBarSnapIndex, selectedActivityId } = state.options;
+    const snapIndexMinimum = constants.snapIndex.activityList; // Ensure at least this is shown.
+    // TODO for now, no actual menu opens unless there is a selected activity, because it would serve no purpose.
+    if (selectedActivityId !== null) {
+      yield put(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));
+      yield put(newAction(AppAction.flagToggle, 'topMenuOpen'));
+    }
+    // Ensure the ActivityList is shown, in order to see which activity would be affected by the menu.
+    if (grabBarSnapIndex < snapIndexMinimum) {
+      yield put(newAction(AppAction.setAppOption, {
+        grabBarSnapIndex: snapIndexMinimum,
+        grabBarSnapIndexPreview: snapIndexMinimum,
+      }))
+    }
+  },
   // Stop following user after panning the map.
   userMovedMap: function* (action: Action) {
     try {

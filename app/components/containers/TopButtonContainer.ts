@@ -5,6 +5,7 @@ import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import constants from 'lib/constants';
 import {
   activityIndex,
   dynamicAreaTop,
@@ -55,13 +56,7 @@ const mapDispatchToProps = (dispatch: Function): TopButtonDispatchProps => {
   const onPressIn = () => {
     log.debug('TopButton onPressIn');
     ReactNativeHaptic.generate('impactLight');
-    const state = store.getState();
-    const { selectedActivityId } = state.options;
-    // TODO for now, no actual menu opens unless there is a selected activity, because it would serve no purpose.
-    if (selectedActivityId !== null) {
-      dispatch(newAction(AppAction.closePanels, { option: 'otherThanTopMenu' }));
-      dispatch(newAction(AppAction.flagToggle, 'topMenuOpen'));
-    }
+    dispatch(newAction(AppAction.topButtonPressed));
   }
   const dispatchers = {
     onPressIn,

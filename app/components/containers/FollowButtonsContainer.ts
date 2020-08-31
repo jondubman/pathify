@@ -8,7 +8,6 @@ import { AppAction, newAction } from 'lib/actions';
 import {
   dynamicLowerButtonBase,
   mapHidden,
-  mapIsFullScreen,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import store from 'lib/store';

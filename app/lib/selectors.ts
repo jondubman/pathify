@@ -157,16 +157,20 @@ export const shouldShowTimeline = (state: AppState): boolean => (
   shouldShowActivityList(state)
 )
 
+// below ActivityList
 export const showActivityDetailsRows = (state: AppState): number => {
-  // below ActivityList
-  const rows = Math.max(0, state.options.grabBarSnapIndex - constants.snapIndex.activityList);
-  return rows;
+  if (state.flags.topMenuOpen) {
+    return 0;
+  }
+  return Math.max(0, state.options.grabBarSnapIndex - constants.snapIndex.activityList);
 }
 
+// below ActivityList
 export const showActivityDetailsRowsPreview = (state: AppState): number => {
-  // below ActivityList
-  const rows = Math.max(0, state.options.grabBarSnapIndexPreview - constants.snapIndex.activityList)
-  return rows;
+  if (state.flags.topMenuOpen) {
+    return 0;
+  }
+  return Math.max(0, state.options.grabBarSnapIndexPreview - constants.snapIndex.activityList)
 }
 
 export const dynamicTopBelowActivityList = (state: AppState): number => (

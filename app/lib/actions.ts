@@ -95,6 +95,7 @@ export enum AppAction {
   'timelineZoomed' = 'timelineZoomed',
   'timelineZooming' = 'timelineZooming',
   'timerTick' = 'timerTick',
+  'topButtonPressed' = 'topButtonPressed',
   'userMovedMap' = 'userMovedMap',
   'zoomToActivity' = 'zoomToActivity',
 }

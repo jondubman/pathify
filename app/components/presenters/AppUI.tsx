@@ -68,7 +68,6 @@ class AppUI extends Component<AppUIProps> {
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
           <View style={AppStyles.logo} />
-          {showActivityInfo ? <ActivityInfoContainer /> : null}
           <View pointerEvents={pointerEvents} style={timelineOpacity}>
             <TimelineScrollContainer />
           </View>
@@ -84,6 +83,7 @@ class AppUI extends Component<AppUIProps> {
                 <SettingsPanelContainer />
                 <TopMenuContainer />
               </View>
+              {showActivityInfo ? <ActivityInfoContainer /> : null}
               <StartMenuContainer />
               <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <StartButtonContainer />
