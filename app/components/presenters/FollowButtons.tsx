@@ -55,7 +55,7 @@ const FollowButtons = (props: FollowButtonsProps) => (props.hideBoth ? null : (
         <View style={[Styles.labelView, { bottom: props.bottomOffset + bottom1 }]}>
           <LabelContainer>
             <Text style={labelTextStyle}>
-              PAST
+              PAST LOC
             </Text>
           </LabelContainer>
         </View>
