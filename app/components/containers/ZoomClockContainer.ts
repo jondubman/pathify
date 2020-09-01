@@ -15,8 +15,11 @@ import ZoomClock from 'presenters/ZoomClock';
 import log from 'shared/log';
 
 interface ZoomClockStateProps {
+  activitySelected: boolean;
   allowZoom: boolean;
   bottom: number;
+  followingPath: boolean;
+  followingUser: boolean;
   nowMode: boolean;
   pressed: boolean;
 }
@@ -33,12 +36,18 @@ export type ZoomClockProps = ZoomClockStateProps & ZoomClockDispatchProps;
 
 const mapStateToProps = (state: AppState): ZoomClockStateProps => {
   const {
+    activitySelected,
+    followingPath,
+    followingUser,
     timelineNow,
     zoomClockPressed,
   } = state.flags;
   return {
+    activitySelected: !!state.options.selectedActivityId,
     allowZoom: shouldShowTimeline(state),
     bottom: dynamicClockBottom(state),
+    followingPath,
+    followingUser,
     nowMode: timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     pressed: zoomClockPressed,
   }

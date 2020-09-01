@@ -191,8 +191,11 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
 
   render() {
     const {
+      activitySelected,
       allowZoom,
       bottom,
+      followingPath,
+      followingUser,
       nowMode,
       pressed,
     } = this.props;
@@ -214,6 +217,20 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     const verticalTrackStyle = verticalLock ? [Styles.verticalTrack, Styles.verticalTrackActive] : Styles.verticalTrack;
     const horizontalPositionStyle = (horizontalLock ? { left: centerline() - clockDiameter / 2 - deltaX } : {})
     const clockViewStyle = [Styles.clockCenter, bottomStyle, horizontalPositionStyle];
+    let labelText = 'PAST TIMEPOINT';
+    if (nowMode) {
+      if (followingPath) {
+        labelText = 'CURRENT TIME BUT NOT LOC';
+      } else if (followingUser) {
+        labelText = 'CURRENT TIME AND LOC';
+      } else {
+        labelText = 'CURRENT TIME';
+      }
+    } else {
+      if (followingPath) {
+        labelText = activitySelected ? 'REVIEWING PATH' : 'TIMEPOINT W/O LOCATION';
+      }
+    }
     return (
       <Fragment>
         {pressed ? (
@@ -239,7 +256,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           <View style={[Styles.labelView, { bottom: bottom - 16 }]}>
             <LabelContainer>
               <Text style={labelTextStyle}>
-                TIMELINE
+                {labelText}
               </Text>
             </LabelContainer>
           </View>

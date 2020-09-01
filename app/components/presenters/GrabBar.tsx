@@ -168,7 +168,6 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       keyName,
       labelsEnabled,
       pressed,
-      snapBack,
       snapIndex,
       topMenuOpen,
     } = this.props;
