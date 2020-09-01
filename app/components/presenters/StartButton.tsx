@@ -40,11 +40,8 @@ const Styles = StyleSheet.create({
     paddingTop: 2,
   },
   labelView: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
     position: 'absolute',
-    left: 1,
-    width: 100, // arbitrary
+    left: 7,
   },
 })
 

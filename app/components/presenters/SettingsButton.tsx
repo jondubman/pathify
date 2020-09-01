@@ -38,11 +38,8 @@ const Styles = StyleSheet.create({
     width: size,
   },
   labelView: {
-    flexDirection: 'row',
-    justifyContent: 'center',
     position: 'absolute',
-    left: 8,
-    width: constants.buttonSize + (constants.buttonOffset * 2) + 2,
+    left: 7,
   },
 })
 
