@@ -14,7 +14,6 @@ import {
   ActivityDataExtended,
 } from 'lib/activities';
 import {
-  cachedActivity,
   dynamicTopBelowButtons,
   shouldShowActivityList,
 } from 'lib/selectors';

@@ -79,11 +79,11 @@ class AppUI extends Component<AppUIProps> {
               </View>
               <TimelineControlsContainer />
               <View style={{ position: 'absolute', width }}>
+                <TopMenuContainer />
+                {showActivityInfo ? <ActivityInfoContainer /> : null}
                 <HelpPanelContainer />
                 <SettingsPanelContainer />
-                <TopMenuContainer />
               </View>
-              {showActivityInfo ? <ActivityInfoContainer /> : null}
               <StartMenuContainer />
               <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <StartButtonContainer />

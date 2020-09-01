@@ -107,19 +107,23 @@ export const dynamicAreaTop = (): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )
 
-export const dynamicClockBottom = (state: AppState): number => (
-  shouldShowTimeline(state) ? (dynamicTimelineHeight(state) + constants.refTime.height + 1) :
-    (constants.safeAreaBottom + constants.refTime.height + 1)
+export const bottomGivenTimeline = (state: AppState): number => (
+  (shouldShowTimeline(state) || !constants.safeAreaBottom) ? 0 : constants.bottomWithoutTimeline
 )
 
+// Note that a larger 'bottom' yields a higher position.
+export const dynamicClockBottom = (state: AppState): number => (
+  bottomGivenTimeline(state) + dynamicTimelineHeight(state) + constants.refTime.height + 1
+)
+
+// Note that a smaller 'bottom' yields a lower position.
 export const dynamicRefTimeBottom = (state: AppState): number => (
   dynamicClockBottom(state) - constants.refTime.height
 )
 
 // TODO should this be just a constant now?
 export const dynamicLowerButtonBase = (state: AppState): number => (
-  shouldShowTimeline(state) ? (constants.mapLogoHeight + constants.bottomButtonSpacing)
-                            : (constants.safeAreaBottom + constants.mapLogoHeight + constants.bottomButtonSpacing)
+  bottomGivenTimeline(state) + constants.mapLogoHeight + constants.bottomButtonSpacing
 )
 
 export const dynamicMapHeight = (state: AppState): number => {

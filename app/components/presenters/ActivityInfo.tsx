@@ -8,7 +8,7 @@ import GrabBarContainer from 'containers/GrabBarContainer';
 
 const ActivityInfo = (props: ActivityInfoProps) => (
   <React.Fragment>
-    <ActivityListContainer />
+    {props.showActivityList ? <ActivityListContainer /> : null}
     {props.showActivityDetails ? <ActivityDetailsContainer /> : null}
     {props.showGrabBar ? <GrabBarContainer /> : null}
   </React.Fragment>

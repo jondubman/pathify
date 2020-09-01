@@ -188,7 +188,7 @@ const colors = {
     underlay: colorThemes.help,
   },
   helpPanel: {
-    background: withOpacity(colorThemes.background, defaultOpacity),
+    background: colorThemes.background,
     border: namedColors.darkerGray,
     labelsLabel: withOpacity(colorThemes.labels, 0.75),
     labelsThumb: withOpacity(colorThemes.labels, 0.85),
@@ -228,7 +228,7 @@ const colors = {
     underlay: colorThemes.settings,
   },
   settingsPanel: {
-    background: withOpacity(colorThemes.background, defaultOpacity),
+    background: colorThemes.background,
     border: colorThemes.settings,
     choiceUnderlay: withOpacity(colorThemes.settings, 0.5),
     opacitySliderBackground: withOpacity(colorThemes.settings, 0.3),
@@ -350,6 +350,7 @@ const constants = {
   borderRadiusSmall,
   borderRadiusMedium,
   bottomButtonSpacing,
+  bottomWithoutTimeline: 10, // This layout factor was empirically determined, for devices with nonzero safeAreaBottom.
   buttonBaseOffsetPerRow: (buttonSize + buttonOffset * 2) + bottomButtonSpacing,
   buttonOffset,
   buttonSize,
@@ -507,7 +508,7 @@ const constants = {
     topSpace: 16,
     width: 160 - buttonOffset * 2, // was 126, which fits on smallest device without overlap
   },
-  safeAreaBottom,
+  safeAreaBottom, // see bottomWithoutTimeline
   safeAreaTop,
   serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
   serverUrl: 'https://pathify.app:3000/', // TODO

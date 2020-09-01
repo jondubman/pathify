@@ -2009,6 +2009,7 @@ const sagas = {
       yield put(newAction(AppAction.flagToggle, 'topMenuOpen'));
     }
     // Ensure the ActivityList is shown, in order to see which activity would be affected by the menu.
+    // That enables the selection of an activity which the topMenu would then act on. The Timeline will also be shown.
     if (grabBarSnapIndex < snapIndexMinimum) {
       yield put(newAction(AppAction.setAppOption, {
         grabBarSnapIndex: snapIndexMinimum,
@@ -2016,6 +2017,7 @@ const sagas = {
       }))
     }
   },
+
   // Stop following user after panning the map.
   userMovedMap: function* (action: Action) {
     try {
