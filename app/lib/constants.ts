@@ -179,7 +179,7 @@ const colors = {
     underlayUser: 'transparent',
   },
   grabBar: {
-    infoLabel: withOpacity(colorThemes.labels, 0.75),
+    infoLabel: withOpacity(colorThemes.labels, 0.85),
     line: withOpacity(namedColors.silver, 0.25), // inert
     lineDragging: withOpacity(namedColors.silver, 0.5),
     lineLabeled: withOpacity(colorThemes.labels, 0.5),

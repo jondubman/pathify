@@ -53,7 +53,7 @@ const labelViewStyle = {
 
 const labelTextStyle = {
   color: constants.colors.grabBar.infoLabel,
-  fontSize: 14,
+  fontSize: 12,
   fontFamily: constants.fonts.family,
   fontWeight: 'bold',
 } as StyleProp<ViewStyle>;
@@ -167,10 +167,24 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       keyName,
       labelsEnabled,
       pressed,
+      snapIndex,
       topMenuOpen,
     } = this.props;
 
     const lineStyle = labelsEnabled ? [lineStyleBase, lineStyleLabeled] : lineStyleBase;
+    const snaps = snapPositions();
+    let labelText: string;
+    if (snapIndex === 0) {
+      labelText = 'SLIDE DOWN TO RESTORE UI';
+    } else if (snapIndex === 1) {
+      labelText = 'SLIDE DOWN TO REVEAL';
+    } else if (snapIndex === 2) {
+      labelText = 'SLIDE DOWN FOR DETAILS';
+    } else if (snapIndex === snaps.length - 1) {
+      labelText = 'SLIDE UP FOR MORE MAP';
+    } else {
+      labelText = 'SLIDE DOWN FOR MORE';
+    }
 
     // The styles & layout here may be confusing. The intent is, the grabBar appears subtle unless pressed (grabbed).
     // When pressed, it turns color. When dragged, the grabBar itself remains that color, PLUS a "snap bar" that shows
@@ -189,14 +203,15 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
             <View style={dragStyle} />
             <View style={dragStyle} />
           </View>
-        ) : null}
-        <View style={[topLayoutStyle, labelViewStyle]}>
-          <LabelContainer>
-            <Text style={labelTextStyle}>
-              SLIDE BAR UP/DOWN
-            </Text>
-          </LabelContainer>
-        </View>
+        ) : (
+          <View style={[topLayoutStyle, labelViewStyle]}>
+            <LabelContainer>
+              <Text style={labelTextStyle}>
+                {labelText}
+              </Text>
+            </LabelContainer>
+          </View>
+        )}
         <View pointerEvents={pointerEvents} style={topLayoutStyle}>
           <View {...this._panResponder.panHandlers} >
             <View pointerEvents="none" style={snapStyleIfPressed} />
