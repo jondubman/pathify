@@ -420,7 +420,7 @@ export const flavorText = (state: AppState): string[] => {
     const gap = timeGapBetweenActivities(state, scrollTime);
     const previous = previousActivity(state, scrollTime);
     const gapPercent = ((previous === null) ? '?' : (((scrollTime - previous.tLast) / gap) * 100).toFixed(0));
-    return ['PAST', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
+    return ['', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
   } catch(err) {
     log.warn('flavorText error', err);
     return [''];
