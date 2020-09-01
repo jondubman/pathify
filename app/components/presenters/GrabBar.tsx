@@ -6,12 +6,14 @@ import {
   PanResponder,
   PanResponderInstance,
   StyleProp,
+  Text,
   View,
   ViewStyle,
 } from 'react-native';
 import ReactNativeHaptic from 'react-native-haptic';
 
 import { GrabBarProps } from 'containers/GrabBarContainer';
+import LabelContainer from 'containers/LabelContainer';
 import constants from 'lib/constants';
 import {
   maxGrabBarSnapIndex,
@@ -39,6 +41,21 @@ const lineStyleDragging = {
 
 const lineStyleLabeled = {
   backgroundColor: constants.colors.grabBar.lineLabeled,
+} as StyleProp<ViewStyle>;
+
+const labelViewStyle = {
+  flexDirection: 'row',
+  flex: 1,
+  justifyContent: 'center',
+  marginTop: 6,
+  width: utils.windowSize().width,
+} as StyleProp<ViewStyle>;
+
+const labelTextStyle = {
+  color: constants.colors.grabBar.infoLabel,
+  fontSize: 14,
+  fontFamily: constants.fonts.family,
+  fontWeight: 'bold',
 } as StyleProp<ViewStyle>;
 
 interface GrabBarState {
@@ -173,6 +190,13 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
             <View style={dragStyle} />
           </View>
         ) : null}
+        <View style={[topLayoutStyle, labelViewStyle]}>
+          <LabelContainer>
+            <Text style={labelTextStyle}>
+              SLIDE BAR UP/DOWN
+            </Text>
+          </LabelContainer>
+        </View>
         <View pointerEvents={pointerEvents} style={topLayoutStyle}>
           <View {...this._panResponder.panHandlers} >
             <View pointerEvents="none" style={snapStyleIfPressed} />
