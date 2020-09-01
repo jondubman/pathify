@@ -37,6 +37,10 @@ const lineStyleDragging = {
   backgroundColor: constants.colors.grabBar.lineDragging,
 } as StyleProp<ViewStyle>;
 
+const lineStyleLabeled = {
+  backgroundColor: constants.colors.grabBar.lineLabeled,
+} as StyleProp<ViewStyle>;
+
 interface GrabBarState {
 }
 
@@ -143,18 +147,23 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     } as StyleProp<ViewStyle>;
 
     const {
+      keyName,
+      labelsEnabled,
       pressed,
       topMenuOpen,
     } = this.props;
+
+    const lineStyle = labelsEnabled ? [lineStyleBase, lineStyleLabeled] : lineStyleBase;
+
     // The styles & layout here may be confusing. The intent is, the grabBar appears subtle unless pressed (grabbed).
-    // When pressed, it turns color. When dragged, the grabBar itself remains that color, plus a "snap bar" that shows
+    // When pressed, it turns color. When dragged, the grabBar itself remains that color, PLUS a "snap bar" that shows
     // where things will end up (see snapPositions) is also rendered (without zooming theme color, at medium intensity.)
-    const dragStyle = pressed ? [lineStyleBase, lineStyleDragging] : lineStyleBase;
-    const snapStyle = pressed ? [lineStyleBase, lineStyleSnapping] : lineStyleBase;
+    const dragStyle = pressed ? [lineStyleBase, lineStyleDragging] : lineStyle;
+    const snapStyle = pressed ? [lineStyleBase, lineStyleSnapping] : lineStyle;
     const snapStyleIfPressed = pressed ? snapStyle : dragStyle;
     const pointerEvents = topMenuOpen ? 'none' : 'auto';
     return (
-      <Fragment key={this.props.keyName}>
+      <Fragment key={keyName}>
         {pressed ? (
           <View pointerEvents="none" style={snapLayoutStyle}>
             <View style={dragStyle} />

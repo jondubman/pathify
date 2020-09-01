@@ -67,7 +67,7 @@ export const initialAppState = {
     appStartupCompleted: false, // once true, should never be set to false
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
-    devMode: true, // if set to true, app can be remotely controlled and queried; false for public release to App Store.
+    devMode: true, // if set to true, app can be remotely controlled and queried; false for public release to App Store!
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
