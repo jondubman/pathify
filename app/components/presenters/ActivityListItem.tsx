@@ -16,6 +16,7 @@ import {
 
 interface ActivityListItemProps {
   activity: ActivityDataExtended;
+  labelsEnabled: boolean;
   onPress: () => void;
   selected: boolean;
 }
@@ -60,6 +61,9 @@ const Styles = StyleSheet.create({
   faint: {
     opacity: 0.65,
   },
+  labelsEnabled: {
+    color: constants.colors.infoLabels,
+  },
   text: {
     color: colors.text,
     fontSize: 16,
@@ -89,7 +93,11 @@ const Styles = StyleSheet.create({
 })
 
 const ActivityListItem = (props: ActivityListItemProps) => {
-  const { activity, selected } = props;
+  const {
+    activity,
+    labelsEnabled,
+    selected
+  } = props;
   const isCurrent = !activity.tEnd;
   const { tLast } = activity;
   const time = (tLast && activity.tStart) ?
@@ -103,6 +111,12 @@ const ActivityListItem = (props: ActivityListItemProps) => {
   ]
   const textStyle = [Styles.text, selected ? Styles.textSelected : null];
   const infoStyle = [textStyle, Styles.textEmphasize];
+  const activityDesciptor = selected ? (isCurrent ? 'CURRENT' : 'SELECTED')
+                                     : (isCurrent ? 'CURRENT' : 'TIMED');
+
+  const descriptorStyle = labelsEnabled ? [Styles.text, Styles.timeLabel, Styles.labelsEnabled, Styles.textEmphasize]
+                                        : [Styles.faint, Styles.text, Styles.timeLabel];;
+
   // Note onPress receives a GestureResponderEvent we are ignoring.
   return (
     <TouchableHighlight
@@ -118,12 +132,17 @@ const ActivityListItem = (props: ActivityListItemProps) => {
         </View>
         <View style={Styles.textLines}>
           <View style={Styles.textLine}>
-            <Text style={[Styles.faint, Styles.text, Styles.timeLabel]}>TOTAL</Text>
+            <Text style={descriptorStyle}>{activityDesciptor}</Text>
+          </View>
+        </View>
+        <View style={Styles.textLines}>
+          <View style={Styles.textLine}>
+            <Text style={descriptorStyle}>ACTIVITY</Text>
           </View>
         </View>
         <View style={Styles.textLine}>
           <Text style={infoStyle}>{distance}</Text>
-          <Text style={textStyle}>{distanceLabel}</Text>
+          <Text style={textStyle}>{distance.length ? distanceLabel : ''}</Text>
         </View>
       </View>
     </TouchableHighlight>

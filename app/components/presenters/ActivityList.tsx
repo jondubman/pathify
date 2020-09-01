@@ -17,10 +17,6 @@ import {
 import { ActivityListProps } from 'containers/ActivityListContainer';
 import LabelContainer from 'containers/LabelContainer';
 import NowClockContainer from 'containers/NowClockContainer';
-import {
-  AppAction,
-  newAction,
-} from 'lib/actions';
 import { ActivityDataExtended } from 'lib/activities';
 import constants from 'lib/constants';
 import { centerline } from 'lib/selectors';
@@ -387,6 +383,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       <View style={Styles.itemView}>
         <ActivityListItem
           activity={activity}
+          labelsEnabled={this.props.labelsEnabled}
           selected={activity.id === this.props.selectedActivityId}
           onPress={() => { this.props.onPressActivity(activity.id) }}
         />
