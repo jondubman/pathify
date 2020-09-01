@@ -13,6 +13,7 @@ interface AppUIStateProps {
   mapFullScreen: boolean;
   mapTapped: boolean;
   showActivityInfo: boolean;
+  showGrabBar: boolean;
   showTimeline: boolean;
   timelineHeight: number;
 }
@@ -27,12 +28,14 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     introMode,
     mapTapped,
     showActivityInfo,
+    showGrabBar,
   } = state.flags;
   return {
     introMode,
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
     showActivityInfo: showActivityInfo,
+    showGrabBar,
     showTimeline: shouldShowTimeline(state),
     timelineHeight: dynamicTimelineHeight(state),
   }

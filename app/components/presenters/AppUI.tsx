@@ -17,6 +17,7 @@ import ActivityInfoContainer from 'containers/ActivityInfoContainer';
 import { AppUIProps } from 'containers/AppUIContainer';
 import CompassButtonContainer from 'containers/CompassButtonContainer';
 import FollowButtonsContainer from 'containers/FollowButtonsContainer';
+import GrabBarContainer from 'containers/GrabBarContainer';
 import HelpPanelContainer from 'containers/HelpPanelContainer';
 import IntroContainer from 'containers/IntroContainer';
 import MapAreaContainer from 'containers/MapAreaContainer';
@@ -53,6 +54,7 @@ class AppUI extends Component<AppUIProps> {
       introMode,
       mapFullScreen,
       showActivityInfo,
+      showGrabBar,
       showTimeline,
       timelineHeight,
     } = this.props;
@@ -71,8 +73,11 @@ class AppUI extends Component<AppUIProps> {
           <View pointerEvents={pointerEvents} style={timelineOpacity}>
             <TimelineScrollContainer />
           </View>
-          {mapFullScreen ? null : (
-            <Fragment>
+          {showGrabBar ? <GrabBarContainer /> : null}
+          {mapFullScreen ?
+            null
+            :
+            (<Fragment>
               <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <CompassButtonContainer />
                 <FollowButtonsContainer />

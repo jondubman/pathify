@@ -106,6 +106,7 @@ const buttonOffset = 6;
 const buttonSize = 50;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
+const labelHeightAllowance = 12;
 const mapLogoHeight = 34; // Mapbox logo
 const menuBorderWidth = 1.5;
 const minDeviceWidth = 320; // minimum design width; iPhone SE
@@ -225,6 +226,7 @@ const colors = {
   },
   settingsButton: {
     background: namedColors.white,
+    backgroundOpen: namedColors.darkRed,
     icon: namedColors.black,
     underlay: colorThemes.settings,
   },
@@ -442,7 +444,7 @@ const constants = {
   helpPanel: {
     height: panelHeight,
     rightOffset: buttonOffset,
-    subpanelTopOffset: buttonOffset,
+    subpanelTopOffset: buttonOffset + labelHeightAllowance,
     topOffset: safeAreaTop,
   },
   headers: {
@@ -523,7 +525,7 @@ const constants = {
   settingsPanel: {
     height: panelHeight,
     leftOffset: buttonOffset,
-    subpanelTopOffset: buttonSize + buttonOffset,
+    subpanelTopOffset: buttonSize + buttonOffset + labelHeightAllowance + 10,
     topOffset: safeAreaTop,
   },
   snapIndex: {

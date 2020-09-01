@@ -10,7 +10,6 @@ import ActivityInfo from 'presenters/ActivityInfo';
 interface ActivityInfoStateProps {
   showActivityDetails: boolean;
   showActivityList: boolean;
-  showGrabBar: boolean;
 }
 
 interface ActivityInfoDispatchProps {
@@ -22,7 +21,6 @@ const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
   return {
     showActivityDetails: showActivityDetailsRowsPreview(state) > 0,
     showActivityList: shouldShowActivityList(state),
-    showGrabBar: state.flags.showGrabBar,
   }
 }
 

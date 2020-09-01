@@ -41,25 +41,23 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     position: 'absolute',
-    left: 0,
+    left: 8,
     width: constants.buttonSize + (constants.buttonOffset * 2) + 2,
   },
 })
 
 const SettingsButton = (props: SettingsButtonProps) => (
   <Fragment>
-    {props.open ? null : (
-      <View style={[Styles.labelView, { top: props.topOffset + constants.buttonSize - 1 }]}>
-        <LabelContainer>
-          <Text style={labelTextStyle}>
-            SETTINGS
-          </Text>
-        </LabelContainer>
-      </View>
-    )}
+    <View style={[Styles.labelView, { top: props.topOffset + constants.buttonSize - 1 }]}>
+      <LabelContainer>
+        <Text style={labelTextStyle}>
+          SETTINGS
+        </Text>
+      </LabelContainer>
+    </View>
     <TouchableHighlight
       style={[Styles.button, {
-        backgroundColor: props.open ? colors.underlay : colors.background,
+        backgroundColor: props.open ? colors.backgroundOpen : colors.background,
         opacity: props.open ? opacityWhenOpen : opacityWhenClosed,
       }]}
       onPressIn={props.onPressIn}
