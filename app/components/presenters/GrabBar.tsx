@@ -164,9 +164,11 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     } as StyleProp<ViewStyle>;
 
     const {
+      activitySelected,
       keyName,
       labelsEnabled,
       pressed,
+      snapBack,
       snapIndex,
       topMenuOpen,
     } = this.props;
@@ -174,16 +176,17 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const lineStyle = labelsEnabled ? [lineStyleBase, lineStyleLabeled] : lineStyleBase;
     const snaps = snapPositions();
     let labelText: string;
+    const noActivitySelectedText = 'NO ACTIVITY SELECTED';
     if (snapIndex === 0) {
       labelText = 'SLIDE DOWN TO RESTORE UI';
     } else if (snapIndex === 1) {
       labelText = 'SLIDE DOWN TO REVEAL';
     } else if (snapIndex === 2) {
-      labelText = 'SLIDE DOWN FOR DETAILS';
+      labelText = activitySelected ? 'SLIDE DOWN FOR DETAILS' : noActivitySelectedText;
     } else if (snapIndex === snaps.length - 1) {
       labelText = 'SLIDE UP FOR MORE MAP';
     } else {
-      labelText = 'SLIDE DOWN FOR MORE';
+      labelText = activitySelected ? 'SLIDE DOWN FOR MORE' : noActivitySelectedText;
     }
 
     // The styles & layout here may be confusing. The intent is, the grabBar appears subtle unless pressed (grabbed).
