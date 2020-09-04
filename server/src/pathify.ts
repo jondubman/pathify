@@ -41,7 +41,7 @@ app.use(bodyParser.json({ limit: '100mb' })); // TODO constant
 app.use(cookieParser());
 if (useSecureServer) {
   log.info('using subdomain', subdomainName);
-  app.use(vhost(subdomainName));
+  app.use(vhost(subdomainName, app));
 }
 
 // Log network activity at TRACE level
