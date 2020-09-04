@@ -9,7 +9,6 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as https from 'https';
-import * as vhost from 'vhost';
 
 import log from 'shared/log';
 // Ensure this applies to all modules (TODO)
@@ -22,14 +21,8 @@ import { utils } from 'lib/utils';
 const cert = utils.getSecret('pathify-app.crt');
 const key = utils.getSecret('pathify.app.key');
 const useSecureServer = (cert && key);
-const subdomainName = 'server.pathify.app';
 
 const app = express();
-
-if (useSecureServer) {
-  log.info('using subdomain', subdomainName);
-  app.use(vhost(subdomainName, app));
-}
 
 app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
 
@@ -88,7 +81,7 @@ const startServer = () => {
 
   log.info('--------------------------');
 
-  if (cert && key) {
+  if (useSecureServer) {
     log.info('Launching securely with https');
     server = https.createServer({ cert, key }, app);
     via = 'https';
