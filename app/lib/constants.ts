@@ -516,7 +516,7 @@ const constants = {
   safeAreaBottom, // see bottomWithoutTimeline
   safeAreaTop,
   serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
-  serverUrl: 'https://pathify.app:3000/', // TODO
+  serverUrl: 'https://www.pathify.app:3000/', // TODO change subdomain
   settingsButton: {
     leftOffset: buttonOffset,
     opacityWhenClosed: defaultOpacity,

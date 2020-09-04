@@ -1,6 +1,7 @@
 // Pathify server main
-
 // This creates an Express server, installs middleware, configures all the routes, and launches it.
+// Note this is currently for development and debug purposes only, not for use by the production app.
+// The production web site is not served by this code.
 
 require('module-alias/register'); // for module import alias resolution. See tsconfig.json and package.json
 
@@ -9,6 +10,7 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as https from 'https';
+import * as vhost from 'vhost';
 
 import log from 'shared/log';
 // Ensure this applies to all modules (TODO)
@@ -25,6 +27,9 @@ const useSecureServer = (cert && key);
 const app = express();
 
 app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
+if (useSecureServer) { // but not if running locally
+  app.use(vhost(constants.subdomain, app));
+}
 
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
