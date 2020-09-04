@@ -85,11 +85,14 @@ const startServer = () => {
   log.info('--------------------------');
 
   if (useSecureServer) { // but not if running locally
+    log.info('Launching securely with https');
+    
     log.info('Using subdomain', constants.subdomain);
     app.use(vhost(constants.subdomain, app));
 
-    log.info('Launching securely with https');
-    server = vhttps.createServer({ cert, key }, app);
+    const server = vhttps.init();
+    server.use(constants.subdomain, { cert, key }, app);
+    // server = https.createServer({ cert, key }, app);
     via = 'https';
   } else if (allowInsecure) {
     log.warn('Launching insecure server via http');
