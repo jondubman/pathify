@@ -21,6 +21,8 @@ log.useLogger(logBunyan);
 import { constants } from 'lib/constants';
 import { utils } from 'lib/utils';
 
+log.info('--------------------------');
+
 const cert = utils.getSecret('pathify-app.crt');
 const key = utils.getSecret('pathify.app.key');
 const useSecureServer = (cert && key);
@@ -82,20 +84,21 @@ const startServer = () => {
   let server: any;
   let via: string;
 
-  log.info('--------------------------');
-
   if (useSecureServer) { // but not if running locally
     log.info('Launching securely with https');
     via = 'https';
+    // old way
+    // server = https.createServer({ cert, key }, app);
+
     log.info('Using subdomain', constants.subdomain);
     app.use(vhost(constants.subdomain, app));
     const server = vhttps.init();
     if (server) {
+      log.info('vhttps.init succeeded:', server);
       server.use(constants.subdomain, { cert, key }, app);
-      // old way
-      // server = https.createServer({ cert, key }, app);
+      log.info('server.use succeeded on the subdomain', server);
     } else {
-      log.debug('vhttps.init failed:', server);
+      log.info('vhttps.init failed:', server);
     }
   } else if (allowInsecure) {
     log.warn('Launching insecure server via http');
