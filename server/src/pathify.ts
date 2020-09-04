@@ -19,6 +19,11 @@ log.useLogger(logBunyan);
 import { constants } from 'lib/constants';
 import { utils } from 'lib/utils';
 
+const cert = utils.getSecret('pathify-app.crt');
+const key = utils.getSecret('pathify.app.key');
+const secureServer = (cert && key);
+const subdomainName = 'server';
+
 const app = express();
 
 app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
@@ -48,12 +53,21 @@ app.use(cookieParser());
 
 import { ping } from 'routers/ping';
 app.use('/ping', ping);
+if (secureServer) {
+  app.use(subdomain(subdomainName), ping);
+}
 
 import { poll } from 'routers/poll';
 app.use('/poll', poll);
+if (secureServer) {
+  app.use(subdomain(subdomainName), poll);
+}
 
 import { push } from 'routers/push';
 app.use('/push', push);
+if (secureServer) {
+  app.use(subdomain(subdomainName), push);
+}
 
 // used for fatal error / server restart
 function flushLogsAndExit(msecDelay: number = 1000) {
@@ -78,11 +92,8 @@ const startServer = () => {
 
   log.info('--------------------------');
 
-  const cert = utils.getSecret('pathify-app.crt');
-  const key = utils.getSecret('pathify.app.key');
   if (cert && key) {
     log.info('Launching securely with https');
-    app.use(subdomain('server'));
     server = https.createServer({ cert, key }, app);
     via = 'https';
   } else if (allowInsecure) {
