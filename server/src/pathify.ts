@@ -53,20 +53,15 @@ app.use(cookieParser());
 
 import { ping } from 'routers/ping';
 app.use('/ping', ping);
-if (secureServer) {
-  app.use(subdomain(subdomainName), ping);
-}
 
 import { poll } from 'routers/poll';
 app.use('/poll', poll);
-if (secureServer) {
-  app.use(subdomain(subdomainName), poll);
-}
 
 import { push } from 'routers/push';
 app.use('/push', push);
+
 if (secureServer) {
-  app.use(subdomain(subdomainName), push);
+  app.use(subdomain(subdomainName, app.router));
 }
 
 // used for fatal error / server restart
