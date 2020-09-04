@@ -88,7 +88,7 @@ const startServer = () => {
     log.info('Launching securely with https');
     
     log.info('Using subdomain', constants.subdomain);
-    app.use(vhost(constants.subdomain, app));
+    // app.use(vhost(constants.subdomain, app));
 
     const server = vhttps.init();
     server.use(constants.subdomain, { cert, key }, app);
