@@ -10,7 +10,6 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as https from 'https';
-import * as vhttps from 'vhttps';
 import * as vhost from 'vhost';
 
 import log from 'shared/log';
@@ -89,14 +88,7 @@ const startServer = () => {
     via = 'https';
     log.info('Using subdomain', constants.subdomain);
     app.use(vhost(constants.subdomain, app));
-    server = vhttps.init();
-    if (server) {
-      log.info('vhttps.init succeeded');
-      server.use(constants.subdomain, { cert, key }, app);
-      log.info('server.use succeeded on the subdomain');
-    } else {
-      log.info('vhttps.init failed');
-    }
+    server = https.createServer({ cert, key }, app);
   } else if (allowInsecure) {
     log.warn('Launching insecure server via http');
     server = app;
@@ -108,7 +100,7 @@ const startServer = () => {
       log.info(`Server listening via ${via}, port ${port}`);
     })
   } else {
-    log.error('startServer failed');
+    log.error('startServer failed', server);
   }
 }
 
