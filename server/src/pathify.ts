@@ -28,6 +28,11 @@ const app = express();
 
 app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
 
+if (secureServer) {
+  var router = express.Router(); 
+  app.use(subdomain('server', router));
+}
+
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -59,10 +64,6 @@ app.use('/poll', poll);
 
 import { push } from 'routers/push';
 app.use('/push', push);
-
-if (secureServer) {
-  app.use(subdomain(subdomainName, app.router));
-}
 
 // used for fatal error / server restart
 function flushLogsAndExit(msecDelay: number = 1000) {
