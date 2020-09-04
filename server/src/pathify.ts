@@ -26,6 +26,11 @@ const subdomainName = 'server.pathify.app:3000';
 
 const app = express();
 
+if (useSecureServer) {
+  log.info('using subdomain', subdomainName);
+  app.use(vhost(subdomainName, app));
+}
+
 app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
 
 app.use(function(req, res, next) {
@@ -39,10 +44,6 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json({ limit: '100mb' })); // TODO constant
 
 app.use(cookieParser());
-if (useSecureServer) {
-  log.info('using subdomain', subdomainName);
-  app.use(vhost(subdomainName, app));
-}
 
 // Log network activity at TRACE level
 // const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues with import, but works fine with require.
