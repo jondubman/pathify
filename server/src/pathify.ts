@@ -27,9 +27,6 @@ const useSecureServer = (cert && key);
 const app = express();
 
 app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.html#use-helmet
-if (useSecureServer) { // but not if running locally
-  app.use(vhost(constants.subdomain, app));
-}
 
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -87,6 +84,11 @@ const startServer = () => {
   log.info('--------------------------');
 
   if (useSecureServer) {
+    if (useSecureServer) { // but not if running locally
+      log.info('Using subdomain', constants.subdomain);
+      app.use(vhost(constants.subdomain, app));
+    }
+
     log.info('Launching securely with https');
     server = https.createServer({ cert, key }, app);
     via = 'https';
