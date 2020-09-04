@@ -48,6 +48,7 @@
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-subdomain": "^1.0.5",
     "file-loader": "^6.0.0",
     "geolib": "^3.3.1",
     "graphql": "^15.3.0",
@@ -66,7 +67,6 @@
     "url-loader": "^4.1.0",
     "util": "^0.12.3",
     "uuid": "^8.3.0",
-    "vhost": "^3.0.2",
     "winston": "^3.3.3",
     "xml2js": "^0.4.23"
   },
