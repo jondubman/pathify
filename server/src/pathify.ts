@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as https from 'https';
-import * as subdomain from 'express-subdomain'; // for subdomains with Express
+import * as vhost from 'vhost';
 
 import log from 'shared/log';
 // Ensure this applies to all modules (TODO)
@@ -21,8 +21,8 @@ import { utils } from 'lib/utils';
 
 const cert = utils.getSecret('pathify-app.crt');
 const key = utils.getSecret('pathify.app.key');
-const secureServer = (cert && key);
-const subdomainName = 'server';
+const useSecureServer = (cert && key);
+const subdomainName = 'server.pathify.app:3000';
 
 const app = express();
 
@@ -39,6 +39,10 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json({ limit: '100mb' })); // TODO constant
 
 app.use(cookieParser());
+if (useSecureServer) {
+  log.info('using subdomain', subdomainName);
+  app.use(vhost(subdomainName));
+}
 
 // Log network activity at TRACE level
 // const bunyanMiddleware = require('bunyan-middleware'); // logger. has issues with import, but works fine with require.
@@ -59,12 +63,6 @@ app.use('/poll', poll);
 
 import { push } from 'routers/push';
 app.use('/push', push);
-
-if (secureServer) {
-  app.use(subdomain(subdomainName, ping));
-  app.use(subdomain(subdomainName, poll));
-  app.use(subdomain(subdomainName, push));
-}
 
 // used for fatal error / server restart
 function flushLogsAndExit(msecDelay: number = 1000) {
