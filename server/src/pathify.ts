@@ -22,7 +22,7 @@ import { utils } from 'lib/utils';
 const cert = utils.getSecret('pathify-app.crt');
 const key = utils.getSecret('pathify.app.key');
 const useSecureServer = (cert && key);
-const subdomainName = 'server.pathify.app:3000';
+const subdomainName = 'server.pathify.app';
 
 const app = express();
 
