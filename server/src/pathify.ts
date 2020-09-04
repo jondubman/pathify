@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as https from 'https';
-// import * as JSON5 from 'json5'; // extension of JSON with more permissive syntax
+import * as vhost from 'vhost'; // for subdomains with Express
 
 import log from 'shared/log';
 // Ensure this applies to all modules (TODO)
@@ -82,6 +82,7 @@ const startServer = () => {
   const key = utils.getSecret('pathify.app.key');
   if (cert && key) {
     log.info('Launching securely with https');
+    app.use(vhost('server.pathify.app'));
     server = https.createServer({ cert, key }, app);
     via = 'https';
   } else if (allowInsecure) {
