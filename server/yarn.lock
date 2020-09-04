@@ -3952,6 +3952,11 @@ vhost@^3.0.2:
   resolved "https://registry.yarnpkg.com/vhost/-/vhost-3.0.2.tgz#2fb1decd4c466aa88b0f9341af33dc1aff2478d5"
   integrity sha1-L7HezUxGaqiLD5NBrzPcGv8keNU=
 
+vhttps@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/vhttps/-/vhttps-0.1.1.tgz#c9758de6fd10fdbd0d8953820d3a8d13dab031ad"
+  integrity sha512-3BGVuxSSvViDmy0Nuxe4AJ4VbDV+DMmINOD5inSJS433PQAvZGXcq5CUGeZequzgggspzWwdfnxqT04LC4M9Sg==
+
 wbuf@^1.1.0, wbuf@^1.7.3:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/wbuf/-/wbuf-1.7.3.tgz#c1d8d149316d3ea852848895cb6a0bfe887b87df"

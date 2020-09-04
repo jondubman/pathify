@@ -10,6 +10,7 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as https from 'https';
+import * as vhttps from 'vhttps';
 import * as vhost from 'vhost';
 
 import log from 'shared/log';
@@ -88,7 +89,7 @@ const startServer = () => {
     app.use(vhost(constants.subdomain, app));
 
     log.info('Launching securely with https');
-    server = https.createServer({ cert, key }, app);
+    server = vhttps.createServer({ cert, key }, app);
     via = 'https';
   } else if (allowInsecure) {
     log.warn('Launching insecure server via http');
