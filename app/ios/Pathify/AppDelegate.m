@@ -45,7 +45,8 @@ static void InitializeFlipper(UIApplication *application) {
 #else
   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-
+  
+  // TODO warning: bridge currently unused
   RCTBridge *bridge = [[RCTBridge alloc] initWithBundleURL:jsCodeLocation
     moduleProvider:nil
     launchOptions:launchOptions];
@@ -58,11 +59,22 @@ static void InitializeFlipper(UIApplication *application) {
   //                                                   moduleName:@"Pathify"
   //                                            initialProperties:nil];
 
+  NSMutableDictionary *initialPropertiesDictionary = [NSMutableDictionary dictionary];
+
   // Custom code for Pathify: retrieve the environment variables for the running app and pass them to the RCTRootView.
   NSDictionary *environment = [[NSProcessInfo processInfo] environment];
+  [initialPropertiesDictionary addEntriesFromDictionary:environment];
+
+  // Add XCode version and buildNumber to initialPropertiesDictionary.
+  NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleShortVersionString"];
+  [initialPropertiesDictionary setValue:version forKey:@"version"];
+
+  NSString *buildNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleVersion"];
+  [initialPropertiesDictionary setValue:buildNumber forKey:@"buildNumber"];
+
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Pathify"
-                                               initialProperties:environment
+                                               initialProperties:initialPropertiesDictionary
                                                    launchOptions:launchOptions];
 
   // rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:0.0f blue:0.0f alpha:1];

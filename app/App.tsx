@@ -49,8 +49,10 @@ export default class App extends Component {
       // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
 
-      // Log incoming properties TODO
-      log.info('TODO pathifyEnv', (this.props as any).pathifyEnv);
+      // Log incoming properties
+      log.info('version', (this.props as any).version); // set in AppDelegate.m
+      log.info('buildNumber', (this.props as any).buildNumber); // set in AppDelegate.m
+      log.info('TODO pathifyEnv', (this.props as any).pathifyEnv); // set (maybe) in PathifyUITests.swift
 
       if (flags.logToDatabase) {
         log.registerCallback((level: string, ...args) => {
