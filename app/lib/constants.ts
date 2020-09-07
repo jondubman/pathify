@@ -317,6 +317,9 @@ const colors = {
     border: withOpacity(colorThemes.zooming, 1),
     nowTrack: withOpacity(colorThemes.now, 0.35),
     nowTrackActive: withOpacity(colorThemes.now, 0.5),
+    pressedLabelBackgroundColor: withOpacity(namedColors.yellow, 0.85),
+    pressedLabelBorderColor: colorThemes.zooming,
+    pressedLabelTextColor: namedColors.black,
     verticalTrack: withOpacity(colorThemes.zooming, 0.35),
     verticalTrackActive: withOpacity(colorThemes.zooming, 0.5),
   }
@@ -439,7 +442,8 @@ const constants = {
     spacing: 2,
   },
   helpButton: {
-    opacity: defaultOpacity,
+    opacityWhenClosed: defaultOpacity,
+    opacityWhenOpen: 1,
     rightOffset: buttonOffset,
     size: buttonSize,
   },

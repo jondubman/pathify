@@ -27,6 +27,7 @@ interface RefTimeStateProps {
   flavorLine2: string,
   flavorLine3: string,
   showLeftSide: boolean;
+  showRightSide: boolean;
 }
 
 interface RefTimeDispatchProps {
@@ -70,6 +71,7 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
     flavorLine2,
     flavorLine3,
     showLeftSide: !state.flags.zoomClockPressed,
+    showRightSide: !state.flags.zoomClockPressed,
   }
 }
 

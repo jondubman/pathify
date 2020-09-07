@@ -100,30 +100,32 @@ const RefTime = (props: RefTimeProps) => (
         </TouchableHighlight>
       ) : null }
     </View>
-    <TouchableHighlight
-      onPress={props.onPress}
-      style={Styles.rightHalf}
-      underlayColor={colors.underlay}
-    >
-      <Fragment>
-        <View style={Styles.refTimeFull}>
-          <Text style={[Styles.refTimeText, Styles.hoursMinutes]}>
-            {props.hours}:{props.minutes}
+    {props.showRightSide ? (
+      <TouchableHighlight
+        onPress={props.onPress}
+        style={Styles.rightHalf}
+        underlayColor={colors.underlay}
+      >
+        <Fragment>
+          <View style={Styles.refTimeFull}>
+            <Text style={[Styles.refTimeText, Styles.hoursMinutes]}>
+              {props.hours}:{props.minutes}
+            </Text>
+            <Text style={[Styles.refTimeText, Styles.seconds]}>
+              :{props.seconds}
+            </Text>
+            {/* Fractions not needed in a context in which most of the interesting things happen no more than 1x/sec...
+            <Text style={[Styles.refTimeText, Styles.msec]}>
+              .{props.hundredths}
+            </Text>
+            */}
+          </View>
+          <Text style={Styles.subTextRight}>
+            {props.ampm} {props.day} {props.month} {props.dayOfMonth}, {props.year}
           </Text>
-          <Text style={[Styles.refTimeText, Styles.seconds]}>
-            :{props.seconds}
-          </Text>
-          {/* Fractions not needed in a context in which most of the interesting things happen no more than 1x/sec...
-          <Text style={[Styles.refTimeText, Styles.msec]}>
-            .{props.hundredths}
-          </Text>
-          */}
-        </View>
-        <Text style={Styles.subTextRight}>
-          {props.ampm} {props.day} {props.month} {props.dayOfMonth}, {props.year}
-        </Text>
-      </Fragment>
-    </TouchableHighlight>
+        </Fragment>
+      </TouchableHighlight>
+    ) : null }
   </View>
 )
 

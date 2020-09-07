@@ -10,7 +10,7 @@ import HelpButton from 'presenters/HelpButton';
 import log from 'shared/log';
 
 interface HelpButtonStateProps {
-  enabled: boolean;
+  open: boolean;
   topOffset: number;
 }
 
@@ -22,7 +22,7 @@ export type HelpButtonProps = HelpButtonStateProps & HelpButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpButtonStateProps => {
   return {
-    enabled: state.flags.helpOpen,
+    open: state.flags.helpOpen,
     topOffset: dynamicAreaTop(),
   }
 }

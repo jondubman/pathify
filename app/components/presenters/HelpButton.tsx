@@ -18,7 +18,8 @@ import { labelTextStyle } from 'presenters/Label';
 
 const colors = constants.colors.helpButton;
 const {
-  opacity,
+  opacityWhenClosed,
+  opacityWhenOpen,
   rightOffset,
   size,
 } = constants.helpButton;
@@ -33,7 +34,6 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4 - 2,
     position: 'absolute',
     right: rightOffset,
-    opacity,
     width: size,
   },
   labelView: {
@@ -57,6 +57,7 @@ const HelpButton = (props: HelpButtonProps) => (
     <TouchableHighlight
       style={[Styles.button, {
         backgroundColor: props.enabled ? colors.underlay : colors.background,
+        opacity: props.open ? opacityWhenOpen : opacityWhenClosed,
         top: props.topOffset,
       }]}
       onPressIn={props.onPress}

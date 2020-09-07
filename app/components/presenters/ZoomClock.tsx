@@ -6,8 +6,10 @@ import {
   PanResponder,
   PanResponderInstance,
   StyleSheet,
+  StyleProp,
   Text,
   View,
+  ViewStyle,
 } from 'react-native';
 import ReactNativeHaptic from 'react-native-haptic';
 
@@ -71,7 +73,7 @@ const Styles = StyleSheet.create({
   },
   verticalTrackActive: {
     backgroundColor: constants.colors.zoomClock.verticalTrackActive,
-  }
+  },
 })
 
 interface ZoomClockState {
@@ -217,30 +219,81 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     const verticalTrackStyle = verticalLock ? [Styles.verticalTrack, Styles.verticalTrackActive] : Styles.verticalTrack;
     const horizontalPositionStyle = (horizontalLock ? { left: centerline() - clockDiameter / 2 - deltaX } : {})
     const clockViewStyle = [Styles.clockCenter, bottomStyle, horizontalPositionStyle];
-    let labelText = 'PAST TIMEPOINT';
+
+    const verticalTrackLabelUpStyle = {
+      bottom: bottom + deltaYMax + clockDiameter / 2,
+      height: 20,
+      left: centerline() - clockDiameter / 2,
+      position: 'absolute',
+      width: clockDiameter,
+    } as StyleProp<ViewStyle>;
+    const verticalTrackUpLabelTextStyle = {
+      alignSelf: 'center',
+    } as StyleProp<ViewStyle>;
+
+    const verticalTrackLabelDownStyle = {
+      bottom: bottom - deltaYMax,
+      height: 20,
+      left: centerline(),
+      marginLeft: 2,
+      position: 'absolute',
+      width: clockDiameter / 2,
+    } as StyleProp<ViewStyle>;
+    const verticalTrackDownLabelTextStyle = {
+      alignSelf: 'flex-start',
+    } as StyleProp<ViewStyle>;
+
+    let labelText = 'PAST TIMEPOINT'; // default
     if (nowMode) {
       if (followingPath) {
-        labelText = 'CURRENT TIME BUT NOT LOC';
+        labelText = 'CURRENT TIME';
       } else if (followingUser) {
         labelText = 'CURRENT TIME AND LOC';
       } else {
         labelText = 'CURRENT TIME';
       }
     } else {
-      if (followingPath) {
-        labelText = activitySelected ? 'REVIEWING PATH' : 'TIMEPOINT W/O LOCATION';
+      if (followingPath && activitySelected) {
+        labelText = 'REVIEWING PATH';
       }
+    }
+    let pressedLabelText = 'ZOOM TIMELINE';
+    const labelBottomStyle = { bottom: bottom - 18 };
+    const pressedLabelBottomStyle = { bottom: bottom - 20 }; // room for border
+    const pressedLabelTextStyle = [labelTextStyle, { color: constants.colors.zoomClock.pressedLabelTextColor }];
+    const labelEmphasisStyle = {
+      backgroundColor: constants.colors.zoomClock.pressedLabelBackgroundColor,
+      borderColor: constants.colors.zoomClock.pressedLabelBorderColor,
+      borderWidth: 2,
+      borderRadius: 5,
+      marginLeft: 17, // TODO this is empirically determined, to get the centerLine to thread between ZOOM and TIMELINE
+      paddingHorizontal: 4, // yields a little breathing room on the side of the labe
     }
     return (
       <Fragment>
         {pressed ? (
           <Fragment>
+          {horizontalLock || verticalLock ? null : (
+            // Label when pressed but not yet dragged
+            <View style={[Styles.labelView, pressedLabelBottomStyle]}>
+              <LabelContainer>
+                <View style={labelEmphasisStyle}>
+                  <Text style={pressedLabelTextStyle}>
+                    {pressedLabelText}
+                  </Text>
+                </View>
+              </LabelContainer>
+            </View>
+            )}
             {verticalLock ? null : (
+              // Horizontal track
               <Fragment>
+                {/* Left side */}
                 {!nowMode || deltaX < 0 ? null : (
                   <View pointerEvents="none" style={[...backTrackStyle, bottomStyle]}>
                   </View>
                 )}
+                {/* Right side */}
                 {nowMode || deltaX > 0 ? null : (
                   <View pointerEvents="none" style={[...nowTrackStyle, bottomStyle]}>
                   </View>
@@ -248,12 +301,28 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
               </Fragment>
             )}
             {!allowZoom || horizontalLock ? null : (
-              <View pointerEvents="none" style={[verticalTrackStyle, { bottom: bottom - deltaYMax }]}>
-              </View>
+              // Vertical track
+              <Fragment>
+                <View pointerEvents="none" style={[verticalTrackStyle, { bottom: bottom - deltaYMax }]}>
+                </View>
+                <LabelContainer>
+                  <View style={verticalTrackLabelUpStyle}>
+                    <Text style={[labelTextStyle, verticalTrackUpLabelTextStyle]}>
+                      OUT
+                    </Text>
+                  </View>
+                  <View style={verticalTrackLabelDownStyle}>
+                    <Text style={[labelTextStyle, verticalTrackDownLabelTextStyle]}>
+                      IN
+                    </Text>
+                  </View>
+                </LabelContainer>
+              </Fragment>
             )}
           </Fragment>
         ) : (
-          <View style={[Styles.labelView, { bottom: bottom - 16 }]}>
+          // Label when not pressed
+          <View style={[Styles.labelView, labelBottomStyle]}>
             <LabelContainer>
               <Text style={labelTextStyle}>
                 {labelText}
@@ -261,6 +330,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
             </LabelContainer>
           </View>
         )}
+        {/* And finally, the actual clock! */}
         <View {...this._panResponder.panHandlers} style={clockViewStyle}>
           {nowMode ? <NowClockContainer clockStyle={pressedStyle} interactive={true} key='NowClock' />
             : <PausedClockContainer clockStyle={pressedStyle} interactive={true} key='PausedClock' />}
