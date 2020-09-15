@@ -28,9 +28,9 @@ class PathifyUITests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
 
         sleep(10)
-        snapshot("uitest1")
-        sleep(5)
-        snapshot("uitest2")
+        snapshot("uitest1");
+        // sleep(5)
+        // snapshot("uitest2")
     }
 
     // func testLaunchPerformance() {
