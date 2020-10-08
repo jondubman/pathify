@@ -282,9 +282,9 @@ PODS:
     - React
   - RNBackgroundFetch (3.1.0):
     - React
-  - RNBackgroundGeolocation (3.9.0):
+  - RNBackgroundGeolocation (3.9.1):
     - CocoaLumberjack (~> 3.6.1)
-    - React
+    - React-Core
   - RNDeviceInfo (6.0.2):
     - React
   - RNSVG (12.1.0):
@@ -458,7 +458,7 @@ SPEC CHECKSUMS:
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
   RealmJS: c8645e0d65b676780f7e6c393d327527a2eb15e8
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
-  RNBackgroundGeolocation: 66b7cd2859fb4659ff2a1c09fd7739f9ba179e05
+  RNBackgroundGeolocation: 807366bac2fc9f64cadad355695a9c19a9760d66
   RNDeviceInfo: bdd61e8b070d13a1dd9d022091981075ed4cde16
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
