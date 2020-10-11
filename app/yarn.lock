@@ -1544,10 +1544,10 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-3.0.3.tgz#830167fd757ba70ac638747ba3169b2dbae60330"
   integrity sha512-8IeHfDwJ9/CTUwFs6x90VlobV3BfuPgNLjTgC6dRZovfCWigaZwVNIFFJnHBakK3pW2xErAPwhdvNR4JeNoYbw==
 
-"@react-native-mapbox-gl/maps@8.1.0-rc.4":
-  version "8.1.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@react-native-mapbox-gl/maps/-/maps-8.1.0-rc.4.tgz#7a9415f1a076ed1a514a7107d74b7d8ea96ad560"
-  integrity sha512-OdzpkvBvkllU+ymO3hpAT31+zJJUITjsK/c7dX2j3wvHLCQmhAhg5GY3PJUK2cBhZsE6ojjc739Bcnbg9IBFIQ==
+"@react-native-mapbox-gl/maps@8.1.0-rc.5":
+  version "8.1.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@react-native-mapbox-gl/maps/-/maps-8.1.0-rc.5.tgz#e923c3de52da08f5f495dc0cbe00e8fbf3f5f40b"
+  integrity sha512-tvP9gqx3Jg7/lw2YL4PUfLtXwPKn3V3Ii4Ua6e3Ff9+ivLJtjBspaTveWkW25Dq94wuBqFW3YHQJ6CinCgaQBw==
   dependencies:
     "@mapbox/geo-viewport" ">= 0.4.0"
     "@turf/along" ">= 4.0.0 <7.0.0"
@@ -3203,10 +3203,10 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/mapbox-gl@^1.12.2":
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-1.12.2.tgz#e30d9c745c4fbcdf8b6abe54a25f6f920a6d1639"
-  integrity sha512-5BjQ4wmRpz584qApgazma/6w2EB2evIaWKwZrDlshSX0+KoM8XT3nTrp8iYHQyMZV3mmIzEdbvt0jmc6ToLqeQ==
+"@types/mapbox-gl@^1.12.3":
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-1.12.3.tgz#6d515f28bba8a9ce7bdbaa188672e3c3a3fcdb77"
+  integrity sha512-udNoJiY3P9MRp1CPPnCI7N/p+F3jJS8SQFamGEtBWI5aZTbB8vd3DuqBJONkMO7LaORrL2xCpacqhDa6puVYgQ==
   dependencies:
     "@types/geojson" "*"
 
