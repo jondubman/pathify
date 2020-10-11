@@ -16,10 +16,6 @@ target 'Pathify' do
   # end
 
   require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-  # use_native_modules!
-
-  # pod 'Mapbox-iOS-SDK', '~> 6.2.1'
-
   config = use_native_modules!
   use_react_native!(:path => config["reactNativePath"])
 
