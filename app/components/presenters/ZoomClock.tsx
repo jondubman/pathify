@@ -269,6 +269,24 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       marginLeft: 17, // TODO this is empirically determined, to get the centerLine to thread between ZOOM and TIMELINE
       paddingHorizontal: 4, // yields a little breathing room on the side of the labe
     }
+    const backTrackLabelStyle = {
+      alignSelf: 'flex-start',
+      justifyContent: 'center', // centers vertically
+      marginLeft: 6,
+      height: clockDiameter,
+      width: clockDiameter,
+    }
+    const backTrackText = 'BACK IN ← TIME';
+    const backTrackTextStyle = [labelTextStyle]
+    const nowTrackLabelStyle = {
+      alignSelf: 'flex-end',
+      justifyContent: 'center', // centers vertically
+      marginRight: 6,
+      height: clockDiameter,
+      width: clockDiameter,
+    }
+    const nowTrackText = 'JUMP TO NOW →';
+    const nowTrackTextStyle = [labelTextStyle, { textAlign: 'right' }];
     return (
       <Fragment>
         {pressed ? (
@@ -291,11 +309,25 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
                 {/* Left side */}
                 {!nowMode || deltaX < 0 ? null : (
                   <View pointerEvents="none" style={[...backTrackStyle, bottomStyle]}>
+                    <LabelContainer>
+                      <View style={backTrackLabelStyle}>
+                        <Text style={backTrackTextStyle}>
+                          {backTrackText}
+                        </Text>
+                      </View>
+                    </LabelContainer>
                   </View>
                 )}
                 {/* Right side */}
                 {nowMode || deltaX > 0 ? null : (
                   <View pointerEvents="none" style={[...nowTrackStyle, bottomStyle]}>
+                    <LabelContainer>
+                      <View style={nowTrackLabelStyle}>
+                        <Text style={nowTrackTextStyle}>
+                          {nowTrackText}
+                        </Text>
+                      </View>
+                    </LabelContainer>
                   </View>
                 )}
               </Fragment>

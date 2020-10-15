@@ -5,7 +5,7 @@ import React, {
 
 import {
   FlatList,
-  GestureResponderEvent,
+  // GestureResponderEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,

@@ -15,6 +15,7 @@ import GrabBar from 'presenters/GrabBar';
 import log from 'shared/log';
 
 interface GrabBarStateProps {
+  activityCount: number;
   activitySelected: boolean;
   keyName: string;
   labelsEnabled: boolean;
@@ -55,6 +56,7 @@ const mapStateToProps = (state: AppState): GrabBarStateProps => {
   const snap = snapIfNeeded(state, snapPosition(state));
   // That is the same trick used with the mapOpacity slider to avoid redundant updates.
   return {
+    activityCount: state.cache.activities.length || 0,
     activitySelected: !!state.options.selectedActivityId,
     keyName: snap.toString(),
     labelsEnabled: state.flags.labelsEnabled,
