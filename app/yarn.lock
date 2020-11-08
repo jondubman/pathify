@@ -9449,10 +9449,10 @@ react-native-background-fetch@3.1.0, react-native-background-fetch@~3.1.0:
     plist "^3.0.1"
     xcode "^2.0.0"
 
-react-native-background-geolocation@^3.9.1:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/react-native-background-geolocation/-/react-native-background-geolocation-3.9.1.tgz#50810c2f95e5f4c24c804e97da0ceeffca7c4c3a"
-  integrity sha512-ig+RtFO58fNTjQYIfMasXJJt0ytfaEcXcvT0wgeDUyIPhdYI0OBAGBBmFXc43MGolC4FWb9kc4I9JgIqcSnbow==
+react-native-background-geolocation@^3.9.3:
+  version "3.9.3"
+  resolved "https://registry.yarnpkg.com/react-native-background-geolocation/-/react-native-background-geolocation-3.9.3.tgz#7bab17653c852e3b54fa2765a85f1ae3d6bf548a"
+  integrity sha512-XfONtcTL7W2qsZxHzqQomIcza3IrjqvEujeqViHuGRc+sQjeQAm8rqTzbuBNx/QNuLIuerdBy3lzwd89myz7Cw==
   dependencies:
     fast-plist "^0.1.2"
     plist "^2.0.1"
@@ -9460,9 +9460,9 @@ react-native-background-geolocation@^3.9.1:
     xcode "^0.9.1"
 
 react-native-device-info@^6.0.2:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-6.0.2.tgz#03317893bd6336b9ed2fe7a78d424737a441553f"
-  integrity sha512-Kx6ozWKkiPPvRhZDIL5jQ8zEZLlRT8hTovTaV+NgDc0tM+slBEnuEIgn0FXArHudO0qq2r+VDs4pUwMf6csGPg==
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-6.2.1.tgz#6b63faeef833d8959d636c0413ccd5066eada2bf"
+  integrity sha512-+9Li07jD+7IiSIn9VVmb1YWYfJtgERVMsgO/hG+aUzsFD6uFklpM2TOEBlfKPWP/8J6s8MZgpGfA/Dl1WZrn2g==
 
 react-native-dotenv@0.2.0:
   version "0.2.0"
@@ -9642,10 +9642,10 @@ readable-stream@^2.0.1, readable-stream@^2.0.6, readable-stream@^2.2.2, readable
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-realm@6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-6.1.0.tgz#fe8d615a8f1ed8cfe3d93338c569d77d66fb9d3f"
-  integrity sha512-F1oQ04FcdoICm2sr9W1PsH9e0C6YwnwlG0R6VZzEcjryQ0miV0HmDP3QaahaEQqvM25ggPcwcX3aJrJZwPv0nA==
+realm@6.1.5:
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-6.1.5.tgz#17656b4ba545c1df10f0c707f2966af150056df6"
+  integrity sha512-YOu0PUwFss+mEivlkpX1GsAuJZtbuNrwM2DYaZUevYQuinSQgFIHMh8OQUXw02XWz3OUtNoaIEhgRka0PbSqSA==
   dependencies:
     command-line-args "^4.0.6"
     deepmerge "2.1.0"

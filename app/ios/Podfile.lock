@@ -280,16 +280,16 @@ PODS:
     - React-Core (= 0.63.2)
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
-  - RealmJS (6.1.0):
+  - RealmJS (6.1.5):
     - GCDWebServer
     - React
   - RNBackgroundFetch (3.1.0):
     - React
-  - RNBackgroundGeolocation (3.9.1):
+  - RNBackgroundGeolocation (3.9.3):
     - CocoaLumberjack (~> 3.6.1)
     - React-Core
-  - RNDeviceInfo (6.0.2):
-    - React
+  - RNDeviceInfo (6.2.1):
+    - React-Core
   - RNSVG (12.1.0):
     - React
   - RNVectorIcons (7.1.0):
@@ -459,10 +459,10 @@ SPEC CHECKSUMS:
   React-RCTText: 1b6773e776e4b33f90468c20fe3b16ca3e224bb8
   React-RCTVibration: 4d2e726957f4087449739b595f107c0d4b6c2d2d
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
-  RealmJS: c8645e0d65b676780f7e6c393d327527a2eb15e8
+  RealmJS: efb0b7b52759192752ef8b6f061e2c3dd0ea14cd
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
-  RNBackgroundGeolocation: 807366bac2fc9f64cadad355695a9c19a9760d66
-  RNDeviceInfo: bdd61e8b070d13a1dd9d022091981075ed4cde16
+  RNBackgroundGeolocation: c591c7119b3f4d3aaac6ebb4a33d6614259f6879
+  RNDeviceInfo: 9b6aba9ffaed69ecb72bd13c7bcb0debf277bc9f
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
