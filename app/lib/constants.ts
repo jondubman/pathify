@@ -195,7 +195,10 @@ const colors = {
     labelsLabel: withOpacity(colorThemes.labels, 0.75),
     labelsThumb: withOpacity(colorThemes.labels, 0.85),
   },
-  infoLabels: colorThemes.labels,
+  infoLabels: {
+    default: colorThemes.labels,
+    alwaysVisible: namedColors.white,
+  },
   links: {
     background: withOpacity(namedColors.aqua, 0),
     border: withOpacity(namedColors.aqua, 0.5),

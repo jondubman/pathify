@@ -7,7 +7,7 @@ interface LabelStateProps {
   alwaysShow: boolean;
   // TODO this might be part of solving TS error 2741 below
   // children?: React.ReactNode;
-  visible: boolean;
+  labelsEnbled: boolean;
 }
 
 interface LabelDispatchProps {
@@ -22,7 +22,7 @@ export type LabelProps = LabelStateProps & LabelDispatchProps;
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): LabelStateProps => {
   return {
     alwaysShow: !!(ownProps && ownProps.alwaysShow),
-    visible: state.flags.labelsEnabled,
+    labelsEnbled: state.flags.labelsEnabled,
   }
 }
 

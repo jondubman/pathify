@@ -62,7 +62,7 @@ const Styles = StyleSheet.create({
     opacity: 0.65,
   },
   labelsEnabled: {
-    color: constants.colors.infoLabels,
+    color: constants.colors.infoLabels.default,
   },
   text: {
     color: colors.text,

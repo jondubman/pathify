@@ -20,6 +20,7 @@ interface ZoomClockStateProps {
   bottom: number;
   followingPath: boolean;
   followingUser: boolean;
+  labelsEnabled: boolean;
   nowMode: boolean;
   pressed: boolean;
 }
@@ -36,9 +37,9 @@ export type ZoomClockProps = ZoomClockStateProps & ZoomClockDispatchProps;
 
 const mapStateToProps = (state: AppState): ZoomClockStateProps => {
   const {
-    activitySelected,
     followingPath,
     followingUser,
+    labelsEnabled,
     timelineNow,
     zoomClockPressed,
   } = state.flags;
@@ -48,6 +49,7 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
     bottom: dynamicClockBottom(state),
     followingPath,
     followingUser,
+    labelsEnabled,
     nowMode: timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     pressed: zoomClockPressed,
   }

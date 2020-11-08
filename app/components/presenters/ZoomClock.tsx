@@ -219,7 +219,10 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     const verticalTrackStyle = verticalLock ? [Styles.verticalTrack, Styles.verticalTrackActive] : Styles.verticalTrack;
     const horizontalPositionStyle = (horizontalLock ? { left: centerline() - clockDiameter / 2 - deltaX } : {})
     const clockViewStyle = [Styles.clockCenter, bottomStyle, horizontalPositionStyle];
-
+    let labelRenderTextStyle = { ...labelTextStyle };
+    if (!this.props.labelsEnabled) {
+      labelRenderTextStyle.color = constants.colors.infoLabels.alwaysVisible;
+    }
     const verticalTrackLabelUpStyle = {
       bottom: bottom + deltaYMax + clockDiameter / 2,
       height: 20,
@@ -260,7 +263,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     let pressedLabelText = 'ZOOM TIMELINE';
     const labelBottomStyle = { bottom: bottom - 18 };
     const pressedLabelBottomStyle = { bottom: bottom - 20 }; // room for border
-    const pressedLabelTextStyle = [labelTextStyle, { color: constants.colors.zoomClock.pressedLabelTextColor }];
+    const pressedLabelTextStyle = [labelRenderTextStyle, { color: constants.colors.zoomClock.pressedLabelTextColor }];
     const labelEmphasisStyle = {
       backgroundColor: constants.colors.zoomClock.pressedLabelBackgroundColor,
       borderColor: constants.colors.zoomClock.pressedLabelBorderColor,
@@ -277,7 +280,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       width: clockDiameter,
     } as ViewStyle;
     const backTrackText = 'BACK IN ← TIME';
-    const backTrackTextStyle = [labelTextStyle] as ViewStyle;
+    const backTrackTextStyle = [labelRenderTextStyle] as ViewStyle;
     const nowTrackLabelStyle = {
       alignSelf: 'flex-end',
       justifyContent: 'center', // centers vertically
@@ -286,7 +289,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       width: clockDiameter,
     } as ViewStyle;
     const nowTrackText = 'JUMP TO NOW →';
-    const nowTrackTextStyle = [labelTextStyle, { textAlign: 'right' }] as ViewStyle;
+    const nowTrackTextStyle = [labelRenderTextStyle, { textAlign: 'right' }] as ViewStyle;
     return (
       <Fragment>
         {pressed ? (
@@ -337,14 +340,14 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
               <Fragment>
                 <View pointerEvents="none" style={[verticalTrackStyle, { bottom: bottom - deltaYMax }]}>
                 </View>
-                <LabelContainer>
+                <LabelContainer alwaysShow={true}>
                   <View style={verticalTrackLabelUpStyle}>
-                    <Text style={[labelTextStyle, verticalTrackUpLabelTextStyle]}>
+                    <Text style={[labelRenderTextStyle, verticalTrackUpLabelTextStyle]}>
                       OUT
                     </Text>
                   </View>
                   <View style={verticalTrackLabelDownStyle}>
-                    <Text style={[labelTextStyle, verticalTrackDownLabelTextStyle]}>
+                    <Text style={[labelRenderTextStyle, verticalTrackDownLabelTextStyle]}>
                       IN
                     </Text>
                   </View>
@@ -355,8 +358,8 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
         ) : (
           // Label when not pressed
           <View style={[Styles.labelView, labelBottomStyle]}>
-            <LabelContainer>
-              <Text style={labelTextStyle}>
+            <LabelContainer alwaysShow={true}>
+              <Text style={labelRenderTextStyle}>
                 {labelText}
               </Text>
             </LabelContainer>
