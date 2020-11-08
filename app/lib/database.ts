@@ -117,13 +117,13 @@ const { schemaVersion } = constants.database;
 const { bounds, heading } = constants.map.default;
 
 const defaultSettings = {
-  id: 1,
-  backTime: 0,
+  id: 1, // always 1, since there is 1 set of defaultSettings. This is a singleton.
+  backTime: 0, // TODO this is pretty rudimentary, should at least be a stack
   currentActivityId: undefined,
   followingPath: false,
   followingUser: false,
   grabBarSnapIndex: 1,
-  labelsEnabled: true,
+  labelsEnabled: true, // Show these initially, then user has option to hide for a cleaner look.
   latMax: bounds[0][0], // defaults
   latMin: bounds[1][1],
   lonMax: bounds[0][0],

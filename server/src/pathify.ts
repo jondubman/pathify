@@ -38,7 +38,7 @@ app.use(function(req, res, next) {
 
 // NOTE: This must be done BEFORE wiring app.post handler in order to receive anything in req.body!
 // app.use(bodyParser.json());
-app.use(bodyParser.json({ limit: '100mb' })); // TODO constant
+app.use(bodyParser.json({ limit: '100mb' })); // TODO use constant for limit. Is this always sufficient?
 
 app.use(cookieParser());
 
@@ -56,6 +56,7 @@ app.use(cookieParser());
 import { ping } from 'routers/ping';
 app.use('/ping', ping);
 
+// Note 'poll' also appears in app's server.ts TODO use shared constant
 import { poll } from 'routers/poll';
 app.use('/poll', poll);
 

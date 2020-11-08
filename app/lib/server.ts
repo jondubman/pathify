@@ -1,5 +1,5 @@
-// This is intended for development use only (not for production.)
-// This currently uses long-polling which is reliable but not the most efficient. TODO upgrade to WebSockets.
+// This is for development/debugging only (not for production.)
+// This currently uses long-polling, which is reliable but not the most efficient. TODO upgrade to WebSockets.
 
 import { newAction } from 'lib/actions';
 import constants from 'lib/constants';
@@ -19,8 +19,8 @@ const handleServerPush = async (data: any) => {
     if (data === 'handshake') {
       getFromServer('ping/json');
     }
-    // TODO For now, for convenience, assume that any JSON that comes in is an AppAction and just dispatch it with params.
-    // TODO Handle other kinds of incoming JSON
+    // TODO For now, for convenience, assume  any JSON that arrives is an AppAction and just dispatch it with params.
+    // TODO Handle other kinds of incoming JSON.
     if (typeof data === 'object') {
       // log.info(`serverPush: message count ${data.length}`);
       for (const message of data) {
@@ -38,8 +38,9 @@ const handleServerPush = async (data: any) => {
 }
 
 const pollServerOnce = async () => {
-  const route = 'poll';
+  const route = 'poll'; // TODO should move to shared constant; see pathify.ts on server-side.
   const clientAlias = store.getState().options.clientAlias;
+  // TODO use constant for timeout
   const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=90000`;
   const method = 'GET';
   try {

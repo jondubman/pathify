@@ -249,7 +249,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     let labelText = 'PAST TIMEPOINT'; // default
     if (nowMode) {
       if (followingPath) {
-        labelText = 'CURRENT TIME';
+        labelText = 'CURRENT TIME / PAST LOC';
       } else if (followingUser) {
         labelText = 'CURRENT TIME AND LOC';
       } else {
@@ -257,7 +257,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       }
     } else {
       if (followingPath && activitySelected) {
-        labelText = 'REVIEWING PATH';
+        labelText = 'RETRACING PATH';
       }
     }
     let pressedLabelText = 'ZOOM TIMELINE';

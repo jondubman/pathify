@@ -33,12 +33,14 @@ router.get('/', function (req, res) {
 })
 
 // Push JSON to the app.
+// The way this works is, you POST to the Pathify server, and that pushes to a connected client (running in devMode)
+// whose clientId matches that of the running app.
 router.post('/', function (req, res) {
   const { clientAlias } = req.query;
   let { clientId } = req.query;
 
   // OK for clientId to be missing if we have clientAlias
-  // If both are provided by mistake, clientAlias overrides.
+  // If both are provided, clientAlias overrides.
   if (clientAlias) {
     clientId = clientIdForAlias(clientAlias.toString());
   }
