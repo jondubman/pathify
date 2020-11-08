@@ -268,25 +268,25 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       borderRadius: 5,
       marginLeft: 17, // TODO this is empirically determined, to get the centerLine to thread between ZOOM and TIMELINE
       paddingHorizontal: 4, // yields a little breathing room on the side of the labe
-    }
+    } as ViewStyle;
     const backTrackLabelStyle = {
       alignSelf: 'flex-start',
       justifyContent: 'center', // centers vertically
       marginLeft: 6,
       height: clockDiameter,
       width: clockDiameter,
-    }
+    } as ViewStyle;
     const backTrackText = 'BACK IN ← TIME';
-    const backTrackTextStyle = [labelTextStyle]
+    const backTrackTextStyle = [labelTextStyle] as ViewStyle;
     const nowTrackLabelStyle = {
       alignSelf: 'flex-end',
       justifyContent: 'center', // centers vertically
       marginRight: 6,
       height: clockDiameter,
       width: clockDiameter,
-    }
+    } as ViewStyle;
     const nowTrackText = 'JUMP TO NOW →';
-    const nowTrackTextStyle = [labelTextStyle, { textAlign: 'right' }];
+    const nowTrackTextStyle = [labelTextStyle, { textAlign: 'right' }] as ViewStyle;
     return (
       <Fragment>
         {pressed ? (
@@ -309,7 +309,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
                 {/* Left side */}
                 {!nowMode || deltaX < 0 ? null : (
                   <View pointerEvents="none" style={[...backTrackStyle, bottomStyle]}>
-                    <LabelContainer>
+                    <LabelContainer alwaysShow={true}>
                       <View style={backTrackLabelStyle}>
                         <Text style={backTrackTextStyle}>
                           {backTrackText}
@@ -321,7 +321,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
                 {/* Right side */}
                 {nowMode || deltaX > 0 ? null : (
                   <View pointerEvents="none" style={[...nowTrackStyle, bottomStyle]}>
-                    <LabelContainer>
+                    <LabelContainer alwaysShow={true}>
                       <View style={nowTrackLabelStyle}>
                         <Text style={nowTrackTextStyle}>
                           {nowTrackText}

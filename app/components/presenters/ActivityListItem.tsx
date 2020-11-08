@@ -115,7 +115,7 @@ const ActivityListItem = (props: ActivityListItemProps) => {
                                      : (isCurrent ? 'CURRENT' : 'TIMED');
 
   const descriptorStyle = labelsEnabled ? [Styles.text, Styles.timeLabel, Styles.labelsEnabled, Styles.textEmphasize]
-                                        : [Styles.faint, Styles.text, Styles.timeLabel];;
+                                        : [Styles.faint, Styles.text, Styles.timeLabel];
 
   // Note onPress receives a GestureResponderEvent we are ignoring.
   return (
