@@ -13,6 +13,9 @@ interface HelpPanelStateProps {
 }
 
 interface HelpPanelDispatchProps {
+  onLinkPrivacy: () => void;
+  onLinkWeb: () => void;
+  onReplayIntro: () => void;
   onSetLabelsEnabled: (enabled: boolean) => void;
 }
 
@@ -26,11 +29,23 @@ const mapStateToProps = (state: AppState): HelpPanelStateProps => {
 }
 
 const mapDispatchToProps = (dispatch: Function): HelpPanelDispatchProps => {
+  const onLinkPrivacy = () => {
+    log.debug('HelpPanel onLinkPrivacy');
+  }
+  const onLinkWeb = () => {
+    log.debug('HelpPanel onLinkWeb');
+  }
+  const onReplayIntro = () => {
+    log.debug('HelpPanel onReplayIntro');
+  }
   const onSetLabelsEnabled = (enabled: boolean) => {
     log.debug('HelpPanel onSetLabelsEnabled', enabled);
     dispatch(newAction(enabled ? AppAction.flagEnable : AppAction.flagDisable, 'labelsEnabled'));
   }
   const dispatchers = {
+    onLinkPrivacy,
+    onLinkWeb,
+    onReplayIntro,
     onSetLabelsEnabled,
   }
   return dispatchers;

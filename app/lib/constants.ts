@@ -153,7 +153,6 @@ const colors = {
     textSelected: withOpacity(namedColors.white, 1),
   },
   appBackground: colorThemes.background,
-  appText: namedColors.black,
   byName: namedColors, // all of them
   clock: {
     background: withOpacity(namedColors.black, 0.7),
@@ -197,6 +196,12 @@ const colors = {
     labelsThumb: withOpacity(colorThemes.labels, 0.85),
   },
   infoLabels: colorThemes.labels,
+  links: {
+    background: withOpacity(namedColors.aqua, 0),
+    border: withOpacity(namedColors.aqua, 0.5),
+    icon: withOpacity(namedColors.white, 1),
+    text: namedColors.aqua,
+  },
   map: {
     dimmer: namedColors.black,
   },
@@ -463,6 +468,11 @@ const constants = {
   labels: {
     fontFamily,
     fontSize: 12,
+    fontWeight: 'bold' as any, // bold as any!
+  },
+  links: {
+    fontFamily,
+    fontSize: 14,
     fontWeight: 'bold' as any, // bold as any!
   },
   map: {

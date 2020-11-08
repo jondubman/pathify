@@ -56,12 +56,12 @@ const HelpButton = (props: HelpButtonProps) => (
     </View>
     <TouchableHighlight
       style={[Styles.button, {
-        backgroundColor: props.enabled ? colors.underlay : colors.background,
+        backgroundColor: props.open ? colors.underlay : colors.background,
         opacity: props.open ? opacityWhenOpen : opacityWhenClosed,
         top: props.topOffset,
       }]}
       onPressIn={props.onPress}
-      underlayColor={props.enabled ? colors.background : colors.underlay}
+      underlayColor={props.open ? colors.background : colors.underlay}
     >
       <FontAwesome5
         color={colors.icon}

@@ -5,12 +5,16 @@ import {
   StyleSheet,
   Switch,
   Text,
+  TouchableHighlight,
   View,
 } from 'react-native';
+
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import { HelpPanelProps } from 'containers/HelpPanelContainer';
 import constants from 'lib/constants';
+import log from 'shared/log';
 
 const colors = constants.colors.helpPanel;
 const {
@@ -25,8 +29,34 @@ const Styles = StyleSheet.create({
     fontFamily: constants.labels.fontFamily,
     fontSize: constants.labels.fontSize,
     fontWeight: constants.labels.fontWeight,
-    marginLeft: 20,
     margin: 10,
+    marginLeft: 0,
+  },
+  linkButton: {
+    backgroundColor: constants.colors.links.background,
+    borderColor: constants.colors.links.border,
+    borderRadius: constants.buttonSize / 2,
+    borderWidth: 2,
+    padding: 5,
+  },
+  linkContainer: {
+    margin: 10,
+    overflow: 'hidden',
+    padding: 5,
+  },
+  linkIconView: {
+    marginLeft: 10,
+    marginTop: 2,
+  },
+  linkText: {
+    alignSelf: 'center',
+    color: constants.colors.links.text,
+    fontFamily: constants.links.fontFamily,
+    fontSize: constants.links.fontSize,
+    fontWeight: constants.links.fontWeight,
+  },
+  linkView: {
+    flexDirection: 'row',
   },
   panel: {
     backgroundColor: colors.background,
@@ -44,6 +74,8 @@ const Styles = StyleSheet.create({
   subpanel: {
   },
   subpanelContents: {
+    flexDirection: 'column',
+    marginLeft: 10,
   },
   subpanels: {
     top: subpanelTopOffset,
@@ -52,12 +84,11 @@ const Styles = StyleSheet.create({
     marginLeft: 2,
   },
   switchContainer: {
-    position: 'absolute',
   },
   switchView: {
-    alignItems: 'center',
-    alignSelf: 'center',
+    alignItems: 'center', // vertically
     flexDirection: 'row',
+    marginBottom: 10,
   },
 })
 
@@ -98,6 +129,59 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                         />
                       </View>
                     </View>
+                  </View>
+                  <View style={Styles.linkContainer}>
+                    <TouchableHighlight
+                      onPress={props.onReplayIntro}
+                      style={Styles.linkButton}
+                      underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                    >
+                      <View style={Styles.linkView}>
+                        <Text style={Styles.linkText}>
+                          Replay intro
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={Styles.linkContainer}>
+                    <TouchableHighlight
+                      onPress={props.onLinkWeb}
+                      style={Styles.linkButton}
+                      underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                    >
+                      <View style={Styles.linkView}>
+                        <Text style={Styles.linkText}>
+                          Pathify on the web
+                        </Text>
+                        <View style={Styles.linkIconView}>
+                          <FontAwesome5
+                            color={constants.colors.links.icon}
+                            name='external-link-alt'
+                            size={constants.links.fontSize}
+                          />
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={Styles.linkContainer}>
+                    <TouchableHighlight
+                      onPress={props.onLinkPrivacy}
+                      style={Styles.linkButton}
+                      underlayColor={constants.colors.topMenu.menuItemUnderlay}
+                    >
+                      <View style={Styles.linkView}>
+                        <Text style={Styles.linkText}>
+                          Privacy policy
+                        </Text>
+                        <View style={Styles.linkIconView}>
+                          <FontAwesome5
+                            color={constants.colors.links.icon}
+                            name='external-link-alt'
+                            size={constants.links.fontSize}
+                          />
+                        </View>
+                      </View>
+                    </TouchableHighlight>
                   </View>
                 </View>
               </View>

@@ -1,14 +1,12 @@
 // SettingsPanel supports setting map style and opacity (with a slider).
 
-import _ from 'lodash';
+import _ from 'lodash'; // for _.throttle
 
 import React, {
 } from 'react';
 
 import {
-  // GestureResponderEvent,
   StyleSheet,
-  Switch,
   Text,
   TouchableHighlight,
   View,
