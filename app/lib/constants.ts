@@ -703,6 +703,10 @@ const constants = {
     height: 240,
     width: 240,
   },
+  urls: {
+    pathifyWeb: 'https://pathify.app',
+    privacyPolicy: 'https://pathify.app/privacy/', // trailing slash is needed
+  },
 }
 
 export default constants;

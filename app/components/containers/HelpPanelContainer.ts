@@ -1,8 +1,10 @@
 import {
+  Linking,
 } from 'react-native';
 import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
+import constants from 'lib/constants';
 import { AppState } from 'lib/state';
 import HelpPanel from 'presenters/HelpPanel';
 import log from 'shared/log';
@@ -31,9 +33,11 @@ const mapStateToProps = (state: AppState): HelpPanelStateProps => {
 const mapDispatchToProps = (dispatch: Function): HelpPanelDispatchProps => {
   const onLinkPrivacy = () => {
     log.debug('HelpPanel onLinkPrivacy');
+    Linking.openURL(constants.urls.privacyPolicy);
   }
   const onLinkWeb = () => {
     log.debug('HelpPanel onLinkWeb');
+    Linking.openURL(constants.urls.pathifyWeb);
   }
   const onReplayIntro = () => {
     log.debug('HelpPanel onReplayIntro');
