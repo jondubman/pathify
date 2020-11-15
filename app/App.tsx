@@ -7,7 +7,8 @@ import {
 import { Provider } from 'react-redux';
 
 // This disables annoying spurious warnings in the simulator, by hiding ALL warnings. But they still show up in the log.
-console.disableYellowBox = true;
+// Note: This is now deprecated; use LogBox.ignoreAllLogs(disable)
+// console.disableYellowBox = true;
 
 // Note the following transformer, along with package.json files with a name property, enables import from lib/* etc.
 // https: //www.npmjs.com/package/react-native-typescript-transformer

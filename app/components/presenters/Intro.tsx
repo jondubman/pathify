@@ -15,6 +15,7 @@ const { swiper } = constants.colors;
 
 const Styles = StyleSheet.create({
   containingView: {
+    position: 'absolute',  
     flex: 1,
   },
   slide1: {
@@ -42,8 +43,8 @@ const Styles = StyleSheet.create({
     backgroundColor: swiper.p4,
   },
   text: {
-    color: '#fff',
-    fontSize: 30,
+    color: constants.colors.infoLabels.default,
+    fontSize: 24,
     fontWeight: 'bold'
   },
   swiper: {},
@@ -56,6 +57,7 @@ const onIndexChanged = (index: number) => {
 const Intro = (props: IntroProps) => (
   <View style={Styles.containingView}>
     <Swiper
+      index={props.page}
       loop={false}
       onIndexChanged={onIndexChanged}
       showsButtons={true}

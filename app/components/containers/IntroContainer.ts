@@ -1,9 +1,11 @@
 import { connect } from 'react-redux';
 
+import { AppAction, newAction } from 'lib/actions';
 import { AppState } from 'lib/state';
 import Intro from 'presenters/Intro';
 
 interface IntroStateProps {
+  page: number;
 }
 
 interface IntroDispatchProps {
@@ -13,6 +15,7 @@ export type IntroProps = IntroStateProps & IntroDispatchProps;
 
 const mapStateToProps = (state: AppState): IntroStateProps => {
   return {
+    page: state.options.introModePage,
   }
 }
 

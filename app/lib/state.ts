@@ -49,7 +49,7 @@ export const noCurrentLocation = {
 // TODO This and state.userLocation are largely redundant, but combining them wouldn't buy much.
 export type Current = typeof noCurrentLocation;
 
-const devMode = __DEV__ ? true : true; // TODO always use false for production
+const devMode = __DEV__ ? true : false; // TODO always use false for production (? true : false)
 
 export const initialAppState = {
   cache: {
@@ -127,6 +127,7 @@ export const initialAppState = {
     decelerationRate: 1, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
     grabBarSnapIndex: constants.snapIndex.topButtons, // User can drag bar up and down to reveal more/less UI over map.
     grabBarSnapIndexPreview: constants.snapIndex.topButtons, // same as grabBarSnapIndex, different only while dragging
+    introModePage: 0, // current page of swiper for introMode
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
