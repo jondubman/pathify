@@ -44,11 +44,11 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Change to Always Allow to continue tracking activities in the background.</string>
+	<string>Change to Always Allow to enable your private activity tracking sessions to continue running in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow While Using App enables you to see your location on a map and track it on request, privately and securely.</string>
+	<string>Allow While Using App to see your location on a map, and track it on request, privately.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>This is needed to maximize battery efficiency and to determine the mode of travel during tracking.</string>
+	<string>This is needed to maximize battery efficiency, and to determine the mode of travel during tracking.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

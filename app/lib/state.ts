@@ -49,7 +49,7 @@ export const noCurrentLocation = {
 // TODO This and state.userLocation are largely redundant, but combining them wouldn't buy much.
 export type Current = typeof noCurrentLocation;
 
-const devMode = __DEV__ ? true : false; // TODO always use false for production (? true : false)
+const devMode = __DEV__ ? true : true; // (debug : release) TODO always use false for production (? true : false)
 
 export const initialAppState = {
   cache: {
