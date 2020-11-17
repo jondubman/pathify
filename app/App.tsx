@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
 } from 'react-native';
@@ -46,15 +47,24 @@ export default class App extends Component {
     try {
       store.create(); // proactively create Redux store instance
       const { flags } = store.getState();
+      let { devMode } = flags;
 
       // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
 
       // Log incoming properties
-      log.info('version', (this.props as any).version); // set in AppDelegate.m
-      log.info('buildNumber', (this.props as any).buildNumber); // set in AppDelegate.m
-      log.info('TODO pathifyEnv', (this.props as any).pathifyEnv); // set (maybe) in PathifyUITests.swift
-
+      const { version, buildNumber, pathifyEnv, develop } = this.props as any;
+      log.info('version', version); // set in AppDelegate.m
+      log.info('buildNumber', buildNumber); // set in AppDelegate.m
+      log.info('TODO pathifyEnv', pathifyEnv); // set (maybe) in PathifyUITests.swift
+      log.info('TODO develop', develop); // set (maybe) in XCode build scheme
+      if (develop === 'true') {
+        // Alert.alert('Warning: devMode is enabled');
+        store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
+        store.dispatch(newAction(AppAction.setAppOption, { clientId: Date.now().toString() }));
+        log.warn('devMode enabled');
+        devMode = true;
+      }
       if (flags.logToDatabase) {
         log.registerCallback((level: string, ...args) => {
           const message: LogMessageData = {
@@ -91,7 +101,7 @@ export default class App extends Component {
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
 
-      if (flags.devMode) {
+      if (devMode) {
         // In devMode, attempt to stay in regular contact with the Pathify server.
         setTimeout(pollServer, 0);
       }

@@ -49,7 +49,7 @@ export const noCurrentLocation = {
 // TODO This and state.userLocation are largely redundant, but combining them wouldn't buy much.
 export type Current = typeof noCurrentLocation;
 
-const devMode = __DEV__ ? true : true; // (debug : release) TODO always use false for production (? true : false)
+const devMode = __DEV__ ? true : false; // (debug : release) TODO
 
 export const initialAppState = {
   cache: {
@@ -69,7 +69,7 @@ export const initialAppState = {
     appStartupCompleted: false, // once true, should never be set to false
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
-    devMode, // if set to true, app can be remotely controlled and queried; false for public release
+    devMode, // if set to true, app calls in to Pathify server and takes requests and queries; false for public release
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
@@ -122,7 +122,8 @@ export const initialAppState = {
     appState: AppStateChange.STARTUP as AppStateChange,
     backTime: now, // time you go back to if you jump to NOW on the Timeline, and then go back
     centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.
-    clientAlias: __DEV__ ? 'app' : 'device', // TODO use constants
+    clientAlias: 'app', // TODO use constants
+    clientId: '', // TODO
     currentActivityId: null as string | null, // while tracking Activity
     decelerationRate: 1, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
     grabBarSnapIndex: constants.snapIndex.topButtons, // User can drag bar up and down to reveal more/less UI over map.

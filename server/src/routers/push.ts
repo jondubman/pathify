@@ -78,7 +78,7 @@ router.post('/', function (req, res) {
         res.send(JSON.stringify(response));
       }).catch(error => {
         try {
-          log.info(`appQuery timeout, clientId ${clientId}`);
+          log.info(`appQuery timeout, clientAlias ${clientAlias}, clientId ${clientId}`);
           res.send({ error });
         } catch(err) {
           log.error('subsequent error, probably: Cannot set headers after they are sent to the client');

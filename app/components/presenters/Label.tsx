@@ -26,7 +26,6 @@ class Label extends React.Component<LabelProps> {
 
   render() {
     const { props } = this;
-    log.debug('props');
     const style = (props.alwaysShow || props.labelsEnbled) ? showStyle : hideStyle;
     return (
       <View pointerEvents="none" style={style}>

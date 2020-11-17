@@ -38,17 +38,18 @@ const handleServerPush = async (data: any) => {
 }
 
 const pollServerOnce = async () => {
-  const route = 'poll'; // TODO should move to shared constant; see pathify.ts on server-side.
-  const clientAlias = store.getState().options.clientAlias;
-  // TODO use constant for timeout
-  const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=90000`;
-  const method = 'GET';
   try {
+    const route = 'poll'; // TODO should move to shared constant; see pathify.ts on server-side.
+    const { options } = store.getState();
+    const { clientAlias } = options;
+    // TODO use constant for timeout
+    const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=90000`;
+    const method = 'GET';
     const response = await fetch(url, { method, headers });
     const message = await response.json();
     handleServerPush(message);
   } catch (err) {
-    log.info('pollServerOnce', url, err);
+    log.info('pollServerOnce', err);
 
     // take a brief nap and then try again
     try {
