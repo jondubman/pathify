@@ -20,15 +20,18 @@ class PathifyUITests: XCTestCase {
     func testExample() {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
+
+        // Note launchEnvironment comes through as props to the App component on the react-native side once launched.
         app.launchEnvironment = ["pathifyEnv" : "TODO"]
+
         setupSnapshot(app)
+
         app.launch()
 
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-
         sleep(10)
-        snapshot("uitest1");
+        snapshot("uitest1")
         // sleep(5)
         // snapshot("uitest2")
     }

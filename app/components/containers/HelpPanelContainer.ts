@@ -25,8 +25,10 @@ interface HelpPanelDispatchProps {
 export type HelpPanelProps = HelpPanelStateProps & HelpPanelDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpPanelStateProps => {
+  const { appBuild, appVersion } = state.options;
+  const { devMode } = state.flags;
   return {
-    version: `Pathify v${state.options.appVersion}.${state.options.appBuild}`,
+    version: `Pathify v${appVersion}.${appBuild}${devMode ? '.' : ''}`,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
   }

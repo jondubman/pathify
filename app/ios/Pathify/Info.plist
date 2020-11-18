@@ -44,9 +44,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always Allow enables you to privately track your own activities in the background.</string>
+	<string>Always Allow lets you keep tracking an activity while running in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow While Using App to see your location on a map and privately track your own activities.</string>
+	<string>Allow While Using App lets you view your location on a map and privately track your own activity.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>This is needed to maximize battery efficiency, and to determine the mode of travel during tracking.</string>
 	<key>UIAppFonts</key>

@@ -1763,7 +1763,7 @@ const sagas = {
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
       const flagsNow = yield select((state: AppState) => state.flags);
       yield call(log.trace, 'timelineNow was', timelineNow, 'and is', flagsNow.timelineNow);
-      const scrollTime = timelineNow ? utils.now() : pausedTime;
+      const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
       yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
       yield put(newAction(AppAction.completeAppStartup));
       yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (TODO still needed?)

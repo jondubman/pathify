@@ -120,7 +120,7 @@ const geoconfig_default: Config = {
 
   persistMode: BackgroundGeolocation.PERSIST_MODE_NONE,
   // Enable to prevent iOS from suspending when stationary. Must be used with a heartbeatInterval.
-  preventSuspend: true, // TODO use false here?
+  preventSuspend: true, // TODO Do we need to use false here?
 
   showsBackgroundLocationIndicator: false,
 
@@ -151,8 +151,7 @@ const geoconfig_tracking: Config = {
   stationaryRadius: 1, // meters
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  // stopOnTerminate: false, // TODO
-  stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
+  stopTimeout: 10, // Minutes to wait in moving state with no movement before considering the device stationary
 
   // TODO for diagnosis via HTTP POST
   // batchSync: true,
