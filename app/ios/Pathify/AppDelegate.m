@@ -67,10 +67,10 @@ static void InitializeFlipper(UIApplication *application) {
 
   // Add XCode version and buildNumber to initialPropertiesDictionary.
   NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleShortVersionString"];
-  [initialPropertiesDictionary setValue:version forKey:@"version"];
+  [initialPropertiesDictionary setValue:version forKey:@"appVersion"];
 
   NSString *buildNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleVersion"];
-  [initialPropertiesDictionary setValue:buildNumber forKey:@"buildNumber"];
+  [initialPropertiesDictionary setValue:buildNumber forKey:@"appBuild"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Pathify"

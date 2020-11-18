@@ -53,15 +53,16 @@ export default class App extends Component {
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
 
       // Log incoming properties
-      const { version, buildNumber, pathifyEnv, develop } = this.props as any;
-      log.info('version', version); // set in AppDelegate.m
-      log.info('buildNumber', buildNumber); // set in AppDelegate.m
+      const { appBuild, appVersion, develop, pathifyEnv } = this.props as any;
+      log.info('appVersion', appVersion); // set in AppDelegate.m
+      log.info('appBuild', appBuild); // set in AppDelegate.m
+      store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
       log.info('TODO pathifyEnv', pathifyEnv); // set (maybe) in PathifyUITests.swift
       log.info('TODO develop', develop); // set (maybe) in XCode build scheme
-      if (develop === 'true') {
+      if (devMode || develop === 'true') {
         // Alert.alert('Warning: devMode is enabled');
         store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
-        store.dispatch(newAction(AppAction.setAppOption, { clientId: Date.now().toString() }));
+        store.dispatch(newAction(AppAction.setAppOption, { clientId: Date.now().toString() })); // TODO
         log.warn('devMode enabled');
         devMode = true;
       }
@@ -83,14 +84,6 @@ export default class App extends Component {
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
       store.dispatch(newAction(AppAction.startupActions));
-
-      // For react-native-vector-icons when using use_frameworks in Podfile
-      // See https://awesomeopensource.com/project/oblador/react-native-vector-icons
-      // log.debug('FontAwesome5', FontAwesome5);
-      // if ((FontAwesome5 as any).loadFont) {
-      //   log.debug('react-native-vector-icons loadFont');
-      //   (FontAwesome5 as any).loadFont();
-      // }
 
       // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {

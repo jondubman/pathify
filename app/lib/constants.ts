@@ -194,6 +194,7 @@ const colors = {
     border: namedColors.darkerGray,
     labelsLabel: withOpacity(colorThemes.labels, 0.75),
     labelsThumb: withOpacity(colorThemes.labels, 0.85),
+    staticText: withOpacity(namedColors.white, 0.75),
   },
   infoLabels: {
     default: colorThemes.labels,

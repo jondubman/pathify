@@ -119,6 +119,8 @@ export const initialAppState = {
   mapZoomInitial: null as number | null, // once set, never changes
   // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
   options: { // Like the flags, these are not necessarily user-configurable.
+    appBuild: '0', // set on startup in App component
+    appVersion: 0, // set on startup in App component
     appState: AppStateChange.STARTUP as AppStateChange,
     backTime: now, // time you go back to if you jump to NOW on the Timeline, and then go back
     centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.

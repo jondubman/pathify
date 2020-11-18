@@ -117,7 +117,7 @@ const { schemaVersion } = constants.database;
 const { bounds, heading } = constants.map.default;
 
 const defaultSettings = {
-  id: 1, // always 1, since there is 1 set of defaultSettings. This is a singleton.
+  id: 1, // ALWAYS 1, since there is 1 set of defaultSettings. This is a singleton.
   backTime: 0, // TODO this is pretty rudimentary, should at least be a stack
   currentActivityId: undefined,
   followingPath: false,
@@ -149,7 +149,7 @@ const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): v
     if (oldRealm.objects('Settings').length > 0) {
       oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
     }
-    newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, true); // true: update
+    newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, Realm.UpdateMode.All);
     migrationRequired = true;
   }
 }
@@ -258,10 +258,10 @@ const database = {
     }
     let newActivity;
     realm.write(() => {
-      newActivity = realm.create('Activity', newActivityTemplate);
+      newActivity = realm.create('Activity', newActivityTemplate, Realm.UpdateMode.All);
       const pathUpdate = database.newPathUpdate(newActivityTemplate.id);
       // create Path right away
-      const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
+      const path = realm.create('Path', pathUpdate, Realm.UpdateMode.All) as Path;
       // TODO could cache this path, though there's no need now.
     })
     return newActivity;
@@ -298,7 +298,7 @@ const database = {
   updateActivity: async (activityUpdate: ActivityData, pathUpdate: PathUpdate | undefined = undefined) => {
     let activity: Activity | null = null;
     realm.write(() => {
-      activity = realm.create('Activity', activityUpdate, Realm.UpdateMode.Modified) as Activity; // true: update
+      activity = realm.create('Activity', activityUpdate, Realm.UpdateMode.Modified) as Activity;
       if (pathUpdate) { // otherwise leave it alone
         const path = realm.create('Path', pathUpdate, Realm.UpdateMode.Modified) as Path;
       }
@@ -369,7 +369,7 @@ const database = {
         // Note id is always 1 (Settings is a singleton.) Apply changes to defaultSettings:
         const initialSettings = { ...defaultSettings, ...changes, updateTime: now }; // merge any changes
         realm.write(() => {
-          realm.create('Settings', initialSettings, true); // true: update
+          realm.create('Settings', initialSettings, Realm.UpdateMode.All);
         })
         log.debug('changeSettings wrote:', initialSettings);
       }

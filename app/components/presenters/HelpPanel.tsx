@@ -41,6 +41,7 @@ const Styles = StyleSheet.create({
   },
   linkContainer: {
     margin: 10,
+    marginVertical: 5,
     overflow: 'hidden',
     padding: 5,
   },
@@ -70,6 +71,14 @@ const Styles = StyleSheet.create({
     right: rightOffset,
     top: topOffset,
     width: constants.panelWidth,
+  },
+  staticText: {
+    color: constants.colors.helpPanel.staticText,
+    fontFamily: constants.fonts.family,
+    fontSize: 14,
+  },
+  staticTextView: {
+    marginTop: 50, // TODO good for now
   },
   subpanel: {
   },
@@ -107,6 +116,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
   render() {
     const colors = constants.colors.switch;
     const { props } = this;
+    const staticText = props.version;
     return (
       <React.Fragment>
         { props.open ?
@@ -182,6 +192,11 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                         </View>
                       </View>
                     </TouchableHighlight>
+                  </View>
+                  <View style={Styles.staticTextView}>
+                    <Text style={Styles.staticText}>
+                      {staticText}
+                    </Text>
                   </View>
                 </View>
               </View>

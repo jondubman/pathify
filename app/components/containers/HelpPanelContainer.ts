@@ -10,6 +10,7 @@ import HelpPanel from 'presenters/HelpPanel';
 import log from 'shared/log';
 
 interface HelpPanelStateProps {
+  version: string;
   labelsEnabled: boolean;
   open: boolean;
 }
@@ -25,6 +26,7 @@ export type HelpPanelProps = HelpPanelStateProps & HelpPanelDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpPanelStateProps => {
   return {
+    version: `Pathify v${state.options.appVersion}.${state.options.appBuild}`,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
   }
