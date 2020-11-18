@@ -120,10 +120,9 @@ const geoconfig_default: Config = {
 
   persistMode: BackgroundGeolocation.PERSIST_MODE_NONE,
   // Enable to prevent iOS from suspending when stationary. Must be used with a heartbeatInterval.
-  // preventSuspend: false, // default false
+  preventSuspend: true, // TODO use false here?
 
-  // preventSuspend: false, // default false TODO
-  preventSuspend: true, // default false TODO
+  showsBackgroundLocationIndicator: false,
 
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
@@ -146,6 +145,7 @@ const geoconfig_tracking: Config = {
   preventSuspend: true, // default false (note true has major battery impact!)
   maxDaysToPersist: 14,
   persistMode: BackgroundGeolocation.PERSIST_MODE_NONE, // NONE when appactive, vs. geoconfig_tracking_background below
+
   // stationaryRadius: when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
@@ -153,7 +153,6 @@ const geoconfig_tracking: Config = {
   stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   // stopOnTerminate: false, // TODO
   stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
-  showsBackgroundLocationIndicator: true,
 
   // TODO for diagnosis via HTTP POST
   // batchSync: true,
@@ -175,6 +174,7 @@ const geoconfig_tracking: Config = {
 const geoconfig_tracking_background: Config = {
   ...geoconfig_tracking,
   persistMode: BackgroundGeolocation.PERSIST_MODE_ALL,
+  showsBackgroundLocationIndicator: true,
 }
 
 const mapActivityToMode = {
@@ -486,7 +486,6 @@ export const Geo = {
       const locations = await BackgroundGeolocation.getLocations() as Location[];
       log.info(`processSavedLocations: count: ${locations.length}`);
       if (locations.length && activityId) {
-        // AppAction.addEvents
         const locationEvents: LocationEvents = [];
         for (const location of locations) {
           if (location.sample) {
@@ -496,7 +495,7 @@ export const Geo = {
           locationEvents.push(locationEvent);
         }
         locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
-        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents }));
+        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, forceRefresh: true }));
         // TODO is there any possibility the above might not have worked and we might be at risk of losing data here?
         await Geo.destroyLocations();
         log.debug(`processSavedLocations added: ${locationEvents.length}`);

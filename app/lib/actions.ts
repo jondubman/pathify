@@ -146,6 +146,7 @@ export interface ActivityListScrolledParams {
 
 export interface AddEventsParams {
   events: GenericEvents;
+  forceRefresh: boolean;
 }
 
 export interface AppStateChangeParams {

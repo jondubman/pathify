@@ -203,7 +203,7 @@ const sagas = {
   addEvents: function* (action: Action) {
     try {
       const params = action.params as AddEventsParams;
-      const { events } = params;
+      const { events, forceRefresh } = params;
       // First, add the given events. This is the easy part. The rest is side effects.
       if (events && events.length) {
         yield call(database.createEvents, events);
@@ -211,7 +211,7 @@ const sagas = {
       // Now update any Activity/Activities related to the added events.
       // The Activity is essentially a redundant, persisted summary of events with the same activityId.
       // Activities are then cached in Redux state in "extended" form with additional properties that make it more
-      // readily consumable. (See ActivityDataExtended.) It would/should be possible to reconstruct these from the events.
+      // readily consumable (see ActivityDataExtended) It would/should be possible to reconstruct these from the events.
       let activityId: string | undefined;
       let firstNewLoc: LocationEvent | undefined;
       let firstNewOdo: number = 0;
@@ -263,7 +263,10 @@ const sagas = {
           // We simply append to the path and avoid reformulating it entirely.
           // The case of inserting events in the middle of an existing Activity is handled by the else block below.
           const appending: boolean = !!(!firstNewLoc || (activity.tLastUpdate && firstNewLoc.t > activity.tLastUpdate));
-          if (appending) {
+          if (forceRefresh || !appending) {
+            // not simply appending events; recalc entire path et al (note new events were already added above)
+            yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
+          } else {
             let latestLocEvent: LocationEvent | undefined = undefined; // TODO need to remember this
             // odoStart
             if (firstNewOdo) {
@@ -356,9 +359,6 @@ const sagas = {
             }
             activityUpdate.tLastUpdate = utils.now();
             yield call(database.updateActivity, activityUpdate);
-          } /* appending */ else {
-            // not simply appending events; recalc entire path et al (note new events were already added above)
-            yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
           }
         }
       }
@@ -615,7 +615,7 @@ const sagas = {
       trackingActivity,
     } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
-      yield call(Geo.countLocations);
+      const count = yield call(Geo.countLocations); // TODO use count?
       if (!recoveryMode) {
         yield call(Geo.processSavedLocations); // Let's get this started ASAP.
       }
@@ -853,10 +853,10 @@ const sagas = {
             log.warn('attempt to delete currentActivity (not permitted)');
             return;
           }
-          store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: id, remove: true }));
           if (id === selectedActivityId) {
             store.dispatch(newAction(AppAction.setAppOption, { selectedActivityId: null }));
           }
+          store.dispatch(newAction(AppAction.refreshCachedActivity, { activityId: id, remove: true }));
           setTimeout(() => {
             database.deleteActivity(id, deleteEventsWhenDeletingActivity);
             Vibration.vibrate(constants.timing.vibration);
