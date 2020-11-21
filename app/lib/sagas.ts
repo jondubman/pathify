@@ -921,6 +921,8 @@ const sagas = {
     }
   },
 
+  // Note these flag sagas are the way to toggle flags in state.flags.
+
   flagDisable: function* (action: Action) {
     const flagName: string = action.params;
     const flags = yield select((state: AppState) => state.flags);
@@ -1515,6 +1517,8 @@ const sagas = {
     }
   },
 
+  // This is the mechanism that should be used to modify state.options.
+  // That happens right away, and all the rest is side effects.
   setAppOption: function* (action: Action) {
     // First, actually set the options!
     const { params } = action;
@@ -1529,7 +1533,7 @@ const sagas = {
       timelineScrolling,
     } = state.flags;
     if (!appStartupCompleted) {
-      yield call(log.trace, 'setAppOption: appStartupCompleted false, skipping side-effects');
+      yield call(log.trace, 'setAppOption: app has not finished starting up, so skipping side-effects');
       return;
     }
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.

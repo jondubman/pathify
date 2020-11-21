@@ -74,10 +74,12 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       log.debug('componentDidUpdate during scrolling?');
     } else {
       const { scrollTime } = store.getState().options;
-      setTimeout(() => { // This setTimeout is needed for the scroll to take effect.
-        this.scrollToTime(scrollTime);
-        log.scrollEvent('timelineScroll componentDidUpdate', prevProps, this.props);
-      }, 0)
+      if (scrollTime) {
+        setTimeout(() => { // This setTimeout is needed for the scroll to take effect.
+          this.scrollToTime(scrollTime);
+          log.scrollEvent('timelineScroll componentDidUpdate', prevProps, this.props);
+        }, 0)
+      }
     }
   }
 

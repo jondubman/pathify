@@ -34,7 +34,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     introMode,
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
-    showActivityInfo: showActivityInfo,
+    showActivityInfo,
     showGrabBar,
     showTimeline: shouldShowTimeline(state),
     timelineHeight: dynamicTimelineHeight(state),

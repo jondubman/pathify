@@ -572,7 +572,7 @@ const constants = {
     timelineRelativeZoomStep: 30, // bigger zooms faster
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
-    // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode / now clock.
+    // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode & Now clock.
     // 50 generates buttery smooth motion of second hand on the clock, but may drop JS frame.
     // 100 looks smooth but seems a bit CPU intensive. Above 200, the stepping motion becomes more apparent.
     timerTickInterval: 200,

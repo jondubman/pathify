@@ -62,6 +62,8 @@ static void InitializeFlipper(UIApplication *application) {
   NSMutableDictionary *initialPropertiesDictionary = [NSMutableDictionary dictionary];
 
   // Custom code for Pathify: retrieve the environment variables for the running app and pass them to the RCTRootView.
+  // Note envrironment variables defined in the XCode scheme are unfortunately only passed when run from XCode directly,
+  // not when app is launched via the icon.
   NSDictionary *environment = [[NSProcessInfo processInfo] environment];
   [initialPropertiesDictionary addEntriesFromDictionary:environment];
 

@@ -7,7 +7,7 @@ import ActivityListContainer from 'containers/ActivityListContainer';
 
 const ActivityInfo = (props: ActivityInfoProps) => (
   <React.Fragment>
-    {props.showActivityList ? <ActivityListContainer /> : null}
+    <ActivityListContainer />
     {props.showActivityDetails ? <ActivityDetailsContainer /> : null}
   </React.Fragment>
 )

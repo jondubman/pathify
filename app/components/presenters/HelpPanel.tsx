@@ -14,7 +14,6 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import { HelpPanelProps } from 'containers/HelpPanelContainer';
 import constants from 'lib/constants';
-import log from 'shared/log';
 
 const colors = constants.colors.helpPanel;
 const {

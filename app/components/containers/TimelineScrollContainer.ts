@@ -8,7 +8,6 @@ import { AppAction, newAction } from 'lib/actions';
 import {
   dynamicTimelineScrollWidth,
   dynamicTimelineWidth,
-  shouldShowTimeline,
   timelineVisibleTime,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';

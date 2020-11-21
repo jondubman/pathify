@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 
 import {
-  shouldShowActivityList,
   showActivityDetailsRowsPreview,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -9,7 +8,6 @@ import ActivityInfo from 'presenters/ActivityInfo';
 
 interface ActivityInfoStateProps {
   showActivityDetails: boolean;
-  showActivityList: boolean;
 }
 
 interface ActivityInfoDispatchProps {
@@ -20,7 +18,6 @@ export type ActivityInfoProps = ActivityInfoStateProps & ActivityInfoDispatchPro
 const mapStateToProps = (state: AppState): ActivityInfoStateProps => {
   return {
     showActivityDetails: showActivityDetailsRowsPreview(state) > 0,
-    showActivityList: shouldShowActivityList(state),
   }
 }
 

@@ -1,4 +1,5 @@
-// Selector functions for Redux reducer, plus some other derived quantities not necessarily dependent on Redux state.
+// Selector functions for Redux reducer, including some derived quantities not necessarily dependent on Redux state.
+
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { createSelector } from 'reselect'
 
@@ -35,16 +36,18 @@ export const activityIncludesMark = (activityId: string, mark: MarkEvent): boole
   return !!(mark.activityId && activity && mark.activityId === activity.id)
 }
 
+// Note this may return -1, which means, no cache hit for this selectedActivityId. Note 0 is a valid index.
 export const selectedActivityIndex = (state: AppState) => (
   state.cache.activities.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
 )
 
+// This returns a string for display in the bubble above the TopMenu.
 export const activityIndex = (state: AppState): string => (
   state.cache.activities.length ?
     selectedActivityIndex(state) > -1 ?
-      `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}`
+      `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}` // (selectedActivityIndex / count)
       :
-      `${state.cache.activities.length}`
+      `${state.cache.activities.length}` // if no selected activity, just usethe count
     :
     '' // don't bother showing 0
 )
@@ -64,20 +67,9 @@ export const cachedActivityForTimepoint = (state: AppState, t: Timepoint): Activ
   return result;
 }
 
+// vertical center line on the screen
 export const centerline = () => {
   return utils.windowSize().width / 2;
-}
-
-export const clockNowMode = (state: AppState): boolean => {
-  if (state.flags.timelineNow) {
-    return true;
-  }
-  if (state.flags.timelineScrolling &&
-    state.options.scrollTime >= state.options.viewTime - constants.timing.timelineCloseToNow &&
-    state.options.scrollTime >= utils.now() - constants.timing.timelineCloseToNow) {
-    return true;
-  }
-  return false;
 }
 
 export const currentActivity = (state: AppState): Activity | undefined => {
@@ -99,10 +91,10 @@ export const currentOrSelectedActivity = (state: AppState): Activity | undefined
 }
 
 export const mapIsFullScreen = (state: AppState): boolean => (
-  state.options.grabBarSnapIndexPreview === 0
+  state.options.grabBarSnapIndexPreview === 0 // at the top
 )
 
-// Note this 'selector' does not currently depend on state.
+// Note this does not depend on state.
 export const dynamicAreaTop = (): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )

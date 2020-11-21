@@ -74,6 +74,10 @@ class AppUI extends Component<AppUIProps> {
             <TimelineScrollContainer />
           </View>
           {showGrabBar ? <GrabBarContainer /> : null}
+          {/* ActivityInfoContainer hidden in mapFullScreen, but keep it alive so it can be shown quickly later */}
+          <View style={{ position: 'absolute', width }}>
+            {showActivityInfo ? <ActivityInfoContainer /> : null}
+          </View>
           {mapFullScreen ?
             null
             :
@@ -82,11 +86,14 @@ class AppUI extends Component<AppUIProps> {
                 <CompassButtonContainer />
                 <FollowButtonsContainer />
               </View>
+              {/* TimelineControls (including ZoomClock) can appear even if Timeline itself hidden */}
               <TimelineControlsContainer />
               <View style={{ position: 'absolute', width }}>
-                {showActivityInfo ? <ActivityInfoContainer /> : null}
+                {/* includes TopButton */}
                 <TopMenuContainer />
+                {/* includes HelpButton */}
                 <HelpPanelContainer />
+                {/* includes SettingsButton */}
                 <SettingsPanelContainer />
               </View>
               <StartMenuContainer />
