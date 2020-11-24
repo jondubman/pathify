@@ -24,7 +24,9 @@ const mapStateToProps = (state: AppState): IntroStateProps => {
 const mapDispatchToProps = (dispatch: Function): IntroDispatchProps => {
   const pageChanged = (index: number) => {
     log.debug('Intro pageChanged', index);
-    dispatch(newAction(AppAction.setAppOption, { introModePage: index }));
+    setTimeout(() => {
+      dispatch(newAction(AppAction.setAppOption, { introModePage: index }));
+    }, 0)
   }
   const dispatchers = {
     pageChanged,

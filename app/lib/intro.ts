@@ -1,6 +1,11 @@
 // Intro mode
 
 import {
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
+
+import {
   AppState,
 } from 'lib/state';
 
@@ -11,6 +16,7 @@ export enum UICategory {
   'activities' = 'activities',
   'help' = 'help',
   'map' = 'map',
+  'follow' = 'follow',
   'settings' = 'settings',
   'start' = 'start',
 }
@@ -20,6 +26,7 @@ export const uiCategories = (state: AppState): UICategory[] => (
     // allow all by default
     UICategory.activities,
     UICategory.help,
+    UICategory.follow,
     UICategory.map,
     UICategory.settings,
     UICategory.start,
@@ -31,20 +38,23 @@ export interface IntroPageTemplate {
   buttonSkip?: IntroPageButton;
   buttonNext?: IntroPageButton;
   header: string;
+  headerStyle?: StyleProp<ViewStyle>;
+  pageStyle?: StyleProp<ViewStyle>;
   text: string;
+  textStyle?: StyleProp<ViewStyle>;
   ui: UICategory[];
 }
 const askLaterButton = {
   label: 'Ask later',
 }
 const closeButton = {
-  label: 'Skip rest',
+  label: '',
 }
 const nextButton = {
   label: 'NEXT',
 }
 const skipButton = {
-  label: 'Skip intro',
+  label: 'Skip tour',
 }
 const doneButton = {
   label: 'GET STARTED',
@@ -52,10 +62,10 @@ const doneButton = {
 export const introPages: IntroPageTemplate[] = [
   {
     name: 'welcome',
-    buttonSkip: skipButton,
     buttonNext: nextButton,
-    header: 'Welcome to Pathify',
-    text: `Pathify is a location-based app that lets you track, measure, map and retrace your activities, while navigating through time as well as space - all with complete privacy.`,
+    header: 'Welcome',
+    text: `Pathify is a location-based app that lets you track, measure and map your activities, navigating through time as well as space.\n
+Pathify takes a fresh approach that lets you plan, monitor and review activities all at once, on a unified map.`,
     ui: [],
   },
   {
@@ -63,23 +73,15 @@ export const introPages: IntroPageTemplate[] = [
     buttonSkip: closeButton,
     buttonNext: nextButton,
     header: 'Privacy, first',
-    text: `Privacy is a basic right. Your activity in Pathify is private by design. There's no signup to complete, no account to create. You are not the product. You are the owner - of your own data, whose value should accrue to you.
-\nWe want to earn your attention, not to monetize it.`,
+    text: `Privacy is a basic right. Your activity in Pathify is completely private by design. There's no signup to complete, no account to create.
+\nPathify respectfully requests permission to track your location for your own benefit. What happens in Pathify stays in Pathify, on your device, not in a big data pool on a remote server. We don't even anonymously track your usage.`,
     ui: [],
   },
-  {
-    name: 'location',
-    buttonSkip: askLaterButton,
-    buttonNext: nextButton,
-    header: 'Location permission',
-    text: `Pathify respectfully requests permission to track your location - for your benefit, not ours. We don't want to know where you are or where you've been. But if we agree that you should, let's get started!`,
-    ui: [],
-},
   {
     name: 'map',
     buttonSkip: closeButton,
     buttonNext: nextButton,
-    header: 'Built around the map',
+    header: 'Always-on map',
     text: `Instead of a separate route map for each activity, Pathify overlays current and prior activities on a unified map.
 \nBeautiful, up-to-date maps from Mapbox help you find lesser-known parks and trails. Adjust the style and opacity on the go with the Settings panel.`,
     ui: [UICategory.map, UICategory.settings],
@@ -91,41 +93,41 @@ export const introPages: IntroPageTemplate[] = [
     header: 'Two taps to get tracking ',
     text: `Tap the START button, then Start New Activity. End Activity the same way. It's that simple.
 \nYour path is green as you're tracking, and blue when done. You can dim the map to highlight it.`,
-    ui: [UICategory.map, UICategory.settings, UICategory.start],
+    ui: [UICategory.start],
   },
   {
     name: 'bar',
     buttonSkip: closeButton,
     buttonNext: nextButton,
-    header: 'Slide the bar down for details',
-    text: `This reveals a continuous timeline below the map, and a chronological list of activities above. 
+    header: 'See your activity timeline',
+    text: `Slide the bar down to reveal a continuous timeline below the map, and a chronological list of activities above. 
 \nKeep pulling down for details. See your distance, elapsed time, pace, elevation and more. Or slide the bar up for more map.`,
-    ui: [UICategory.map, UICategory.settings, UICategory.start, UICategory.activities],
+    ui: [UICategory.map, UICategory.activities],
   },
   {
     name: 'timeline',
     buttonSkip: closeButton,
     buttonNext: nextButton,
     header: 'Scroll the timeline to follow your path',
-    text: `Horizontally scroll the timeline, or the activity list. They are linked!. Scrolling one scrolls the other proportionally.
-\nThe timeline clock changes color. Green means now. Red means paused in the current activity. Blue means paused in a completed activity.
-\nTap the clock to reveal timeline zoom controls. Zoom out to see the distribution of activities over time, or way in to revisit a moment.
-\nUse the blue arrow to follow the blue dot on the map along a prior path, as you scroll through time.
-\nUse the green arrow to jump to where you are now, and the blue arrow to jump back.`,
-    ui: [UICategory.map, UICategory.settings, UICategory.start, UICategory.activities],
+    text: `Scroll the timeline or activity list to adjust the clock and retrace your path.
+\nTap the clock to zoom the timeline. Zoom out to see distribution over time, or way in to revisit a moment.
+\nUse the blue arrow to make the map follow a prior path, as you scroll through time.
+\nUse the green arrow to jump to now.`,
+    ui: [UICategory.follow, UICategory.map, UICategory.activities],
   },
   {
     name: 'tips',
     // final page, no buttonSkip
     buttonNext: doneButton,
     header: 'Tips and tricks',
+    headerStyle: { marginTop: 20 }, // TODO
     text: `Use the Activities menu (top) to zoom the map to an activity, or to delete an activity.
 \nTap an activity list square to zoom the map and timeline to show the entire activity. First tap jumps to the end, second back to the start, third to the chronological midpoint, looping around.
 \nUse the Info panel to show helpful yellow labels while you learn the app, then hide them for a cleaner look.
 \nSettings and Info panels stay open until you tap the button again, or tap outside the panel.
 \nTap the green clock in the activity list to jump to now. Green means now.
 \nZoom the map with only one finger by double tapping and sliding up and down.`,
-    ui: [UICategory.map, UICategory.settings, UICategory.help, UICategory.start, UICategory.activities],
+    ui: [],
   },
 ]
 

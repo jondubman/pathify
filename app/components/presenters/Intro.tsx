@@ -8,7 +8,10 @@ import {
 
 import { IntroProps } from 'containers/IntroContainer';
 import constants from 'lib/constants';
-import { introPages, IntroPageTemplate } from 'lib/intro';
+import {
+  introPages,
+  IntroPageTemplate
+} from 'lib/intro';
 
 import Swiper from 'react-native-swiper';
 // const { swiper } = constants.colors;
@@ -22,15 +25,15 @@ const Styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: constants.colors.introPages.background,
   },
   header: {
     color: constants.colors.byName.white,
     fontFamily: constants.fonts.family,
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     margin: 20,
-    marginTop: 50,
+    marginTop: 110,
     textAlign: 'center',
   },
   text: {
@@ -38,9 +41,10 @@ const Styles = StyleSheet.create({
     fontFamily: constants.fonts.family,
     fontSize: 16,
     fontWeight: 'normal',
-    margin: 20,
+    marginHorizontal: 20,
     marginBottom: 50,
-    textAlign: 'center',
+    marginTop: 0,
+    textAlign: 'left',
   },
   swiper: {},
 })
@@ -55,8 +59,8 @@ const Intro = (props: IntroProps) => (
       style={Styles.swiper}
     >
       {introPages.map((page: IntroPageTemplate) => (
-        <View style={Styles.slide}>
-          <Text style={Styles.header}>{page.header}</Text>
+        <View style={[Styles.slide, page.pageStyle]} key={page.name}>
+          <Text style={[Styles.header, page.headerStyle]}>{page.header}</Text>
           <Text style={Styles.text}>{page.text}</Text>
         </View>
       ))}

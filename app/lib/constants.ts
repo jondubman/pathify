@@ -200,6 +200,9 @@ const colors = {
     default: colorThemes.labels,
     alwaysVisible: namedColors.white,
   },
+  introPages: {
+    background: withOpacity(namedColors.black, 0.25),
+  },
   links: {
     background: withOpacity(namedColors.aqua, 0),
     border: withOpacity(namedColors.aqua, 0.5),

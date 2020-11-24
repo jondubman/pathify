@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import {
   uiCategories,
-  UICategory
+  UICategory,
 } from 'lib/intro';
 import {
   dynamicTimelineHeight,
@@ -29,6 +29,7 @@ interface AppUIDispatchProps {
 export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
+  const ui = uiCategories(state);
   const {
     introMode,
     mapTapped,
@@ -40,10 +41,10 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
     showActivityInfo,
-    showGrabBar,
-    showTimeline: shouldShowTimeline(state),
+    showGrabBar: showGrabBar && ui.includes(UICategory.activities),
+    showTimeline: shouldShowTimeline(state) && ui.includes(UICategory.activities),
     timelineHeight: dynamicTimelineHeight(state),
-    ui: uiCategories(state),
+    ui,
   }
 }
 

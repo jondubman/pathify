@@ -14,7 +14,7 @@ import constants, {
 import database from 'lib/database';
 import {
   uiCategories,
-  UICategory
+  UICategory,
 } from 'lib/intro';
 import locations, {
   LonLat,

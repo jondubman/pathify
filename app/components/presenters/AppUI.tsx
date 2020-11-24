@@ -27,6 +27,7 @@ import StartMenuContainer from 'containers/StartMenuContainer';
 import TimelineControlsContainer from 'containers/TimelineControlsContainer';
 import TimelineScrollContainer from 'containers/TimelineScrollContainer';
 import TopMenuContainer from 'containers/TopMenuContainer';
+import { UICategory } from 'lib/intro';
 
 const AppStyles = StyleSheet.create({
   containingAppView: {
@@ -82,27 +83,36 @@ class AppUI extends Component<AppUIProps> {
           {mapFullScreen ?
             null
             :
-            (<Fragment>
+            <Fragment>
               <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
                 <CompassButtonContainer />
-                <FollowButtonsContainer />
+                {ui.includes(UICategory.follow) ? (
+                  <FollowButtonsContainer />
+                ) : null}
               </View>
               {/* TimelineControls (including ZoomClock) can appear even if Timeline itself hidden */}
-              <TimelineControlsContainer />
+              {ui.includes(UICategory.activities) ? <TimelineControlsContainer /> : null}
               <View style={{ position: 'absolute', width }}>
-                {/* includes TopButton */}
-                <TopMenuContainer />
-                {/* includes HelpButton */}
-                <HelpPanelContainer />
-                {/* includes SettingsButton */}
-                <SettingsPanelContainer />
+                {ui.includes(UICategory.activities) ? (
+                  <TopMenuContainer /> // includes TopButton
+                ) : null}
+                {ui.includes(UICategory.help) ? (
+                    <HelpPanelContainer /> // includes HelpButton
+                  ) : null}
+                {ui.includes(UICategory.settings) ? (
+                  <SettingsPanelContainer /> // includes SettingsButton
+                ) : null}
               </View>
-              <StartMenuContainer />
-              <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
-                <StartButtonContainer />
-              </View>
+              {ui.includes(UICategory.start) ? (
+                <Fragment>
+                  <StartMenuContainer />
+                  <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+                    <StartButtonContainer />
+                  </View>
+                </Fragment>
+              ) : null}
             </Fragment>
-          )}
+        }
         </View>
         {introMode ? <IntroContainer /> : null}
       </View>

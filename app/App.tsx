@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import {
-  Alert,
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
+  LogBox,
 } from 'react-native';
 // import FontAwesome5 from 'react-native-vector-icons';
 import { Provider } from 'react-redux';
 
-// This disables annoying spurious warnings in the simulator, by hiding ALL warnings. But they still show up in the log.
-// Note: This is now deprecated; use LogBox.ignoreAllLogs(disable)
-// console.disableYellowBox = true;
+LogBox.ignoreAllLogs(true); // Note this only disables notifications, not uncaught errors.
 
 // Note the following transformer, along with package.json files with a name property, enables import from lib/* etc.
 // https: //www.npmjs.com/package/react-native-typescript-transformer
