@@ -12,6 +12,10 @@ import constants, {
   MapStyle,
 } from 'lib/constants';
 import database from 'lib/database';
+import {
+  uiCategories,
+  UICategory
+} from 'lib/intro';
 import locations, {
   LonLat,
   modeIsMoving,
@@ -189,7 +193,9 @@ export const loggableOptions = (state: AppState) => {
 }
 
 export const mapHidden = (state: AppState): boolean => (
-  (dynamicMapStyle(state).url === '' || !state.flags.mapEnable)
+  dynamicMapStyle(state).url === '' ||
+  !state.flags.mapEnable ||
+  !(uiCategories(state).includes(UICategory.map))
 )
 
 export const mapPadding = (state: AppState): [number, number] => {

@@ -57,6 +57,7 @@ class AppUI extends Component<AppUIProps> {
       showGrabBar,
       showTimeline,
       timelineHeight,
+      ui,
     } = this.props;
     const pointerEvents = showTimeline ? 'auto' : 'none';
     const timelineOpacity = { opacity: showTimeline ? 1 : 0 };

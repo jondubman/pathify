@@ -1,12 +1,16 @@
 import { connect } from 'react-redux';
 
-import AppUI from 'presenters/AppUI';
+import {
+  uiCategories,
+  UICategory
+} from 'lib/intro';
 import {
   dynamicTimelineHeight,
   mapIsFullScreen,
   shouldShowTimeline,
  } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import AppUI from 'presenters/AppUI';
 
 interface AppUIStateProps {
   introMode: boolean;
@@ -16,6 +20,7 @@ interface AppUIStateProps {
   showGrabBar: boolean;
   showTimeline: boolean;
   timelineHeight: number;
+  ui: UICategory[];
 }
 
 interface AppUIDispatchProps {
@@ -38,6 +43,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     showGrabBar,
     showTimeline: shouldShowTimeline(state),
     timelineHeight: dynamicTimelineHeight(state),
+    ui: uiCategories(state),
   }
 }
 

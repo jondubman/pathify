@@ -8,73 +8,58 @@ import {
 
 import { IntroProps } from 'containers/IntroContainer';
 import constants from 'lib/constants';
-import log from 'shared/log';
+import { introPages, IntroPageTemplate } from 'lib/intro';
 
 import Swiper from 'react-native-swiper';
-const { swiper } = constants.colors;
+// const { swiper } = constants.colors;
 
 const Styles = StyleSheet.create({
   containingView: {
     position: 'absolute',  
     flex: 1,
   },
-  slide1: {
+  slide: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: swiper.p1,
+    backgroundColor: 'transparent',
   },
-  slide2: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: swiper.p2,
-  },
-  slide3: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: swiper.p3,
-  },
-  slide4: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: swiper.p4,
+  header: {
+    color: constants.colors.byName.white,
+    fontFamily: constants.fonts.family,
+    fontSize: 24,
+    fontWeight: 'bold',
+    margin: 20,
+    marginTop: 50,
+    textAlign: 'center',
   },
   text: {
-    color: constants.colors.infoLabels.default,
-    fontSize: 24,
-    fontWeight: 'bold'
+    color: constants.colors.byName.white,
+    fontFamily: constants.fonts.family,
+    fontSize: 16,
+    fontWeight: 'normal',
+    margin: 20,
+    marginBottom: 50,
+    textAlign: 'center',
   },
   swiper: {},
 })
-
-const onIndexChanged = (index: number) => {
-  log.debug('Intro onIndexChanged', index);
-}
 
 const Intro = (props: IntroProps) => (
   <View style={Styles.containingView}>
     <Swiper
       index={props.page}
       loop={false}
-      onIndexChanged={onIndexChanged}
+      onIndexChanged={props.pageChanged}
       showsButtons={true}
       style={Styles.swiper}
     >
-      <View style={Styles.slide1}>
-        <Text style={Styles.text}>Pathify</Text>
-      </View>
-      <View style={Styles.slide2}>
-        <Text style={Styles.text}>Privacy-first</Text>
-      </View>
-      <View style={Styles.slide3}>
-        <Text style={Styles.text}>Activity Tracker</Text>
-      </View>
-      <View style={Styles.slide4}>
-        <Text style={Styles.text}>and Timeline</Text>
-      </View>
+      {introPages.map((page: IntroPageTemplate) => (
+        <View style={Styles.slide}>
+          <Text style={Styles.header}>{page.header}</Text>
+          <Text style={Styles.text}>{page.text}</Text>
+        </View>
+      ))}
     </Swiper>
   </View>
 )

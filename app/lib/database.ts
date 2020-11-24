@@ -144,7 +144,6 @@ let migrationRequired = false;
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
     // Migrate Settings
-    // TODO this currently overwrites user settings with new defaults on any DB migration; fix this for production.
     let oldSettings;
     if (oldRealm.objects('Settings').length > 0) {
       oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;

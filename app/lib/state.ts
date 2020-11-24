@@ -74,7 +74,7 @@ export const initialAppState = {
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
     helpOpen: false, // manually opened by user
-    introMode: false, // TODO first run experience, possibly replayed from Help menu
+    introMode: true, // TODO first run experience, possibly replayed from Help menu
     labelsEnabled: true, // yellow UI labels (like training wheels) that can be switched on/off on the Help menu
     locationAuthorized: false, // TODO
     logInDebugVersion: true, // typically true
