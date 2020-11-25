@@ -77,9 +77,12 @@ class AppUI extends Component<AppUIProps> {
           </View>
           {showGrabBar ? <GrabBarContainer /> : null}
           {/* ActivityInfoContainer hidden in mapFullScreen, but keep it alive so it can be shown quickly later */}
-          <View style={{ position: 'absolute', width }}>
-            {showActivityInfo ? <ActivityInfoContainer /> : null}
-          </View>
+          {ui.includes(UICategory.activities) ? (
+            <View style={{ position: 'absolute', width }}>
+              {mapFullScreen ? null : <TopMenuContainer />}
+              {showActivityInfo ? <ActivityInfoContainer /> : null}
+            </View>
+          ) : null}
           {mapFullScreen ?
             null
             :
@@ -93,9 +96,6 @@ class AppUI extends Component<AppUIProps> {
               {/* TimelineControls (including ZoomClock) can appear even if Timeline itself hidden */}
               {ui.includes(UICategory.activities) ? <TimelineControlsContainer /> : null}
               <View style={{ position: 'absolute', width }}>
-                {ui.includes(UICategory.activities) ? (
-                  <TopMenuContainer /> // includes TopButton
-                ) : null}
                 {ui.includes(UICategory.help) ? (
                     <HelpPanelContainer /> // includes HelpButton
                   ) : null}

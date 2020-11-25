@@ -45,6 +45,7 @@ const mapDispatchToProps = (dispatch: Function): HelpPanelDispatchProps => {
   }
   const onReplayIntro = () => {
     log.debug('HelpPanel onReplayIntro');
+    dispatch(newAction(AppAction.flagDisable, 'helpOpen'));
     dispatch(newAction(AppAction.flagEnable, 'introMode'));
   }
   const onSetLabelsEnabled = (enabled: boolean) => {

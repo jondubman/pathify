@@ -201,7 +201,7 @@ const colors = {
     alwaysVisible: namedColors.white,
   },
   introPages: {
-    background: withOpacity(namedColors.black, 0.25),
+    background: 'transparent',
     pageHeader: [
       namedColors.blue,
       colorThemes.help,

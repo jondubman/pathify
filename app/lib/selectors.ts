@@ -150,7 +150,8 @@ export const dynamicTimelineWidth = (state: AppState): number => (
 )
 
 export const shouldShowActivityList = (state: AppState): boolean => (
-  (state.options.grabBarSnapIndexPreview >= constants.snapIndex.activityList)
+  (state.options.grabBarSnapIndexPreview >= constants.snapIndex.activityList) &&
+    uiCategories(state).includes(UICategory.activities)
 )
 
 export const shouldShowTimeline = (state: AppState): boolean => (

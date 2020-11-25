@@ -23,6 +23,7 @@ const smallerRadius = 4;
 
 const Styles = StyleSheet.create({
   containingView: {
+    backgroundColor: 'transparent',
     position: 'absolute',
   },
   header: {
@@ -86,7 +87,8 @@ const Styles = StyleSheet.create({
     marginTop: 0,
     textAlign: 'left',
   },
-  swiper: {},
+  swiper: {
+  },
 })
 
 const headerColors = constants.colors.introPages.pageHeader;
@@ -103,7 +105,7 @@ const renderPagination = (index: number, total: number, swiper: Swiper) => {
     if (i < index) bubbleStyle = seenBubbleStyle;
     if (i === index) bubbleStyle = activeBubbleStyle;    
     pageBubbles.push(
-      <View style={Styles.paginationBubbleEraser}>
+      <View style={Styles.paginationBubbleEraser} key={i}>
         <View style={bubbleStyle}>
         </View>
       </View>
@@ -118,15 +120,14 @@ const renderPagination = (index: number, total: number, swiper: Swiper) => {
   )
 }
 
-
 const Intro = (props: IntroProps) => (
   <View style={Styles.containingView}>
     <Swiper
       index={props.page}
       loop={false}
       onIndexChanged={props.pageChanged}
-      showsButtons={false}
       renderPagination={renderPagination}
+      showsButtons={false}
       style={Styles.swiper}
     >
       {introPages.map((page: IntroPageTemplate, index: number) => (

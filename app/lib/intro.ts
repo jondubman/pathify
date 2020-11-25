@@ -21,17 +21,19 @@ export enum UICategory {
   'settings' = 'settings',
   'start' = 'start',
 }
-// selector
+// selector: which UICategory are visible in the current introModePage (or, just allow all of them by default.)
 export const uiCategories = (state: AppState): UICategory[] => (
-  state.flags.introMode ? introPages[state.options.introModePage].ui : [
-    // allow all by default
-    UICategory.activities,
-    UICategory.help,
-    UICategory.follow,
-    UICategory.map,
-    UICategory.settings,
-    UICategory.start,
-  ]
+  (state.flags.introMode && introPages[state.options.introModePage]) ?
+    introPages[state.options.introModePage].ui
+  :
+    [ // allow all by default
+      UICategory.activities,
+      UICategory.help,
+      UICategory.follow,
+      UICategory.map,
+      UICategory.settings,
+      UICategory.start,
+    ]
 )
 
 export interface IntroPageTemplate {
@@ -106,7 +108,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonSkip: closeButton,
     buttonNext: nextButton,
     header: 'Choose your own\nadventure UI on the fly',
-    headerStyle: { color: constants.colors.byName.orange, marginTop: 110 } as StyleProp<ViewStyle>,
+    headerStyle: { color: constants.colors.byName.orange, marginTop: 250 } as StyleProp<ViewStyle>,
     text: `Slide the bar down to reveal a continuous timeline below the map, and a chronological list of activities above. 
 \nKeep pulling down for details. See your distance, elapsed time, pace, elevation and more. Or slide the bar way up for all map.`,
     ui: [UICategory.activities],
@@ -116,7 +118,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonSkip: closeButton,
     buttonNext: nextButton,
     header: 'Zoom through time,\nfollow your own path',
-    headerStyle: { color: constants.colors.byName.lighterBlue, marginTop: 110 } as StyleProp<ViewStyle>,
+    headerStyle: { color: constants.colors.byName.lighterBlue, marginTop: 250 } as StyleProp<ViewStyle>,
     text: `Scroll the timeline or activity list to adjust the clock and retrace your path.
 \nTap the clock to zoom the timeline. Zoom out to see distribution over time, or way in to revisit a moment.
 \nUse the blue arrow to make the map follow a prior path, as you scroll through time. Use the green arrow to jump to the here and now.`,

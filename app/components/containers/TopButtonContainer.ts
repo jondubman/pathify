@@ -5,13 +5,11 @@ import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
-import constants from 'lib/constants';
 import {
   activityIndex,
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import store from 'lib/store';
 import TopButton from 'presenters/TopButton';
 import log from 'shared/log';
 
