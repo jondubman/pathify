@@ -100,7 +100,8 @@ export const mapIsFullScreen = (state: AppState): boolean => (
 
 // Note this does not depend on state.
 export const dynamicAreaTop = (): number => (
-  constants.safeAreaTop || getStatusBarHeight()
+  // constants.safeAreaTop || getStatusBarHeight()
+  constants.safeAreaTop
 )
 
 export const bottomGivenTimeline = (state: AppState): number => (

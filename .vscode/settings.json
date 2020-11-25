@@ -17,6 +17,13 @@
     "**/.factorypath": true
   },
   "workbench.colorTheme": "Tomorrow Night Blue",
+  "workbench.colorCustomizations": {
+    "editor.selectionBackground": "#ca1f1f",
+    "editor.findMatchBackground": "#6122d6",
+    "editor.findMatchHighlightBackground": "#00ffd569",
+  },
+  "editor.occurrencesHighlight": false,
+  "editor.selectionHighlight": false,
   "search.quickOpen.includeHistory": false,
   "typescript.suggest.autoImports": false,
   "search.exclude": {

@@ -3,11 +3,10 @@
 import { v4 as uuidv4 } from 'uuid';
 const clientId = uuidv4(); // TODO perist
 
-import SafeAreaView from 'react-native-safe-area-view-with-get-inset';
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 import { DomainTuple } from 'victory-native';
-const getInset = (SafeAreaView as any).getInset;
-const safeAreaTop =  getInset('top');
-const safeAreaBottom = getInset('bottom');
+const safeAreaTop = StaticSafeAreaInsets.safeAreaInsetsTop;
+const safeAreaBottom = StaticSafeAreaInsets.safeAreaInsetsBottom;
 const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized for displays with/without home button
 
 import { interval } from 'lib/timeseries';
@@ -59,6 +58,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   darkerRed: '#840700',
   darkerYellow: '#ffdc00',
   lighterBlue: '#77c0ff',
+  lighterRed: '#ff665d',
   niceRed: '#c40027',
   white: '#ffffff',
 
@@ -202,6 +202,15 @@ const colors = {
   },
   introPages: {
     background: withOpacity(namedColors.black, 0.25),
+    pageHeader: [
+      namedColors.blue,
+      colorThemes.help,
+      namedColors.lighterRed,
+      colorThemes.now,
+      namedColors.orange,
+      namedColors.lighterBlue,
+      namedColors.fuschia,
+    ],
   },
   links: {
     background: withOpacity(namedColors.aqua, 0),
@@ -272,12 +281,6 @@ const colors = {
       false: withOpacity(namedColors.black, 1),
       true: withOpacity(namedColors.blue, 0.75),
     }
-  },
-  swiper: {
-    p1: withOpacity(namedColors.blue, swiperOpacity),
-    p2: withOpacity(namedColors.darkRed, swiperOpacity),
-    p3: withOpacity(namedColors.darkLimeGreen, swiperOpacity),
-    p4: withOpacity(namedColors.gray, swiperOpacity),
   },
   timeline: {
     axis: namedColors.darkerGray,

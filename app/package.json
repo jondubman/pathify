@@ -40,7 +40,7 @@
     "react-native-get-random-values": "^1.5.0",
     "react-native-haptic": "^1.0.1",
     "react-native-restart": "0.0.13",
-    "react-native-safe-area-view-with-get-inset": "^0.10.0",
+    "react-native-static-safe-area-insets": "^2.1.1",
     "react-native-status-bar-height": "^2.6.0",
     "react-native-svg": "12.1.0",
     "react-native-swiper": "^1.6.0",
