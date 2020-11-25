@@ -18,11 +18,13 @@ interface ZoomClockStateProps {
   activitySelected: boolean;
   allowZoom: boolean;
   bottom: number;
+  currentActivitySelected: boolean;
   followingPath: boolean;
   followingUser: boolean;
   labelsEnabled: boolean;
   nowMode: boolean;
   pressed: boolean;
+  trackingActivity: boolean;
 }
 
 interface ZoomClockDispatchProps {
@@ -36,22 +38,26 @@ interface ZoomClockDispatchProps {
 export type ZoomClockProps = ZoomClockStateProps & ZoomClockDispatchProps;
 
 const mapStateToProps = (state: AppState): ZoomClockStateProps => {
+  const { flags, options } = state;
   const {
     followingPath,
     followingUser,
     labelsEnabled,
     timelineNow,
+    trackingActivity,
     zoomClockPressed,
-  } = state.flags;
+  } = flags;
   return {
-    activitySelected: !!state.options.selectedActivityId,
+    activitySelected: !!options.selectedActivityId,
     allowZoom: shouldShowTimeline(state),
     bottom: dynamicClockBottom(state),
+    currentActivitySelected: !!(options.selectedActivityId && options.selectedActivityId === options.currentActivityId),
     followingPath,
     followingUser,
     labelsEnabled,
-    nowMode: timelineNow || (state.options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
+    nowMode: timelineNow || (options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     pressed: zoomClockPressed,
+    trackingActivity,
   }
 }
 

@@ -196,10 +196,12 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       activitySelected,
       allowZoom,
       bottom,
+      currentActivitySelected,
       followingPath,
       followingUser,
       nowMode,
       pressed,
+      trackingActivity,
     } = this.props;
     const {
       deltaX,
@@ -246,18 +248,34 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       alignSelf: 'flex-start',
     } as StyleProp<ViewStyle>;
 
-    let labelText = 'PAST TIMEPOINT'; // default
+    let labelText = 'PAST TIME'; // default
     if (nowMode) {
       if (followingPath) {
-        labelText = 'CURRENT TIME / PAST LOC';
+        labelText = 'CURRENT TIME'; // must be current time in nowMode
       } else if (followingUser) {
-        labelText = 'CURRENT TIME AND LOC';
+        labelText = 'CURRENT TIME & LOC';
       } else {
-        labelText = 'CURRENT TIME';
+        labelText = 'CURRENT TIME, NO FOLLOW';
       }
-    } else {
-      if (followingPath && activitySelected) {
-        labelText = 'RETRACING PATH';
+    } else { // past time
+      if (followingPath) {
+        if (activitySelected) {
+          labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'RETRACING PRIOR PATH';
+        } else {
+          labelText = 'READY TO RETRACE PATH';
+        }
+      } else if (followingUser) {
+        if (activitySelected) {
+          labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'PAST TIME, CURRENT LOC';
+        } else {
+          labelText = 'READY TO RETRACE PATH';
+        }
+      } else {
+        if (currentActivitySelected) {
+          labelText = 'EARLIER IN CURRENT ACTIVITY';
+        } else {
+          labelText = activitySelected ? 'PAST ACTIVITY, NO FOLLOW' : 'PAST TIME, NO FOLLOW';
+        }
       }
     }
     let pressedLabelText = 'ZOOM TIMELINE';

@@ -76,8 +76,8 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonNext: nextButton,
     header: 'Privacy, first',
     text: `Privacy is a basic right. Your activity in Pathify is completely private by design. There's no signup to complete, no account to create.
-\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not flowing into a big shared data pool.
-\nWe don't collect anonymous usage data, though Mapbox Telemetry will unless you opt-out. Anything more in the future will be opt-in, default off, designed up front to maximize your privacy.`,
+\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not in a big, shared data pool.
+\nWe don't even collect anonymous usage data. Mapbox does, to improve the map, but you can opt out. Anything more in the future will be opt-in, designed up front to maximize your privacy.`,
     ui: [],
   },
   {
@@ -88,7 +88,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     headerStyle: { color: constants.colors.byName.lighterRed, marginTop: 110 } as StyleProp<ViewStyle>,
     text: `Instead of a separate route map for each activity, Pathify overlays current and prior activities on a unified map.
 \nBeautiful, up-to-date maps from Mapbox help you find lesser-known parks and trails.
-\nAdjust the style and opacity on the go with the Settings panel. For maximum privacy, opt-out of Mapbox Telemetry using the little blue (i) anytime. `,
+\nAdjust the style and opacity on the go with the Settings panel. For total privacy, opt out of Mapbox Telemetry using the little blue (i) in the corner. `,
     ui: [UICategory.map, UICategory.settings],
   },
   {
@@ -119,7 +119,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     headerStyle: { color: constants.colors.byName.lighterBlue, marginTop: 110 } as StyleProp<ViewStyle>,
     text: `Scroll the timeline or activity list to adjust the clock and retrace your path.
 \nTap the clock to zoom the timeline. Zoom out to see distribution over time, or way in to revisit a moment.
-\nUse the blue arrow to make the map follow a prior path, as you scroll through time. Use the green arrow to jump to now.`,
+\nUse the blue arrow to make the map follow a prior path, as you scroll through time. Use the green arrow to jump to the here and now.`,
     ui: [UICategory.follow, UICategory.map, UICategory.activities],
   },
   {

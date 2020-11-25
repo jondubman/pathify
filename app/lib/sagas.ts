@@ -1458,7 +1458,8 @@ const sagas = {
             yield put(newAction(AppAction.flagEnable, 'timelineNow'));
           }
         }
-        if (!state.flags.timelineNow) {
+        // TODO review. Probably works best to ignore incoming timelineNow mode in selectActivity. */
+        /* if (!state.flags.timelineNow) */ {
           const appOptions = {
             centerTime: newTime, // TODO is it necessary to set this here?
             scrollTime: newTime,
@@ -1467,10 +1468,13 @@ const sagas = {
           }
           log.debug('selectActivity setting appOptions', appOptions);
           yield put(newAction(AppAction.setAppOption, appOptions));
-          if (!activity.tEnd) { // current activity
+          if (activity.tEnd) { // prior activity
+            yield put(newAction(AppAction.startFollowingPath));
+          } else { // current activity
             const now = yield call(utils.now);
             yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
             yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+            yield put(newAction(AppAction.startFollowingUser));
           }
         }
       }
@@ -1966,16 +1970,17 @@ const sagas = {
       mapReorienting,
       timelineNow,
       timelineScrolling,
+      // trackingActivity,
     } = state.flags;
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
       if (nowTimeRounded === state.options.nowTimeRounded) {
         // Most of the time, only this happens:
-        yield put(newAction(AppAction.setAppOption, { nowTime: now }));
+        yield put(newAction(AppAction.setAppOption, { nowTime: now })); // TODO review, maybe still too much
       } else {
         // But when nowTimeRounded bumps up to the next whole second, we do this:
-        yield put(newAction(AppAction.refreshCachedCurrentActivity));
+        yield put(newAction(AppAction.refreshCachedCurrentActivity)); // TODO review
         const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
         if (timelineNow) {
           options.scrollTime = now;
