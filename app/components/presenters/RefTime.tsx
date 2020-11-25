@@ -80,9 +80,7 @@ const RefTime = (props: RefTimeProps) => (
   <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
     <View style={Styles.leftHalf}>
       {props.showLeftSide ? (
-        <View
-          style={Styles.leftHighlight}
-        >
+        <View style={Styles.leftHighlight}>
           <View style={Styles.leftView}>
             <Text style={[Styles.subText, Styles.leftText, props.flavorLine2 ? {} : { marginTop: 2 }]}>
               {props.flavorLine1}

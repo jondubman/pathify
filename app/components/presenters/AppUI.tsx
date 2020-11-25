@@ -71,7 +71,7 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
-          <View style={AppStyles.logo} />
+          <View pointerEvents="none" style={AppStyles.logo} />
           <View pointerEvents={pointerEvents} style={timelineOpacity}>
             <TimelineScrollContainer />
           </View>

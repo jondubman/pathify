@@ -64,7 +64,7 @@ export const introPages: IntroPageTemplate[] = [
   {
     name: 'welcome',
     buttonNext: nextButton,
-    header: 'Hello',
+    header: 'Hello, world',
     headerStyle: { color: constants.colors.byName.blue, marginTop: 110 } as StyleProp<ViewStyle>,
     text: `Pathify is a location-based app that lets you track, measure and map your activities, navigating through time as well as space.\n
 Pathify takes a fresh approach that lets you plan, monitor and review activities all at once, on a unified map.`,
@@ -77,7 +77,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     header: 'Privacy, first',
     text: `Privacy is a basic right. Your activity in Pathify is completely private by design. There's no signup to complete, no account to create.
 \nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not flowing into a big shared data pool.
-\nWe don't even collect anonymous usage data. We just hope you'll love the app. In the future, anything beyond this will be opt-in, default off, and designed up front to maximize your privacy.`,
+\nWe don't collect anonymous usage data, though Mapbox Telemetry will unless you opt-out. Anything more in the future will be opt-in, default off, designed up front to maximize your privacy.`,
     ui: [],
   },
   {
@@ -88,7 +88,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     headerStyle: { color: constants.colors.byName.lighterRed, marginTop: 110 } as StyleProp<ViewStyle>,
     text: `Instead of a separate route map for each activity, Pathify overlays current and prior activities on a unified map.
 \nBeautiful, up-to-date maps from Mapbox help you find lesser-known parks and trails.
-\nAdjust the style and opacity on the go with the Settings panel.`,
+\nAdjust the style and opacity on the go with the Settings panel. For maximum privacy, opt-out of Mapbox Telemetry using the little blue (i) anytime. `,
     ui: [UICategory.map, UICategory.settings],
   },
   {

@@ -41,7 +41,7 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
     height: (bubbleRadius * 2) + 6,
     justifyContent: 'space-around',
-    marginBottom: 30,
+    marginBottom: 27,
     width: 168, // TODO
   },
   paginationBubble: {

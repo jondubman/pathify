@@ -147,7 +147,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                     >
                       <View style={Styles.linkView}>
                         <Text style={Styles.linkText}>
-                          Replay intro
+                          Review intro...
                         </Text>
                       </View>
                     </TouchableHighlight>
