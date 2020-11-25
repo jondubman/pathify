@@ -31,7 +31,6 @@ interface RefTimeStateProps {
 }
 
 interface RefTimeDispatchProps {
-  onPress: () => void;
 }
 
 export type RefTimeProps = RefTimeStateProps & RefTimeDispatchProps;
@@ -77,8 +76,6 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
 
 const mapDispatchToProps = (dispatch: Function): RefTimeDispatchProps => {
   const dispatchers = {
-    onPress: () => {
-    }
   }
   return dispatchers;
 }

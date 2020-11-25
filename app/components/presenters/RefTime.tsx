@@ -4,7 +4,6 @@ import React, {
 
 import {
   StyleSheet,
-  TouchableHighlight,
   View,
   Text,
 } from 'react-native';
@@ -78,13 +77,11 @@ const Styles = StyleSheet.create({
 })
 
 const RefTime = (props: RefTimeProps) => (
-  <View pointerEvents="none" style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
+  <View style={[Styles.refTimeContainer, { bottom: props.bottom }]}>
     <View style={Styles.leftHalf}>
       {props.showLeftSide ? (
-        <TouchableHighlight
-          onPress={props.onPress}
+        <View
           style={Styles.leftHighlight}
-          underlayColor={colors.underlay}
         >
           <View style={Styles.leftView}>
             <Text style={[Styles.subText, Styles.leftText, props.flavorLine2 ? {} : { marginTop: 2 }]}>
@@ -97,15 +94,11 @@ const RefTime = (props: RefTimeProps) => (
               {props.flavorLine3}
             </Text>
           </View>
-        </TouchableHighlight>
+        </View>
       ) : null }
     </View>
     {props.showRightSide ? (
-      <TouchableHighlight
-        onPress={props.onPress}
-        style={Styles.rightHalf}
-        underlayColor={colors.underlay}
-      >
+      <View style={Styles.rightHalf}>
         <Fragment>
           <View style={Styles.refTimeFull}>
             <Text style={[Styles.refTimeText, Styles.hoursMinutes]}>
@@ -124,7 +117,7 @@ const RefTime = (props: RefTimeProps) => (
             {props.ampm} {props.day} {props.month} {props.dayOfMonth}, {props.year}
           </Text>
         </Fragment>
-      </TouchableHighlight>
+      </View>
     ) : null }
   </View>
 )

@@ -51,7 +51,9 @@ const backgroundColorFor = (props: TimelineControlsProps) => {
 const TimelineControls = (props: TimelineControlsProps) => (
   <View>
     <ZoomClockContainer />
-    <RefTimeContainer />
+    <View pointerEvents="none">
+      <RefTimeContainer />
+    </View>
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
