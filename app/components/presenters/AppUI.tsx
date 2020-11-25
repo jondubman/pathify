@@ -35,7 +35,7 @@ const AppStyles = StyleSheet.create({
     flex: 1,
   },
   logo: {
-    height: 30, // Note higher# lowers default position of Mapbox logo and attribution
+    height: 27, // Note higher# lowers default position of Mapbox logo and attribution
   },
   mainAppView: {
     flex: 1,
