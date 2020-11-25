@@ -120,7 +120,7 @@ const geoconfig_default: Config = {
 
   persistMode: BackgroundGeolocation.PERSIST_MODE_NONE,
   // Enable to prevent iOS from suspending when stationary. Must be used with a heartbeatInterval.
-  preventSuspend: true, // TODO Do we need to use false here?
+  preventSuspend: true, // TODO Is it better to use false here?
 
   showsBackgroundLocationIndicator: false,
 
@@ -129,8 +129,8 @@ const geoconfig_default: Config = {
   stationaryRadius: 10, // meters
 
   // stopDetectionDelay is the time between when motion is still and accelerometer is monitored with GPS off.
-  stopDetectionDelay: 1, // Allows the iOS stop-detection system to be delayed from activating after becoming still
-  stopTimeout: 3, // Minutes to wait in moving state with no movement before considering the device stationary
+  stopDetectionDelay: 3, // Allows the iOS stop-detection system to be delayed from activating after becoming still
+  stopTimeout: 5, // Minutes to wait in moving state with no movement before considering the device stationary
 }
 
 const geoconfig_tracking: Config = {
@@ -150,7 +150,7 @@ const geoconfig_tracking: Config = {
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
   startOnBoot: true, // set to true to enable background-tracking after the device reboots
-  stopDetectionDelay: 5, // Allows the iOS stop-detection system to be delayed from activating after becoming still
+  stopDetectionDelay: 10, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   stopTimeout: 10, // Minutes to wait in moving state with no movement before considering the device stationary
 
   // TODO for diagnosis via HTTP POST
