@@ -51,7 +51,8 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   black: '#000000',
   blueGreen: '#127e6f', // darker version of '#17A08D'
   brightGreen: '#08f222',
-  darkerGray: '#888888',
+  darkGray: '#888888',
+  darkerGray: '#555555',
   darkGreen: '#239c31',
   darkerGreen: '#035a0d',
   darkRed: '#bf0a00',
@@ -86,8 +87,8 @@ const colorThemes = {
   nowDarker: namedColors.darkerGreen,
   past: namedColors.blue,
   pastSelected: namedColors.azure_dark,
-  settings: namedColors.darkerGray,
-  topMenu: namedColors.darkerGray,
+  settings: namedColors.darkGray,
+  topMenu: namedColors.darkGray,
   zooming: namedColors.orange,
 }
 
@@ -99,11 +100,12 @@ const schemaVersion = 30;
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
+const buttonOffset = 6; // from edge
+const buttonSize = 50;
+const bottomButtonSpacing = 15;
 const borderRadiusSmall = 5;
 const borderRadiusMedium = 10;
-const bottomButtonSpacing = 15;
-const buttonOffset = 6;
-const buttonSize = 50;
+const borderRadiusLarge = buttonSize / 2;
 const defaultOpacity = 0.65;
 const fontFamily = 'Futura';
 const labelHeightAllowance = 12;
@@ -115,7 +117,6 @@ const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
 const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activities
 const clockHeight = 70;
-const swiperOpacity = 0.25;
 
 const colors = {
   activityDetails: {
@@ -142,7 +143,7 @@ const colors = {
     },
     futureZoneUnderlay: withOpacity(colorThemes.now, 0.35),
     past: {
-      background: withOpacity(namedColors.darkerGray, 0.25),
+      background: withOpacity(namedColors.darkGray, 0.25),
       backgroundSelected: withOpacity(colorThemes.past, 0.75),
       border: withOpacity(namedColors.gray, 0.5),
       borderSelected: withOpacity(namedColors.lighterBlue, 0.5),
@@ -191,7 +192,7 @@ const colors = {
   },
   helpPanel: {
     background: colorThemes.background,
-    border: namedColors.darkerGray,
+    border: namedColors.darkGray,
     labelsLabel: withOpacity(colorThemes.labels, 0.75),
     labelsThumb: withOpacity(colorThemes.labels, 0.85),
     staticText: withOpacity(namedColors.white, 0.75),
@@ -266,7 +267,7 @@ const colors = {
     enabledUnderlay: namedColors.darkerYellow, // in transition
   },
   startMenu: {
-    border: namedColors.darkerGray,
+    border: namedColors.darkGray,
     buttonBackground: withOpacity(namedColors.gray, 0.25),
     dimmerBackground: withOpacity(colorThemes.background, defaultOpacity),
     menuItemBackground: 'transparent',
@@ -274,7 +275,7 @@ const colors = {
     panelBackground: withOpacity(namedColors.black, 1),
   },
   switch: {
-    background: withOpacity(namedColors.darkerGray, 0.5),
+    background: withOpacity(namedColors.darkGray, 0.5),
     thumb: withOpacity(namedColors.green, 1),
     track: {
       false: withOpacity(namedColors.black, 1),
@@ -282,7 +283,7 @@ const colors = {
     }
   },
   timeline: {
-    axis: namedColors.darkerGray,
+    axis: namedColors.darkGray,
     axisLabels: namedColors.gray,
     background: colorThemes.background,
     currentActivity: withOpacity(colorThemes.now, 0.75),
@@ -308,7 +309,7 @@ const colors = {
     backgroundSelected: withOpacity(colorThemes.past, 1),
     border: withOpacity(namedColors.silver, 0.65),
     borderSelected: withOpacity(namedColors.lighterBlue, 0.5),
-    bubble: withOpacity(namedColors.darkerGray, 1),
+    bubble: withOpacity(namedColors.darkGray, 1),
     bubbleNow: withOpacity(colorThemes.now, 1),
     bubblePast: withOpacity(colorThemes.past, 1),
     bubbleLabel: namedColors.white,
@@ -317,7 +318,7 @@ const colors = {
     underlay: withOpacity(namedColors.black, 1),
   },
   topMenu: {
-    border: namedColors.darkerGray,
+    border: namedColors.darkGray,
     buttonBackground: withOpacity(namedColors.gray, 0.25),
     dimmerBackground: withOpacity(colorThemes.background, defaultOpacity),
     menuItemBackground: 'transparent',
@@ -371,6 +372,7 @@ const constants = {
   appName: 'Pathify',
   borderRadiusSmall,
   borderRadiusMedium,
+  borderRadiusLarge,
   bottomButtonSpacing,
   bottomWithoutTimeline: 10, // This layout factor was empirically determined, for devices with nonzero safeAreaBottom.
   buttonBaseOffsetPerRow: (buttonSize + buttonOffset * 2) + bottomButtonSpacing,

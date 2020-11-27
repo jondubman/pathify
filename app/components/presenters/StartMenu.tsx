@@ -73,14 +73,14 @@ class StartMenu extends React.Component<StartMenuProps> {
 
     const menuItemContainerStyle = {
       backgroundColor: colors.buttonBackground,
-      borderRadius: constants.buttonSize / 2,
+      borderRadius: constants.borderRadiusLarge,
       overflow: 'hidden',
     } as StyleProp<ViewStyle>;
 
     const subpanelStyle = {
       alignSelf: 'center',
       backgroundColor: colors.panelBackground,
-      borderRadius: constants.buttonSize / 2,
+      borderRadius: constants.borderRadiusLarge,
       borderColor: colors.border,
       borderWidth: constants.startMenu.borderWidth,
       flexDirection: 'column',

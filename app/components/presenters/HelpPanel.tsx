@@ -34,9 +34,9 @@ const Styles = StyleSheet.create({
   linkButton: {
     backgroundColor: constants.colors.links.background,
     borderColor: constants.colors.links.border,
-    borderRadius: constants.buttonSize / 2,
+    borderRadius: constants.borderRadiusLarge,
     borderWidth: 2,
-    padding: 5,
+    padding: 10,
   },
   linkContainer: {
     margin: 10,
@@ -60,7 +60,7 @@ const Styles = StyleSheet.create({
   },
   panel: {
     backgroundColor: colors.background,
-    borderRadius: constants.buttonSize / 2,
+    borderRadius: constants.borderRadiusLarge,
     borderColor: colors.border,
     borderWidth: 1,
     height: constants.panelHeight,
@@ -77,7 +77,7 @@ const Styles = StyleSheet.create({
     fontSize: 14,
   },
   staticTextView: {
-    marginTop: 50, // TODO good for now
+    marginTop: 30, // TODO good for now
   },
   subpanel: {
   },

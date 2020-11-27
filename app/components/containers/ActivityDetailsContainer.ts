@@ -119,7 +119,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
           if (info.speed < 0 || speedPaceText.indexOf(':') !== speedPaceText.lastIndexOf(':')) {
             speedPaceText = missing;
           }
-          const mph = metersPerSecondToMilesPerHour(info.speed);
+          const mph = metersPerSecondToMilesPerHour(Math.max(0, info.speed)); // always avoid negative speed
           speedText = mph.toFixed(1); // That's 1 digit after the decimal point, not 1 mph!
         }
         // TODO support legitimate negative elevation. -1 is getting reported for elevation in the Simulator.

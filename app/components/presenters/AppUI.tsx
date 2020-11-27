@@ -35,7 +35,7 @@ const AppStyles = StyleSheet.create({
     flex: 1,
   },
   logo: {
-    height: 27, // Note higher# lowers default position of Mapbox logo and attribution
+    height: 30, // Note higher# lowers default position of Mapbox logo and attribution
   },
   mainAppView: {
     flex: 1,
@@ -71,6 +71,7 @@ class AppUI extends Component<AppUIProps> {
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
+          {introMode ? <IntroContainer /> : null}
           <View pointerEvents="none" style={AppStyles.logo} />
           <View pointerEvents={pointerEvents} style={timelineOpacity}>
             <TimelineScrollContainer />
@@ -114,7 +115,6 @@ class AppUI extends Component<AppUIProps> {
             </Fragment>
         }
         </View>
-        {introMode ? <IntroContainer /> : null}
       </View>
     )
   }

@@ -51,7 +51,7 @@ const Styles = StyleSheet.create({
     paddingTop: size / 4 - 2,
     width: size,
     height: size,
-    left: centerline() - constants.buttonSize / 2,
+    left: centerline() - constants.borderRadiusLarge,
     justifyContent: 'center',
     flexDirection: 'row',
   },

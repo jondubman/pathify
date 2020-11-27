@@ -75,7 +75,7 @@ class TopMenu extends React.Component<TopMenuProps> {
     const subpanelStyle = {
       alignSelf: 'center',
       backgroundColor: colors.panelBackground,
-      borderRadius: constants.buttonSize / 2,
+      borderRadius: constants.borderRadiusLarge,
       borderColor: colors.border,
       borderWidth: constants.topMenu.borderWidth,
       flexDirection: 'column',
@@ -93,7 +93,7 @@ class TopMenu extends React.Component<TopMenuProps> {
 
     const menuItemContainerStyle = {
       backgroundColor: colors.buttonBackground,
-      borderRadius: constants.buttonSize / 2,
+      borderRadius: constants.borderRadiusLarge,
       overflow: 'hidden',
     } as StyleProp<ViewStyle>;
 

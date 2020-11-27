@@ -1,9 +1,14 @@
 import * as React from 'react';
 
 import {
+  Component,
+  Fragment,
+} from 'react';
+import {
   StyleSheet,
   StyleProp,
   Text,
+  TouchableHighlight,
   View,
   ViewStyle,
 } from 'react-native';
@@ -14,16 +19,44 @@ import {
   introPages,
   IntroPageTemplate
 } from 'lib/intro';
+import { dynamicAreaTop } from 'lib/selectors';
 import utils from 'lib/utils';
+import log from 'shared/log';
 
 import Swiper from 'react-native-swiper';
 
 const bubbleRadius = 8;
 const smallerRadius = 4;
+const bottom = 27; // empirically determined
 
 const Styles = StyleSheet.create({
+  buttonLabelText: {
+    color: constants.colors.byName.black,
+    fontFamily: constants.fonts.family,
+    fontSize: 16,
+  },
+  buttonLabelView: {
+  },
+  closeButton: {
+    backgroundColor: constants.colors.byName.black,
+    borderColor: constants.colors.byName.darkerGray,
+    borderRadius: constants.borderRadiusLarge,
+    borderWidth: 2,
+    paddingHorizontal: 10,
+    paddingVertical: 14,
+  },
+  closeButtonLabelText: {
+    color: constants.colors.byName.gray,
+    fontFamily: constants.fonts.family,
+    fontSize: 16,
+  },
+  closeButtonView: {
+    right: 5,
+    position: 'absolute',
+  },
   containingView: {
     backgroundColor: 'transparent',
+    bottom,
     position: 'absolute',
   },
   header: {
@@ -35,15 +68,26 @@ const Styles = StyleSheet.create({
     marginTop: 50,
     textAlign: 'center',
   },
+  nextButton: {
+    backgroundColor: constants.colors.byName.gray,
+    borderRadius: constants.borderRadiusLarge,
+    paddingHorizontal: 10,
+    paddingVertical: 14,
+  },
+  nextButtonView: {
+    bottom: bottom - 2, // align with dots
+    right: 5,
+    position: 'absolute',
+  },
   paginationOval: {
-    alignSelf: 'center',
+    alignSelf: 'center', // horizontal
     backgroundColor: constants.colors.byName.gray,
     borderRadius: 30,
     flexDirection: 'row',
     height: (bubbleRadius * 2) + 6,
     justifyContent: 'space-around',
-    marginBottom: 27,
-    width: 168, // TODO
+    marginBottom: 10,
+    width: 168, // big enough to show all the dots
   },
   paginationBubble: {
     alignSelf: 'center',
@@ -53,14 +97,14 @@ const Styles = StyleSheet.create({
     width: bubbleRadius * 2,
   },
   paginationBubbleEraser: {
-    alignSelf: 'center',
+    alignSelf: 'center', // vertical
     backgroundColor: constants.colors.byName.black, // default
     borderRadius: bubbleRadius,
     height: bubbleRadius * 2,
     width: bubbleRadius * 2,
   },
   paginationBubbleSeen: {
-    alignSelf: 'center',
+    alignSelf: 'center', // vertical
     backgroundColor: constants.colors.byName.black, // default
     borderRadius: smallerRadius,
     height: smallerRadius * 2,
@@ -69,19 +113,19 @@ const Styles = StyleSheet.create({
   },
   paginationContainer: {
     position: 'absolute',  
+    bottom,
     flexDirection: 'column-reverse',
   },
   slide: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'center', // horizontal
     backgroundColor: constants.colors.introPages.background,
+    flex: 1,
+    justifyContent: 'center', // vertical
   },
   text: {
     color: constants.colors.byName.white,
     fontFamily: constants.fonts.family,
     fontSize: 16,
-    fontWeight: 'normal',
     marginHorizontal: 20,
     marginBottom: 50,
     marginTop: 0,
@@ -120,26 +164,87 @@ const renderPagination = (index: number, total: number, swiper: Swiper) => {
   )
 }
 
-const Intro = (props: IntroProps) => (
-  <View style={Styles.containingView}>
-    <Swiper
-      index={props.page}
-      loop={false}
-      onIndexChanged={props.pageChanged}
-      renderPagination={renderPagination}
-      showsButtons={false}
-      style={Styles.swiper}
-    >
-      {introPages.map((page: IntroPageTemplate, index: number) => (
-        <View style={[Styles.slide, page.pageStyle]} key={page.name}>
-          <Text style={{...Styles.header, ...page.headerStyle as any, color: headerColors[index]}}>
-            {page.header}
-          </Text>
-          <Text style={Styles.text}>{page.text}</Text>
+class Intro extends Component<IntroProps> {
+
+  _swiper: Swiper | null = null;
+
+  constructor(props: IntroProps) {
+    super(props);
+    this.onPressNext = this.onPressNext.bind(this);
+  }
+
+  onPressNext() {
+    const { props } = this;
+    const swiper = this._swiper;
+    if (swiper) {
+      setTimeout(() => {
+        log.debug('Intro swiper auto-scrolling to next page');
+        swiper.scrollBy(1, true);
+      }, 0)
+    }
+    props.onPressNext();
+  }
+
+  render() {
+    const { props } = this;
+    const { pageIndex } = props;
+    const currentPage = introPages[pageIndex];
+    const top = dynamicAreaTop();
+    return (
+      <Fragment>
+        <View style={Styles.containingView}>
+          <Swiper
+            index={props.pageIndex}
+            loop={false}
+            onIndexChanged={props.pageChanged}
+            ref={(swiper) => {this._swiper = swiper}}
+            renderPagination={renderPagination}
+            showsButtons={false}
+            style={Styles.swiper}
+          >
+            {introPages.map((page: IntroPageTemplate, index: number) => (
+              <View style={[Styles.slide, page.pageStyle]} key={page.name}>
+                <Text style={{...Styles.header, ...page.headerStyle as any, color: headerColors[index]}}>
+                  {page.header}
+                </Text>
+                <Text style={Styles.text}>{page.text}</Text>
+              </View>
+            ))}
+          </Swiper>
+          {currentPage.buttonNext ? (
+            <View style={Styles.nextButtonView}>
+              <TouchableHighlight
+                onPress={this.onPressNext}
+                style={Styles.nextButton}
+                underlayColor={constants.colors.byName.silver}
+              >
+                <View style={Styles.buttonLabelView}>
+                  <Text style={Styles.buttonLabelText}>
+                    {currentPage.buttonNext.label}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          ) : null}
         </View>
-      ))}
-    </Swiper>
-  </View>
-)
+        {currentPage.buttonClose ? (
+          <View style={{...Styles.closeButtonView, top}}>
+            <TouchableHighlight
+              onPress={props.onPressClose}
+              style={Styles.closeButton}
+              underlayColor={constants.colors.byName.silver}
+            >
+              <View style={Styles.buttonLabelView}>
+                <Text style={Styles.closeButtonLabelText}>
+                  {currentPage.buttonClose.label}
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        ) : null}
+      </Fragment>
+    )
+  }
+}
 
 export default Intro;

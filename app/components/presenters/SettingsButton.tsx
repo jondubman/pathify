@@ -32,7 +32,7 @@ const Styles = StyleSheet.create({
     height: size,
     justifyContent: 'center',
     left: leftOffset,
-    paddingTop: size / 4 - 2,
+    paddingTop: size / 4 - 2, // adjusts icon inside circle
     position: 'absolute',
     top: topOffset,
     width: size,

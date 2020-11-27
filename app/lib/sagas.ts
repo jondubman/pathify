@@ -592,6 +592,7 @@ const sagas = {
     // used with yield take, doesn't need to do anything else
   },
 
+  // state change here refers to activating or suspending the app.
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { manual, newState } = params; // manual param not currently used for anything but logging
@@ -615,7 +616,13 @@ const sagas = {
       trackingActivity,
     } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
-      const count = yield call(Geo.countLocations); // TODO use count?
+      // Follow user, and jump to NOW mode, when reactivating app while tracking.
+      // TODO add flag to make these actions optional?
+      if (trackingActivity) {
+        yield put(newAction(AppAction.startFollowingUser));
+        yield put(newAction(AppAction.jumpToNow));
+      }
+      // const count = yield call(Geo.countLocations); // TODO use count?
       if (!recoveryMode) {
         yield call(Geo.processSavedLocations); // Let's get this started ASAP.
       }
@@ -627,12 +634,6 @@ const sagas = {
       yield call(log.debug, 'cache has been populated:', populated);
       if (!populated) {
         yield put(newAction(AppAction.refreshCache));
-      }
-      // Follow user, and jump to NOW mode, when reactivating app while tracking.
-      // TODO add flag to make these actions optional?
-      if (trackingActivity) {
-        yield put(newAction(AppAction.startFollowingUser));
-        yield put(newAction(AppAction.jumpToNow));
       }
     } else {
       if (newState === AppStateChange.BACKGROUND) {
@@ -879,7 +880,8 @@ const sagas = {
         text: 'Cancel',
         style: 'cancel',
       } // cancel is always on the left
-      yield call(Alert.alert, 'Delete Activity?', 'This operation cannot be undone.', [deleteButton, cancelButton]);
+      yield call(Alert.alert,
+        'Delete selected activity?', 'This operation cannot be undone.', [deleteButton, cancelButton]);
     } catch (err) {
       yield call(log.error, 'saga deleteActivity', err);
     }

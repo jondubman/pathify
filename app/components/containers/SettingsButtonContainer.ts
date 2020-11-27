@@ -4,6 +4,7 @@ import {
 import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
+import constants from 'lib/constants';
 import { dynamicAreaTop } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import log from 'shared/log';

@@ -67,7 +67,7 @@ const Styles = StyleSheet.create({
   },
   panel: {
     backgroundColor: colors.background,
-    borderRadius: constants.buttonSize / 2,
+    borderRadius: constants.borderRadiusLarge,
     borderColor: colors.border,
     borderWidth: 1,
     justifyContent: 'flex-start',
