@@ -71,6 +71,7 @@ export enum AppAction {
   'refreshCachedCurrentActivity' = 'refreshCachedCurrentActivity',
   'reorientMap' = 'reorientMap',
   'repeatedAction' = 'repeatedAction',
+  'requestLocationPermission' = 'requestLocationPermission',
   'restartApp' = 'restartApp',
   'scrollTimeline' = 'scrollTimeline',
   'scrollActivityList' = 'scrollActivityList',
@@ -212,6 +213,10 @@ export interface RefreshCachedActivityParams {
 export interface RepeatedActionParams {
   repeat: Action,
   times: number,
+}
+
+export interface RequestLocationPermissionParams {
+  onDone: VoidFunction;
 }
 
 export interface ScrollActivityListParams {

@@ -40,13 +40,16 @@ export const uiCategories = (state: AppState): UICategory[] => (
 export interface IntroPageTemplate {
   name: string;
   buttonClose?: IntroPageButton;
+  hideCloseButtonBeforeLocationRequest?: boolean;
   buttonNext?: IntroPageButton;
   header: string;
   headerStyle?: StyleProp<ViewStyle>;
+  isFinalPage?: boolean;
   pageStyle?: StyleProp<ViewStyle>;
   text: string;
   textStyle?: StyleProp<ViewStyle>;
   ui: UICategory[];
+  yieldsLocationRequest?: boolean;
 }
 const closeButton = {
   label: 'CLOSE',
@@ -64,6 +67,7 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Hello, world',
     headerStyle: { color: constants.colors.byName.blue } as StyleProp<ViewStyle>,
+    hideCloseButtonBeforeLocationRequest: true,
     text: `Pathify is a location-based app that lets you track, measure and map your activities, navigating through time as well as space.\n
 Pathify takes a fresh approach that lets you plan, monitor and review activities all at once, on a unified map.`,
     ui: [],
@@ -73,10 +77,12 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonClose: closeButton,
     buttonNext: nextButton,
     header: 'Privacy, first',
+    hideCloseButtonBeforeLocationRequest: true,
     text: `Privacy is a basic right. Your activity in Pathify is completely private by design. There's no signup to complete, no account to create.
 \nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not in a big, shared data pool.
 \nWe don't even collect anonymous usage data. Mapbox does, to improve the map, but you can opt out on the next page. New features will be opt-in, designed up front to maximize your privacy.`,
     ui: [],
+    yieldsLocationRequest: true,
   },
   {
     name: 'map',
@@ -127,6 +133,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonNext: doneButton, // instead of Next
     header: 'Tips and tricks',
     headerStyle: { color: constants.colors.byName.fuschia } as StyleProp<ViewStyle>,
+    isFinalPage: true,
     text: `Use the Activities menu up top to zoom the map to an activity, or to delete an activity.
 \nZoom both map and timeline to a past activity by tapping its square. First to the end, then to the start, then the halfway point, looping around.
 \nUse the Info panel to show helpful yellow labels while you learn the app, then hide them for a cleaner look.

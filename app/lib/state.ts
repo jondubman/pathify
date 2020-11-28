@@ -91,6 +91,7 @@ export const initialAppState = {
     receiveHeartbeatEvents: false, // TODO
     receiveMotionChangeEvents: false, // TODO
     refreshActivityOnStop: true, // Should refreshActivity be performed after stopActivity? TODO inefficient, fail-safe.
+    requestedLocationPermission: false, // has it been requested through react-native-background-geolocation
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // manually opened by user
     startMenuOpen: false, // if manually opened by user
@@ -165,6 +166,7 @@ export const persistedFlags = [
   'followingPath',
   'followingUser',
   'labelsEnabled',
+  'requestedLocationPermission',
   'timelineNow',
 ]
 

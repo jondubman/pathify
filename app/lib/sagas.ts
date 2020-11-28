@@ -65,6 +65,7 @@ import {
   RefreshActivityParams,
   RefreshCachedActivityParams,
   RepeatedActionParams,
+  RequestLocationPermissionParams,
   ScrollActivityListParams,
   ScrollTimelineParams,
   SelectActivityParams,
@@ -1290,7 +1291,7 @@ const sagas = {
     const activityIds = yield call(database.activityIds);
     if (activityIds) {
       let count = 0;
-      for (let id of activityIds.kept) {
+      for (const id of activityIds.kept) {
         yield put(newAction(AppAction.refreshActivity, { id })); // initiate activity refresh
         yield take(AppAction.refreshActivityDone); // wait for it to finish
         // TODO could pause here
@@ -1374,6 +1375,19 @@ const sagas = {
 
   // See sequence saga. This looks like a no-op; the saga is, because it needs to exist, but the action is still useful.
   repeatedAction: function* () {
+  },
+
+  requestLocationPermission: function* (action: Action) {
+    const params = action.params as RequestLocationPermissionParams;
+    const { requestedLocationPermission } = yield select((state: AppState) => state.flags);
+    if (requestedLocationPermission) {
+      yield call(log.debug, 'requestedLocationPermission already');
+    } else {
+      const authStatus = yield call(Geo.requestPermission); // TODO store in options so can query later?
+      yield call(log.info, 'requestLocationPermission authStatus', authStatus);
+      yield put(newAction(AppAction.flagEnable, 'requestedLocationPermission'));
+    }
+    yield call(params.onDone);
   },
 
   restartApp: function* () {
@@ -1491,7 +1505,7 @@ const sagas = {
   sequence: function* (action: Action) {
     try {
       const runSequenceActions = async (sequenceActions: Action[]) => {
-        for (let sequenceAction of sequenceActions) {
+        for (const sequenceAction of sequenceActions) {
           log.debug('sequenceAction', sequenceAction);
           if (sequenceAction.type === AppAction.sleep) { // sleep gets special treatment to ensure blocking execution
             const sleepTime = (sequenceAction.params as SleepParams).for;
@@ -1694,7 +1708,7 @@ const sagas = {
       yield call(log.info, 'Saved App settings', settings);
       // restore app options from settings
       const newSettings = {} as any;
-      for (let propName of persistedOptions) {
+      for (const propName of persistedOptions) {
         if (settings[propName] !== undefined) {
           newSettings[propName] = settings[propName];
         }
@@ -1726,6 +1740,7 @@ const sagas = {
         grabBarSnapIndex,
         mapHeading,
         mapZoomLevel,
+        requestedLocationPermission,
         timelineNow,
       } = settings;
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
@@ -1749,7 +1764,11 @@ const sagas = {
       const tracking = !!currentActivityId;
       const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
       yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
-      yield call(Geo.startBackgroundGeolocation);
+      if (requestedLocationPermission) {
+        yield call(Geo.startBackgroundGeolocation);
+      } else {
+        yield put(newAction(AppAction.flagEnable, 'introMode'));
+      }
       if (!recoveryMode) {
         if (!runningInBackgroundNow) {
           yield put(newAction(AppAction.refreshCache));

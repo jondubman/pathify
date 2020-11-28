@@ -17,7 +17,7 @@ import { IntroProps } from 'containers/IntroContainer';
 import constants from 'lib/constants';
 import {
   introPages,
-  IntroPageTemplate
+  IntroPageTemplate,
 } from 'lib/intro';
 import { dynamicAreaTop } from 'lib/selectors';
 import utils from 'lib/utils';
@@ -171,25 +171,51 @@ class Intro extends Component<IntroProps> {
   constructor(props: IntroProps) {
     super(props);
     this.onPressNext = this.onPressNext.bind(this);
+    this.doNext = this.doNext.bind(this);
+  }
+
+  doNext() {
+    const { props } = this;
+    const currentPage = introPages[props.pageIndex];
+    if (currentPage.isFinalPage) {
+      props.onPressClose();
+    } else {
+      const swiper = this._swiper;
+      if (swiper) {
+        swiper.scrollBy(1, true);
+      }
+    }
   }
 
   onPressNext() {
     const { props } = this;
+    const currentPage = introPages[props.pageIndex];
     const swiper = this._swiper;
     if (swiper) {
       setTimeout(() => {
-        log.debug('Intro swiper auto-scrolling to next page');
-        swiper.scrollBy(1, true);
+        if (currentPage.yieldsLocationRequest) {
+          log.debug('Intro swiper requestLocationPermission');
+          const onDone = () => {
+            this.doNext();
+          }
+          props.requestLocationPermission(onDone); // (if needed)
+        } else {
+          this.doNext();
+        }
       }, 0)
     }
-    props.onPressNext();
   }
 
   render() {
     const { props } = this;
     const { pageIndex } = props;
     const currentPage = introPages[pageIndex];
+    if (!currentPage) {
+      return null;
+    }
     const top = dynamicAreaTop();
+    const showCloseButton = currentPage.buttonClose &&
+      (!currentPage.hideCloseButtonBeforeLocationRequest || props.requestedLocationPermission);
     return (
       <Fragment>
         <View style={Styles.containingView}>
@@ -227,7 +253,7 @@ class Intro extends Component<IntroProps> {
             </View>
           ) : null}
         </View>
-        {currentPage.buttonClose ? (
+        {showCloseButton ? (
           <View style={{...Styles.closeButtonView, top}}>
             <TouchableHighlight
               onPress={props.onPressClose}
@@ -236,7 +262,7 @@ class Intro extends Component<IntroProps> {
             >
               <View style={Styles.buttonLabelView}>
                 <Text style={Styles.closeButtonLabelText}>
-                  {currentPage.buttonClose.label}
+                  {currentPage.buttonClose ? currentPage.buttonClose.label : ''}
                 </Text>
               </View>
             </TouchableHighlight>

@@ -513,6 +513,16 @@ export const Geo = {
     }
   },
 
+  requestPermission: async () => {
+    try {
+      log.debug('requestPermission');
+      return await BackgroundGeolocation.requestPermission();
+    } catch (err) {
+      log.error('requestPermission', err);
+      return;
+    }
+  },
+
   // Never do this in production; it would confuse the odometer for activities. As all the odometer calculation is
   // relative, it shouldn't matter anyway; this may be useful only for testing.
   //

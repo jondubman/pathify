@@ -53,6 +53,9 @@ export interface LogMessageData {
   items: string[],
 }
 
+// TODO ensure this schema stays consistent with persistedFlags and persistedOptions in state
+// TODO and be sure to update schemaVersion if this changes!
+
 const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything else to persist across app sessions
   name: 'Settings',
   primaryKey: 'id',
@@ -72,6 +75,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     mapStyle: 'string',
     mapZoomLevel: 'double',
     pausedTime: 'double',
+    requestedLocationPermission: 'bool',
     selectedActivityId: 'string?',
     timelineNow: 'bool',
     timelineZoomValue: 'double',
@@ -96,6 +100,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   mapStyle: string,
   mapZoomLevel: number;
   pausedTime: number,
+  requestedLocationPermission: boolean;
   selectedActivityId: string,
   timelineNow: boolean,
   timelineZoomValue: number,
@@ -133,6 +138,7 @@ const defaultSettings = {
   mapStyle: constants.map.default.style,
   mapZoomLevel: 0,
   pausedTime: 0,
+  requestedLocationPermission: false,
   selectedActivityId: undefined,
   timelineNow: true,
   timelineZoomValue: constants.timeline.default.zoomValue,

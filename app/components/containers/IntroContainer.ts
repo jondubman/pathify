@@ -8,12 +8,13 @@ import log from 'shared/log';
 
 interface IntroStateProps {
   pageIndex: number;
+  requestedLocationPermission: boolean;
 }
 
 interface IntroDispatchProps {
   onPressClose: () => void;
-  onPressNext: () => void;
   pageChanged: (index: number) => void;
+  requestLocationPermission: (onDone: Function) => void;
 }
 
 export type IntroProps = IntroStateProps & IntroDispatchProps;
@@ -21,6 +22,7 @@ export type IntroProps = IntroStateProps & IntroDispatchProps;
 const mapStateToProps = (state: AppState): IntroStateProps => {
   return {
     pageIndex: state.options.introModePage,
+    requestedLocationPermission: state.flags.requestedLocationPermission,
   }
 }
 
@@ -33,18 +35,17 @@ const mapDispatchToProps = (dispatch: Function): IntroDispatchProps => {
   }
   const onPressClose = () => {
     log.info('Intro onPressClose');
+    dispatch(newAction(AppAction.flagDisable, 'introMode'));
     ReactNativeHaptic.generate('impactLight');
-    setTimeout(() => {
-      dispatch(newAction(AppAction.flagDisable, 'introMode'));
-    }, 0)
   }
-  const onPressNext = () => {
-    log.info('Intro onPressNext');
+  const requestLocationPermission = (onDone: Function) => {
+    log.info('Intro requestLocationPermission');
+    dispatch(newAction(AppAction.requestLocationPermission, { onDone }));
   }
   const dispatchers = {
     onPressClose,
-    onPressNext,
     pageChanged,
+    requestLocationPermission,
   }
   return dispatchers;
 }
