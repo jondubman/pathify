@@ -99,22 +99,24 @@ const respond = (clientId: string, reason: string = 'unspecified reason') => {
       return;
     }
     log.debug(`responding to clientId ${clientId} poll due to ${reason}`);
-    const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO best practice?)
+    const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO review)
     if (pollRequest) {
       if (pollRequest.timer) {
         clearTimeout(pollRequest.timer); // if already cleared, this is a no-op
       }
       // send all pending messages in one go and hope for the best
       const pendingMessages = messages[clientId] ? [...messages[clientId]] : [];
+      log.debug(`pendingMessages ${JSON.stringify(pendingMessages)}`);
       try {
         messages[clientId] = []; // clear all pending messages right away so nothing gets sent twice
-        pollRequest.res.send(pendingMessages); // TODO envelope? metadata?
+        pollRequest.res.send(pendingMessages);
       } catch(err) {
-        log.warn('respond exception:', err); // TODO will this ever happen?
-        messages[clientId].concat(pendingMessages); // put these back since something went wrong when attempting to send
+        log.warn('respond exception:', err);
+        // put these back since something went wrong when attempting to send
+        messages[clientId] = messages[clientId].concat(pendingMessages);
       }
     } else {
-      log.warn(`respond: no poll request pending for clientId ${clientId}`); // TODO
+      log.warn(`respond: no poll request pending for clientId ${clientId}`);
     }
   } catch(err) {
     log.error('respond', err);
