@@ -22,6 +22,8 @@
 // Inside one of these sagas, you should generally use yield call for any async function call.
 // Use yield call(log...) instead of log directly (yield call effect) so the call happens at the right time.
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   CameraSettings,
 } from '@react-native-mapbox-gl/maps';
@@ -759,6 +761,8 @@ const sagas = {
   },
 
   // // Caution: clearStorage is highly destructive, without warning or confirmation!
+  // // Only for development purposes, commented out to avoid accidental use.
+  //
   // clearStorage: function* () {
   //   try {
   //     if (__DEV__) { // No way should we do this on production version. With confirmation, if ever...
@@ -814,6 +818,7 @@ const sagas = {
 
   // Activities are 'continued' automatically when the app is terminated and then restarted during activity tracking,
   // whether the app was restarted manually, by the user, or automatically, in the background.
+  // Note the use of startActivity here, but with the continueActivityId parameter set, which changes its behavior.
   continueActivity: function* (action: Action) {
     try {
       const params = action.params as ContinueActivityParams;
@@ -1688,7 +1693,7 @@ const sagas = {
         const scrollTime = utils.now();
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startActivity
         if (!continueActivityId) {
-          yield delay(0); // TODO for race condition
+          yield delay(0); // TODO review: At one point this was added for a race condition. Is it necessary?
           yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         }
       }
@@ -1700,8 +1705,7 @@ const sagas = {
   // This saga is run when the app first starts up, and also when it is restarted after being suspended/terminated.
   // The app may be restarted in the background if tracking an activity and the user has moved beyond a geofence around
   // the last location before the app was terminated. The app may also be restarted manually after having been
-  // terminated. If the app is restarted while tracking an activity, continueActivity is invoked. This is its own saga
-  // but is essentially an option to startActivity.
+  // terminated. If the app is restarted while tracking an activity, continueActivity is invoked.
   startupActions: function* () {
     try {
       const runningInBackgroundNow = utils.appInBackground();
@@ -1751,6 +1755,11 @@ const sagas = {
       } = settings;
       if (devMode || remoteDebug) {
         // In devMode, attempt to stay in regular contact with the Pathify server.
+        // Set and persist clientId for this app if needed
+        if (!settings.clientId || !settings.clientId.length) {
+          const clientId = uuidv4();
+          yield put(newAction(AppAction.setAppOption, { clientId }));
+        }
         yield call(log.debug, `startupActions: devMode ${devMode}, remoteDebug ${remoteDebug}, polling server`);
         yield call(setTimeout, pollServer, 0);
       }
@@ -2002,14 +2011,13 @@ const sagas = {
       mapReorienting,
       timelineNow,
       timelineScrolling,
-      // trackingActivity,
     } = state.flags;
     if (appActive) { // avoid ticking the timer in the background
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
       if (nowTimeRounded === state.options.nowTimeRounded) {
         // Most of the time, only this happens:
-        yield put(newAction(AppAction.setAppOption, { nowTime: now })); // TODO review, maybe still too much
+        yield put(newAction(AppAction.setAppOption, { nowTime: now }));
       } else {
         // But when nowTimeRounded bumps up to the next whole second, we do this:
         yield put(newAction(AppAction.refreshCachedCurrentActivity)); // TODO review

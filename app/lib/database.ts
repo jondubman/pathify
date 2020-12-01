@@ -62,6 +62,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
   properties: {
     id: 'int', // singleton, always 1
     backTime: 'double',
+    clientId: 'string',
     currentActivityId: 'string?',
     followingUser: 'bool',
     grabBarSnapIndex: 'int',
@@ -87,6 +88,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
 export interface SettingsObject extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
   id: number,
   backTime: number;
+  clientId: string;
   currentActivityId?: string,
   followingPath: boolean,
   followingUser: boolean,
@@ -126,6 +128,7 @@ const { bounds, heading } = constants.map.default;
 const defaultSettings = {
   id: 1, // ALWAYS 1, since there is 1 set of defaultSettings. This is a singleton.
   backTime: 0, // TODO this is pretty rudimentary, should at least be a stack
+  clientId: '', // none
   currentActivityId: undefined,
   followingPath: false,
   followingUser: false,
@@ -473,6 +476,8 @@ const database = {
   },
 
   // Caution: This will simply, instantly delete EVERYTHING in the database! There is no undo!
+  // Only for development purposes, commented out to avoid accidental use.
+  //
   // reset: async () => {
   //   log.debug('Resetting Realm database!');
   //   realm.write(() => {

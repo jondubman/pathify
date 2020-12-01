@@ -16,6 +16,9 @@ interface OwnProps { // matching those of PausedClockContainer
 const mapStateToProps = (state: AppState, ownProps?: OwnProps): ClockStateProps => {
   const { selectedActivityId } = state.options;
   const selectedIsCurrent = currentActivityIsSelected(state);
+
+  // The use of now here ensures the NowClock is as up-to-date and thus smooth as can be, particularly the second hand.
+  // Whatever now was determined somewhere earlier in the react-redux dynamic couldn't possibly be as up to date.
   const d = new Date(utils.now());
   return {
     clockStyle: (ownProps && ownProps.clockStyle) ? ownProps.clockStyle : {},

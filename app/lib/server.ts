@@ -1,5 +1,6 @@
 // This is for development/debugging only (not for production.)
-// This currently uses long-polling, which is reliable but not the most efficient. TODO upgrade to WebSockets.
+// This currently uses long-polling, which is reliable, if not scalable, which matters little for debugging.
+// TODO consider upgrading to WebSockets, or some wholly different approach.
 
 import { newAction } from 'lib/actions';
 import constants from 'lib/constants';
@@ -7,12 +8,11 @@ import store from 'lib/store';
 import log, { messageToLog } from 'shared/log';
 
 const {
-  clientId,
   headers,
   serverUrl
 } = constants;
 
-// This handles the server response to /poll, which is a server push.
+// This handles server responses to /poll, which represents a server push.
 const handleServerPush = async (data: any) => {
   try {
     // Custom string messages are handled here
@@ -38,22 +38,26 @@ const handleServerPush = async (data: any) => {
 }
 
 const pollServerOnce = async () => {
+  let clientAlias = '';
+  let clientId = '';
+  let url = '';
   try {
     const route = 'poll'; // TODO should move to shared constant; see pathify.ts on server-side.
     const { options } = store.getState();
-    const { clientAlias } = options;
-    // TODO use constant for timeout
-    const url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=90000`;
+    clientAlias = options.clientAlias;
+    clientId = options.clientId;
+    const timeout = constants.timing.devServerPollTimeout;
+    url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=${timeout}`;
     const method = 'GET';
     const response = await fetch(url, { method, headers });
     const message = await response.json();
     handleServerPush(message);
   } catch (err) {
-    log.info('pollServerOnce', err);
-
-    // take a brief nap and then try again
+    // This will happen if no connection, if server times out, if response is malformed, or if handleServerPush croaks.
+    // Take a brief nap and then try again.
     try {
-      await new Promise(resolve => setTimeout(resolve, constants.serverDelayAfterFailedRequest));
+      log.info('pollServerOnce error', { clientAlias, url, err });
+      await new Promise(resolve => setTimeout(resolve, constants.timing.serverDelayAfterFailedRequest));
     } catch (err) {
       log.info('pollServerOnce inner exception', err);
     }

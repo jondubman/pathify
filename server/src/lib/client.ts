@@ -24,11 +24,12 @@ type ClientPollRequest = {
 type ClientPollRequests = { [key: string]: ClientPollRequest[] }; // key is clientId
 let polls: ClientPollRequests = {};
 
-type ClientAliases = { [key: string]: string }; // key is clientAlias, value is clientId
-let aliases: ClientAliases = {};
+type ClientAliases = { [key: string]: string }; // key is clientAlias, value is clientId.
+let aliases: ClientAliases = {}; // Thus, any alias maps to no more than one clientId.
 
-// Start here: Polling request from client. Exported to be called from Express router.
-// This should happen regularly for each active/connected client.
+// From the server perspective, things start here with a poll request from a client.
+// handlePollRequest is the responder for the Express router for /poll.
+// Long polling should happen regularly (e.g. with a 90 second timeout) for any/each active/connected client.
 export const handlePollRequest = (req: any, res: any, timeout: number) => {
   const { clientAlias, clientId } = req.query;
   if (!clientId) {
@@ -64,7 +65,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
   }
 }
 
-// Server push is the purpose of this module. Enqueue a message to a client and attempt to send it.
+// Server push is the real purpose of all this polling business. Enqueue a message to a client and attempt to send it.
 // See handleServerPush in the app for where this comes in.
 export const pushToClient = (message: any, clientId: string, clientAlias: string = '') => {
   // If clientId is

@@ -7,10 +7,14 @@ import log from 'shared/log';
 import { handlePollRequest } from 'lib/client';
 
 router.get('/', function (req, res) {
-  const { clientAlias, clientId, timeout } = req.query;
-  const timeoutMsec = (timeout && parseInt(timeout.toString())) || constants.serverPollTimeout;
-  log.debug(`poll from clientId ${clientId} (${clientAlias}) timeout=${timeoutMsec}`);
-  handlePollRequest(req, res, timeoutMsec);
+  try {
+    const { clientAlias, clientId, timeout } = req.query;
+    const timeoutMsec = (timeout && parseInt(timeout.toString())) || constants.serverPollTimeout;
+    log.debug(`poll from clientId ${clientId} (${clientAlias}) timeout=${timeoutMsec}`);
+    handlePollRequest(req, res, timeoutMsec);
+  } catch (err) {
+    log.warn(`poll error: ${err}`);
+  }
 })
 
 export { router as poll };

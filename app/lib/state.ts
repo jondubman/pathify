@@ -126,8 +126,8 @@ export const initialAppState = {
     appState: AppStateChange.STARTUP as AppStateChange,
     backTime: now, // time you go back to if you jump to NOW on the Timeline, and then go back
     centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.
-    clientAlias: 'app', // TODO use constants
-    clientId: '', // TODO
+    clientAlias: constants.clientAlias,
+    clientId: '', // for dev server, unique per installation of the app, should be resettable
     currentActivityId: null as string | null, // while tracking Activity
     decelerationRate: 1, // for ScrolLViews. Note even zero does not disable momentum scrolling, just tapers it faster.
     grabBarSnapIndex: constants.snapIndex.topButtons, // User can drag bar up and down to reveal more/less UI over map.
@@ -174,6 +174,7 @@ export const persistedFlags = [
 
 export const persistedOptions = [
   'backTime',
+  'clientId',
   'currentActivityId',
   'grabBarSnapIndex',
   'mapOpacity',

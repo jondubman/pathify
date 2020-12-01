@@ -1,8 +1,5 @@
 // constants module
 
-import { v4 as uuidv4 } from 'uuid';
-const clientId = uuidv4(); // TODO perist
-
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 import { DomainTuple } from 'victory-native';
 const safeAreaTop = StaticSafeAreaInsets.safeAreaInsetsTop;
@@ -95,7 +92,7 @@ const colorThemes = {
 // For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
 // It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
 // as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
-const schemaVersion = 32;
+const schemaVersion = 33;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
@@ -378,7 +375,7 @@ const constants = {
   buttonBaseOffsetPerRow: (buttonSize + buttonOffset * 2) + bottomButtonSpacing,
   buttonOffset,
   buttonSize,
-  clientId,
+  clientAlias: 'app', // for convenience when debugging a single app instance on the dev server
   clock: {
     border: {
       width: 1.5,
@@ -540,7 +537,6 @@ const constants = {
   },
   safeAreaBottom, // see bottomWithoutTimeline
   safeAreaTop,
-  serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
   serverUrl: 'https://www.pathify.app:3000/', // TODO change subdomain
   settingsButton: {
     leftOffset: buttonOffset,
@@ -572,9 +568,12 @@ const constants = {
     width: 240,
   },
   timing: { // msec
-    opacitySliderThrottle: 50,
+    devServerPollTimeout: 90000,
+    opacitySliderThrottle: 50, // throttle rate: slider should issue no more than this #/sec of change events
     pulsarPulse: 1000,
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
+    serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
+    tickThrottleWhileTracking: 1000,
     timelineCloseToNow: 3000,
     timelineRelativeZoomStep: 30, // bigger zooms faster
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.

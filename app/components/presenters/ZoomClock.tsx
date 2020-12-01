@@ -201,7 +201,6 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       followingUser,
       nowMode,
       pressed,
-      trackingActivity,
     } = this.props;
     const {
       deltaX,

@@ -20,7 +20,7 @@
   "workbench.colorCustomizations": {
     "editor.selectionBackground": "#ca1f1f",
     "editor.findMatchBackground": "#6122d6",
-    "editor.findMatchHighlightBackground": "#00ffd569",
+    "editor.findMatchHighlightBackground": "#0f8f3392",
   },
   "editor.occurrencesHighlight": false,
   "editor.selectionHighlight": false,

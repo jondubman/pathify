@@ -18,6 +18,7 @@
     "@turf/helpers": "^6.1.4",
     "@turf/turf": "^5.1.6",
     "@types/d3": "^6.2.0",
+    "@types/lodash": "^4.14.165",
     "@types/mapbox": "^1.6.39",
     "@types/mapbox-gl": "^1.12.8",
     "@types/radium": "^0.24.3",

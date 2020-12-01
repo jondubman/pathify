@@ -1,6 +1,7 @@
+import _ from 'lodash'; // for _.throttle
+
 import React, { Component } from 'react';
 import {
-  Alert,
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
   LogBox,
@@ -46,7 +47,6 @@ export default class App extends Component {
       store.create(); // proactively create Redux store instance
       const { flags } = store.getState();
       let { devMode } = flags;
-
       // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
 
@@ -59,7 +59,6 @@ export default class App extends Component {
       log.info('TODO develop', develop); // set (maybe) in XCode build scheme
       if (devMode || develop === 'true') {
         store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
-        store.dispatch(newAction(AppAction.setAppOption, { clientId: Date.now().toString() })); // TODO
         log.warn('devMode enabled');
         devMode = true;
       }
@@ -86,7 +85,15 @@ export default class App extends Component {
       const interval = setInterval(() => {
         const { flags } = store.getState();
         if (flags.appActive && flags.ticksEnabled) { // no need for timer ticks when runing in the background
-          store.dispatch(newAction(AppAction.timerTick, utils.now()));
+          const now = utils.now();
+          // Optimization: Throttle upstream of the store.dispatch when tracking
+          if (flags.trackingActivity) {
+            _.throttle(() => {
+              store.dispatch(newAction(AppAction.timerTick, now));
+            }, constants.timing.tickThrottleWhileTracking)();
+          } else {
+            store.dispatch(newAction(AppAction.timerTick, now)); // call directly
+          }
         }
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
