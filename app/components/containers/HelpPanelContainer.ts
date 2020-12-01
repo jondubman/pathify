@@ -28,7 +28,7 @@ const mapStateToProps = (state: AppState): HelpPanelStateProps => {
   const { appBuild, appVersion } = state.options;
   const { devMode, remoteDebug } = state.flags;
   return {
-    version: `Pathify v${appVersion}.${appBuild}${(devMode || remoteDebug) ? '.' : ''}${devMode ? 'dev' : ''}`,
+    version: `Pathify v${appVersion}.${appBuild}${(devMode || remoteDebug) ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
   }
