@@ -39,6 +39,7 @@ router.post('/', function (req, res) {
   const { clientAlias } = req.query;
   let { clientId } = req.query;
 
+  log.debug(`/push request to clientAlias ${clientAlias}, clientId ${clientId}`);
   // OK for clientId to be missing if we have clientAlias
   // If both are provided, clientAlias overrides.
   if (clientAlias) {
