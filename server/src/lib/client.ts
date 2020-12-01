@@ -31,52 +31,59 @@ let aliases: ClientAliases = {}; // Thus, any alias maps to no more than one cli
 // handlePollRequest is the responder for the Express router for /poll.
 // Long polling should happen regularly (e.g. with a 90 second timeout) for any/each active/connected client.
 export const handlePollRequest = (req: any, res: any, timeout: number) => {
-  const { clientAlias, clientId } = req.query;
-  if (!clientId) {
-    log.warn('handlePollRequest: clientId not provided');
-    res.sendStatus(500); // TODO
-    return;
-  }
-  const timer = setTimeout(() => {
-    log.trace(`poll timed out, responding`);
-    respond(clientId, 'timeout');
-  }, timeout);
+  try {
+    const { clientAlias, clientId } = req.query;
+    if (!clientId) {
+      log.warn('handlePollRequest: clientId not provided');
+      res.sendStatus(500); // TODO
+      return;
+    }
+    const timer = setTimeout(() => {
+      log.trace(`poll timed out, responding`);
+      respond(clientId, 'timeout');
+    }, timeout);
 
-  if (!polls[clientId]) { // make sure the array exists
-    polls[clientId] = [];
-  }
-  const clientPollRequest: ClientPollRequest = {
-    clientAlias,
-    clientId,
-    index: req.query.index || 0, // TODO
-    res, // so server can respond
-    timer, // so it can be cleared if server responds
-    timeout, // fyi
-  }
-  polls[clientId].push(clientPollRequest);
+    if (!polls[clientId]) { // make sure the array exists
+      polls[clientId] = [];
+    }
+    const clientPollRequest: ClientPollRequest = {
+      clientAlias,
+      clientId,
+      index: req.query.index || 0, // TODO
+      res, // so server can respond
+      timer, // so it can be cleared if server responds
+      timeout, // fyi
+    }
+    polls[clientId].push(clientPollRequest);
 
-  if (clientAlias && clientAlias.length) {
-    // This is where a clientAlias gets associated with a clientId.
-    aliases[clientAlias] = clientId; // TODO do we ever need to clean up this array?
-  }
-  // Respond right away if pushes are pending, else, no immediate response.
-  if (messages[clientId] && messages[clientId].length) {
-    respond(clientId, 'client poll');
+    if (clientAlias && clientAlias.length) {
+      // This is where a clientAlias gets associated with a clientId.
+      aliases[clientAlias] = clientId; // TODO do we ever need to clean up this array?
+    }
+    // Respond right away if pushes are pending, else, no immediate response.
+    if (messages[clientId] && messages[clientId].length) {
+      respond(clientId, 'client poll');
+    }
+  } catch(err) {
+    log.error('handlePollRequest', err);
   }
 }
 
 // Server push is the real purpose of all this polling business. Enqueue a message to a client and attempt to send it.
 // See handleServerPush in the app for where this comes in.
 export const pushToClient = (message: any, clientId: string, clientAlias: string = '') => {
-  // If clientId is
-  if (!messages[clientId]) {
-    messages[clientId] = [];
+  try {
+    if (!messages[clientId]) {
+      messages[clientId] = [];
+    }
+    const countPending = messages[clientId].length;
+    log.debug(`push to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`,
+      messageToLog(message));
+    messages[clientId].push(message);
+    respond(clientId, 'server push');
+  } catch(err) {
+    log.error('pushToClient', err);
   }
-  const countPending = messages[clientId].length;
-  log.debug(`push to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`,
-    messageToLog(message));
-  messages[clientId].push(message);
-  respond(clientId, 'server push');
 }
 
 export const clientIdForAlias = (clientAlias: string): string => {
@@ -86,26 +93,30 @@ export const clientIdForAlias = (clientAlias: string): string => {
 // Attempt to send pending messages by responding to any open poll request.
 // If client is not connected, message sits in a queue.
 const respond = (clientId: string, reason: string = 'unspecified reason') => {
-  if (!clientId || !clientId.length) {
-    log.warn('push respond: missing clientId');
-    return;
-  }
-  log.debug(`responding to clientId ${clientId} poll due to ${reason}`);
-  const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO best practice?)
-  if (pollRequest) {
-    if (pollRequest.timer) {
-      clearTimeout(pollRequest.timer); // if already cleared, this is a no-op
+  try {
+    if (!clientId || !clientId.length) {
+      log.warn('push respond: missing clientId');
+      return;
     }
-    // send all pending messages in one go and hope for the best
-    const pendingMessages = messages[clientId] ? [...messages[clientId]] : [];
-    try {
-      messages[clientId] = []; // clear all pending messages right away so nothing gets sent twice
-      pollRequest.res.send(pendingMessages); // TODO envelope? metadata?
-    } catch(err) {
-      log.warn('respond exception:', err); // TODO will this ever happen?
-      messages[clientId].concat(pendingMessages); // put these back since something went wrong when attempting to send
+    log.debug(`responding to clientId ${clientId} poll due to ${reason}`);
+    const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO best practice?)
+    if (pollRequest) {
+      if (pollRequest.timer) {
+        clearTimeout(pollRequest.timer); // if already cleared, this is a no-op
+      }
+      // send all pending messages in one go and hope for the best
+      const pendingMessages = messages[clientId] ? [...messages[clientId]] : [];
+      try {
+        messages[clientId] = []; // clear all pending messages right away so nothing gets sent twice
+        pollRequest.res.send(pendingMessages); // TODO envelope? metadata?
+      } catch(err) {
+        log.warn('respond exception:', err); // TODO will this ever happen?
+        messages[clientId].concat(pendingMessages); // put these back since something went wrong when attempting to send
+      }
+    } else {
+      log.warn(`respond: no poll request pending for clientId ${clientId}`); // TODO
     }
-  } else {
-    log.warn(`respond: no poll request pending for clientId ${clientId}`); // TODO
+  } catch(err) {
+    log.error('respond', err);
   }
 }
