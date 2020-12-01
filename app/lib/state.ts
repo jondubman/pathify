@@ -60,7 +60,7 @@ export const initialAppState = {
   counts: {
     refreshedActivities: 0,
   },
-  current: noCurrentLocation, // TODO persist last values, restore on restart? Have timestamp.
+  current: noCurrentLocation, // Most recently received location, currently only used for debugging
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
     allowMapStyleNone: false, // really only useful for debugging / perf
     activityListScrolling: false, // is the activityList currently actively being scrolled?

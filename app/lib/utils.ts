@@ -39,8 +39,6 @@ const utils = {
     `${(new Date(t)).toTimeString().split(' ')[0]}:${t.toString().slice(t.toString().length - 4, t.toString().length)}`
   ),
 
-  isDebugVersion: __DEV__,
-
   // Return true if given loc is inside given bounds, thus:
   // lonInset and latInset of 0 yield the simplest containment test.
   // lonInset or latInset > 0 shrinks the range that is considered 'inside' the bounds.

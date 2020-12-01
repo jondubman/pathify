@@ -24,4 +24,5 @@ export interface AppQueryParams {
 export interface AppQueryResponse {
   uuid: string;
   response: any;
+  responseTime: number;
 }

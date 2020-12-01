@@ -380,6 +380,7 @@ const sagas = {
       const queryType = query ? query.type : null;
       const state = (yield select((state: AppState) => state)) as AppState;
       let response: any = `response to uuid ${uuid}`; // generic fallback response
+      const queryStartTime = utils.now(); // milliseconds
       switch (queryType) {
 
         case 'activities': { // all
@@ -570,7 +571,6 @@ const sagas = {
             },
             current: state.current,
             flags: state.flags,
-            isDebugVersion: utils.isDebugVersion,
             options: yield call(loggableOptions, state),
             pastLocationCached: yield call(getCachedPathInfo, state),
             pastLocationStored: yield call(getStoredLocationEvent, state),
@@ -584,7 +584,8 @@ const sagas = {
           break;
         }
       }
-      const appQueryResponse: AppQueryResponse = { response, uuid };
+      const responseTime = utils.now() - queryStartTime;
+      const appQueryResponse: AppQueryResponse = { response, responseTime, uuid };
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
     } catch(err) {
       yield call(log.error, 'appQuery', err);
@@ -760,7 +761,7 @@ const sagas = {
   // // Caution: clearStorage is highly destructive, without warning or confirmation!
   // clearStorage: function* () {
   //   try {
-  //     if (utils.isDebugVersion) { // No way should we do this on production version. With confirmation, if ever...
+  //     if (__DEV__) { // No way should we do this on production version. With confirmation, if ever...
   //       yield call(log.warn, 'saga clearStorage on debug version of app - deleting all persisted data!');
   //       yield call(database.reset); // including Settings
   //       yield call(Geo.destroyLocations);
