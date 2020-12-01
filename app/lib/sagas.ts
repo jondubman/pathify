@@ -131,7 +131,10 @@ import {
   timelineVisibleTime,
   timelineZoomValue,
 } from 'lib/selectors';
-import { postToServer } from 'lib/server';
+import {
+  pollServer,
+  postToServer,
+ } from 'lib/server';
 import {
   AppState,
   CacheInfo,
@@ -1702,11 +1705,12 @@ const sagas = {
     try {
       const runningInBackgroundNow = utils.appInBackground();
       yield call(database.completeAnyMigration);
-      const { recoveryMode } = yield select((state: AppState) => state.flags);
+      const { devMode, recoveryMode } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
+
+      // Restore app options from settings
       const settings = (yield call(database.settings)) as SettingsObject;
       yield call(log.info, 'Saved App settings', settings);
-      // restore app options from settings
       const newSettings = {} as any;
       for (const propName of persistedOptions) {
         if (settings[propName] !== undefined) {
@@ -1740,9 +1744,15 @@ const sagas = {
         grabBarSnapIndex,
         mapHeading,
         mapZoomLevel,
+        remoteDebug,
         requestedLocationPermission,
         timelineNow,
       } = settings;
+      if (devMode || remoteDebug) {
+        // In devMode, attempt to stay in regular contact with the Pathify server.
+        yield call(log.debug, `startupActions: devMode ${devMode}, remoteDebug ${remoteDebug}, polling server`);
+        yield call(setTimeout, pollServer, 0);
+      }
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);

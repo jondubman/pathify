@@ -69,7 +69,7 @@ export const initialAppState = {
     appStartupCompleted: false, // once true, should never be set to false
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
-    devMode, // if set to true, app calls in to Pathify server and takes requests and queries; false for public release
+    devMode, // set true if __DEV__ or develop ENV variable set to true (if launched using Pathify Develop XCode scheme)
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
@@ -91,6 +91,7 @@ export const initialAppState = {
     receiveHeartbeatEvents: false, // TODO
     receiveMotionChangeEvents: false, // TODO
     refreshActivityOnStop: true, // Should refreshActivity be performed after stopActivity? TODO inefficient, fail-safe.
+    remoteDebug: false, // if true, app calls in to Pathify server, takes requests and queries; false for public release
     requestedLocationPermission: false, // has it been requested through react-native-background-geolocation
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
     settingsOpen: false, // manually opened by user
@@ -166,6 +167,7 @@ export const persistedFlags = [
   'followingPath',
   'followingUser',
   'labelsEnabled',
+  'remoteDebug',
   'requestedLocationPermission',
   'timelineNow',
 ]

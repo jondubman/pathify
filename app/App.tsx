@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
   LogBox,
@@ -21,7 +22,6 @@ import {
 import { AppStateChange } from 'lib/appEvents';
 import constants from 'lib/constants';
 import database, { LogMessageData } from 'lib/database';
-import { pollServer } from 'lib/server';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -58,7 +58,6 @@ export default class App extends Component {
       log.info('TODO pathifyEnv', pathifyEnv); // set (maybe) in PathifyUITests.swift
       log.info('TODO develop', develop); // set (maybe) in XCode build scheme
       if (devMode || develop === 'true') {
-        // Alert.alert('Warning: devMode is enabled');
         store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
         store.dispatch(newAction(AppAction.setAppOption, { clientId: Date.now().toString() })); // TODO
         log.warn('devMode enabled');
@@ -91,11 +90,6 @@ export default class App extends Component {
         }
       }, store.getState().options.timerTickIntervalMsec);
       store.dispatch(newAction(ReducerAction.SET_TIMER_TICK_INTERVAL, interval));
-
-      if (devMode) {
-        // In devMode, attempt to stay in regular contact with the Pathify server.
-        setTimeout(pollServer, 0);
-      }
     } catch (err) {
       log.warn('App componentDidMount err', err);
     }

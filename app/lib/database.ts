@@ -75,6 +75,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     mapStyle: 'string',
     mapZoomLevel: 'double',
     pausedTime: 'double',
+    remoteDebug: 'bool',
     requestedLocationPermission: 'bool',
     selectedActivityId: 'string?',
     timelineNow: 'bool',
@@ -100,6 +101,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   mapStyle: string,
   mapZoomLevel: number;
   pausedTime: number,
+  remoteDebug: boolean,
   requestedLocationPermission: boolean;
   selectedActivityId: string,
   timelineNow: boolean,
@@ -138,6 +140,7 @@ const defaultSettings = {
   mapStyle: constants.map.default.style,
   mapZoomLevel: 0,
   pausedTime: 0,
+  remoteDebug: false,
   requestedLocationPermission: false,
   selectedActivityId: undefined,
   timelineNow: true,
