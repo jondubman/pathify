@@ -47,16 +47,20 @@ const pollServerOnce = async () => {
     clientAlias = options.clientAlias;
     clientId = options.clientId;
     const timeout = constants.timing.devServerPollTimeout;
-    url = `${serverUrl}${route}?clientId=${clientId}&clientAlias=${clientAlias}&timeout=${timeout}`;
+    if (clientAlias) {
+      url = `${serverUrl}${route}?clientAlias=${clientAlias}&clientId=${clientId}&timeout=${timeout}`;
+    } else {
+      url = `${serverUrl}${route}?&clientId=${clientId}&timeout=${timeout}`;
+    }
     const method = 'GET';
-    const response = await fetch(url, { method, headers });
+    const response = await fetch(url, { method, headers }); // This may take a long time... up to timeout.
     const message = await response.json();
     handleServerPush(message);
   } catch (err) {
     // This will happen if no connection, if server times out, if response is malformed, or if handleServerPush croaks.
     // Take a brief nap and then try again.
     try {
-      log.info('pollServerOnce error', { clientAlias, url, err });
+      log.info('pollServerOnce error', { clientAlias, clientId, url, err });
       await new Promise(resolve => setTimeout(resolve, constants.timing.serverDelayAfterFailedRequest));
     } catch (err) {
       log.info('pollServerOnce inner exception', err);

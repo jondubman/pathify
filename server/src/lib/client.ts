@@ -99,19 +99,13 @@ const respond = (clientId: string, reason: string = 'unspecified reason') => {
       return;
     }
     log.debug(`responding to clientId ${clientId} poll due to ${reason}`);
-    log.debug(`trace1`);
     const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO review)
-    log.debug(`trace2`);
     if (pollRequest) {
-      log.debug(`trace3`);
       if (pollRequest.timer) {
         clearTimeout(pollRequest.timer); // if already cleared, this is a no-op
       }
-      log.debug(`trace4`);
       // send all pending messages in one go and hope for the best
       const pendingMessages = messages[clientId] ? [...messages[clientId]] : [];
-      log.debug(`trace5`);
-      log.debug(`pendingMessages ${JSON.stringify(pendingMessages)}`);
       try {
         messages[clientId] = []; // clear all pending messages right away so nothing gets sent twice
         pollRequest.res.send(pendingMessages);
