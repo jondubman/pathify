@@ -57,8 +57,14 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
     polls[clientId].push(clientPollRequest);
 
     if (clientAlias && clientAlias.length) {
+      // If any other alias is associated with the same clientId, let's clear that now.
+      for (const [key, value] of Object.entries(aliases)) {
+        if (value === clientId) {
+          delete aliases[key]; // Note that deleting while iterating properties is safe, per JS spec
+        }
+      }
       // This is where a clientAlias gets associated with a clientId.
-      aliases[clientAlias] = clientId; // TODO do we ever need to clean up this array?
+      aliases[clientAlias] = clientId;
     }
     // Respond right away if pushes are pending, else, no immediate response.
     if (messages[clientId] && messages[clientId].length) {
