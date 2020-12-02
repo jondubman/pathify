@@ -62,6 +62,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
   properties: {
     id: 'int', // singleton, always 1
     backTime: 'double',
+    clientAlias: 'string',
     clientId: 'string',
     currentActivityId: 'string?',
     followingUser: 'bool',
@@ -88,6 +89,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
 export interface SettingsObject extends Realm.Object { // returned from Realm, resembles ordinary Object, but isn't
   id: number,
   backTime: number;
+  clientAlias: string;
   clientId: string;
   currentActivityId?: string,
   followingPath: boolean,
@@ -128,6 +130,7 @@ const { bounds, heading } = constants.map.default;
 const defaultSettings = {
   id: 1, // ALWAYS 1, since there is 1 set of defaultSettings. This is a singleton.
   backTime: 0, // TODO this is pretty rudimentary, should at least be a stack
+  clientAlias: '', // none
   clientId: '', // none
   currentActivityId: undefined,
   followingPath: false,

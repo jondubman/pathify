@@ -1,42 +1,67 @@
 #!/usr/bin/env ts-node
 
 // Usage:
-//    json-compose commandFile inputFile
+//    json-compose commandFile optionalParameter
 //
-// Both commandFile and inputFile should be valid JSON. commandFile is read from the filesystem.
-// If inputFile is not specified, commandFile is output, unchanged (a simple pass-through).
-// If inputFile is specified, its entire contents are inserted as the 'include' property at the top level.
-// The JSON files are thus 'composed' into JSON that is sent to the server which may be forwarded to the app.
+// commandFile should be valid JSON. commandFile is read from the filesystem.
+// If optionalParameter is not specified, commandFile is output, unchanged (a simple pass-through).
 
 // TODO this must currently be run from the sample root folder
 // TODO add TS typings
 
 const fs = require('fs');
 const parseArgs = require('minimist');
+// https://github.com/substack/minimist
 
 const commandLineOpts = {
 }
 const argv = parseArgs(process.argv, commandLineOpts);
-const commandFilename = argv._[2];
-const inputFilename = argv._[3];
 
-if (commandFilename) {
-  const commandJson = fs.readFileSync(commandFilename, 'utf8');
-  const command = JSON.parse(commandJson);
-  const include = (command.params !== undefined) && (command.params.include !== undefined);
-  if (include && inputFilename) {
-    const inputJson = fs.readFileSync(inputFilename, 'utf8');
-    const input = JSON.parse(inputJson);
-    command.params.include = input;
-  } else if (typeof(include) === 'string') {
-    command.params.include = JSON.parse(fs.readFileSync(include, 'utf8'));
+// Note argv._[0] is ts-node
+//      argv._[1] is json-compose
+
+const commandFilename = argv._[2];
+const optionalParameter = argv._[3];
+
+const main = () => {
+  if (commandFilename) {
+    let commandJson = fs.readFileSync(commandFilename, 'utf8');
+
+    // Replace any instances of magicString with optionalParameter (or, if that's missing, empty string.)
+    const magicString = '$$'; // something we're not likely to see used for real
+    commandJson = commandJson.replace(magicString, optionalParameter);
+
+    const command = JSON.parse(commandJson);
+
+    // Import feature:
+    // If the command (from the JSON file) contains params object with an include property, like params: { include: {} },
+    // that indicates a request to insert the entire contents of the file whose path is given via the optionalParameter
+    // as the value of params.include. This enables this sort of action, where importActivity has an include param: 
+    //
+    // json-compose importActivity sampleActivity.json.
+
+    const includeRequested = (command.params !== undefined) && (command.params.include !== undefined);
+    const inputFilename = optionalParameter;
+    if (includeRequested && inputFilename) {
+      const inputJson = fs.readFileSync(inputFilename, 'utf8');
+      const input = JSON.parse(inputJson);
+      command.params.include = input;
+    } else if (typeof(include) === 'string') {
+      command.params.include = JSON.parse(fs.readFileSync(include, 'utf8'));
+    }
+
+    // const output = JSON.stringify(command, null, 4); // pretty-print
+    const output = JSON.stringify(command);
+
+    console.log(output);
+  } else {
+    // TODO better help. This isn't shown when piped to curl anyway...
+    const help = `usage:
+  json-compose commandFile.json optionalParameter
+    logs output to console
+  `;
+    console.log(help);
   }
-  const output = JSON.stringify(command);
-  console.log(output);
-} else {
-  const help = `usage:
-json-compose commandFile.json inputFile.json
-  logs output to console
-`;
-  console.log(help);
 }
+
+main();

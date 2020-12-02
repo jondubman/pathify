@@ -14,7 +14,7 @@
   "dependencies": {
     "@types/filesystem": "^0.0.29",
     "@types/json5": "^0.0.30",
-    "@types/node": "^14.14.8",
+    "@types/node": "^14.14.10",
     "commander": "^6.2.0",
     "get-stdin": "^8.0.0",
     "json5": "^2.1.3",

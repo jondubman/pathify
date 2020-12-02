@@ -1,0 +1,6 @@
+{
+  type: 'setAppOption',
+  params: {
+    'clientAlias': '$$', // replaced with command-line parameter
+  }
+}

@@ -1,9 +1,5 @@
 #!/bin/bash
 
 # Note curl -d option is for data, and the dash at the end (escaped with at-sign) means use stdin.
-json-compose json/$1 $2 | curl -s "${PATHIFY_SERVER}push?clientAlias=$CA&clientId=$CID" -H "Content-Type: application/json" -d @- | python -m json.tool
-
-# pretty-print:
-#     | python - json.tool
-
-# alias json="python -m json.tool"
+json-compose json/$1 $2 | curl -s "${PATHIFY_SERVER}push?clientAlias=${CA}&clientId=${CID}" -H "Content-Type: application/json" -d @- | jq
+# Note the | jq at the end pretty-prints the json output

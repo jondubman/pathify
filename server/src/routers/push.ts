@@ -39,7 +39,7 @@ router.post('/', function (req, res) {
   const { clientAlias } = req.query;
   let { clientId } = req.query;
 
-  log.debug(`/push request to clientAlias ${clientAlias}, clientId ${clientId}`);
+  log.debug(`/push request to clientAlias ${clientAlias || 'undefined'}, clientId ${clientId || 'undefined'}`);
   // OK for clientId to be missing if we have clientAlias
   // If both are provided, clientAlias overrides.
   if (clientAlias) {
@@ -79,7 +79,7 @@ router.post('/', function (req, res) {
         res.send(JSON.stringify(response));
       }).catch(error => {
         try {
-          log.info(`appQuery timeout, clientAlias ${clientAlias}, clientId ${clientId}`);
+          log.info(`appQuery timeout, clientAlias ${clientAlias || 'undefined'}, clientId ${clientId}`);
           res.send({ error });
         } catch(err) {
           log.error('subsequent error, probably: Cannot set headers after they are sent to the client');
