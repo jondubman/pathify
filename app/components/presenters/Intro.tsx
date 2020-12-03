@@ -29,6 +29,10 @@ const bubbleRadius = 8;
 const smallerRadius = 4;
 const bottom = 27; // empirically determined
 
+const fontScaleFactor = utils.windowWidthFactor();
+const headerFontSize = 20 * fontScaleFactor;
+const textFontSize = 16 * fontScaleFactor;
+
 const Styles = StyleSheet.create({
   buttonLabelText: {
     color: constants.colors.byName.black,
@@ -62,7 +66,7 @@ const Styles = StyleSheet.create({
   header: {
     color: constants.colorThemes.help,
     fontFamily: constants.fonts.family,
-    fontSize: 20,
+    fontSize: headerFontSize,
     fontWeight: 'bold',
     margin: 20,
     marginTop: 50,
@@ -125,7 +129,7 @@ const Styles = StyleSheet.create({
   text: {
     color: constants.colors.byName.white,
     fontFamily: constants.fonts.family,
-    fontSize: 16,
+    fontSize: textFontSize,
     marginHorizontal: 20,
     marginBottom: 50,
     marginTop: 0,

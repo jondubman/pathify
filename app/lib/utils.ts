@@ -100,9 +100,28 @@ const utils = {
     return n.toString();
   },
 
+  // iPhone logical widths are
+  // 320 = iPhone SE 1st gen
+  // 360 = iPhone 12 mini
+  // 375 = iPhone 11 Pro
+  // 390 = iPhone 12
+  // 414 = iPhone 11, iPhone 11 Pro Max
+  // 428 = iPhone 12 Pro Max
+  windowWidthFactor: () => (utils.windowWidth() / 320),
+
+  windowHeight: () => {
+    const dim = Dimensions.get('window');
+    return dim.height;
+  },
+
   windowSize: () => {
     const dim = Dimensions.get('window');
     return dim; // { height, width }
+  },
+
+  windowWidth: () => {
+    const dim = Dimensions.get('window');
+    return dim.width;
   },
 }
 
