@@ -587,7 +587,8 @@ const sagas = {
         }
       }
       const responseTime = utils.now() - queryStartTime;
-      const appQueryResponse: AppQueryResponse = { response, responseTime, uuid };
+      response.responseTime = responseTime;
+      const appQueryResponse: AppQueryResponse = { response, uuid };
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
     } catch(err) {
       yield call(log.error, 'appQuery', err);
