@@ -21,6 +21,7 @@ interface ZoomClockStateProps {
   currentActivitySelected: boolean;
   followingPath: boolean;
   followingUser: boolean;
+  haveActivities: boolean;
   labelsEnabled: boolean;
   nowMode: boolean;
   pressed: boolean;
@@ -54,6 +55,7 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
     currentActivitySelected: !!(options.selectedActivityId && options.selectedActivityId === options.currentActivityId),
     followingPath,
     followingUser,
+    haveActivities: !!(state.cache.activities && state.cache.activities.length),
     labelsEnabled,
     nowMode: timelineNow || (options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     pressed: zoomClockPressed,

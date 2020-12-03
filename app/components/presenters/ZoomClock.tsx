@@ -199,6 +199,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       currentActivitySelected,
       followingPath,
       followingUser,
+      haveActivities,
       nowMode,
       pressed,
     } = this.props;
@@ -260,13 +261,13 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       if (followingPath) {
         if (activitySelected) {
           labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'RETRACING PRIOR PATH';
-        } else {
+        } else if (haveActivities) {
           labelText = 'READY TO RETRACE PATH';
         }
       } else if (followingUser) {
         if (activitySelected) {
           labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'PAST TIME, CURRENT LOC';
-        } else {
+        } else if (haveActivities) {
           labelText = 'READY TO RETRACE PATH';
         }
       } else {
