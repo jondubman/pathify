@@ -65,11 +65,11 @@ export const introPages: IntroPageTemplate[] = [
     name: 'welcome',
     buttonClose: closeButton, // TODO only show this one when intro manually launched
     buttonNext: nextButton,
-    header: 'Hello, world',
+    header: 'Hello, world!',
     headerStyle: { color: constants.colors.byName.blue } as StyleProp<ViewStyle>,
     hideCloseButtonBeforeLocationRequest: true,
-    text: `Pathify is a location-based app that lets you track, measure and map your activities, navigating through time as well as space.\n
-Pathify takes a fresh approach that lets you plan, monitor and review activities all at once, on a unified map.`,
+    text: `Pathify is a location-based app that lets you privately track, measure and map your activities, navigating through time as well as space. It's a map with a memory.
+\nPathify has the basics of a running app, but takes a fresh approach. You can plan, monitor and review activities all at once, on a unified map. A journey of a thousand miles begins with a single step.`,
     ui: [],
   },
   {
@@ -78,9 +78,9 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonNext: nextButton,
     header: 'Privacy, first',
     hideCloseButtonBeforeLocationRequest: true,
-    text: `Privacy is a basic right. Your activity in Pathify is completely private by design. There's no signup to complete, no account to create.
-\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not in a big, shared data pool.
-\nWe don't even collect anonymous usage data. Mapbox does, to improve the map, but you can opt out on the next page. New features will be opt-in, designed up front to maximize your privacy.`,
+    text: `Privacy is a basic right. Your activity in Pathify is private by design. There's no signup to complete, no account to create.
+\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not sent to a server and stored in a shared repository.
+\nWe do not even collect anonymous usage data. By default, Mapbox does so, to improve the map, but you can opt out on the next page.`,
     ui: [],
     yieldsLocationRequest: true,
   },
@@ -90,9 +90,9 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonNext: nextButton,
     header: 'One map to find them all',
     headerStyle: { color: constants.colors.byName.lighterRed } as StyleProp<ViewStyle>,
-    text: `Instead of a separate route map for each activity, Pathify overlays current and prior activities on a unified map.
-\nBeautiful, up-to-date maps from Mapbox help you find lesser-known parks and trails.
-\nAdjust the style and opacity on the go with the Settings panel. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner. `,
+    text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on a unified map.
+\nBeautiful, up-to-date maps from Mapbox help you find lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
+\nAdjust the style and opacity on the go with the Settings panel anytime (including now!)`,
     ui: [UICategory.map, UICategory.settings],
   },
   {
@@ -101,7 +101,7 @@ Pathify takes a fresh approach that lets you plan, monitor and review activities
     buttonNext: nextButton,
     header: 'Two taps to get tracking ',
     headerStyle: { color: constants.colorThemes.now } as StyleProp<ViewStyle>,
-    text: `Tap the START button, then Start New Activity. It's that simple. End Activity the same way.
+    text: `Tap the START button, then Start New Activity. It's that simple. End Activity the same way. You could even try it right now.
 \nYour path is green while tracking, and blue when done. You can dim the map to highlight it.`,
     ui: [UICategory.start],
   },

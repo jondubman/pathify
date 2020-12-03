@@ -109,9 +109,20 @@ const utils = {
   // 414 = iPhone 11, iPhone 11 Pro Max
   // 428 = iPhone 12 Pro Max
   //
+  // iPhone logical heights are
+  // 568 = iPhone SE 1st gen = constants.minDeviceHeight
+  // 667 = iPhone SE 2nd gen, iPhone 8
+  // 736 = iPhone 8 Plus
+  // 780 = iPhone 12 mini
+  // 812 = iPhone 11 Pro
+  // 844 = iPhone 12
+  // 896 = iPhone 11 Pro Max
+  // 926 = iPhone 12 Pro Max
+  //
   // https://ios-resolution.com
 
-  windowWidthFactor: () => Math.floor(utils.windowWidth() / constants.minDeviceWidth),
+  windowHeightFactor: () => utils.windowHeight() / constants.minDeviceHeight,
+  windowWidthFactor: () => utils.windowWidth() / constants.minDeviceWidth,
 
   windowHeight: () => {
     const dim = Dimensions.get('window');

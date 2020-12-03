@@ -54,10 +54,6 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
   },
 }
 
-export interface Activity extends ActivityData, Realm.Object {
-}
-export type Activities = Activity[];
-
 // ActivityData facilitate creating and updating Activities.
 // All the Activity properties above are included, without extending Realm.Object. Here, all but id are optional.
 export interface ActivityData {
@@ -110,6 +106,8 @@ export interface ActivityDataExtended extends ActivityData { // these are the 'E
   tTotalText?: string;
 }
 
+// Note activity and path are bundled here. The activity is everything necessary to populate the ActivityList;
+// The path is the one with the individual location data points, which is needed to render a path on the map.
 export interface ExportedActivity {
   activity: ActivityData;
   path: PathUpdate;
@@ -159,6 +157,10 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
   }
   return a;
 }
+
+export interface Activity extends ActivityData, Realm.Object {
+}
+export type Activities = Activity[];
 
 export const loggableActivity = (activity: Activity) => {
   return extendActivity(activity);

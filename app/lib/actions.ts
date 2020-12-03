@@ -193,7 +193,7 @@ export interface GeolocationParams {
 }
 
 export interface ImportActivityParams {
-  include: ExportedActivity;
+  include: ExportedActivity; // Note use of param named include. See json-compose.
 }
 
 export interface LogActionParams {

@@ -29,9 +29,9 @@ const bubbleRadius = 8;
 const smallerRadius = 4;
 const bottom = 27; // empirically determined
 
-const fontScaleFactor = utils.windowWidthFactor();
-const headerFontSize = 20 * fontScaleFactor;
-const textFontSize = 16 * fontScaleFactor;
+const fontScaleFactor = Math.min(utils.windowWidthFactor(), utils.windowHeightFactor());
+const headerFontSize = Math.floor(20 * fontScaleFactor);
+const textFontSize = Math.floor(16 * fontScaleFactor);
 
 const Styles = StyleSheet.create({
   buttonLabelText: {

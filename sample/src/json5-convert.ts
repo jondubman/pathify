@@ -1,3 +1,9 @@
+#!/usr/bin/env ts-node
+
+// usage:
+// json5-convert json5/singleJson5file.json5
+// json5-convert json5/*.json5
+
 // Convert JSON5 file to JSON.
 
 import * as json5 from 'json5';
@@ -6,7 +12,8 @@ import * as fs from 'fs';
 function main() {
   const suffix = 'json5';
 
-  // Note this expects to be run in the sample project root folder! Not too flexible, but, good enough for now.
+  // Note this expects to be run in the sample project root folder, and it puts all the results in the json subfolder.
+  // Not too flexible, but, good enough for now.
   function convert(path: string) {
     if (path.endsWith(suffix)) {
       if (fs.existsSync(path)) {
@@ -22,12 +29,6 @@ function main() {
         }
     }
   }
-
-  // usage:
-
-  // node index.js json5/singleJson5file.json5
-
-  // node index.js json5/*.json5
 
   for (let j = 2; j < process.argv.length; j++) {
     convert(process.argv[j]);

@@ -80,7 +80,6 @@ class AppUI extends Component<AppUIProps> {
           {/* ActivityInfoContainer hidden in mapFullScreen, but keep it alive so it can be shown quickly later */}
           {ui.includes(UICategory.activities) ? (
             <View style={{ position: 'absolute', width }}>
-              {mapFullScreen ? null : <TopMenuContainer />}
               {showActivityInfo ? <ActivityInfoContainer /> : null}
             </View>
           ) : null}
@@ -113,7 +112,12 @@ class AppUI extends Component<AppUIProps> {
                 </Fragment>
               ) : null}
             </Fragment>
-        }
+          }
+          {ui.includes(UICategory.activities) ? (
+            <View style={{ position: 'absolute', width }}>
+              {mapFullScreen ? null : <TopMenuContainer />}
+            </View>
+          ) : null}
         </View>
       </View>
     )

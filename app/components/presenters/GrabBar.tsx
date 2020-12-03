@@ -176,7 +176,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const lineStyle = labelsEnabled ? [lineStyleBase, lineStyleLabeled] : lineStyleBase;
     const snaps = snapPositions();
     let labelText: string;
-    const noActivitiesText = 'ACTIVITIES WILL BE SHOWN HERE';
+    const noActivitiesText = 'ACTIVITIES WILL GO ABOVE, CHRONOLOGICALLY';
     const noActivitySelectedText = 'NO ACTIVITY SELECTED';
     const noActivityText = activityCount ? noActivitySelectedText : noActivitiesText;
     if (snapIndex === 0) { // full screen mode

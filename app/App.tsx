@@ -77,6 +77,8 @@ export default class App extends Component {
       // Start logging
       log.info('----- App starting up! (device log)');
       log.info('windowSize', utils.windowSize());
+      log.info('windowHeightFactor', utils.windowHeightFactor());
+      log.info('windowWidthFactor', utils.windowWidthFactor());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
       store.dispatch(newAction(AppAction.startupActions));

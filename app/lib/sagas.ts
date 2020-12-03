@@ -1037,7 +1037,7 @@ const sagas = {
       const { include } = params;
       const { activity, path } = include;
       const { id } = activity;
-      const pathLengths = {
+      const pathLengths = { // just for logging
         ele: path.ele.length,
         lats: path.lats.length,
         lons: path.lons.length,

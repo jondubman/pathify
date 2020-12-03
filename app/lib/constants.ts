@@ -108,7 +108,8 @@ const fontFamily = 'Futura';
 const labelHeightAllowance = 12;
 const mapLogoHeight = 34; // Mapbox logo
 const menuBorderWidth = 1.5;
-const minDeviceWidth = 320; // minimum design width; iPhone SE
+const minDeviceHeight = 568; // minimum design height; iPhone SE 1st gen
+const minDeviceWidth = 320; // minimum design width; iPhone SE 1st gen
 const initialTimelineHeight = 90;
 const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
@@ -519,6 +520,7 @@ const constants = {
   months: [
     'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
   ],
+  minDeviceHeight,
   minDeviceWidth,
   panelHeight,
   panelWidth,
