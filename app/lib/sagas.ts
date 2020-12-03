@@ -825,7 +825,7 @@ const sagas = {
       const { activityId } = params;
       yield call(log.info, 'saga continueActivity', activityId);
       yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
-      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomTimeline: true, zoomMap: false })); // in continueActivity
+      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomTimeline: true, zoomMap: true })); // in continueActivity
       // const scrollTime = yield select((state: AppState) => state.options.scrollTime);
       // yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in continueActivity
     } catch (err) {

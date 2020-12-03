@@ -195,10 +195,7 @@ class Intro extends Component<IntroProps> {
       setTimeout(() => {
         if (currentPage.yieldsLocationRequest) {
           log.debug('Intro swiper requestLocationPermission');
-          const onDone = () => {
-            this.doNext();
-          }
-          props.requestLocationPermission(onDone); // (if needed)
+          props.requestLocationPermission(this.doNext); // (if needed)
         } else {
           this.doNext();
         }

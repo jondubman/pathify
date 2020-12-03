@@ -159,9 +159,12 @@ let migrationRequired = false;
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
     // Migrate Settings
-    let oldSettings;
+    let oldSettings = {};
     if (oldRealm.objects('Settings').length > 0) {
-      oldSettings = oldRealm.objects('Settings')[0] as SettingsObject;
+      const oldSettingsObject = oldRealm.objects('Settings')[0] as SettingsObject;
+      // Spread operator is broken in RealmJS... this is the workaround:
+      // https://github.com/realm/realm-js/issues/2518
+      oldSettings = JSON.parse(JSON.stringify(oldSettingsObject));
     }
     newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, Realm.UpdateMode.All);
     migrationRequired = true;

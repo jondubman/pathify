@@ -92,7 +92,7 @@ const colorThemes = {
 // For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
 // It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
 // as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
-const schemaVersion = 34;
+const schemaVersion = 35;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
