@@ -523,9 +523,10 @@ const constants = {
   panelHeight,
   panelWidth,
   paths: {
-    elevationUnvailable: -1000, // Meters. 0 or -1 may a legitimate elevation; needs to be stored in Realm as a number.
+    elevationUnvailable: -1000, // Magic# for elevation that won't be confused with 0 or small negatives in places
+                                // with legitimate negative elevation like Death Valley and the Salton Sink
     metersAccuracyRequired: 40, // Locations with accuracy less than this are excluded from the Path
-    width: 8,
+    width: 8, // visual width of the paths on the map
   },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden

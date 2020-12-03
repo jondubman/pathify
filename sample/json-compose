@@ -30,37 +30,34 @@ const main = () => {
 
       // Replace any instances of magic with optionalParameter (or, if that's missing, empty string.)
       // We need separate magic values for quoted vs. non-quoted parameters. Both must make it through the JSON5 parser.
-      const magicNonQuotedValue = 1234567890;
+      const magicNonQuotedValue = 1234567890; // This actually works for boolean, null, number, anything sans quotes.
       const magicStringValue = '$$'; // something short and human-recognizable but otherwise quite unlikely to appear
       commandJson = commandJson.replace(magicStringValue, optionalParameter);
       commandJson = commandJson.replace(magicNonQuotedValue, optionalParameter);
       const command = JSON.parse(commandJson);
 
       // Import feature:
-      // If the command (from the JSON file) contains params object with an include property, like params: { include: {} },
+      // If the command (from JSON file) contains params object with an include property, like params: { include: {} },
       // that indicates a request to insert the entire contents of the file whose path is given via the optionalParameter
       // as the value of params.include. This enables this sort of action, where importActivity has an include param: 
       //
       // json-compose importActivity sampleActivity.json.
 
       const includeRequested = (command.params !== undefined) && (command.params.include !== undefined);
-      const inputFilename = optionalParameter;
+      const inputFilename = optionalParameter; // just renaming for readability
       if (includeRequested && inputFilename) {
         const inputJson = fs.readFileSync(inputFilename, 'utf8');
-        const input = JSON.parse(inputJson);
+        const input = JSON.parse(inputJson); // TODO this could later be extended to allow GPX (which is XML) etc.
         command.params.include = input;
-      } else if (typeof(include) === 'string') {
-        command.params.include = JSON.parse(fs.readFileSync(include, 'utf8'));
       }
-      // const output = JSON.stringify(command, null, 4); // pretty-print
+      // const output = JSON.stringify(command, null, 4); // TODO potential pretty-print option
       const output = JSON.stringify(command);
-
       console.log(output);
-    } catch(err) {
+    } catch (err) {
       console.log(`Error opening json/${commandFilename}`);
     }
   } else {
-    // TODO better help. This isn't shown when piped to curl anyway...
+    // TODO better help
     const help = `usage:
   json-compose commandFile.json optionalParameter
     logs output to console

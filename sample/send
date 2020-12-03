@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# This bash script is used to communicate with any running app instance for which remote debugging is enabled.
+# It is intended to be run from the sample directory.
+
+# The clientAlias mechanism is just for convenience; a valid clientId is always sufficient to send messages to an app.
+# clientAlias or clientId may be specified; if both are specified, dev server should continue to associate clientAlias
+# with clientId until server is restarted or a poll request from an app instance resassigns it.
+# Poll requests from the app always include a clientId, and may include a clientAlias.
+# App clientAlias is persisted if set remotely via setAppOption, but cannot be set within the app itself.
+#
+# usage:
+#   CID='someClientIdGUID' send setAlias myAppAlias
+#   CA='myAppAlias' send status
+
+#  where json/status is a JSON file containing the command to send to the app.
+
 # Note curl -d option is for data, and the dash at the end (escaped with at-sign) means use stdin.
 json-compose json/$1 $2 | curl -s "${PATHIFY_SERVER}push?clientAlias=${CA}&clientId=${CID}" -H "Content-Type: application/json" -d @- | jq
 # Note the | jq at the end pretty-prints the json output

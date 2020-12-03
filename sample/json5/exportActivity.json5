@@ -3,6 +3,7 @@
   params: {
     query: {
       type: 'exportActivity',
+      activityId: '$$',
     },
   }
 }

@@ -459,10 +459,10 @@ const sagas = {
           break;
         }
         case 'emailLog': {
-          Geo.emailLog();
+          Geo.emailLog(); // This is one of the ways to debug react-native-background-geolocation.
           break;
         }
-        case 'events': { // TODO
+        case 'events': { // TODO surely you don't want to do this with 1M events...
           const events = yield call(database.events);
           response = query.count ? events.length : Array.from(events);
           break;
@@ -471,6 +471,8 @@ const sagas = {
           response = (yield call(database.events)).length;
           break;
         }
+        // Note this is not a public GPX export, which probably needs to exist, but a dev-only export feature for
+        // debugging, generating screenshots, etc. that exports as JSON that is compatible with importActivity.
         case 'exportActivity': {
           const { activityId } = params.query as ExportActivityParams;
           yield call(log.debug, 'exportActivity', activityId);
@@ -586,8 +588,7 @@ const sagas = {
           break;
         }
       }
-      const responseTime = utils.now() - queryStartTime;
-      response.responseTime = responseTime;
+      response.queryTime = utils.now() - queryStartTime; // adding this to reveal any performance issues / outliers
       const appQueryResponse: AppQueryResponse = { response, uuid };
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
     } catch(err) {
