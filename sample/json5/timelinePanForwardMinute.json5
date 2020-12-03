@@ -1,7 +1,0 @@
-{
-  type: 'panTimeline',
-  params: {
-    option: 'relative',
-    t: 60000,
-  }
-}

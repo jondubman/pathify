@@ -25,35 +25,40 @@ const optionalParameter = argv._[3];
 
 const main = () => {
   if (commandFilename) {
-    let commandJson = fs.readFileSync(commandFilename, 'utf8');
+    try {
+      let commandJson = fs.readFileSync(commandFilename, 'utf8');
 
-    // Replace any instances of magicString with optionalParameter (or, if that's missing, empty string.)
-    const magicString = '$$'; // something we're not likely to see used for real
-    commandJson = commandJson.replace(magicString, optionalParameter);
+      // Replace any instances of magic with optionalParameter (or, if that's missing, empty string.)
+      // We need separate magic values for quoted vs. non-quoted parameters. Both must make it through the JSON5 parser.
+      const magicNonQuotedValue = 1234567890;
+      const magicStringValue = '$$'; // something short and human-recognizable but otherwise quite unlikely to appear
+      commandJson = commandJson.replace(magicStringValue, optionalParameter);
+      commandJson = commandJson.replace(magicNonQuotedValue, optionalParameter);
+      const command = JSON.parse(commandJson);
 
-    const command = JSON.parse(commandJson);
+      // Import feature:
+      // If the command (from the JSON file) contains params object with an include property, like params: { include: {} },
+      // that indicates a request to insert the entire contents of the file whose path is given via the optionalParameter
+      // as the value of params.include. This enables this sort of action, where importActivity has an include param: 
+      //
+      // json-compose importActivity sampleActivity.json.
 
-    // Import feature:
-    // If the command (from the JSON file) contains params object with an include property, like params: { include: {} },
-    // that indicates a request to insert the entire contents of the file whose path is given via the optionalParameter
-    // as the value of params.include. This enables this sort of action, where importActivity has an include param: 
-    //
-    // json-compose importActivity sampleActivity.json.
+      const includeRequested = (command.params !== undefined) && (command.params.include !== undefined);
+      const inputFilename = optionalParameter;
+      if (includeRequested && inputFilename) {
+        const inputJson = fs.readFileSync(inputFilename, 'utf8');
+        const input = JSON.parse(inputJson);
+        command.params.include = input;
+      } else if (typeof(include) === 'string') {
+        command.params.include = JSON.parse(fs.readFileSync(include, 'utf8'));
+      }
+      // const output = JSON.stringify(command, null, 4); // pretty-print
+      const output = JSON.stringify(command);
 
-    const includeRequested = (command.params !== undefined) && (command.params.include !== undefined);
-    const inputFilename = optionalParameter;
-    if (includeRequested && inputFilename) {
-      const inputJson = fs.readFileSync(inputFilename, 'utf8');
-      const input = JSON.parse(inputJson);
-      command.params.include = input;
-    } else if (typeof(include) === 'string') {
-      command.params.include = JSON.parse(fs.readFileSync(include, 'utf8'));
+      console.log(output);
+    } catch(err) {
+      console.log(`Error opening json/${commandFilename}`);
     }
-
-    // const output = JSON.stringify(command, null, 4); // pretty-print
-    const output = JSON.stringify(command);
-
-    console.log(output);
   } else {
     // TODO better help. This isn't shown when piped to curl anyway...
     const help = `usage:

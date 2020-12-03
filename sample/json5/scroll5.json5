@@ -1,8 +1,0 @@
-{
-  type: 'scrollTimeline',
-  params: {
-    index: 5,
-    viewOffset: 0,
-    viewPosition: 0.5,
-  }
-}

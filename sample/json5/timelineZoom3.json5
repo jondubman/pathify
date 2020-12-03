@@ -1,6 +1,0 @@
-{
-  type: 'setAppOption',
-  params: {
-    'timelineZoomLevel': 3
-  }
-}

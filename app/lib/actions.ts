@@ -157,7 +157,7 @@ export interface AppStateChangeParams {
 
 export interface CenterMapParams {
   center: LonLat;
-  option: AbsoluteRelativeOption;
+  option: AbsoluteRelativeOption; // if relative, center is interpreted as relative LonLat
   zoom?: number;
 }
 
