@@ -3,6 +3,7 @@ import {
   Dimensions,
 } from 'react-native';
 
+import constants from 'lib/constants';
 import { LonLat } from 'lib/locations';
 
 type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
@@ -101,13 +102,16 @@ const utils = {
   },
 
   // iPhone logical widths are
-  // 320 = iPhone SE 1st gen
+  // 320 = iPhone SE 1st gen = constants.minDeviceWidth
   // 360 = iPhone 12 mini
   // 375 = iPhone 11 Pro
   // 390 = iPhone 12
   // 414 = iPhone 11, iPhone 11 Pro Max
   // 428 = iPhone 12 Pro Max
-  windowWidthFactor: () => (utils.windowWidth() / 320),
+  //
+  // https://ios-resolution.com
+
+  windowWidthFactor: () => Math.floor(utils.windowWidth() / constants.minDeviceWidth),
 
   windowHeight: () => {
     const dim = Dimensions.get('window');

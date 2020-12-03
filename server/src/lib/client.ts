@@ -83,7 +83,7 @@ export const pushToClient = (message: any, clientId: string, clientAlias: string
       messages[clientId] = [];
     }
     const countPending = messages[clientId].length;
-    log.debug(`push to clientId ${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`,
+    log.debug(`push to clientId CID=${clientId}${countPending ? ', ' + countPending + ' in queue' : ''}`,
       messageToLog(message));
     messages[clientId].push(message);
     respond(clientId, 'server push');
@@ -104,7 +104,7 @@ const respond = (clientId: string, reason: string = 'unspecified reason') => {
       log.warn('push respond: missing clientId');
       return;
     }
-    log.debug(`responding to clientId ${clientId} poll due to ${reason}`);
+    log.debug(`responding to clientId CID=${clientId} poll due to ${reason}`);
     const pollRequest = polls[clientId] && polls[clientId].pop(); // respond to most recent request (TODO review)
     if (pollRequest) {
       if (pollRequest.timer) {

@@ -1395,6 +1395,8 @@ const sagas = {
       const authStatus = yield call(Geo.requestPermission); // TODO store in options so can query later?
       yield call(log.info, 'requestLocationPermission authStatus', authStatus);
       yield put(newAction(AppAction.flagEnable, 'requestedLocationPermission'));
+      yield call(Geo.initializeGeolocation, store, false); // false: not tracking
+      yield call(Geo.startBackgroundGeolocation);
     }
     yield call(params.onDone);
   },
@@ -1782,9 +1784,9 @@ const sagas = {
         }))
       }
       const tracking = !!currentActivityId;
-      const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
-      yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
       if (requestedLocationPermission) {
+        const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
+        yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
         yield call(Geo.startBackgroundGeolocation);
       } else {
         yield put(newAction(AppAction.flagEnable, 'introMode'));

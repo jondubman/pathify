@@ -27,7 +27,7 @@ let appQueryPromises: AppQueryPromises = {};
 // GET can be used to push simple string messages to the app
 router.get('/', function (req, res) {
   const { clientAlias, clientId, message } = req.query;
-  log.debug(`push text clientAlias ${clientAlias}, clientId ${clientId}, message ${message}`);
+  log.debug(`push text clientAlias ${clientAlias}, clientId CID=${clientId}, message ${message}`);
   pushToClient(message, clientId.toString(), clientAlias.toString());
   res.send({ message: 'done' });
 })
@@ -74,12 +74,12 @@ router.post('/', function (req, res) {
       }).then(appQueryResponse => { // a POST to /appQueryResponse gets us here
         const { response } = appQueryResponse;
         const responseReadable = util.inspect(response, { depth: 4 });
-        log.info(`response from clientId ${clientId}: ${responseReadable}`);
+        log.info(`response from clientId CID=${clientId}: ${responseReadable}`);
         // forward response to whoever requested that we post this JSON to the app
         res.send(JSON.stringify(response));
       }).catch(error => {
         try {
-          log.info(`appQuery timeout, clientAlias ${clientAlias || 'undefined'}, clientId ${clientId}`);
+          log.info(`appQuery timeout, clientAlias ${clientAlias || 'undefined'}, clientId CID=${clientId}`);
           res.send({ error });
         } catch(err) {
           log.error('subsequent error, probably: Cannot set headers after they are sent to the client');
@@ -87,7 +87,7 @@ router.post('/', function (req, res) {
       })
     }
   }
-  log.debug(`push object to clientAlias ${clientAlias}, clientId ${clientId}, message`, messageToLog(message));
+  log.debug(`push object to clientAlias ${clientAlias}, clientId CID=${clientId}, message`, messageToLog(message));
   pushToClient(message, clientId.toString(), clientAlias.toString());
 
   if (message.type !== 'appQuery') { // The handler for POST to /appQueryResponse above should respond to an appQuery.

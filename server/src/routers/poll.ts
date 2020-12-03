@@ -10,7 +10,7 @@ router.get('/', function (req, res) {
   try {
     const { clientAlias, clientId, timeout } = req.query;
     const timeoutMsec = (timeout && parseInt(timeout.toString())) || constants.serverPollTimeout;
-    log.debug(`poll from clientId ${clientId} (${clientAlias}) timeout=${timeoutMsec}`);
+    log.debug(`poll from clientId CID=${clientId} (CA=${clientAlias}) timeout=${timeoutMsec}`);
     handlePollRequest(req, res, timeoutMsec);
   } catch (err) {
     log.warn(`poll error: ${err}`);
