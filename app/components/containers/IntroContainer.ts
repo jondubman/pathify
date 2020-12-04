@@ -13,6 +13,7 @@ interface IntroStateProps {
 
 interface IntroDispatchProps {
   onPressClose: () => void;
+  onPressReset: () => void;
   pageChanged: (index: number) => void;
   requestLocationPermission: (onDone: Function) => void;
 }
@@ -38,12 +39,17 @@ const mapDispatchToProps = (dispatch: Function): IntroDispatchProps => {
     dispatch(newAction(AppAction.flagDisable, 'introMode'));
     ReactNativeHaptic.generate('impactLight');
   }
+  const onPressReset = () => {
+    log.info('Intro onPressReset');
+    dispatch(newAction(AppAction.setAppOption, { introModePage: 0 }));
+  }
   const requestLocationPermission = (onDone: Function) => {
     log.info('Intro requestLocationPermission');
     dispatch(newAction(AppAction.requestLocationPermission, { onDone }));
   }
   const dispatchers = {
     onPressClose,
+    onPressReset,
     pageChanged,
     requestLocationPermission,
   }

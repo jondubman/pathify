@@ -54,11 +54,14 @@ export interface IntroPageTemplate {
 const closeButton = {
   label: 'CLOSE',
 }
+const doneButton = {
+  label: 'DONE',
+}
 const nextButton = {
   label: 'NEXT',
 }
-const doneButton = {
-  label: 'DONE',
+const restartButton = {
+  label: 'RESTART',
 }
 export const introPages: IntroPageTemplate[] = [
   {
@@ -131,7 +134,7 @@ export const introPages: IntroPageTemplate[] = [
   },
   { // Note isFinalPage
     name: 'tips',
-    buttonClose: closeButton,
+    buttonClose: restartButton,
     buttonNext: doneButton, // instead of Next
     header: 'Tips and tricks',
     headerStyle: { color: constants.colors.byName.fuschia } as StyleProp<ViewStyle>,

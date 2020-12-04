@@ -46,7 +46,7 @@ const Styles = StyleSheet.create({
     borderColor: constants.colors.byName.darkerGray,
     borderRadius: constants.borderRadiusLarge,
     borderWidth: 2,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     paddingVertical: 15,
   },
   closeButtonLabelText: {
@@ -256,7 +256,7 @@ class Intro extends Component<IntroProps> {
         {showCloseButton ? (
           <View style={{...Styles.closeButtonView, top}}>
             <TouchableHighlight
-              onPress={props.onPressClose}
+              onPress={currentPage.isFinalPage ? props.onPressReset : props.onPressClose}
               style={Styles.closeButton}
               underlayColor={constants.colors.byName.silver}
             >
