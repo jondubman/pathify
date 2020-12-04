@@ -622,9 +622,10 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   return pulsars;
 }
 
-// Note this excludes any currentActivity.
+// Note this excludes any currentActivity; if currentActivity is selected this retuns null.
 const getSelectedActivityId = (state: AppState) => (
-  (state.options.currentActivityId == state.options.selectedActivityId) ? null : state.options.selectedActivityId
+  (state.options.currentActivityId && state.options.selectedActivityId &&
+   state.options.currentActivityId === state.options.selectedActivityId) ? null : state.options.selectedActivityId
 )
 export const selectedActivityPath = createSelector(
   [getSelectedActivityId],

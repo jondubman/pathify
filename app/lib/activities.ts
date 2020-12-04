@@ -137,7 +137,6 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
   for (const key of Object.keys(ActivitySchema.properties)) {
     a[key] = activity[key];
   }
-
   try {
     if (a.odo && a.odoStart) {
       a.distance = a.odo - a.odoStart;

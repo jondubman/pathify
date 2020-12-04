@@ -459,7 +459,11 @@ const sagas = {
           break;
         }
         case 'emailLog': {
-          Geo.emailLog(); // This is one of the ways to debug react-native-background-geolocation.
+          Geo.emailLog(); // TODO This is one of the ways to debug react-native-background-geolocation.
+          break;
+        }
+        case 'eventCount': { // quick count of the total, no overhead
+          response = (yield call(database.events)).length;
           break;
         }
         case 'events': { // TODO surely you don't want to do this with 1M events...
@@ -467,12 +471,8 @@ const sagas = {
           response = query.count ? events.length : Array.from(events);
           break;
         }
-        case 'eventCount': { // quick count of the total, no overhead
-          response = (yield call(database.events)).length;
-          break;
-        }
         // Note this is not a public GPX export, which probably needs to exist, but a dev-only export feature for
-        // debugging, generating screenshots, etc. that exports as JSON that is compatible with importActivity.
+        // debugging, screenshots, etc. that exports an individual activity as JSON compatible with importActivity.
         case 'exportActivity': {
           const { activityId } = params.query as ExportActivityParams;
           yield call(log.debug, 'exportActivity', activityId);
@@ -492,7 +492,7 @@ const sagas = {
           }
           break;
         }
-        case 'flags': { // quick count of the total, no overhead
+        case 'flags': {
           response = state.flags;
           break;
         }
@@ -588,8 +588,8 @@ const sagas = {
           break;
         }
       }
-      response.queryTime = utils.now() - queryStartTime; // adding this to reveal any performance issues / outliers
-      const appQueryResponse: AppQueryResponse = { response, uuid };
+      const queryTime = utils.now() - queryStartTime; // adding this to reveal any performance issues / outliers
+      const appQueryResponse: AppQueryResponse = { response, queryTime, uuid };
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
     } catch(err) {
       yield call(log.error, 'appQuery', err);
