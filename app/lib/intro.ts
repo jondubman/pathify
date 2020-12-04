@@ -73,7 +73,7 @@ export const introPages: IntroPageTemplate[] = [
     hideCloseButtonBeforeLocationRequest: true,
     pageStyle: { top: -20 },
     text: `Pathify is a location-based app for privately tracking, measuring and mapping your activities, while navigating through space and time - a map with a memory.
-\nPathify reinvents the running app and takes off running in a new direction. Plan, monitor and review activities all at once, on a unified map, linked and synced to a unified timeline.
+\nPathify reinvents the running app and takes off running in a new direction. Present and past activities coexist on a unified map, linked and synced to a unified timeline.
 \nWe hope this fresh approach will provide insights and inspiration while you explore the near far away. This is only the start of a new journey we're excited to be sharing with you.`,
     ui: [],
   },
@@ -85,8 +85,8 @@ export const introPages: IntroPageTemplate[] = [
     hideCloseButtonBeforeLocationRequest: true,
     pageStyle: { top: -15 },
     text: `Privacy is a basic right. Your activity in Pathify is fully private by design. There's no signup to complete, and no account to create. We don't seek your identity, or your data.
-\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device and is not replicated to any remote repository. Exporting and sharing are desirable, but not yet available.
-\nWe do not collect anonymized usage data. By default, Mapbox does, to improve the map, but you can opt out on the next page.`,
+\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device and is not replicated to any remote server or data store. Exporting and sharing are slated for a future release.
+\nWe do not collect anonymized usage data. Mapbox, our map provider, does so, but you can opt out on the next page.`,
     ui: [],
     yieldsLocationRequest: true, // This will issue a requestLocationPermission action on buttonNext.
   },
@@ -97,7 +97,7 @@ export const introPages: IntroPageTemplate[] = [
     header: 'One map to find them all',
     headerStyle: { color: constants.colors.byName.lighterRed } as StyleProp<ViewStyle>,
     text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on the same map.
-\nBeautiful, up-to-date maps from Mapbox help you discover lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
+\nBeautiful, up-to-date maps help you discover lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
 \nAdjust the map style and opacity with the Settings panel anytime (including now!)`,
     ui: [UICategory.map, UICategory.settings],
   },
@@ -127,8 +127,8 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Zoom through time,\nfollow your own path',
     headerStyle: { color: constants.colors.byName.lighterBlue } as StyleProp<ViewStyle>,
-    text: `Scroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized... like clockwork!
-\nTap the clock to zoom the timeline. Zoom continuously, from the entire span of history, down to a split-second.
+    text: `Scroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized - like clockwork!
+\nTap the clock to zoom the timeline. Zoom continuously, from your entire history, down to a split second.
 \nUse the blue arrow to follow prior paths on the map, and the green arrow to jump to here and now.`,
     ui: [UICategory.follow, UICategory.start],
   },

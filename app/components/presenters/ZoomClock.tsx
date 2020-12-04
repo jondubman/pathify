@@ -265,14 +265,10 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           labelText = 'READY TO RETRACE PATH';
         }
       } else if (followingUser) {
-        if (activitySelected) {
-          labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'PAST TIME, CURRENT LOC';
-        } else if (haveActivities) {
-          labelText = 'READY TO RETRACE PATH';
-        }
+        labelText = 'PAST TIME, CURRENT LOC';
       } else {
         if (currentActivitySelected) {
-          labelText = 'EARLIER IN CURRENT ACTIVITY';
+          labelText = 'EARLIER IN CURRENT ACTIVITY'; // no follow
         } else {
           labelText = activitySelected ? 'PAST ACTIVITY, NO FOLLOW' : 'PAST TIME, NO FOLLOW';
         }

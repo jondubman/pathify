@@ -2,6 +2,9 @@ import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import {
+  introPages,
+} from 'lib/intro';
 import { AppState } from 'lib/state';
 import Intro from 'presenters/Intro';
 import log from 'shared/log';
@@ -30,6 +33,13 @@ const mapStateToProps = (state: AppState): IntroStateProps => {
 const mapDispatchToProps = (dispatch: Function): IntroDispatchProps => {
   const pageChanged = (index: number) => {
     log.debug('Intro pageChanged', index);
+    if (index < 0) {
+      // TODO this can happen after you Reset to page 0 and then navigate from there... the relative indexes are off
+      // consistently in subsequent calls to pageChanged due to what appears to be a Slider component bug.
+      // This simple workaround seems sufficient.
+      log.warn('Negative page index in Intro pageChanged');
+      index = index + introPages.length - 1;
+    }
     setTimeout(() => {
       dispatch(newAction(AppAction.setAppOption, { introModePage: index }));
     }, 0)

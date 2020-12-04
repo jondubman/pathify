@@ -170,11 +170,14 @@ const renderPagination = (index: number, total: number, swiper: Swiper) => {
 class Intro extends Component<IntroProps> {
 
   _swiper: Swiper | null = null;
+  index: number = 0;
 
   constructor(props: IntroProps) {
     super(props);
-    this.onPressNext = this.onPressNext.bind(this);
+    this.index = props.pageIndex;
     this.doNext = this.doNext.bind(this);
+    this.onPressNext = this.onPressNext.bind(this);
+    this.onPressReset = this.onPressReset.bind(this);
   }
 
   doNext() {
@@ -204,6 +207,17 @@ class Intro extends Component<IntroProps> {
         }
       }, 0)
     }
+  }
+
+  onPressReset() {
+    const swiper = this._swiper;
+    // if (swiper) {
+    //   swiper.scrollTo(0);
+    // }    
+    // Note use of optional chaining, a relatively new TypeScript feature:
+    // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html
+    this.props.onPressReset();
+    swiper?.forceUpdate();
   }
 
   render() {
@@ -256,7 +270,7 @@ class Intro extends Component<IntroProps> {
         {showCloseButton ? (
           <View style={{...Styles.closeButtonView, top}}>
             <TouchableHighlight
-              onPress={currentPage.isFinalPage ? props.onPressReset : props.onPressClose}
+              onPress={currentPage.isFinalPage ? this.onPressReset : props.onPressClose}
               style={Styles.closeButton}
               underlayColor={constants.colors.byName.silver}
             >
