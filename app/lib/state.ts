@@ -69,7 +69,7 @@ export const initialAppState = {
     appStartupCompleted: false, // once true, should never be set to false
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
-    devMode, // set true if __DEV__ or develop ENV variable set to true (if launched using Pathify Develop XCode scheme)
+    devMode, // enabled if __DEV__ or develop ENV variable set to true (if launched using Pathify Develop XCode scheme)
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
@@ -99,7 +99,7 @@ export const initialAppState = {
     showActivityInfo: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
-    showGrabBar: false, // generally true
+    showGrabBar: false, // generally true, enabled on startup
     showPathsOnMap: true, // generally true
     showPastLocation: true, // as a Pulsar on the map
     showTimelineMarks: false, // generally true

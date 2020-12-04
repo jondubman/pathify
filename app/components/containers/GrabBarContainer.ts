@@ -17,6 +17,7 @@ import log from 'shared/log';
 interface GrabBarStateProps {
   activityCount: number;
   activitySelected: boolean;
+  introMode: boolean;
   keyName: string;
   labelsEnabled: boolean;
   pressed: boolean;
@@ -58,6 +59,7 @@ const mapStateToProps = (state: AppState): GrabBarStateProps => {
   return {
     activityCount: state.cache.activities.length || 0,
     activitySelected: !!state.options.selectedActivityId,
+    introMode: state.flags.introMode,
     keyName: snap.toString(),
     labelsEnabled: state.flags.labelsEnabled,
     pressed: state.flags.grabBarPressed,

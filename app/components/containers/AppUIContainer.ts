@@ -41,7 +41,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
     showActivityInfo,
-    showGrabBar: showGrabBar && ui.includes(UICategory.activities),
+    showGrabBar: showGrabBar && ui.includes(UICategory.activities) || ui.includes(UICategory.grabBar),
     showTimeline: shouldShowTimeline(state) && ui.includes(UICategory.activities),
     timelineHeight: dynamicTimelineHeight(state),
     ui,

@@ -16,6 +16,7 @@ interface IntroPageButton {
 }
 export enum UICategory {
   'activities' = 'activities',
+  'grabBar' = 'grabBar',
   'help' = 'help',
   'map' = 'map',
   'follow' = 'follow',
@@ -29,8 +30,9 @@ export const uiCategories = (state: AppState): UICategory[] => (
   :
     [ // allow all by default
       UICategory.activities,
-      UICategory.help,
       UICategory.follow,
+      UICategory.grabBar,
+      UICategory.help,
       UICategory.map,
       UICategory.settings,
       UICategory.start,
@@ -66,7 +68,7 @@ const restartButton = {
 export const introPages: IntroPageTemplate[] = [
   {
     name: 'welcome',
-    buttonClose: closeButton, // TODO only show this one when intro manually launched
+    buttonClose: closeButton,
     buttonNext: nextButton,
     header: 'Hello, world!',
     headerStyle: { color: constants.colors.byName.blue } as StyleProp<ViewStyle>,
@@ -85,8 +87,8 @@ export const introPages: IntroPageTemplate[] = [
     hideCloseButtonBeforeLocationRequest: true,
     pageStyle: { top: -15 },
     text: `Privacy is a basic right. Your activity in Pathify is fully private by design. There's no signup to complete, and no account to create. We don't seek your identity, or your data.
-\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device and is not replicated to any remote server or data store. Exporting and sharing are slated for a future release.
-\nWe do not collect anonymized usage data. Mapbox, our map provider, does so, but you can opt out on the next page.`,
+\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not replicated to a remote server or data store. Exporting and sharing are slated for a future release.
+\nWe do not collect anonymized usage data. Our map provider, Mapbox, does so to improve the map, but you can opt out on the next page.`,
     ui: [],
     yieldsLocationRequest: true, // This will issue a requestLocationPermission action on buttonNext.
   },
@@ -119,7 +121,7 @@ export const introPages: IntroPageTemplate[] = [
     headerStyle: { color: constants.colors.byName.orange } as StyleProp<ViewStyle>,
     text: `There's a horizontal bar you can slide down to reveal the timeline and list of activities. 
 \nKeep pulling it down for details like distance, elapsed time, pace, elevation. Or slide the bar way up for all map.`,
-    ui: [UICategory.start],
+    ui: [UICategory.grabBar, UICategory.map, UICategory.start],
   },
   {
     name: 'timeline',
@@ -135,7 +137,7 @@ export const introPages: IntroPageTemplate[] = [
   { // Note isFinalPage
     name: 'tips',
     buttonClose: restartButton,
-    buttonNext: doneButton, // instead of Next
+    buttonNext: doneButton, // instead of Next. isFinalPage will affect its behavior.
     header: 'Tips and tricks',
     headerStyle: { color: constants.colors.byName.fuschia } as StyleProp<ViewStyle>,
     isFinalPage: true,

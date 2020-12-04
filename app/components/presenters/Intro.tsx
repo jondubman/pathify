@@ -18,6 +18,7 @@ import constants from 'lib/constants';
 import {
   introPages,
   IntroPageTemplate,
+  UICategory,
 } from 'lib/intro';
 import { dynamicAreaTop } from 'lib/selectors';
 import utils from 'lib/utils';
@@ -227,9 +228,12 @@ class Intro extends Component<IntroProps> {
     if (!currentPage) {
       return null;
     }
+    const pageHasGrabBar = currentPage.ui.includes(UICategory.grabBar);
+    const grabBarAtTop = pageHasGrabBar && !props.grabBarSnapIndexPreview;
     const top = dynamicAreaTop();
     const showCloseButton = currentPage.buttonClose &&
-      (!currentPage.hideCloseButtonBeforeLocationRequest || props.requestedLocationPermission);
+      (!currentPage.hideCloseButtonBeforeLocationRequest || props.requestedLocationPermission) &&
+      !grabBarAtTop;
     return (
       <Fragment>
         <View style={Styles.containingView}>

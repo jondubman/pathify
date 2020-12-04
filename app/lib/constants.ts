@@ -286,7 +286,7 @@ const colors = {
     background: colorThemes.background,
     currentActivity: withOpacity(colorThemes.now, 0.75),
     selectedActivity: withOpacity(namedColors.blue, 0.75), // special case when timespan is selected
-    timespans: {
+    timespans: { // TODO these are vestigial but also relate to future timeline functionality - revisit
       [TimespanKind.ACTIVITY]: withOpacity(namedColors.white, 0.4), // unselected state (selectedActivity color above)
       [TimespanKind.APP_STATE]: namedColors.white, // opacity applied later
       [TimespanKind.FUTURE]: withOpacity(namedColors.green, 0.25),

@@ -166,6 +166,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const {
       activityCount,
       activitySelected,
+      introMode,
       keyName,
       labelsEnabled,
       pressed,
@@ -176,21 +177,25 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
     const lineStyle = labelsEnabled ? [lineStyleBase, lineStyleLabeled] : lineStyleBase;
     const snaps = snapPositions();
     let labelText: string;
-    const noActivitiesText = 'ACTIVITIES WILL BE LISTED CHRONOLOGICALLY';
-    const noActivitySelectedText = 'NO ACTIVITY SELECTED';
-    const noActivityText = activityCount ? noActivitySelectedText : noActivitiesText;
-    if (snapIndex === 0) { // full screen mode
-      labelText = 'SLIDE DOWN TO RESTORE UI';
-    } else if (snapIndex === 1) { // ActivityList hidden
-      labelText = 'SLIDE DOWN TO REVEAL';
-    } else if (snapIndex === 2) { // ActivityList shown, but ActivityDetails hidden
-      labelText = activitySelected ? 'SLIDE DOWN FOR DETAILS' : noActivityText;
-    } else if (snapIndex === snaps.length - 1) { // dragged to the bottom
-      labelText = 'SLIDE UP FOR MORE MAP';
-    } else {
-      labelText = activitySelected ? 'SLIDE DOWN FOR MORE' : noActivityText;
-    }
 
+    if (introMode) {
+      labelText = "SLIDE ME";
+    } else {
+      const noActivitiesText = 'ACTIVITIES WILL BE LISTED CHRONOLOGICALLY';
+      const noActivitySelectedText = 'NO ACTIVITY SELECTED';
+      const noActivityText = activityCount ? noActivitySelectedText : noActivitiesText;
+      if (snapIndex === 0) { // full screen mode
+        labelText = 'SLIDE DOWN TO RESTORE UI';
+      } else if (snapIndex === 1) { // ActivityList hidden
+        labelText = 'SLIDE DOWN TO REVEAL';
+      } else if (snapIndex === 2) { // ActivityList shown, but ActivityDetails hidden
+        labelText = activitySelected ? 'SLIDE DOWN FOR DETAILS' : noActivityText;
+      } else if (snapIndex === snaps.length - 1) { // dragged to the bottom
+        labelText = 'SLIDE UP FOR MORE MAP';
+      } else {
+        labelText = activitySelected ? 'SLIDE DOWN FOR MORE' : noActivityText;
+      }
+    }
     // The styles & layout here may be confusing. The intent is, the grabBar appears subtle unless pressed (grabbed).
     // When pressed, it turns color. When dragged, the grabBar itself remains that color, PLUS a "snap bar" that shows
     // where things will end up (see snapPositions) is also rendered (without zooming theme color, at medium intensity.)

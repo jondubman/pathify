@@ -10,6 +10,7 @@ import Intro from 'presenters/Intro';
 import log from 'shared/log';
 
 interface IntroStateProps {
+  grabBarSnapIndexPreview: number;
   pageIndex: number;
   requestedLocationPermission: boolean;
 }
@@ -25,6 +26,7 @@ export type IntroProps = IntroStateProps & IntroDispatchProps;
 
 const mapStateToProps = (state: AppState): IntroStateProps => {
   return {
+    grabBarSnapIndexPreview: state.options.grabBarSnapIndexPreview,
     pageIndex: state.options.introModePage,
     requestedLocationPermission: state.flags.requestedLocationPermission,
   }
