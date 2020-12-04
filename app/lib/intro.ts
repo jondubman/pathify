@@ -68,9 +68,10 @@ export const introPages: IntroPageTemplate[] = [
     header: 'Hello, world!',
     headerStyle: { color: constants.colors.byName.blue } as StyleProp<ViewStyle>,
     hideCloseButtonBeforeLocationRequest: true,
-    text: `Pathify is a location-based app for privately tracking, measuring and mapping your activities, while navigating through time and space - a map with a memory.
-\nPathify has the essential features of a running app, with a fresh approach. Plan, monitor and review activities all at once, on a unified map, linked and synced to a unified timeline.
-\nWe hope this app will inspire you, and provide valuable insights from your own data while you explore the near far away.`,
+    pageStyle: { top: -20 },
+    text: `Pathify is a location-based app for privately tracking, measuring and mapping your activities, while navigating through space and time - a map with a memory.
+\nPathify reinvents the running app and takes off running in a new direction. Plan, monitor and review activities all at once, on a unified map, linked and synced to a unified timeline.
+\nWe hope this fresh approach will provide insights and inspiration while you explore the near far away. This is only the start of a new journey we're excited to be sharing with you.`,
     ui: [],
   },
   {
@@ -79,9 +80,10 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Privacy, first',
     hideCloseButtonBeforeLocationRequest: true,
+    pageStyle: { top: -15 },
     text: `Privacy is a basic right. Your activity in Pathify is fully private by design. There's no signup to complete, and no account to create. We don't seek your identity, or your data.
-\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device and is not copied to a remote repository. It's not yet possible to export or share data.
-\nWe do not even collect anonymous usage data. By default, Mapbox does so, to improve the map, but you can opt out on the next page.`,
+\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device and is not replicated to any remote repository. Exporting and sharing are desirable, but not yet available.
+\nWe do not collect anonymized usage data. By default, Mapbox does, to improve the map, but you can opt out on the next page.`,
     ui: [],
     yieldsLocationRequest: true, // This will issue a requestLocationPermission action on buttonNext.
   },
@@ -91,7 +93,6 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'One map to find them all',
     headerStyle: { color: constants.colors.byName.lighterRed } as StyleProp<ViewStyle>,
-    pageStyle: { top: -15 }, // leave extra room for labeled Settings button above, since we have UICategory.settings.
     text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on the same map.
 \nBeautiful, up-to-date maps from Mapbox help you discover lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
 \nAdjust the map style and opacity with the Settings panel anytime (including now!)`,
@@ -135,6 +136,7 @@ export const introPages: IntroPageTemplate[] = [
     header: 'Tips and tricks',
     headerStyle: { color: constants.colors.byName.fuschia } as StyleProp<ViewStyle>,
     isFinalPage: true,
+    pageStyle: { top: -10 },
     text: `Use the Activities menu up top to zoom the map to an activity, or to delete an activity.
 \nZoom both map and timeline to a past activity by tapping its square. First to the end, then to the start, then the halfway point, looping around.
 \nUse the Info panel to show helpful yellow labels while you learn the app, then hide them for a cleaner look.

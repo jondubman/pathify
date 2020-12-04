@@ -27,7 +27,7 @@ import Swiper from 'react-native-swiper';
 
 const bubbleRadius = 8;
 const smallerRadius = 4;
-const bottom = 10;
+const bottom = 30;
 
 const fontScaleFactor = Math.min(utils.windowWidthFactor(), utils.windowHeightFactor());
 const headerFontSize = Math.floor(20 * fontScaleFactor);
@@ -79,7 +79,7 @@ const Styles = StyleSheet.create({
     paddingVertical: 15,
   },
   nextButtonView: {
-    bottom: 50,
+    bottom: 30,
     alignSelf: 'center',
     position: 'absolute',
   },
@@ -90,7 +90,6 @@ const Styles = StyleSheet.create({
     flexDirection: 'row',
     height: (bubbleRadius * 2) + 6,
     justifyContent: 'space-around',
-    marginBottom: 10,
     width: 168, // big enough to show all the dots
   },
   paginationBubble: {
@@ -117,7 +116,7 @@ const Styles = StyleSheet.create({
   },
   paginationContainer: {
     position: 'absolute',  
-    bottom,
+    bottom: 0,
     flexDirection: 'column-reverse',
   },
   slide: {
@@ -125,7 +124,6 @@ const Styles = StyleSheet.create({
     backgroundColor: constants.colors.introPages.background,
     flex: 1,
     justifyContent: 'center', // vertical
-    top: -30, // shift things up a bit
   },
   text: {
     color: constants.colors.byName.white,
