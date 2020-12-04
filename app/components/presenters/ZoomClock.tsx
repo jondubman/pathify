@@ -248,10 +248,10 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       alignSelf: 'flex-start',
     } as StyleProp<ViewStyle>;
 
-    let labelText = 'PAST TIME'; // default
-    if (nowMode) {
+    let labelText = 'PAST TIME'; // fallback if no other case applies
+    if (nowMode) { // definitely the current time
       if (followingPath) {
-        labelText = 'CURRENT TIME'; // must be current time in nowMode
+        labelText = 'CURRENT TIME';
       } else if (followingUser) {
         labelText = 'CURRENT TIME & LOC';
       } else {
@@ -260,7 +260,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     } else { // past time
       if (followingPath) {
         if (activitySelected) {
-          labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'RETRACING PRIOR PATH';
+          labelText = currentActivitySelected ? 'RETRACING CURRENT PATH' : 'RETRACING PATH';
         } else if (haveActivities) {
           labelText = 'READY TO RETRACE PATH';
         }

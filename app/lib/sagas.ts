@@ -1757,16 +1757,6 @@ const sagas = {
         requestedLocationPermission,
         timelineNow,
       } = settings;
-      if (devMode || remoteDebug) {
-        // In devMode, attempt to stay in regular contact with the Pathify server.
-        // Set and persist clientId for this app if needed
-        if (!settings.clientId || !settings.clientId.length) {
-          const clientId = uuidv4();
-          yield put(newAction(AppAction.setAppOption, { clientId }));
-        }
-        yield call(log.debug, `startupActions: devMode ${devMode}, remoteDebug ${remoteDebug}, polling server`);
-        yield call(setTimeout, pollServer, 0);
-      }
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
@@ -1820,6 +1810,18 @@ const sagas = {
       yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
       yield put(newAction(AppAction.completeAppStartup));
       yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (TODO still needed?)
+
+      // After appStartupCompleted, we are able to persist changes to Settings.
+      if (devMode || remoteDebug) {
+        // In devMode, attempt to stay in regular contact with the Pathify server.
+        // Set and persist clientId for this app if needed.
+        if (!settings.clientId || !settings.clientId.length) {
+          const clientId = uuidv4();
+          yield put(newAction(AppAction.setAppOption, { clientId }));
+        }
+        yield call(log.debug, `startupActions: devMode ${devMode}, remoteDebug ${remoteDebug}, polling server`);
+        yield call(setTimeout, pollServer, 0); // pollServer requires clientId
+      }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
     }

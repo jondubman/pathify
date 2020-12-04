@@ -35,7 +35,7 @@ const AppStyles = StyleSheet.create({
     flex: 1,
   },
   logo: {
-    height: 30, // Note higher# lowers default position of Mapbox logo and attribution
+    height: 25, // Note higher# lowers default position of Mapbox logo and attribution
   },
   mainAppView: {
     flex: 1,
@@ -84,7 +84,11 @@ class AppUI extends Component<AppUIProps> {
             </View>
           ) : null}
           {mapFullScreen ?
-            null
+            <View style={{ bottom: timelineHeight, position: 'absolute', width }}>
+              {ui.includes(UICategory.follow) ? (
+                <FollowButtonsContainer />
+              ) : null}
+            </View>
             :
             <Fragment>
               <View style={{ bottom: timelineHeight, position: 'absolute', width }}>

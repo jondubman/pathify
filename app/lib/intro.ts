@@ -68,8 +68,9 @@ export const introPages: IntroPageTemplate[] = [
     header: 'Hello, world!',
     headerStyle: { color: constants.colors.byName.blue } as StyleProp<ViewStyle>,
     hideCloseButtonBeforeLocationRequest: true,
-    text: `Pathify is a location-based app that lets you privately track, measure and map your activities, navigating through time as well as space. It's a map with a memory.
-\nPathify has the basics of a running app, but takes a fresh approach. You can plan, monitor and review activities all at once, on a unified map. A journey of a thousand miles begins with a single step.`,
+    text: `Pathify is a location-based app for privately tracking, measuring and mapping your activities, while navigating through time and space - a map with a memory.
+\nPathify has the essential features of a running app, with a fresh approach. Plan, monitor and review activities all at once, on a unified map, linked and synced to a unified timeline.
+\nWe hope this app will inspire you, and provide valuable insights from your own data while you explore the near far away.`,
     ui: [],
   },
   {
@@ -78,11 +79,11 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Privacy, first',
     hideCloseButtonBeforeLocationRequest: true,
-    text: `Privacy is a basic right. Your activity in Pathify is private by design. There's no signup to complete, no account to create.
-\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not sent to a server and stored in a shared repository.
+    text: `Privacy is a basic right. Your activity in Pathify is fully private by design. There's no signup to complete, and no account to create. We don't seek your identity, or your data.
+\nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device and is not copied to a remote repository. It's not yet possible to export or share data.
 \nWe do not even collect anonymous usage data. By default, Mapbox does so, to improve the map, but you can opt out on the next page.`,
     ui: [],
-    yieldsLocationRequest: true,
+    yieldsLocationRequest: true, // This will issue a requestLocationPermission action on buttonNext.
   },
   {
     name: 'map',
@@ -90,9 +91,10 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'One map to find them all',
     headerStyle: { color: constants.colors.byName.lighterRed } as StyleProp<ViewStyle>,
-    text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on a unified map.
-\nBeautiful, up-to-date maps from Mapbox help you find lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
-\nAdjust the style and opacity on the go with the Settings panel anytime (including now!)`,
+    pageStyle: { top: -15 }, // leave extra room for labeled Settings button above, since we have UICategory.settings.
+    text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on the same map.
+\nBeautiful, up-to-date maps from Mapbox help you discover lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
+\nAdjust the map style and opacity with the Settings panel anytime (including now!)`,
     ui: [UICategory.map, UICategory.settings],
   },
   {
@@ -101,8 +103,8 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Two taps to get tracking ',
     headerStyle: { color: constants.colorThemes.now } as StyleProp<ViewStyle>,
-    text: `Tap the START button, then Start New Activity. It's that simple. End Activity the same way. You could even try it right now.
-\nYour path is green while tracking, and blue when done. You can dim the map to highlight it.`,
+    text: `Tap the START button, then Start New Activity. It's that simple. End Activity the same way, anytime. It even works from here.
+\nYour path on the map is green while tracking, and blue when done. You can dim the map to highlight it using Settings.`,
     ui: [UICategory.start],
   },
   {
@@ -111,9 +113,9 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Choose your own\nadventure UI on the fly',
     headerStyle: { color: constants.colors.byName.orange } as StyleProp<ViewStyle>,
-    text: `Slide the bar down to reveal a continuous timeline below the map, and a chronological list of activities above. 
-\nKeep pulling down for details. See your distance, elapsed time, pace, elevation and more. Or slide the bar way up for all map.`,
-    ui: [],
+    text: `There's a horizontal bar you can slide down to reveal the timeline and list of activities. 
+\nKeep pulling it down for details like distance, elapsed time, pace, elevation. Or slide the bar way up for all map.`,
+    ui: [UICategory.start],
   },
   {
     name: 'timeline',
@@ -121,14 +123,13 @@ export const introPages: IntroPageTemplate[] = [
     buttonNext: nextButton,
     header: 'Zoom through time,\nfollow your own path',
     headerStyle: { color: constants.colors.byName.lighterBlue } as StyleProp<ViewStyle>,
-    text: `Scroll the timeline or activity list to adjust the clock and retrace your path.
-\nTap the clock to zoom the timeline. Zoom out to see your whole history, or way in to a moment.
-\nBlue arrow follows a prior path, as you scroll through time. Green arrow jumps to the here and now.`,
-    ui: [],
+    text: `Scroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized... like clockwork!
+\nTap the clock to zoom the timeline. Zoom continuously, from the entire span of history, down to a split-second.
+\nUse the blue arrow to follow prior paths on the map, and the green arrow to jump to here and now.`,
+    ui: [UICategory.follow, UICategory.start],
   },
-  {
+  { // Note isFinalPage
     name: 'tips',
-    // final page, no buttonSkip
     buttonClose: closeButton,
     buttonNext: doneButton, // instead of Next
     header: 'Tips and tricks',
@@ -139,7 +140,7 @@ export const introPages: IntroPageTemplate[] = [
 \nUse the Info panel to show helpful yellow labels while you learn the app, then hide them for a cleaner look.
 \nTap the green clock in the activity list to jump to now. Green means now.
 \nZoom the map with only one finger by double tapping and sliding up and down.`,
-    ui: [],
+    ui: [UICategory.start],
   },
 ]
 

@@ -27,7 +27,7 @@ import Swiper from 'react-native-swiper';
 
 const bubbleRadius = 8;
 const smallerRadius = 4;
-const bottom = 27; // empirically determined
+const bottom = 10;
 
 const fontScaleFactor = Math.min(utils.windowWidthFactor(), utils.windowHeightFactor());
 const headerFontSize = Math.floor(20 * fontScaleFactor);
@@ -47,7 +47,7 @@ const Styles = StyleSheet.create({
     borderRadius: constants.borderRadiusLarge,
     borderWidth: 2,
     paddingHorizontal: 10,
-    paddingVertical: 14,
+    paddingVertical: 15,
   },
   closeButtonLabelText: {
     color: constants.colors.byName.gray,
@@ -75,12 +75,12 @@ const Styles = StyleSheet.create({
   nextButton: {
     backgroundColor: constants.colors.byName.gray,
     borderRadius: constants.borderRadiusLarge,
-    paddingHorizontal: 10,
-    paddingVertical: 14,
+    paddingHorizontal: 25,
+    paddingVertical: 15,
   },
   nextButtonView: {
-    bottom: bottom - 2, // align with dots
-    right: 5,
+    bottom: 50,
+    alignSelf: 'center',
     position: 'absolute',
   },
   paginationOval: {
@@ -125,6 +125,7 @@ const Styles = StyleSheet.create({
     backgroundColor: constants.colors.introPages.background,
     flex: 1,
     justifyContent: 'center', // vertical
+    top: -30, // shift things up a bit
   },
   text: {
     color: constants.colors.byName.white,

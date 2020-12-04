@@ -6,6 +6,10 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import {
+  uiCategories,
+  UICategory,
+} from 'lib/intro';
+import {
   dynamicLowerButtonBase,
   mapHidden,
 } from 'lib/selectors';
@@ -30,6 +34,8 @@ interface FollowButtonsDispatchProps {
 export type FollowButtonsProps = FollowButtonsStateProps & FollowButtonsDispatchProps;
 
 const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
+  const hideBoth = mapHidden(state) && !uiCategories(state).includes(UICategory.follow);
+  const bottomOffset = dynamicLowerButtonBase(state);
   const {
     followingPath,
     followingUser,
@@ -37,8 +43,8 @@ const mapStateToProps = (state: AppState): FollowButtonsStateProps => {
   return {
     followingPath,
     followingUser,
-    bottomOffset: dynamicLowerButtonBase(state),
-    hideBoth: mapHidden(state),
+    bottomOffset,
+    hideBoth,
     hideFollowPath: false,
   }
 }

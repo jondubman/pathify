@@ -200,14 +200,18 @@ export const mapHidden = (state: AppState): boolean => (
 )
 
 export const mapPadding = (state: AppState): [number, number] => {
+  // horizontal padding is constant
   const horizontal = constants.map.fitBounds.minHorizontalPadding;
+
+  // vertical padding is calculated
   const showActivityList = shouldShowActivityList(state);
   const topClearZone = dynamicTopBelowButtons()
     + (showActivityList ? 1 : 0) * constants.activityList.height;
-  const bottomClearZone = constants.timeline.default.height;
-  const vertical = Math.max(topClearZone, bottomClearZone);
+  const bottomClearZone = constants.timeline.default.height; // clear it whether or not timeline is showing now
+  // Using min here to ensure padding doesn't get too big, which would generate a Mapbox exception and break fitBounds.
+  const vertical = Math.max(Math.min(topClearZone, bottomClearZone), constants.map.fitBounds.minVerticalPadding);
 
-  return [vertical + constants.map.fitBounds.minVerticalPadding, horizontal];
+  return [vertical, horizontal];
 }
 
 export const mapStyles = (state: AppState): MapStyle[] => (
