@@ -373,16 +373,19 @@ const sagas = {
     }
   },
 
-  // appQuery is used for debugging and (currently) internal import/export.
+  // appQuery is used for debugging and (currently internal-only) import/export.
+  // The responses are mostly intended to be human-readable for debugging.
+  // The queryType is just a string, and response is any free-form, untyped data.
   appQuery: function* (action: Action) {
     try {
       const params = action.params as AppQueryParams;
       yield call(log.debug, 'appQuery', params);
       const { query, uuid } = params;
-      const queryType = query ? query.type : null;
       const state = (yield select((state: AppState) => state)) as AppState;
-      let response: any = `response to uuid ${uuid}`; // generic fallback response
+      let response: any = `generic response to uuid ${uuid}`; // fallback response
       const queryStartTime = utils.now(); // milliseconds
+      const timeSinceAppStartedUp = msecToString(queryStartTime - state.options.startupTime);
+      const queryType = query ? query.type : null;
       switch (queryType) {
 
         case 'activities': { // all
@@ -396,7 +399,7 @@ const sagas = {
           response = { results };
           break;
         }
-        case 'activity': { // default to current or selected if activityId not specified
+        case 'activity': { // a single activity, defaulting to current or selected if activityId not specified
           const activity = query.activityId ? yield call(database.activityById, query.activityId)
             : (yield call(currentActivity, state)) || (yield call(selectedActivity, state));
           let results = [] as any;
@@ -413,7 +416,7 @@ const sagas = {
           }
           break;
         }
-        case 'activityIds': {
+        case 'activityIds': { // just the Ids
           const activityIds = yield call(database.activityIds);
           const { currentActivityId, selectedActivityId } = state.options;
           response = {
@@ -428,12 +431,12 @@ const sagas = {
           }
           break;
         }
-        case 'bounds': {
+        case 'bounds': { // of map
           const { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
           response = { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial };
           break;
         }
-        case 'cache': {
+        case 'cache': { // of activities
           const cache: CacheInfo = state.cache;
           response = {
             activityCount: cache.activities.length,
@@ -450,11 +453,11 @@ const sagas = {
             logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
             schemaVersion: constants.database.schemaVersion,
-            timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
+            timeSinceAppStartedUp,
           }
           break;
         }
-        case 'current': {
+        case 'current': { // location
           response = state.current;
           break;
         }
@@ -498,7 +501,7 @@ const sagas = {
         }
         case 'locs': {
           response = {
-            userLocation: state.userLocation,
+            userLocation: state.userLocation, // LocationEvent
           }
           break;
         }
@@ -525,7 +528,7 @@ const sagas = {
         }
         case 'pathMode': {
           const path = selectedActivityPath(state);
-          response = path && path.mode && Array.from(path.mode);
+          response = (path && path.mode && Array.from(path.mode)) || 'No path selected';
           break;
         }
         case 'ping': {
@@ -550,12 +553,12 @@ const sagas = {
           const settings = yield call(database.settings);
           response = {
             ...settings,
-            pausedTime_: new Date(settings.pausedTime).toString(),
+            pausedTime_: new Date(settings.pausedTime).toString(), // for human readability
             updateTime_: new Date(settings.updateTime).toString(),
           }
           break;
         }
-        case 'status': {
+        case 'status': { // bunch of stuff bundled up
           const { cache, mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
           response = {
             bounds: { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial },
@@ -571,7 +574,7 @@ const sagas = {
               logs: (yield call(database.logs)).length,
               paths: (yield call(database.paths)).length,
               schemaVersion: constants.database.schemaVersion,
-              timeSinceAppStartedUp: msecToString(utils.now() - state.options.startupTime),
+              timeSinceAppStartedUp,
             },
             current: state.current,
             flags: state.flags,
@@ -596,12 +599,12 @@ const sagas = {
     }
   },
 
+  // This exists so it can be used with yield take to wait for async stuff to finish, and doesn't do anything else.
   appStartupCompleted: function* (action: Action) {
     yield call(log.info, 'appStartupCompleted');
-    // used with yield take, doesn't need to do anything else
   },
 
-  // state change here refers to activating or suspending the app.
+  // State change here refers to activating or suspending the app.
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { manual, newState } = params; // manual param not currently used for anything but logging
@@ -1048,7 +1051,7 @@ const sagas = {
       }
       yield call(log.info, 'importActivity', activity, pathLengths);
 
-      // Guard against existing activity with same id
+      // Guard against importing an activityId already in use.
       const existingActivity = yield call(database.activityById, id);
       if (existingActivity) {
         yield call(log.warn, 'importActivity: activityId already exists', id);

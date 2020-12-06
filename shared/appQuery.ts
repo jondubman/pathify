@@ -3,15 +3,15 @@
 export interface AppQueryDescriptor {
   type: string; // activities, activity, events, eventCount, options, etc. - see appQuery saga.
 
-  activityId: string; // applies to activity, events
-  count?: boolean; // applies to events
-  events: boolean; // applies to activity (true: include events)
+  activityId?: string;
+  count?: boolean; // true means count results rather than sending them all
+  events?: boolean; // true means include events
+
   level?: number; // applies to logs (default 0)
-  limit?: number; // applies to events
-  pageSize: number; // applies to logs, works with startIndex
-  since: number; // timestamp, applies to events
+  limit?: number; // applies to events, which may be numerous
+  pageSize?: number; // applies to logs and events, works with startIndex
   startIndex?: number; // applies to logs and events
-  timeRange?: [number, number]; // applies to events
+  timeRange?: [number, number]; // applies to logs
 }
 
 export interface AppQueryParams {

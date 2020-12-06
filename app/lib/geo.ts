@@ -21,6 +21,8 @@ import BackgroundGeolocation, {
   // ConnectivityChangeEvent
 } from 'react-native-background-geolocation';
 
+const Logger = BackgroundGeolocation.logger;
+
 import {
   AppAction,
   GeolocationParams,
@@ -358,7 +360,7 @@ export const Geo = {
 
   destroyLog: async () => {
     try {
-      await BackgroundGeolocation.destroyLog();
+      await Logger.destroyLog();
     } catch (err) {
       log.error('geo destroyLog', err);
     }
@@ -368,7 +370,7 @@ export const Geo = {
   emailLog: async () => {
     try {
       if (EMAIL_ADDRESS) {
-        await BackgroundGeolocation.emailLog(EMAIL_ADDRESS);
+        await Logger.emailLog(EMAIL_ADDRESS);
       }
     } catch (err) {
       log.error('geo emailLog', err);

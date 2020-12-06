@@ -1,5 +1,7 @@
 #!/usr/bin/env ts-node
 
+// Bulk export script (for now, just for development purposes)
+
 import * as commander from 'commander';
 import * as fs from 'fs';
 import { exec, spawn, fork, execFile } from 'promisify-child-process';

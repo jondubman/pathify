@@ -26,7 +26,7 @@ class TimelineSpans extends React.Component<TimelineFutureSpanExtendedProps> {
     }
     utils.addToCount('renderTimelineFutureSpan');
     const { nowTime, scale } = this.props as any;
-    const endTime = nowTime + interval.days(365);
+    const endTime = nowTime + interval.days(365); // You can't scroll too far into the future, so a year is plenty.
     return (
       <TimelineSpan
         key={'FUTURE'}

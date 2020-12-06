@@ -1,3 +1,8 @@
+// Pathify uses Realm (now MongoDB Realm) only as a local database, at least for now. 
+// https://www.mongodb.com/realm
+// TODO There's some repetition between the types in the schemas and the types in the corresponding objects; this papers
+// over some subtle differences between RealmResults and POJOs. It's a bit of a maintenance liability. Any way to avoid?
+
 import Realm from 'realm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -127,10 +132,10 @@ const schemaList = [
 const { schemaVersion } = constants.database;
 const { bounds, heading } = constants.map.default;
 
-const defaultSettings = {
+const defaultSettings = { // for a newly installed app
   id: 1, // ALWAYS 1, since there is 1 set of defaultSettings. This is a singleton.
   backTime: 0, // TODO this is pretty rudimentary, should at least be a stack
-  clientAlias: '', // none
+  clientAlias: '', // none, applies only for remote debugging
   clientId: '', // none
   currentActivityId: undefined,
   followingPath: false,
@@ -146,7 +151,7 @@ const defaultSettings = {
   mapStyle: constants.map.default.style,
   mapZoomLevel: 0,
   pausedTime: 0,
-  remoteDebug: false,
+  remoteDebug: false, // This can only be enabled manually during development.
   requestedLocationPermission: false,
   selectedActivityId: undefined,
   timelineNow: true,
@@ -172,12 +177,12 @@ const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): v
 }
 
 const config: Realm.Configuration = {
-  deleteRealmIfMigrationNeeded: false, // Use false for production, as using true will result in irreversible data loss!
+  deleteRealmIfMigrationNeeded: false, // USE FALSE FOR PRODUCTION, as using true will result in irreversible data loss!
   migration,
   schema: schemaList,
   schemaVersion,
 }
-const realm = new Realm(config); // This performs a migration if needed
+const realm = new Realm(config); // This performs a migration if needed.
 
 // TODO which errors to handle?
 
@@ -259,7 +264,8 @@ const database = {
   },
 
   // Return new Activity. Creates Path with corresponding id.
-  createActivity: (now: number, odoStart: number = 0): Activity => {
+  // realm.write is synchronous. In practice, this should always work and return something.
+  createActivity: (now: number, odoStart: number = 0): Activity | undefined => {
     const newActivityTemplate: ActivityData = {
       id: uuidv4(),
       schemaVersion,
@@ -273,7 +279,7 @@ const database = {
       tStart: now,
       tEnd: 0,
     }
-    let newActivity;
+    let newActivity: Activity | undefined;
     realm.write(() => {
       newActivity = realm.create('Activity', newActivityTemplate, Realm.UpdateMode.All);
       const pathUpdate = database.newPathUpdate(newActivityTemplate.id);

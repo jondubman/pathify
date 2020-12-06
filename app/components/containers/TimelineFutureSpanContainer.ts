@@ -1,3 +1,5 @@
+// "FutureSpan" indicates the future on the timeline, from nowTime on.
+
 import { connect } from 'react-redux';
 
 import {
