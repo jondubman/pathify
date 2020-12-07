@@ -10,13 +10,19 @@ import {
 import utils from 'lib/utils';
 import log from 'shared/log';
 
+// Most of this is actually derived from underlying events, but expensive to recompute given the volume of data.
+// In the end, when activity and path are computed and cached, the underlying events are then basically redundant, but
+// they contain additional info that can be daylighted later. Over time, more stuff will appear in this schema beyond
+// what can be recomputed from the events, including user-provided metadata. The name and rating properties are a nod
+// in that direction, not yet implemented.
+
 export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and ActivityData in sync, below!
   name: 'Activity',
   primaryKey: 'id',
   properties: {
     id: 'string',
-    schemaVersion: 'int',
-    odoStart: 'int?',
+    schemaVersion: 'int', // to facilitate schema migration
+    odoStart: 'int?', // Not a trip odo. Monotonic, never reset, as on a car. Only relative amounts are used.
     tFirstLoc: { type: 'int?', indexed: true },
     tLastLoc: 'int?',
     tLastRefresh: { type: 'int', indexed: true }, // See refreshActivity. May change after bumping schemaVersion.
@@ -26,14 +32,14 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
 
     // metrics
     count: 'int', // of events
-    maxGapTime: 'int?',
-    tMaxGapTime: 'int?',
+    maxGapTime: 'int?', // max time between location updates
+    tMaxGapTime: 'int?', // timepoint of the start of that gap
 
     odo: 'int?', // total distance (meters, so OK that it's an int)
-    maxGapDistance: 'int?',
-    tMaxGapDistance: 'int?',
+    maxGapDistance: 'int?', // max distance between location updates
+    tMaxGapDistance: 'int?', // timepoint of the start of that gap
 
-    gain: 'int?', // total elevation gain TODO
+    gain: 'int?', // total elevation gain TODO - these are a little tricky to define and calculate precisely, postpone
     loss: 'int?', // total elevation loss TODO
 
     // bounds
@@ -42,9 +48,9 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
     lonMax: 'double?',
     lonMin: 'double?',
 
-    extra: 'string?',
-    name: 'string?',
-    rating: 'double?',
+    extra: 'string?', // TODO - leaving a bit of room for something that doesn't require a schema change, just in case
+    name: 'string?', // TODO
+    rating: 'double?', // TODO
 
     // TODO caching the first and last known location would be useful for filtering (see tFirstLoc as well)
     // latFirst: 'double?',
@@ -128,6 +134,7 @@ export const exportActivity = (activity: ActivityData): ExportedActivity | null 
   return null;
 }
 
+// This should run quickly, in constant time. It does not traverse the events or path.
 export const extendActivity = (activity: ActivityData): ActivityDataExtended => {
   // Note this no longer works in Realm v>3 now that it uses NAPI... spread operator is broken.
   // See https://github.com/realm/realm-js/issues/2844
@@ -160,7 +167,3 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
 export interface Activity extends ActivityData, Realm.Object {
 }
 export type Activities = Activity[];
-
-export const loggableActivity = (activity: Activity) => {
-  return extendActivity(activity);
-}

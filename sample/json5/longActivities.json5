@@ -1,0 +1,12 @@
+{
+  type: 'appQuery',
+  params: {
+    query: {
+      type: 'activities',
+      activityRangeQueries: {
+        count: [20000, 999999],
+      },
+      // countOnly: true,
+    },
+  }
+}

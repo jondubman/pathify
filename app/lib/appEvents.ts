@@ -1,3 +1,5 @@
+// appEvents here refer not to the location events, but to the app state changing from active to background etc.
+
 import { GenericEvent } from 'lib/timeseries';
 
 export enum AppStateChange {

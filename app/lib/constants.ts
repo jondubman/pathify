@@ -1,5 +1,8 @@
 // constants module
 
+// Most of the constants are here, including colors. Some constants that are very specific to component layouts, not
+// of general interest, and not shared across comoponents are hard-coded in component styles etc. for convenience.
+
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 import { DomainTuple } from 'victory-native';
 const safeAreaTop = StaticSafeAreaInsets.safeAreaInsetsTop;
@@ -8,7 +11,12 @@ const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized 
 
 import { interval } from 'lib/timeseries';
 
-export enum TimespanKind {
+// For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
+// It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
+// as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
+const schemaVersion = 35;
+
+export enum TimespanKind { // used below
   'ACTIVITY' = 'ACTIVITY',
   'APP_STATE' = 'APP_STATE',
   'FUTURE' = 'FUTURE',
@@ -19,12 +27,13 @@ export enum TimespanKind {
   'SELECTION' = 'SELECTION',
 }
 
-export interface MapStyle {
+export interface MapStyle { // used below
   name: string;
   opacity: number;
   url: string; // Mapbox style
 }
 
+// These are used below, and also become constants.colors.byName
 const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 digit abbreviation
   // https://clrs.cc
   // https://www.colorhexa.com
@@ -88,11 +97,6 @@ const colorThemes = {
   topMenu: namedColors.darkGray,
   zooming: namedColors.orange,
 }
-
-// For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
-// It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
-// as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
-const schemaVersion = 35;
 
 // constants that are reused when defining other constants:
 const activityListMargin = 16;

@@ -83,8 +83,8 @@ import {
   ActivityData,
   ActivityDataExtended,
   exportActivity,
+  extendActivity,
   extendedActivities,
-  loggableActivity,
 } from 'lib/activities';
 import {
   AppUserActionEvent,
@@ -150,10 +150,11 @@ import utils from 'lib/utils';
 import { MapUtils } from 'presenters/MapArea';
 import {
   AppQueryParams,
-  AppQueryResponse
+  AppQueryResponse,
+  rangeQueryableActivityProps,
 } from 'shared/appQuery';
 
-let _interval; // used by timelineRelativeZoom saga
+let _interval: NodeJS.Timeout | null; // used by timelineRelativeZoom saga
 
 const sagas = {
 
@@ -382,21 +383,30 @@ const sagas = {
       yield call(log.debug, 'appQuery', params);
       const { query, uuid } = params;
       const state = (yield select((state: AppState) => state)) as AppState;
-      let response: any = `generic response to uuid ${uuid}`; // fallback response
+      let response: any = `generic response to appQuery with uuid ${uuid}`; // fallback response
       const queryStartTime = utils.now(); // milliseconds
       const timeSinceAppStartedUp = msecToString(queryStartTime - state.options.startupTime);
       const queryType = query ? query.type : null;
       switch (queryType) {
 
-        case 'activities': { // all
-          let realmActivities = yield call(database.activities);
-          let results = [] as any;
-          let activities = Array.from(realmActivities) as any;
+        case 'activities': {
+          const realmActivities: Realm.Results<Activity> = yield call(database.activities);
+          let filteredActivities = realmActivities;
+          if (query.activityRangeQueries) {
+            for (const [prop, range] of Object.entries(query.activityRangeQueries)) {
+              const min = range[0];
+              const max = range[1];
+              yield call(log.debug, `range filtering ${prop}: ${min} to ${max}`);
+              filteredActivities = filteredActivities.filtered(`${prop} >= $0 AND ${prop} <= $1`, min, max);
+            }
+          }
+          const results = [] as any;
+          const activities = Array.from(filteredActivities) as any;
           for (let i = 0; i < activities.length; i++) {
-            let modifiedActivity = yield call(loggableActivity, activities[i]);
+            let modifiedActivity = yield call(extendActivity, activities[i]);
             results.push(modifiedActivity);
           }
-          response = { results };
+          response = query.countOnly ? results.length : { results };
           break;
         }
         case 'activity': { // a single activity, defaulting to current or selected if activityId not specified
@@ -404,13 +414,13 @@ const sagas = {
             : (yield call(currentActivity, state)) || (yield call(selectedActivity, state));
           let results = [] as any;
           if (activity) {
-            let modifiedActivity = yield call(loggableActivity, activity);
+            let modifiedActivity = yield call(extendActivity, activity);
             results.push({ activity: modifiedActivity });
-            if (query.events && (query.startIndex || query.startIndex === 0) && query.limit) {
+            if (query.includeEvents && (query.startIndex || query.startIndex === 0) && query.limit) {
               const events = (yield call(database.events)).filtered(`activityId == "${activity.id}"`);
               const start = query.startIndex;
               const end = query.startIndex + query.limit;
-              results.push({ events: query.count ? events.length : Array.from(events).slice(start, end)})
+              results.push({ events: query.countOnly ? events.length : Array.from(events).slice(start, end)})
             }
             response = { results };
           }
@@ -469,11 +479,12 @@ const sagas = {
           response = (yield call(database.events)).length;
           break;
         }
-        case 'events': { // TODO surely you don't want to do this with 1M events...
+        case 'events': { // TODO surely you don't want to do this with a million events... likely to hang the app
           const events = yield call(database.events);
-          response = query.count ? events.length : Array.from(events);
+          response = query.countOnly ? events.length : Array.from(events);
           break;
         }
+        // Export a single activity by activityId.
         // Note this is not a public GPX export, which probably needs to exist, but a dev-only export feature for
         // debugging, screenshots, etc. that exports an individual activity as JSON compatible with importActivity.
         case 'exportActivity': {
@@ -532,7 +543,7 @@ const sagas = {
           break;
         }
         case 'ping': {
-          response = 'pong';
+          response = 'pong'; // of course
           break;
         }
         case 'pulsars': {
@@ -543,7 +554,7 @@ const sagas = {
           let activity = yield call(selectedActivity, state);
           let results = [] as any;
           if (activity) {
-            let modified = yield call(loggableActivity, activity);
+            let modified = yield call(extendActivity, activity);
             results.push(modified);
             response = { results };
           }
@@ -553,8 +564,8 @@ const sagas = {
           const settings = yield call(database.settings);
           response = {
             ...settings,
-            pausedTime_: new Date(settings.pausedTime).toString(), // for human readability
-            updateTime_: new Date(settings.updateTime).toString(),
+            pausedTime_: new Date(settings.pausedTime).toString(), // for human readability;
+            updateTime_: new Date(settings.updateTime).toString(), // underscore at the end to keep alphabetic ordering
           }
           break;
         }
@@ -1315,6 +1326,9 @@ const sagas = {
     }
   },
 
+  // This refers to the cache of Activities, state.cache, which is a POJO array used to populate the ActivityList that
+  // doesn't require doing similar database operations repeatedly. That might not be terrible if Realm is super
+  // optimized, but it'll never match an in-memory JS cache. This operation is not expensive; there's no path traversal.
   refreshCache: function* (action: Action) {
     try {
       yield call(log.trace, 'saga refreshCache');
@@ -1877,7 +1891,7 @@ const sagas = {
         }
         yield put(newAction(AppAction.addEvents, { events: [stopEvent, endMark] }));
         const activity = yield call(database.activityById, activityId);
-        yield call(log.debug, 'stopActivity', loggableActivity(activity));
+        yield call(log.debug, 'stopActivity', extendActivity(activity));
         if (activity) {
           yield call(database.updateActivity, {
             id: activityId,
