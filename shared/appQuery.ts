@@ -20,10 +20,11 @@ export interface AppQueryDescriptor {
   countOnly?: boolean; // true means count results rather than sending them all
   includeEvents?: boolean; // include low-level events in the results
 
-  activityRangeQueries: ActivityRangeQuery | undefined,
+  activityRangeQueries: ActivityRangeQuery | undefined, // applies to activities
+  visibleOnly?: boolean; // true means filter any activities that do not intersect the current mapBounds
 
   level?: number; // applies to logs (default 0)
-  limit?: number; // applies to events, which may be numerous
+  limit?: number; // applies to activities or events
   pageSize?: number; // applies to logs and events, works with startIndex
   startIndex?: number; // applies to logs and events
   timeRange?: [number, number]; // applies to logs

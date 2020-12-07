@@ -378,10 +378,10 @@ const sagas = {
   // The responses are mostly intended to be human-readable for debugging.
   // The queryType is just a string, and response is any free-form, untyped data.
   appQuery: function* (action: Action) {
+    const params = action.params as AppQueryParams;
+    yield call(log.debug, 'appQuery', params);
+    const { query, uuid } = params;
     try {
-      const params = action.params as AppQueryParams;
-      yield call(log.debug, 'appQuery', params);
-      const { query, uuid } = params;
       const state = (yield select((state: AppState) => state)) as AppState;
       let response: any = `generic response to appQuery with uuid ${uuid}`; // fallback response
       const queryStartTime = utils.now(); // milliseconds
@@ -404,7 +404,10 @@ const sagas = {
           const activities = Array.from(filteredActivities) as any;
           for (let i = 0; i < activities.length; i++) {
             let modifiedActivity = yield call(extendActivity, activities[i]);
-            results.push(modifiedActivity);
+            if (!query.limit || results.length < query.limit) {
+              results.push(modifiedActivity);
+              // results.push(activities[i]);
+            }
           }
           response = query.countOnly ? results.length : { results };
           break;
@@ -604,9 +607,15 @@ const sagas = {
       }
       const queryTime = utils.now() - queryStartTime; // adding this to reveal any performance issues / outliers
       const appQueryResponse: AppQueryResponse = { response, queryTime, uuid };
-      yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse});
-    } catch(err) {
-      yield call(log.error, 'appQuery', err);
+      yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse });
+    } catch (err) {
+      try {
+        const errorResponse: AppQueryResponse = { response: `Error: ${JSON.stringify(err)}`, uuid };
+        yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: errorResponse });
+      } catch {
+      } finally {
+        yield call(log.error, 'appQuery', err);
+      }
     }
   },
 

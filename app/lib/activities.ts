@@ -142,7 +142,9 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
   // Workaround:
   let a = { id: activity.id } as ActivityDataExtended;
   for (const key of Object.keys(ActivitySchema.properties)) {
-    a[key] = activity[key];
+    if (activity[key] !== undefined) { // guard
+      a[key] = activity[key];
+    }
   }
   try {
     if (a.odo && a.odoStart) {
@@ -160,8 +162,9 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
     }
   } catch (err) {
     log.warn('extendActivity', err);
+  } finally {
+    return a;
   }
-  return a;
 }
 
 export interface Activity extends ActivityData, Realm.Object {

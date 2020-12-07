@@ -4,9 +4,11 @@
     query: {
       type: 'activities',
       activityRangeQueries: {
-        count: [20000, 999999],
+        count: [0, 999999999],
+        // schemaVersion: [30, 30],
       },
       // countOnly: true,
+      // limit: 8,
     },
   }
 }
