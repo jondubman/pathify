@@ -6,7 +6,9 @@ import { createSelector } from 'reselect'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
 import {
   Activity,
+  ActivityFilter,
   ActivityDataExtended,
+  boundsForActivity,
 } from 'lib/activities';
 import constants, {
   MapStyle,
@@ -42,32 +44,41 @@ export const activityIncludesMark = (activityId: string, mark: MarkEvent): boole
 
 // Note this may return -1, which means, no cache hit for this selectedActivityId. Note 0 is a valid index.
 export const selectedActivityIndex = (state: AppState) => (
-  state.cache.activities.findIndex((activity: ActivityDataExtended) => activity.id === state.options.selectedActivityId)
+  listedActivities(state).findIndex((activity: ActivityDataExtended) => (
+    activity.id === state.options.selectedActivityId
+  ))
 )
 
 // This returns a string for display in the bubble above the TopMenu.
-export const activityIndex = (state: AppState): string => (
-  state.cache.activities.length ?
-    selectedActivityIndex(state) > -1 ?
-      `${selectedActivityIndex(state) + 1}/${state.cache.activities.length}` // (selectedActivityIndex / count)
-      :
-      `${state.cache.activities.length}` // if no selected activity, just usethe count
-    :
-    '' // don't bother showing 0
-)
+export const activityIndex = (state: AppState): string => {
+  if (!state.cache.activities || !state.cache.activities.length) {
+    return '';
+  }
+  const list = listedActivities(state);
+  let s = '';
+  if (selectedActivityIndex(state) > -1) {
+    s = `${selectedActivityIndex(state) + 1}/${list.length}` // (selectedActivityIndex / count)
+  } else {
+    s = `${list.length}` // if no selected activity, just use the count
+  }
+  if (state.flags.filterActivityList) {
+    s = `(${s})/${state.cache.activities.length}`;
+  }
+  return s;
+}
 
 // cachedActivity by id
 export const cachedActivity = (state: AppState, id: string): ActivityDataExtended | undefined => {
-  const cache = state.cache;
+  const { activities } = state.cache;
   if (id) {
-    return cache.activities.find(activity => activity.id === id);
+    return activities.find(activity => activity.id === id);
   }
   return undefined;
 }
 
 export const cachedActivityForTimepoint = (state: AppState, t: Timepoint): ActivityDataExtended | undefined => {
-  const cache = state.cache;
-  const result = cache.activities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
+  const { activities } = state.cache;
+  const result = activities.find(activity => activity.tStart <= t && (t <= activity.tLast || !activity.tEnd));
   return result;
 }
 
@@ -432,6 +443,60 @@ export const flavorText = (state: AppState): string[] => {
 
 // Selectors memozied using reselect / createSelector:
 
+// Note this excludes any currentActivity; if currentActivity is selected this retuns null.
+const getSelectedActivityId = (state: AppState) => (
+  (state.options.currentActivityId && state.options.selectedActivityId &&
+   state.options.currentActivityId === state.options.selectedActivityId) ? null : state.options.selectedActivityId
+)
+export const selectedActivityPath = createSelector(
+  [getSelectedActivityId],
+  (selectedActivityId) => {
+    if (!selectedActivityId) {
+      return undefined;
+    }
+    const path = database.pathById(selectedActivityId);
+    return path;
+  }
+)
+
+const getActivityListFilter = (state: AppState): ActivityFilter | null => (
+  (state.flags.filterActivityList && state.options.activityListFilter) ? state.options.activityListFilter : null
+)
+const getCachedActivities = (state: AppState) => state.cache.activities;
+const getCurrentActivityId = (state: AppState) => state.options.currentActivityId;
+const getMapBounds = (state: AppState) => state.mapBounds;
+
+export const listedActivities = createSelector(
+  [getActivityListFilter, getCachedActivities, getCurrentActivityId, getMapBounds, getSelectedActivityId],
+  (filter, activities, currentActivityId, mapBounds, selectedActivityId): ActivityDataExtended[] => {
+    if (!activities || !activities.length) {
+      return [];
+    }
+    if (!filter || filter.includeAll) {
+      return activities;
+    }
+    const filteredActivities = activities.filter(activity => {
+      if (filter.includeCurrent && activity.id === currentActivityId) {
+        return true;
+      }
+      if (filter.includeSelected && activity.id === selectedActivityId) {
+        return true;
+      }
+      if (filter.excludeOutOfBounds) {
+        const activityBounds = boundsForActivity(activity);
+        if (activityBounds) {
+          return filter.strictBoundsCheck ?
+            utils.boundsContained(activityBounds, mapBounds)
+            :
+            utils.boundsOverlap(activityBounds, mapBounds)
+        }
+      }
+      return false;
+    })
+    return filteredActivities;
+  }
+)
+
 // This is not currently needed for the production app as locations are generally retrieved from an Activity's Path,
 // which is derived from underlying events (mostly, from LocationEvents), and locations outside of an Activity
 // are not generally saved or shown in production.
@@ -460,10 +525,9 @@ export interface PathInfo {
   speed: number; // meters per second
   t: number; // timepoint for this info
 }
-export const getScrollTimeFloor = (state: AppState) => utils.floorTime(state.options.scrollTime);
-export const getTimelineNow = (state: AppState) => state.flags.timelineNow;
-export const getTrackingActivity = (state: AppState) => state.flags.trackingActivity;
-const getCachedActivities = (state: AppState) => state.cache.activities;
+const getScrollTimeFloor = (state: AppState) => utils.floorTime(state.options.scrollTime);
+const getTimelineNow = (state: AppState) => state.flags.timelineNow;
+const getTrackingActivity = (state: AppState) => state.flags.trackingActivity;
 // PathInfo here means info derived from a Path that includes scrollTime as a timepoint - basically, stats right then.
 // getScrollTimeFloor helps to minimize redundant recalculations, as the clock ticks many times per second in
 // timelineNow mode. Path timestamps are rounded down for comparison against getScrollTimeFloor.
@@ -621,22 +685,6 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   }
   return pulsars;
 }
-
-// Note this excludes any currentActivity; if currentActivity is selected this retuns null.
-const getSelectedActivityId = (state: AppState) => (
-  (state.options.currentActivityId && state.options.selectedActivityId &&
-   state.options.currentActivityId === state.options.selectedActivityId) ? null : state.options.selectedActivityId
-)
-export const selectedActivityPath = createSelector(
-  [getSelectedActivityId],
-  (selectedActivityId) => {
-    if (!selectedActivityId) {
-      return undefined;
-    }
-    const path = database.pathById(selectedActivityId);
-    return path;
-  }
-)
 
 // Layout
 

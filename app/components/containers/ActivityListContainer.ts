@@ -21,6 +21,7 @@ import { AppState } from 'lib/state';
 import utils from 'lib/utils';
 import ActivityList from 'presenters/ActivityList';
 import log from 'shared/log';
+import { listedActivities } from 'lib/selectors';
 import { Timepoint } from 'lib/timeseries';
 
 interface ActivityListStateProps {
@@ -58,7 +59,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   return {
     currentActivityId,
     labelsEnabled,
-    list: state.cache.activities || [], // TODO could filter activities
+    list: listedActivities(state),
     refreshCount: state.cache.refreshCount,
     selectedActivityId,
     timelineNow,

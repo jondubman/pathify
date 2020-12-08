@@ -94,15 +94,15 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         let snapIndex: number | undefined;
         const snaps = snapPositions();
         const lastIndex = snaps.length - 1;
-        if (currentPosition <= snaps[0]) {
+        if (currentPosition <= snaps[0]) { // top
           snap = snaps[0];
           containedPosition = snap;
           snapIndex = 0;
-        } else if (currentPosition >= snaps[lastIndex]) {
+        } else if (currentPosition >= snaps[lastIndex]) { // bottom
           snap = snaps[lastIndex];
           containedPosition = snap;
           snapIndex = lastIndex;
-        } else {
+        } else { // somewhere else
           containedPosition = currentPosition;
           for (let p = 0; p < lastIndex; p++) {
             const p1 = snaps[p];
@@ -128,7 +128,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           this._snapIndex = snapIndex ? Math.min(snapIndex, maxGrabBarSnapIndex()) : snapIndex;
           this._top = top;
           log.scrollEvent('onPanResponderMove now', this._snap, this._snapIndex, this._top);
-          this.forceUpdate(); // TODO is this needed?
+          this.forceUpdate(); // TODO explain why
           this.props.onMoved(snap, snapIndex!);
         }
       },

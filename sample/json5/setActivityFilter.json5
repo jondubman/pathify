@@ -1,0 +1,12 @@
+{
+  type: 'setAppOption',
+  params: {
+    activityListFilter: {
+      excludeOutOfBounds: true,
+      includeAll: false,
+      includeCurrent: true,
+      includeSelected: true,
+      strictBoundsCheck: true,
+    }
+  }
+}

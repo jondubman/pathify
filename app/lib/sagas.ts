@@ -151,7 +151,6 @@ import { MapUtils } from 'presenters/MapArea';
 import {
   AppQueryParams,
   AppQueryResponse,
-  rangeQueryableActivityProps,
 } from 'shared/appQuery';
 
 let _interval: NodeJS.Timeout | null; // used by timelineRelativeZoom saga
@@ -402,11 +401,10 @@ const sagas = {
           }
           const results = [] as any;
           const activities = Array.from(filteredActivities) as any;
-          for (let i = 0; i < activities.length; i++) {
+          for (let i = query.startIndex || 0; i < activities.length; i++) {
             let modifiedActivity = yield call(extendActivity, activities[i]);
             if (!query.limit || results.length < query.limit) {
               results.push(modifiedActivity);
-              // results.push(activities[i]);
             }
           }
           response = query.countOnly ? results.length : { results };
@@ -660,7 +658,7 @@ const sagas = {
       }
       yield call(Geo.setConfig, trackingActivity, false); // background false, meaning foreground
       if (setPaceAfterStart && trackingActivity) {
-        yield call(Geo.changePace, true, () => {}); // manually set pace to moving when activating TODO
+        yield call(Geo.changePace, true, () => {}); // manually set pace to moving when activating TODO review
       }
       const populated = yield select((state: AppState) => state.cache.populated);
       yield call(log.debug, 'cache has been populated:', populated);
@@ -882,7 +880,7 @@ const sagas = {
       const {
         deleteEventsWhenDeletingActivity,
       } = yield select((state: AppState) => state.flags);
-      let deleteButton: AlertButton = {
+      const deleteButton: AlertButton = {
         onPress: () => {
           log.info('Delete activity', id);
           if (id === currentActivityId) {
@@ -908,7 +906,7 @@ const sagas = {
         text: 'Delete',
         style: 'destructive',
       }
-      let cancelButton: AlertButton = {
+      const cancelButton: AlertButton = {
         onPress: () => {
           log.info('deleteActivity canceled');
         },

@@ -62,7 +62,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
             newState.mapZoomInitial = mapRegionUpdate.zoomLevel;
           }
           // Set these every time.
-          newState.mapBounds = mapRegionUpdate.bounds;
+          newState.mapBounds = [ ...mapRegionUpdate.bounds ]; // ensure reference inequality
           newState.mapHeading = mapRegionUpdate.heading;
           newState.mapZoom = mapRegionUpdate.zoomLevel;
         }

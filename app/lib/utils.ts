@@ -6,7 +6,8 @@ import {
 import constants from 'lib/constants';
 import { LonLat } from 'lib/locations';
 
-type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
+// export type Bounds = Array<Array<number>>; // [ [lon, lat] representing NE, [lon, lat] representing SW ]
+export type Bounds = LonLat[];
 
 // Counts (e.g. render counts) are stored here privately rather than in the Redux store for simplicity/efficiency.
 // It would be unhelpful for counting to yield any additional chatter between react-redux and the stuff we're measuring.
@@ -23,6 +24,17 @@ const utils = {
 
   appInBackground: (): boolean => (
     (RNAppState.currentState === 'background')
+  ),
+
+  boundsContained: (a: Bounds, b: Bounds): boolean => ( // Is a contained in b?
+    utils.locInsideBounds(a[0], b) && utils.locInsideBounds(a[1], b)
+  ),
+
+  boundsOverlap: (a: Bounds, b: Bounds): boolean => (
+    utils.locInsideBounds(a[0], b) || // NE corner of a inside b
+    utils.locInsideBounds(a[1], b) || // SW corner of a inside b
+    utils.locInsideBounds(b[0], a) || // NE corner of b inside a
+    utils.locInsideBounds(b[1], a)    // SW corner of b inside a
   ),
 
   counts: (): any => {
@@ -71,8 +83,8 @@ const utils = {
     // (top, bottom, left, right). This could be adjusted up or down, or there could be separately controllable margins.
     // If allowance is 0, the center may end up on the edge of the bounds, with zero context on one side.
     const allowance = Math.min(lonRange / 4, latRange / 4); // allow for a substantial margin around square
-    const squareBounds = [[center[0] + allowance, center[1] + allowance],  // NE
-                          [center[0] - allowance, center[1] - allowance]]; // SW
+    const squareBounds: Bounds = [[center[0] + allowance, center[1] + allowance],  // NE
+                                 [center[0] - allowance, center[1] - allowance]]; // SW
     return utils.locInsideBounds(loc, squareBounds);
   },
 

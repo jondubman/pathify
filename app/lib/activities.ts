@@ -140,7 +140,7 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
   // See https://github.com/realm/realm-js/issues/2844
   // const a = { ...activity } as ActivityDataExtended;
   // Workaround:
-  let a = { id: activity.id } as ActivityDataExtended;
+  const a = { id: activity.id } as ActivityDataExtended;
   for (const key of Object.keys(ActivitySchema.properties)) {
     if (activity[key] !== undefined) { // guard
       a[key] = activity[key];
@@ -170,3 +170,19 @@ export const extendActivity = (activity: ActivityData): ActivityDataExtended => 
 export interface Activity extends ActivityData, Realm.Object {
 }
 export type Activities = Activity[];
+
+import { Bounds } from 'lib/utils'; // [NE, SW]
+export const boundsForActivity = (activity: ActivityDataExtended): Bounds | null => (
+  (activity.lonMax && activity.latMax && activity.lonMin && activity.latMin) ?
+    [[activity.lonMax, activity.latMax], [activity.lonMin, activity.latMin]] // NE, SW
+    :
+    null
+)
+
+export interface ActivityFilter {
+  excludeOutOfBounds: boolean;
+  includeAll?: boolean;
+  includeCurrent?: boolean;
+  includeSelected?: boolean;
+  strictBoundsCheck: boolean; // activities wholly contained in current map bounds
+}

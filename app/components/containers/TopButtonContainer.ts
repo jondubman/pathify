@@ -40,7 +40,7 @@ const mapStateToProps = (state: AppState): TopButtonStateProps => {
     selectedActivityId,
   } = state.options;
   return {
-    activityCount: activityIndex(state).toString(),
+    activityCount: activityIndex(state),
     activityId: selectedActivityId || '',
     current: !!(currentActivityId && currentActivityId === selectedActivityId),
     enabled: topMenuOpen,

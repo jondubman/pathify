@@ -25,7 +25,6 @@ import utils from 'lib/utils';
 import log from 'shared/log';
 
 // Public interface to singleton underlying Mapbox component
-export type Bounds = [LonLat, LonLat] | null; // NE, SW
 export type BoundsWithHeading = [LonLat, LonLat, number] | null; // NE, SW, heading
 
 const flexStyle = { flex: 1 };
@@ -53,6 +52,10 @@ class MapArea extends Component<MapAreaProps> {
     this.onPress = this.onPress.bind(this);
     this.setCamera = this.setCamera.bind(this);
     this.zoomTo = this.zoomTo.bind(this);
+  }
+
+  componentDidMount() {
+    Mapbox.setTelemetryEnabled(false); // TODO
   }
 
   getMap(): IMapUtils{
@@ -214,7 +217,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   // return the coordinate bounds [NE LonLat, SW LonLat] visible in the users’s viewport.
-  async getVisibleBounds(): Promise<BoundsWithHeading> {
+  async getVisibleBounds(): Promise<BoundsWithHeading | null> {
     try {
       if (this._map) {
         const mapView = this._map;

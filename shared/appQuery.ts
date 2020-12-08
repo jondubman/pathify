@@ -13,6 +13,9 @@ export const rangeQueryableActivityProps = [
 
 export type ActivityRangeQuery = { [key: string]: [number, number] };
 
+// TODO AppQueryDescriptor is sort of a union of subtypes. TS typings could reflect that more elegantly.
+// It's just for development purposes, to support remote querying the app.
+
 export interface AppQueryDescriptor {
   type: string; // activities, activity, events, eventCount, options, etc. - see appQuery saga.
   // Note this is the type of the AppQueryDescriptor, not the type of the action sent to the app, which is 'appQuery'.
@@ -26,7 +29,7 @@ export interface AppQueryDescriptor {
   level?: number; // applies to logs (default 0)
   limit?: number; // applies to activities or events
   pageSize?: number; // applies to logs and events, works with startIndex
-  startIndex?: number; // applies to logs and events
+  startIndex?: number; // applies activities, logs and events
   timeRange?: [number, number]; // applies to logs
 }
 

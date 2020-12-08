@@ -26,7 +26,7 @@ const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
     scrollTime,
     selectedActivityId,
   } = state.options;
-  // Filter out the ActivityTimespans that are not visible on the timeline as an optimization.
+  // Filter out any ActivityTimespans that are completely out of visible range on the timeline, as an optimization.
   const filteredActivities = state.cache.activities.filter((activity: ActivityDataExtended) => (
     timepointVisibleOnTimeline(state, activity.tStart) || // can see activity start
     timepointVisibleOnTimeline(state, activity.tLast) || // or can see activity end

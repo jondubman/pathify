@@ -3,7 +3,10 @@
 import ActivityList from 'presenters/ActivityList'
 import TimelineScroll from 'presenters/TimelineScroll'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
-import { ActivityDataExtended } from 'lib/activities';
+import {
+  ActivityDataExtended,
+  ActivityFilter,
+} from 'lib/activities';
 import { AppStateChange } from 'lib/appEvents';
 import constants from 'lib/constants';
 import {
@@ -70,6 +73,7 @@ export const initialAppState = {
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
     devMode, // enabled if __DEV__ or develop ENV variable set to true (if launched using Pathify Develop XCode scheme)
+    filterActivityList: true, // if true, state.options.activityListFilter is applied
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
@@ -121,6 +125,13 @@ export const initialAppState = {
   mapZoomInitial: null as number | null, // once set, never changes
   // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
   options: { // Like the flags, these are not necessarily user-configurable.
+    activityListFilter: { // applied if flags.filterActivityList
+      excludeOutOfBounds: true,
+      includeAll: false,
+      includeCurrent: true,
+      includeSelected: true,
+      strictBoundsCheck: true,
+  } as ActivityFilter,
     appBuild: '0', // set on startup in App component
     appVersion: 0, // set on startup in App component
     appState: AppStateChange.STARTUP as AppStateChange,
