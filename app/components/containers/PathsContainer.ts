@@ -1,14 +1,17 @@
 import { connect } from 'react-redux';
 
 import database from 'lib/database';
-import { selectedActivityPath } from 'lib/selectors';
+import {
+  listedActivities,
+  selectedActivityPath
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
 import { Path } from 'lib/paths';
 
 interface PathsStateProps {
   currentActivityId: string | null;
-  paths: Path[];
+  paths: Path[]; // These will be rendered from back to front.
   selectedActivityId: string | null;
 }
 
@@ -19,8 +22,24 @@ export type PathsProps = PathsStateProps & PathsDispatchProps;
 
 const mapStateToProps = (state: AppState): PathsStateProps => {
   const { currentActivityId, selectedActivityId } = state.options;
+
+  // TODO reselector
   const paths: Path[] = [];
   if (state.flags.showPathsOnMap) {
+    if (state.flags.filterActivityList) {
+      for (const activity of listedActivities(state)) {
+        const { id } = activity;
+        if (id !== currentActivityId && id !== selectedActivityId) {
+          const path = database.pathById(id);
+          if (path) {
+            paths.push(path);
+            if (paths.length > state.options.maxDisplayPaths) {
+              break; // TODO
+            }
+          }
+        }
+      }
+    }
     // using memoized selector
     const selectedPath = selectedActivityPath(state);
     if (selectedPath) {

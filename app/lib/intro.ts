@@ -88,7 +88,7 @@ export const introPages: IntroPageTemplate[] = [
     pageStyle: { top: -15 },
     text: `Privacy is a basic right. Your activity in Pathify is fully private by design. There's no signup to complete, and no account to create. We don't seek your identity, or your data.
 \nPathify respectfully requests permission to track your location for your benefit only. What happens in Pathify stays on your device, not replicated to a remote server or data store. Exporting and sharing are slated for a future release.
-\nWe do not collect anonymized usage data. Our map provider, Mapbox, does so to improve the map, but you can opt out on the next page.`,
+\nPathify does not collect anonymized usage data. Our map provider does so to improve the map, but only if you choose to enable it.`,
     ui: [],
     yieldsLocationRequest: true, // This will issue a requestLocationPermission action on buttonNext.
   },
@@ -99,7 +99,7 @@ export const introPages: IntroPageTemplate[] = [
     header: 'One map to find them all',
     headerStyle: { color: constants.colors.byName.lighterRed } as StyleProp<ViewStyle>,
     text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on the same map.
-\nBeautiful, up-to-date maps help you discover lesser-known parks and trails. For maximum privacy, opt out of Mapbox Telemetry with the little blue (i) in the corner.
+\nBeautiful, up-to-date maps from Mapbox help you discover lesser-known parks and trails.
 \nAdjust the map style and opacity with the Settings panel anytime (including now!)`,
     ui: [UICategory.map, UICategory.settings],
   },

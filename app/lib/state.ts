@@ -73,7 +73,7 @@ export const initialAppState = {
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
     devMode, // enabled if __DEV__ or develop ENV variable set to true (if launched using Pathify Develop XCode scheme)
-    filterActivityList: true, // if true, state.options.activityListFilter is applied
+    filterActivityList: false, // if true, state.options.activityListFilter is applied
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
@@ -147,6 +147,7 @@ export const initialAppState = {
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
+    maxDisplayPaths: 10, // for performance reasons TODO this feature still in development
     nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
     nowTimeRounded: now, // updated on timerTick, minus the fractions of a second
     pulsars: {} as OptionalPulsars, // pulsing colored dots to indicate location on the map

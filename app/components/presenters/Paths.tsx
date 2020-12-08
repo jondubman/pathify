@@ -20,21 +20,27 @@ const lineLayerStyleBase = {
   lineOpacity: 1,
 }
 
-const lineLayerStyleDefault = {
-  ...lineLayerStyleBase,
-  lineColor: constants.colors.paths.default,
-}
-
 const lineLayerStyleCurrent = {
   ...lineLayerStyleBase,
   lineColor: constants.colors.paths.current,
 }
 
+const lineLayerStyleOther = {
+  ...lineLayerStyleBase,
+  lineColor: constants.colors.paths.other,
+}
+
+const lineLayerStyleSelected = {
+  ...lineLayerStyleBase,
+  lineColor: constants.colors.paths.selected,
+}
+
 class Paths extends PureComponent<PathsProps> {
 
   render() {
-    const { currentActivityId, paths } = this.props;
-    let shapes = [] as JSX.Element[];
+    const { currentActivityId, paths, selectedActivityId } = this.props;
+    const shapes = [] as JSX.Element[]; // accumulates Mapbox.ShapeSource components
+
     for (let a = 0; a < paths.length; a++) {
       const path = paths[a];
       if (!path) {
@@ -54,7 +60,7 @@ class Paths extends PureComponent<PathsProps> {
           const lonLat = [lons[i], lats[i]] as LonLat;
           coordinates.push(lonLat);
         }
-        const pathShape = {
+        const pathShape: GeoJSON.Feature = { // note GeoJSON is a TS namespace
           type: 'Feature',
           properties: {
             name: `pathId${id}`,
@@ -65,12 +71,18 @@ class Paths extends PureComponent<PathsProps> {
           },
         }
         const key = `pathShape${id}-${lats.length}`;
+        let lineStyle = lineLayerStyleOther;
+        if (id === currentActivityId) {
+          lineStyle = lineLayerStyleCurrent
+        } else if (id === selectedActivityId) {
+          lineStyle = lineLayerStyleSelected
+        }
         shapes.push(
           <Mapbox.ShapeSource id={`pathShape${id}`} key={key} shape={pathShape}>
             <Mapbox.LineLayer
               id={`path${id}`}
               key={`path${id}`}
-              style={id === currentActivityId ? lineLayerStyleCurrent : lineLayerStyleDefault}
+              style={lineStyle}
             />
           </Mapbox.ShapeSource>
         )

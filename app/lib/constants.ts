@@ -236,7 +236,8 @@ const colors = {
   paths: {
     transparent: 'transparent',
     current: withOpacity(colorThemes.now, 0.75),
-    default: withOpacity(namedColors.blue, 0.75),
+    other: withOpacity(namedColors.gray, 0.5),
+    selected: withOpacity(namedColors.blue, 0.75),
   },
   pulsars: {
     userLocation: withOpacity(colorThemes.now, 1),

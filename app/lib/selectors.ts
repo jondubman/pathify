@@ -528,6 +528,7 @@ export interface PathInfo {
 const getScrollTimeFloor = (state: AppState) => utils.floorTime(state.options.scrollTime);
 const getTimelineNow = (state: AppState) => state.flags.timelineNow;
 const getTrackingActivity = (state: AppState) => state.flags.trackingActivity;
+// This is to populate the ActivityDetails.
 // PathInfo here means info derived from a Path that includes scrollTime as a timepoint - basically, stats right then.
 // getScrollTimeFloor helps to minimize redundant recalculations, as the clock ticks many times per second in
 // timelineNow mode. Path timestamps are rounded down for comparison against getScrollTimeFloor.
