@@ -11,10 +11,10 @@ import {
 
 export interface ActivityTimespansStateProps {
   allActivities: ActivityDataExtended[];
-  activityColorOpacity: number;
   colorizeActivites: boolean;
   currentActivityId: string;
   selectedActivityId: string;
+  timelineSpanColorOpacity: number;
   visibleActivities: ActivityDataExtended[];
 }
 
@@ -25,10 +25,10 @@ export type ActivityTimespansProps = ActivityTimespansStateProps & ActivityTimes
 
 const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
   const {
-    activityColorOpacity,
     currentActivityId,
     scrollTime,
     selectedActivityId,
+    timelineSpanColorOpacity,
   } = state.options;
   const allActivities = state.cache.activities;
   // Filter out any ActivityTimespans that are completely out of visible range on the timeline, as an optimization.
@@ -39,10 +39,10 @@ const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
   ))
   return {
     allActivities,
-    activityColorOpacity,
     colorizeActivites: state.flags.colorizeActivities,
     currentActivityId: currentActivityId || '',
     selectedActivityId: selectedActivityId || '',
+    timelineSpanColorOpacity,
     visibleActivities,
   }
 }

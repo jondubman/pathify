@@ -60,6 +60,7 @@ export const activityIndex = (state: AppState, activityId: string): number | und
   return (index < 0) ? undefined : index;
 }
 
+// This version does not require all of state, only the cached activities themselves.
 export const activityListIndex = (activities: ActivityDataExtended[], activityId: string): number | undefined => {
   const index = activities.findIndex((activity: ActivityDataExtended) => (
     activity.id === activityId
@@ -68,8 +69,9 @@ export const activityListIndex = (activities: ActivityDataExtended[], activityId
 }
 
 export const activityColorForSelectedActivity = (state: AppState) => {
+  const { colorizeActivities } = state.flags;
   const { selectedActivityId } = state.options;
-  if (selectedActivityId) {
+  if (colorizeActivities && selectedActivityId) {
     const index = activityListIndex(state.cache.activities, selectedActivityId);
     if (index !== undefined) {
       return activityColorForIndex(index);
@@ -78,12 +80,13 @@ export const activityColorForSelectedActivity = (state: AppState) => {
   return constants.colorThemes.past; // default
 }
 
-// Note this may return -1, which means, no cache hit for this selectedActivityId. Note 0 is a valid index.
-export const selectedActivityIndex = (state: AppState) => (
-  listedActivities(state).findIndex((activity: ActivityDataExtended) => (
+// Note this may return undefined, which means, no cache hit for this selectedActivityId. Note 0 is a valid index.
+export const selectedActivityIndex = (state: AppState) => {
+  const index = listedActivities(state).findIndex((activity: ActivityDataExtended) => (
     activity.id === state.options.selectedActivityId
   ))
-)
+  return (index < 0) ? undefined : index;
+}
 
 // This returns a string for display in the bubble above the TopMenu.
 export const activityIndexBubbleText = (state: AppState): string => {
@@ -92,8 +95,8 @@ export const activityIndexBubbleText = (state: AppState): string => {
   }
   const list = listedActivities(state);
   let s = '';
-  if (selectedActivityIndex(state) > -1) {
-    s = `${selectedActivityIndex(state) + 1}/${list.length}` // (selectedActivityIndex / count)
+  if (selectedActivityIndex(state) !== undefined) {
+    s = `${selectedActivityIndex(state)! + 1}/${list.length}` // (selectedActivityIndex / count)
   } else {
     s = `${list.length}` // if no selected activity, just use the count
   }
@@ -269,6 +272,7 @@ export const menuOpen = (state: AppState): boolean => (
   state.flags.helpOpen || state.flags.settingsOpen || state.flags.startMenuOpen || state.flags.topMenuOpen
 )
 
+// nextActivity, given a timepoint
 export const nextActivity = (state: AppState, t: Timepoint): (ActivityDataExtended | null) => {
   const { activities } = state.cache;
   const length = activities.length;
@@ -291,6 +295,7 @@ export const nextActivity = (state: AppState, t: Timepoint): (ActivityDataExtend
   return null;
 }
 
+// previousActivity, given a timepoint
 export const previousActivity = (state: AppState, t: Timepoint): (ActivityDataExtended | null) => {
   const { activities } = state.cache;
   const length = activities.length;
@@ -411,8 +416,15 @@ export const timelineZoomValue = (visibleTime: number): number => {
 // flavorText goes in RefTime, left of center just under the clock, giving context to scrollTime.
 export const flavorText = (state: AppState): string[] => {
   try {
-    const { timelineNow, trackingActivity } = state.flags;
-    const { currentActivityId, scrollTime, selectedActivityId } = state.options;
+    const {
+      timelineNow,
+      trackingActivity,
+    } = state.flags;
+    const {
+      currentActivityId,
+      scrollTime,
+      selectedActivityId,
+    } = state.options;
     const ago = utils.now() - scrollTime;
     // Check scrollTime in addition to timelineNow to cover scrolling timeline into the future zone.
     if (timelineNow || scrollTime >= utils.now() - constants.timing.timelineCloseToNow) {

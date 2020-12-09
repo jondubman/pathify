@@ -126,18 +126,29 @@ const clockHeight = 70;
 
 const colors = {
   activityColors: [ // opacity applied separately
-    // namedColors.maroon, // too close to fuschia
-    // namedColors.purple, // too close to fuschia
-    // namedColors.azure, // too close to the blue selection color
-    // namedColors.aqua, // too close to the blue selection color
-    // namedColors.darkLimeGreen, // too close to the current activity color
-    namedColors.teal,
-    colorThemes.past,
-    namedColors.lighterBlue,
-    namedColors.niceRed,
-    namedColors.orange,
-    namedColors.darkerYellow,
-    namedColors.fuschia,
+    // namedColors.teal,
+    // colorThemes.past,
+    // namedColors.lighterBlue,
+    // namedColors.niceRed,
+    // namedColors.darkerYellow,
+
+    // https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=0074d9&primary.color=EF5350
+    '#c62828', // red
+    '#ec407a', // pink
+    '#f012be', // namedColors.fuschia,
+    '#ab47bc', // purple
+    '#7e57c2', // deep purple
+    '#5c6bc0', // indigo
+    '#42a5f5', // blue
+    '#29b6f6', // light blue
+    '#26c6da', // cyan
+    '#26a69a', // teal
+    // '#81c784', // green
+    '#B1D470', // light green
+    '#D4E065', // lime
+    '#ffee58', // yellow
+    '#ffca28', // amber
+    '#ef6c00', // orange
   ],
   activityDetails: {
     backgroundCurrentNow: withOpacity(colorThemes.now, 0.20),
@@ -155,7 +166,6 @@ const colors = {
     centerLine: withOpacity(namedColors.white, 0.35),
     centerLineBright: withOpacity(namedColors.white, 0.65),
     centerLineCurrent: withOpacity(colorThemes.now, 0.75),
-    centerLineSelected: withOpacity(colorThemes.past, 0.75),
     current: {
       background: withOpacity(colorThemes.now, 0.3),
       border: withOpacity(colorThemes.now, 1),
@@ -553,6 +563,7 @@ const constants = {
                                 // with legitimate negative elevation like Death Valley and the Salton Sink
     metersAccuracyRequired: 40, // Locations with accuracy less than this are excluded from the Path
     width: 8, // visual width of the paths on the map
+    widthSecondary: 5, // when de-emphasized, like in showSequentialPaths mode
   },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden

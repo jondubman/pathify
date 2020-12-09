@@ -107,6 +107,7 @@ export const initialAppState = {
     showGrabBar: false, // generally true, enabled on startup
     showPathsOnMap: true, // generally true
     showPastLocation: true, // as a Pulsar on the map
+    showSequentialPaths: true, // show paths prior and subsequent to currently selected path, up to maxDisplayPaths
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
@@ -126,14 +127,14 @@ export const initialAppState = {
   mapZoomInitial: null as number | null, // once set, never changes
   // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
   options: { // Like the flags, these are not necessarily user-configurable.
-    activityColorOpacity: 0.25, // for colorizing activities, paths and timeline spans, works with activityColors
+    activityColorOpacity: 0.25, // for colorizing activities and timeline spans, works with activityColors
     activityListFilter: { // applied if flags.filterActivityList
       excludeOutOfBounds: true,
       includeAll: false,
       includeCurrent: true,
       includeSelected: true,
       strictBoundsCheck: true,
-  } as ActivityFilter,
+    } as ActivityFilter,
     appBuild: '0', // set on startup in App component
     appVersion: 0, // set on startup in App component
     appState: AppStateChange.STARTUP as AppStateChange,
@@ -149,14 +150,16 @@ export const initialAppState = {
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
-    maxDisplayPaths: 10, // for performance reasons TODO this feature still in development
+    maxDisplayPaths: 12, // not including current, when showSequentialPaths is enabled
     nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
     nowTimeRounded: now, // updated on timerTick, minus the fractions of a second
+    pathColorOpacity: 0.5, // for colorizing paths, works with activityColors
     pulsars: {} as OptionalPulsars, // pulsing colored dots to indicate location on the map
     pausedTime: now, // timepoint where timeline was last paused
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
     startupTime: now, // not persisted, never changed once set
+    timelineSpanColorOpacity: 0.5,
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)

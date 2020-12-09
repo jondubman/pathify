@@ -29,16 +29,18 @@ class ActivityTimespans extends React.Component<ActivityTimespansExtendedProps> 
     if (activity.id === this.props.currentActivityId) {
       return constants.colors.timeline.currentActivity;
     }
-    const { colorizeActivites } = this.props;
+    const {
+      colorizeActivites,
+      timelineSpanColorOpacity,
+    } = this.props;
     if (!colorizeActivites && activity.id === this.props.selectedActivityId) {
       return constants.colors.timeline.selectedActivity;
     }
     const brightness = 2; // 1 for no change, or anything <1, or anything >1
-    const opacity = 1 - (1 - this.props.activityColorOpacity) / brightness; // brighten it up
     return (!colorizeActivites || listIndex === undefined) ?
       constants.colors.timeline.timespans[TimespanKind.ACTIVITY] // default
       :
-      activityColorForIndex(listIndex, opacity);
+      activityColorForIndex(listIndex, timelineSpanColorOpacity);
   }
 
   render() {

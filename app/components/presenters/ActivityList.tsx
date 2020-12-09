@@ -73,9 +73,6 @@ const Styles = StyleSheet.create({
   centerLineCurrent: {
     backgroundColor: colors.centerLineCurrent,
   },
-  centerLineSelected:{
-    backgroundColor: colors.centerLineSelected,
-  },
   itemView: {
     borderRadius,
     overflow: 'hidden',
@@ -289,12 +286,14 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       currentActivityId,
       labelsEnabled,
       list,
+      selectedActivityColor,
       selectedActivityId,
       timelineNow,
       top,
       trackingActivity,
       visible,
     } = this.props;
+
     const { scrolledBetweenActivities } = this.state;
     const selectedIsCurrent = (selectedActivityId === currentActivityId);
     const centerLineLeft = centerline() - centerLineWidth / 2;
@@ -327,7 +326,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
               pointerEvents="none"
               style={[
                 centerLineBase,
-                selectedIsCurrent ? Styles.centerLineCurrent : Styles.centerLineSelected,
+                selectedIsCurrent ? Styles.centerLineCurrent : { backgroundColor: selectedActivityColor },
               ]}
             />
             <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />

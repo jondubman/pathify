@@ -14,6 +14,7 @@ import {
   ActivityDataExtended,
 } from 'lib/activities';
 import {
+  activityColorForSelectedActivity,
   dynamicTopBelowButtons,
   shouldShowActivityList,
 } from 'lib/selectors';
@@ -31,6 +32,7 @@ interface ActivityListStateProps {
   labelsEnabled: boolean;
   list: ActivityDataExtended[];
   refreshCount: number;
+  selectedActivityColor: string;
   selectedActivityId: string | null;
   timelineNow: boolean;
   trackingActivity: boolean;
@@ -67,6 +69,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     labelsEnabled,
     list: listedActivities(state),
     refreshCount: state.cache.refreshCount,
+    selectedActivityColor: activityColorForSelectedActivity(state),
     selectedActivityId,
     timelineNow,
     trackingActivity,

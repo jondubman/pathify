@@ -8,7 +8,7 @@ import React, {
 import Mapbox from '@react-native-mapbox-gl/maps';
 
 import { PathsProps } from 'containers/PathsContainer';
-import constants from 'lib/constants';
+import constants, { withOpacity } from 'lib/constants';
 import { LonLat } from 'lib/locations';
 import {
   activityColorForIndex,
@@ -21,7 +21,6 @@ const lineLayerStyleBase = {
   // lineDasharray: [1, 1],
   // lineJoin: 'round',
   lineWidth: constants.paths.width,
-  lineOpacity: 1,
 }
 
 const lineLayerStyleCurrent = {
@@ -31,7 +30,8 @@ const lineLayerStyleCurrent = {
 
 const lineLayerStyleOther = {
   ...lineLayerStyleBase,
-  lineColor: constants.colors.paths.other,
+  lineColor: constants.colors.paths.other, // may be overridden
+  lineWidth: constants.paths.widthSecondary,
 }
 
 const lineLayerStyleSelected = {
@@ -46,8 +46,10 @@ class Paths extends PureComponent<PathsProps> {
       allActivities,
       colorizeActivities,
       currentActivityId,
+      pathColorOpacity,
       paths,
       selectedActivityId,
+      sequentialPathStartIndex,
     } = this.props;
     const shapes = [] as JSX.Element[]; // accumulates Mapbox.ShapeSource components
 
@@ -80,24 +82,28 @@ class Paths extends PureComponent<PathsProps> {
             coordinates,
           },
         }
-        const key = `pathShape${id}-${lats.length}`;
-        let lineStyle = lineLayerStyleOther;
+        const key = `pathShape-${id}-${lats.length}-${sequentialPathStartIndex}`;
+        let lineStyle = {...lineLayerStyleOther};
         if (id === currentActivityId) {
-          lineStyle = lineLayerStyleCurrent
+          lineStyle = {...lineLayerStyleCurrent};
         } else if (id === selectedActivityId) {
-          lineStyle = lineLayerStyleSelected
+          lineStyle = {...lineLayerStyleSelected};
         }
         if (colorizeActivities && id !== currentActivityId) {
           const activityIndex = activityListIndex(allActivities, id);
           if (activityIndex !== undefined) {
-            lineStyle.lineColor = activityColorForIndex(activityIndex); // override
+            let color = withOpacity(activityColorForIndex(activityIndex), pathColorOpacity);
+            if (id === selectedActivityId) {
+              color = withOpacity(color, 1);
+            }
+            lineStyle.lineColor = color;  // override
           }
         }
         shapes.push(
           <Mapbox.ShapeSource id={`pathShape${id}`} key={key} shape={pathShape}>
             <Mapbox.LineLayer
               id={`path${id}`}
-              key={`path${id}`}
+              key={`path${id}${sequentialPathStartIndex}`}
               style={lineStyle}
             />
           </Mapbox.ShapeSource>

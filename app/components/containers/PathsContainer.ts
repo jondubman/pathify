@@ -5,8 +5,12 @@ import {
 } from 'lib/activities';
 import database from 'lib/database';
 import {
+  activityIndex,
   listedActivities,
-  selectedActivityPath
+  nextActivity,
+  previousActivity,
+  selectedActivityIndex,
+  selectedActivityPath,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Paths from 'presenters/Paths';
@@ -16,8 +20,10 @@ interface PathsStateProps {
   allActivities: ActivityDataExtended[];
   colorizeActivities: boolean;
   currentActivityId: string | null;
+  pathColorOpacity: number;
   paths: Path[]; // These will be rendered from back to front.
   selectedActivityId: string | null;
+  sequentialPathStartIndex: number;
 }
 
 interface PathsDispatchProps {
@@ -26,29 +32,67 @@ interface PathsDispatchProps {
 export type PathsProps = PathsStateProps & PathsDispatchProps;
 
 const mapStateToProps = (state: AppState): PathsStateProps => {
-  const { currentActivityId, selectedActivityId } = state.options;
+  const { currentActivityId, scrollTime, selectedActivityId } = state.options;
 
   // TODO reselector
   const paths: Path[] = [];
+  let sequentialPathStartIndex = -1;
   if (state.flags.showPathsOnMap) {
-    if (state.flags.filterActivityList) {
-      for (const activity of listedActivities(state)) {
-        const { id } = activity;
-        if (id !== currentActivityId && id !== selectedActivityId) {
-          const path = database.pathById(id);
-          if (path) {
-            paths.push(path);
-            if (paths.length > state.options.maxDisplayPaths) {
-              break; // TODO
+    if (state.flags.showSequentialPaths) {
+      const activities = listedActivities(state);
+      let index = selectedActivityIndex(state);
+      if (index === undefined) {
+        const prev = previousActivity(state, scrollTime);
+        if (prev) {
+          index = activityIndex(state, prev.id);
+        }
+        if (index === undefined) { // maybe before first activity?
+          const next = nextActivity(state, scrollTime);
+          if (next) {
+            index = activityIndex(state, next.id);
+          }
+        }
+      }
+      if (index !== undefined) {
+        sequentialPathStartIndex = index;
+        const numPrevious = 3; // TODO
+        const numSubsequent = 3; // TODO
+        for (let i = index - numPrevious; i < index + numSubsequent; i++) {
+          if (i < 0 || i >= activities.length) {
+            continue;
+          }
+          const activity = activities[i];
+          if (activity && activity.tEnd) { // avoid currentActivity
+            const path = database.pathById(activity.id);
+            if (path) {
+              paths.push(path);
+              if (paths.length >= state.options.maxDisplayPaths) {
+                break; // TODO
+              }
             }
           }
         }
       }
-    }
-    // using memoized selector
-    const selectedPath = selectedActivityPath(state);
-    if (selectedPath) {
-      paths.push(selectedPath);
+    } else { // don't showSequentialPaths
+      if (state.flags.filterActivityList) { // TODO dev feature only for now
+        for (const activity of listedActivities(state)) {
+          const { id } = activity;
+          if (id !== currentActivityId && id !== selectedActivityId) {
+            const path = database.pathById(id);
+            if (path) {
+              paths.push(path);
+              if (paths.length >= state.options.maxDisplayPaths) {
+                break; // TODO
+              }
+            }
+          }
+        }
+      }
+      // using memoized selector
+      const selectedPath = selectedActivityPath(state);
+      if (selectedPath) {
+        paths.push(selectedPath);
+      }
     }
     // currentActivity last, therefore on top:
     if (currentActivityId) {
@@ -62,8 +106,10 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
     allActivities: state.cache.activities,
     colorizeActivities: state.flags.colorizeActivities,
     currentActivityId,
+    pathColorOpacity: state.options.pathColorOpacity,
     paths,
     selectedActivityId,
+    sequentialPathStartIndex,
   }
 }
 
