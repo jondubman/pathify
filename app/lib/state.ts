@@ -17,16 +17,11 @@ import utils from 'lib/utils';
 
 // Note events and persistent settings are external to this (in Realm) - see database module
 
+// ActivityDataExtended are slightly enhanced versions of a canonical Activity in the Realm DB. Cached for performance.
 export interface CacheInfo {
   activities: ActivityDataExtended[];
   populated: boolean;
   refreshCount: number;
-}
-
-export interface MapRegionUpdate {
-  bounds: LonLat[];
-  heading: number;
-  zoomLevel: number;
 }
 
 // This is the default, initial Redux state before any saved Settings are restored from Realm.
@@ -52,7 +47,8 @@ export const noCurrentLocation = {
 // TODO This and state.userLocation are largely redundant, but combining them wouldn't buy much.
 export type Current = typeof noCurrentLocation; // This is sort of a backwards way of forming a type.
 
-const devMode = __DEV__ ? true : false; // (debug : release) TODO
+// Note devMode is important. This is always false for a production release, which prevents all remote debugging.
+const devMode = __DEV__ ? true : false; // (debug : release)
 
 export const initialAppState = {
   cache: {
@@ -172,13 +168,19 @@ export const initialAppState = {
 }
 
 // Canonical interface for AppState, the contents of the Redux store
+
+// TODO for performance enhancement, consider splitting the store to better separate the infrquently updated from that
+// which is constantly being updated in real time.
+
 type InitialAppState = typeof initialAppState;
 export interface AppState extends InitialAppState {
   timerTickInterval?: number; // returned by setInterval with appIntervalMsec
-  userLocation?: LocationEvent; // TODO This is now redundant; replace this with equivalent info from state.current.
+  userLocation?: LocationEvent; // TODO now redundant; could replace this with equivalent info from state.current
 }
 
-// TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema.
+// TODO keep in sync with database.SettingsSchema! Each of these must be included in the schema (but not the reverse.)
+// Various of the remaining options are essentially constants by another name (for tweaking during development),
+// and don't need to be persisted because they don't need to dynamically change in production.
 
 export const persistedFlags = [
   'followingPath',

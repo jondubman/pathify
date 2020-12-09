@@ -13,6 +13,12 @@ import Mapbox, {
   RegionPayload
 } from '@react-native-mapbox-gl/maps';
 
+export interface MapRegionUpdate {
+  bounds: LonLat[];
+  heading: number;
+  zoomLevel: number;
+}
+
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 

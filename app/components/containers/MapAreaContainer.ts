@@ -10,10 +10,9 @@ import {
 } from 'lib/selectors';
 import {
   AppState,
-  MapRegionUpdate,
 } from 'lib/state';
 import utils from 'lib/utils';
-import MapArea from 'presenters/MapArea';
+import MapArea, { MapRegionUpdate } from 'presenters/MapArea';
 
 interface MapAreaStateProps {
   height: number;

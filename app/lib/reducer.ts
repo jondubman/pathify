@@ -10,8 +10,8 @@ import {
   CacheInfo,
   Current,
   initialAppState,
-  MapRegionUpdate,
 } from 'lib/state';
+import { MapRegionUpdate } from 'presenters/MapArea';
 import log from 'shared/log';
 
 // This is the reducer: prior state and action determine the revised state. Note the state coming in is immutable.

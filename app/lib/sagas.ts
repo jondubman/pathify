@@ -141,13 +141,12 @@ import {
   AppState,
   CacheInfo,
   Current,
-  MapRegionUpdate,
   persistedFlags,
   persistedOptions,
 } from 'lib/state';
 import store from 'lib/store';
 import utils from 'lib/utils';
-import { MapUtils } from 'presenters/MapArea';
+import { MapRegionUpdate, MapUtils } from 'presenters/MapArea';
 import {
   AppQueryParams,
   AppQueryResponse,
