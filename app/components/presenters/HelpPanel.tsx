@@ -113,7 +113,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
   }
 
   render() {
-    const colors = constants.colors.switch;
+    const colors = constants.colors.labelSwitch;
     const { props } = this;
     const staticText = props.version;
     return (

@@ -99,7 +99,7 @@ export const initialAppState = {
     remoteDebug: false, // if true, app calls in to Pathify server, takes requests and queries; false for public release
     requestedLocationPermission: false, // has it been requested through react-native-background-geolocation
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
-    settingsOpen: false, // manually opened by user
+    settingsOpen: true, // manually opened by user
     startMenuOpen: false, // if manually opened by user
     showActivityInfo: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false

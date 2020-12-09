@@ -7,6 +7,7 @@ import React, {
 
 import {
   StyleSheet,
+  Switch,
   Text,
   TouchableHighlight,
   View,
@@ -92,19 +93,17 @@ const Styles = StyleSheet.create({
     top: constants.settingsPanel.subpanelTopOffset,
   },
   switch: {
-    alignSelf: 'center',
-    marginTop: 10,
   },
   switchContainer: {
     height: constants.buttonSize + constants.buttonOffset,
-    left: switchLeft,
-    position: 'absolute',
-    top: topOffset - constants.buttonOffset / 2,
+  },
+  switchLabel: {
+    paddingTop: 8, // align vertically with center of switch
   },
   switchView: {
-    alignSelf: 'stretch',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    marginRight: 25,
   },
   text: {
     color: constants.fonts.colors.default,
@@ -140,6 +139,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
   }
 
   render() {
+    const switchColors = constants.colors.switches;
     const { props } = this;
     return (
       <View style={Styles.view}>
@@ -147,6 +147,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
           <View style={Styles.view}>
             <View style={Styles.panel}>
               <View style={Styles.subpanels}>
+
                 <View style={Styles.subpanel}>
                   <View style={Styles.subpanelContents}>
                     <Text style={Styles.choiceLabelText}>
@@ -168,6 +169,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                     </View>
                   </View>
                 </View>
+
                 <View style={Styles.subpanel}>
                   <View style={Styles.subpanelContents}>
                     <Text style={Styles.choiceLabelText}>
@@ -185,6 +187,45 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                     </View>
                   </View>
                 </View>
+
+                <View style={Styles.switchContainer}>
+                  <View style={Styles.switchView}>
+                    <View style={Styles.switchLabel}>
+                      <Text style={Styles.choiceLabelText}>
+                        COLORIZE ACTIVITIES
+                      </Text>
+                    </View>
+                    <View style={Styles.switch}>
+                      <Switch
+                        ios_backgroundColor={switchColors.background}
+                        onValueChange={props.onSetColorizeActivites}
+                        thumbColor={switchColors.thumb}
+                        trackColor={switchColors.track}
+                        value={props.colorizeActivities}
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                <View style={Styles.switchContainer}>
+                  <View style={Styles.switchView}>
+                    <View style={Styles.switchLabel}>
+                      <Text style={Styles.choiceLabelText}>
+                        SHOW SEQUENTIAL PATHS
+                      </Text>
+                    </View>
+                    <View style={Styles.switch}>
+                      <Switch
+                        ios_backgroundColor={switchColors.background}
+                        onValueChange={props.onSetShowSequentialPaths}
+                        thumbColor={switchColors.thumb}
+                        trackColor={switchColors.track}
+                        value={props.showSequentialPaths}
+                      />
+                    </View>
+                  </View>
+                </View>
+
               </View>
             </View>
           </View>

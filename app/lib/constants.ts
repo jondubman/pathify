@@ -126,12 +126,6 @@ const clockHeight = 70;
 
 const colors = {
   activityColors: [ // opacity applied separately
-    // namedColors.teal,
-    // colorThemes.past,
-    // namedColors.lighterBlue,
-    // namedColors.niceRed,
-    // namedColors.darkerYellow,
-
     // https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=0074d9&primary.color=EF5350
     '#c62828', // red
     '#ec407a', // pink
@@ -143,10 +137,8 @@ const colors = {
     '#29b6f6', // light blue
     '#26c6da', // cyan
     '#26a69a', // teal
-    // '#81c784', // green
     '#B1D470', // light green
     '#D4E065', // lime
-    '#ffee58', // yellow
     '#ffca28', // amber
     '#ef6c00', // orange
   ],
@@ -243,6 +235,14 @@ const colors = {
       namedColors.fuschia,
     ],
   },
+  labelSwitch: {
+    background: withOpacity(namedColors.darkGray, 0.5),
+    thumb: withOpacity(namedColors.white, 1),
+    track: {
+      false: withOpacity(namedColors.darkGray, 0.5),
+      true: withOpacity(namedColors.yellow, 0.25),
+    },
+  },
   links: {
     background: withOpacity(namedColors.aqua, 0),
     border: withOpacity(namedColors.aqua, 0.5),
@@ -305,13 +305,13 @@ const colors = {
     menuItemUnderlay: withOpacity(namedColors.white, 0.5),
     panelBackground: withOpacity(namedColors.black, 1),
   },
-  switch: {
+  switches: {
     background: withOpacity(namedColors.darkGray, 0.5),
-    thumb: withOpacity(namedColors.green, 1),
+    thumb: withOpacity(namedColors.white, 1),
     track: {
-      false: withOpacity(namedColors.black, 1),
-      true: withOpacity(namedColors.blue, 0.75),
-    }
+      false: withOpacity(namedColors.darkGray, 0.5),
+      true: withOpacity(namedColors.silver, 0.5),
+    },
   },
   timeline: {
     axis: namedColors.darkGray,
@@ -585,7 +585,7 @@ const constants = {
   settingsPanel: {
     height: panelHeight,
     leftOffset: buttonOffset,
-    subpanelTopOffset: buttonSize + buttonOffset + labelHeightAllowance + 10,
+    subpanelTopOffset: buttonSize + buttonOffset + labelHeightAllowance,
     topOffset: safeAreaTop,
   },
   snapIndex: {
