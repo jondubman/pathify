@@ -10,6 +10,10 @@ import Mapbox from '@react-native-mapbox-gl/maps';
 import { PathsProps } from 'containers/PathsContainer';
 import constants from 'lib/constants';
 import { LonLat } from 'lib/locations';
+import {
+  activityColorForIndex,
+  activityListIndex,
+} from 'lib/selectors';
 import log from 'shared/log';
 
 const lineLayerStyleBase = {
@@ -38,7 +42,13 @@ const lineLayerStyleSelected = {
 class Paths extends PureComponent<PathsProps> {
 
   render() {
-    const { currentActivityId, paths, selectedActivityId } = this.props;
+    const {
+      allActivities,
+      colorizeActivities,
+      currentActivityId,
+      paths,
+      selectedActivityId,
+    } = this.props;
     const shapes = [] as JSX.Element[]; // accumulates Mapbox.ShapeSource components
 
     for (let a = 0; a < paths.length; a++) {
@@ -76,6 +86,12 @@ class Paths extends PureComponent<PathsProps> {
           lineStyle = lineLayerStyleCurrent
         } else if (id === selectedActivityId) {
           lineStyle = lineLayerStyleSelected
+        }
+        if (colorizeActivities && id !== currentActivityId) {
+          const activityIndex = activityListIndex(allActivities, id);
+          if (activityIndex !== undefined) {
+            lineStyle.lineColor = activityColorForIndex(activityIndex); // override
+          }
         }
         shapes.push(
           <Mapbox.ShapeSource id={`pathShape${id}`} key={key} shape={pathShape}>

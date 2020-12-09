@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
 import {
-  activityIndex,
+  activityColorForSelectedActivity,
+  activityIndexBubbleText,
   dynamicAreaTop,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -16,9 +17,11 @@ import log from 'shared/log';
 interface TopButtonStateProps {
   activityCount: string;
   activityId: string;
+  colorizeActivities: boolean;
   current: boolean;
   enabled: boolean;
   selected: boolean;
+  selectedActivityColor: string;
   topOffset: number;
   visible: boolean;
 }
@@ -31,6 +34,7 @@ export type TopButtonProps = TopButtonStateProps & TopButtonDispatchProps;
 
 const mapStateToProps = (state: AppState): TopButtonStateProps => {
   const {
+    colorizeActivities,
     helpOpen,
     settingsOpen,
     topMenuOpen,
@@ -40,11 +44,13 @@ const mapStateToProps = (state: AppState): TopButtonStateProps => {
     selectedActivityId,
   } = state.options;
   return {
-    activityCount: activityIndex(state),
+    activityCount: activityIndexBubbleText(state),
     activityId: selectedActivityId || '',
+    colorizeActivities,
     current: !!(currentActivityId && currentActivityId === selectedActivityId),
     enabled: topMenuOpen,
     selected: state.options.selectedActivityId !== null,
+    selectedActivityColor: activityColorForSelectedActivity(state),
     topOffset: dynamicAreaTop(),
     visible: !(settingsOpen || helpOpen),
   }

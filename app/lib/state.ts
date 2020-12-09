@@ -50,7 +50,7 @@ export const noCurrentLocation = {
 // If trackingActivity, much of the same should end up in the Activity's Path.
 // TODO persist this across app invocations so ActivityDetails calculates current info (particularly mode) correctly.
 // TODO This and state.userLocation are largely redundant, but combining them wouldn't buy much.
-export type Current = typeof noCurrentLocation;
+export type Current = typeof noCurrentLocation; // This is sort of a backwards way of forming a type.
 
 const devMode = __DEV__ ? true : false; // (debug : release) TODO
 
@@ -70,10 +70,11 @@ export const initialAppState = {
     animateMapWhenFollowingPath: true, // animation pans more smoothly
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
+    colorizeActivities: true, // auto-color activities based on their index in the ActivityList
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
     devMode, // enabled if __DEV__ or develop ENV variable set to true (if launched using Pathify Develop XCode scheme)
-    filterActivityList: false, // if true, state.options.activityListFilter is applied
+    filterActivityList: false, // if true, state.options.activityListFilter is applied (dev only / experimental for now)
     followingPath: false, // is map following prior locations of user on an activity path?
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
@@ -125,6 +126,7 @@ export const initialAppState = {
   mapZoomInitial: null as number | null, // once set, never changes
   // options is used broadly here to mean non-boolean state you can access via setAppOption, appQuery options, etc.
   options: { // Like the flags, these are not necessarily user-configurable.
+    activityColorOpacity: 0.25, // for colorizing activities, paths and timeline spans, works with activityColors
     activityListFilter: { // applied if flags.filterActivityList
       excludeOutOfBounds: true,
       includeAll: false,

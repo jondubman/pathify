@@ -12,6 +12,7 @@ import {
 } from 'lib/activities';
 import constants, {
   MapStyle,
+  withOpacity,
 } from 'lib/constants';
 import database from 'lib/database';
 import {
@@ -42,6 +43,41 @@ export const activityIncludesMark = (activityId: string, mark: MarkEvent): boole
   return !!(mark.activityId && activity && mark.activityId === activity.id)
 }
 
+// For now, the defult activity color is based on its index in the ActivityList, with adjacent colors sufficiently
+// distinct to avoid confusion. Note this does not have special coloring for selected, current, etc. - that's applied
+// elsewhere.
+export const activityColorForIndex = (index: number, opacity: number = 1) => {
+  const { activityColors } = constants.colors;
+  const baseColor = activityColors[index % activityColors.length];
+  return withOpacity(baseColor, opacity);
+} 
+
+// Return index of activityId within listedActivities, or undefined.
+export const activityIndex = (state: AppState, activityId: string): number | undefined => {
+  const index = listedActivities(state).findIndex((activity: ActivityDataExtended) => (
+    activity.id === activityId
+  ))
+  return (index < 0) ? undefined : index;
+}
+
+export const activityListIndex = (activities: ActivityDataExtended[], activityId: string): number | undefined => {
+  const index = activities.findIndex((activity: ActivityDataExtended) => (
+    activity.id === activityId
+  ));
+  return (index < 0) ? undefined : index;
+}
+
+export const activityColorForSelectedActivity = (state: AppState) => {
+  const { selectedActivityId } = state.options;
+  if (selectedActivityId) {
+    const index = activityListIndex(state.cache.activities, selectedActivityId);
+    if (index !== undefined) {
+      return activityColorForIndex(index);
+    }
+  }
+  return constants.colorThemes.past; // default
+}
+
 // Note this may return -1, which means, no cache hit for this selectedActivityId. Note 0 is a valid index.
 export const selectedActivityIndex = (state: AppState) => (
   listedActivities(state).findIndex((activity: ActivityDataExtended) => (
@@ -50,7 +86,7 @@ export const selectedActivityIndex = (state: AppState) => (
 )
 
 // This returns a string for display in the bubble above the TopMenu.
-export const activityIndex = (state: AppState): string => {
+export const activityIndexBubbleText = (state: AppState): string => {
   if (!state.cache.activities || !state.cache.activities.length) {
     return '';
   }
@@ -62,7 +98,7 @@ export const activityIndex = (state: AppState): string => {
     s = `${list.length}` // if no selected activity, just use the count
   }
   if (state.flags.filterActivityList) {
-    s = `(${s})/${state.cache.activities.length}`;
+    s = `${s}/${state.cache.activities.length}`; // odd format with two slashes, but just for development for now
   }
   return s;
 }

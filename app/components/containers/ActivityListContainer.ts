@@ -25,6 +25,8 @@ import { listedActivities } from 'lib/selectors';
 import { Timepoint } from 'lib/timeseries';
 
 interface ActivityListStateProps {
+  activityColorOpacity: number;
+  colorizeActivities: boolean;
   currentActivityId: string | null;
   labelsEnabled: boolean;
   list: ActivityDataExtended[];
@@ -48,15 +50,19 @@ export type ActivityListProps = ActivityListStateProps & ActivityListDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   const {
+    colorizeActivities,
     labelsEnabled,
     timelineNow,
     trackingActivity,
   } = state.flags;
   const {
+    activityColorOpacity,
     currentActivityId,
     selectedActivityId,
   } = state.options;
   return {
+    activityColorOpacity,
+    colorizeActivities,
     currentActivityId,
     labelsEnabled,
     list: listedActivities(state),

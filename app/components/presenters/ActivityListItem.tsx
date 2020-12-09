@@ -1,14 +1,16 @@
 import * as React from 'react';
 
 import {
+  StyleProp,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
+  ViewStyle,
 } from 'react-native';
 
 import { ActivityDataExtended } from 'lib/activities';
-import constants from 'lib/constants';
+import constants, { withOpacity } from 'lib/constants';
 import {
   metersToMilesText,
   msecToTimeString,
@@ -16,9 +18,12 @@ import {
 
 interface ActivityListItemProps {
   activity: ActivityDataExtended;
+  activityColor: string;
+  colorizeActivities: boolean;
   labelsEnabled: boolean;
   onPress: () => void;
-  selected: boolean;
+  isCurrent: boolean;
+  isSelected: boolean;
 }
 
 const colors = constants.colors.activityList;
@@ -95,34 +100,51 @@ const Styles = StyleSheet.create({
 const ActivityListItem = (props: ActivityListItemProps) => {
   const {
     activity,
+    activityColor,
+    colorizeActivities,
+    isCurrent,
+    isSelected,
     labelsEnabled,
-    selected
   } = props;
-  const isCurrent = !activity.tEnd;
+  // const isCurrent = !activity.tEnd; // old way
   const { tLast } = activity;
   const time = (tLast && activity.tStart) ?
     msecToTimeString(Math.max(0, tLast - activity.tStart)) : '';
   const distance = (activity.odo && activity.odoStart) ?
     metersToMilesText(activity.odo - activity.odoStart, '') : '';
   const distanceLabel = ' mi';
-  const activityStyle = [
+  const pastActivityNotSelectedStyle = {
+    ...Styles.pastActivity,
+    backgroundColor: activityColor,
+  }
+  const activityStyle: StyleProp<ViewStyle> = [
     Styles.activity,
-    isCurrent ? Styles.currentActivity : (selected ? Styles.pastActivitySelected : Styles.pastActivity),
+    isCurrent ? Styles.currentActivity : (isSelected ? Styles.pastActivitySelected : pastActivityNotSelectedStyle),
   ]
-  const textStyle = [Styles.text, selected ? Styles.textSelected : null];
+  if (isSelected && !isCurrent && colorizeActivities) {
+    activityStyle.push({
+      borderColor: withOpacity(activityColor, 0.65), // boost opacity to this
+      borderWidth: constants.activityList.itemBorderWidthSelected,
+      backgroundColor: withOpacity(activityColor, 0.45), // boost opacity to this
+    });
+  }
+  const textStyle = [Styles.text, isSelected ? Styles.textSelected : null];
   const infoStyle = [textStyle, Styles.textEmphasize];
-  const activityDesciptor = selected ? (isCurrent ? 'CURRENT' : 'SELECTED')
-                                     : (isCurrent ? 'CURRENT' : 'TIMED');
+  const activityDesciptor = isSelected ? (isCurrent ? 'CURRENT' : 'SELECTED')
+                                       : (isCurrent ? 'CURRENT' : 'TIMED');
 
   const descriptorStyle = labelsEnabled ? [Styles.text, Styles.timeLabel, Styles.labelsEnabled, Styles.textEmphasize]
                                         : [Styles.faint, Styles.text, Styles.timeLabel];
 
+  const underlayColor = isCurrent ? colors.current.underlay : (
+    colorizeActivities ? constants.colors.byName.black : colors.past.underlay
+  )
   // Note onPress receives a GestureResponderEvent we are ignoring.
   return (
     <TouchableHighlight
       onPress={props.onPress}
       style={Styles.touchableActivity}
-      underlayColor={isCurrent ? colors.current.underlay : colors.past.underlay}
+      underlayColor={underlayColor}
     >
       <View style={activityStyle}>
         <View style={Styles.textLines}>

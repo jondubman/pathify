@@ -80,7 +80,11 @@ const zeroPrefix = (s: string) => (s.length ? (s.length === 1 ? '0' + s : s) : '
 const dec1ToHexFF = (dec: number) => zeroPrefix(Math.round(dec * 255).toString(16));
 
 // 0 <= opacity <= 1
-export const withOpacity = (color: string, opacity: number): string => (color + dec1ToHexFF(opacity));
+export const withOpacity = (color: string, opacity: number): string => (
+  color.slice(0, '#123456'.length) + dec1ToHexFF(opacity)
+)
+// undoes withOpacity
+export const withoutOpacity = (color: string): string => color.slice(0, '#123456'.length); // as in, 7
 
 // colorThemes is pretty simple right now; just colors that are reused
 const colorThemes = {
@@ -121,6 +125,20 @@ const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activi
 const clockHeight = 70;
 
 const colors = {
+  activityColors: [ // opacity applied separately
+    // namedColors.maroon, // too close to fuschia
+    // namedColors.purple, // too close to fuschia
+    // namedColors.azure, // too close to the blue selection color
+    // namedColors.aqua, // too close to the blue selection color
+    // namedColors.darkLimeGreen, // too close to the current activity color
+    namedColors.teal,
+    colorThemes.past,
+    namedColors.lighterBlue,
+    namedColors.niceRed,
+    namedColors.orange,
+    namedColors.darkerYellow,
+    namedColors.fuschia,
+  ],
   activityDetails: {
     backgroundCurrentNow: withOpacity(colorThemes.now, 0.20),
     backgroundCurrentSelected: withOpacity(colorThemes.nowSelected, 0.20),
@@ -367,6 +385,7 @@ const constants = {
     centerLineTop: -buttonOffset * 2,
     centerLineWidth: 2,
     height: initialTimelineHeight + scrollbarHeight + activityTopBottomBorderHeight, // list items match timeline height
+    itemBorderWidthSelected: 3,
     nowClockMarginLeft: activityListMargin,
     nowClockLabelBottom: 5,
     scrollbarHeight,
@@ -497,7 +516,7 @@ const constants = {
       ],
       heading: 0,
       opacity: 0.5,
-      style: 'Satellite', // e.g. None, Trails, Topo, Satellite. See mapStyles.name
+      style: 'Satellite', // e.g. None, Satellite, Topo, Trails, See mapStyles.name
       zoomStartActivity: 15,
     },
     fitBounds: {
@@ -510,9 +529,9 @@ const constants = {
   mapLogoHeight,
   mapStyles: [
     { name: 'None', opacity: 1, url: '' }, // see flags.allowMapStyleNone
-    { name: 'Trails', opacity: 1, url: 'mapbox://styles/jdubman/ckeeumup108ux19ry42q8wrbc' },
-    { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/ckefxdhc12b6819nsb2cwiqyt' },
     { name: 'Satellite', opacity: 1, url: 'mapbox://styles/jdubman/ckeeuptx719hg19oy8ane401t' },
+    { name: 'Topo', opacity: 1, url: 'mapbox://styles/jdubman/ckefxdhc12b6819nsb2cwiqyt' },
+    { name: 'Trails', opacity: 1, url: 'mapbox://styles/jdubman/ckeeumup108ux19ry42q8wrbc' },
   ] as MapStyle[],
   marks: {
     centerlineWidthDefault: 1.5,

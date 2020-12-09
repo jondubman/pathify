@@ -19,7 +19,10 @@ import LabelContainer from 'containers/LabelContainer';
 import NowClockContainer from 'containers/NowClockContainer';
 import { ActivityDataExtended } from 'lib/activities';
 import constants from 'lib/constants';
-import { centerline } from 'lib/selectors';
+import {
+  centerline,
+  activityColorForIndex,
+} from 'lib/selectors';
 import store from 'lib/store';
 import utils from 'lib/utils';
 import ActivityListItem from 'presenters/ActivityListItem';
@@ -334,7 +337,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           data={list}
           getItemLayout={getItemLayout}
           horizontal
-          initialNumToRender={list.length /* TODO does this help? *}
+          initialNumToRender={40}
           initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
           ListHeaderComponent={/* on far left of ActivityList */
             <View style={listHeaderStyle} />}
@@ -379,12 +382,18 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // TODO anonymous function here always constructs new function; use something like reselect to optimize.
   renderItem({ item, index, separators }) {
     const activity = item as ActivityDataExtended;
+    const { colorizeActivities } = this.props;
+    const activityColor = colorizeActivities ? activityColorForIndex(index, this.props.activityColorOpacity)
+                                              : colors.past.background;
     return (
       <View style={Styles.itemView}>
         <ActivityListItem
           activity={activity}
+          activityColor={activityColor}
+          colorizeActivities={colorizeActivities}
+          isCurrent={activity.id === this.props.currentActivityId}
+          isSelected={activity.id === this.props.selectedActivityId}
           labelsEnabled={this.props.labelsEnabled}
-          selected={activity.id === this.props.selectedActivityId}
           onPress={() => { this.props.onPressActivity(activity.id) }}
         />
       </View>

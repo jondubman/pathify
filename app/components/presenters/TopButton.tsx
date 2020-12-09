@@ -11,7 +11,7 @@ import {
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import constants from 'lib/constants';
+import constants, { withOpacity } from 'lib/constants';
 import { centerline } from 'lib/selectors';
 import LabelContainer from 'containers/LabelContainer';
 import { TopButtonProps } from 'containers/TopButtonContainer';
@@ -70,10 +70,19 @@ const Styles = StyleSheet.create({
   },
 })
 
-const backgroundColor = (props: TopButtonProps) => (props.selected ? (props.current ? colors.backgroundCurrentSelected :
-                                                                                      colors.backgroundSelected) :
-                                                                     colors.background)
-
+const backgroundColor = (props: TopButtonProps) => {
+  if (props.colorizeActivities) {
+      if (props.current && props.selected) {
+        return colors.backgroundCurrentSelected;
+      }
+      return withOpacity(props.selectedActivityColor, 0.75);
+  } else {
+    if (props.selected) {
+      return (props.current ? colors.backgroundCurrentSelected : colors.backgroundSelected);
+    }
+    return colors.background;
+  }
+}
 
 const TopButton = (props: TopButtonProps) => (props.visible ? (
   <Fragment>

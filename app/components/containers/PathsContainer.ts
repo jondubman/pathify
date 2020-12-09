@@ -1,5 +1,8 @@
 import { connect } from 'react-redux';
 
+import {
+  ActivityDataExtended,
+} from 'lib/activities';
 import database from 'lib/database';
 import {
   listedActivities,
@@ -10,6 +13,8 @@ import Paths from 'presenters/Paths';
 import { Path } from 'lib/paths';
 
 interface PathsStateProps {
+  allActivities: ActivityDataExtended[];
+  colorizeActivities: boolean;
   currentActivityId: string | null;
   paths: Path[]; // These will be rendered from back to front.
   selectedActivityId: string | null;
@@ -54,6 +59,8 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
     }
   }
   return {
+    allActivities: state.cache.activities,
+    colorizeActivities: state.flags.colorizeActivities,
     currentActivityId,
     paths,
     selectedActivityId,
