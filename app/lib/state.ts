@@ -85,7 +85,7 @@ export const initialAppState = {
     mapMoving: false, // is the map currently moving? (map events determine this)
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
-    mapTapped: false,
+    mapTapped: false, // tapping the map in full screen mode hides the current and past location markers
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     receiveActivityChangeEvents: true, // TODO
@@ -99,10 +99,11 @@ export const initialAppState = {
     startMenuOpen: false, // if manually opened by user
     showActivityInfo: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
+    showCurrentLocation: true, // should the map reveal the location if known; may still be hidden due to mapTapped
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
     showGrabBar: false, // generally true, enabled on startup
     showPathsOnMap: true, // generally true
-    showPastLocation: true, // as a Pulsar on the map
+    showPastLocation: true, // as a Pulsar on the map, if known, as a blue dot
     showSequentialPaths: true, // show paths prior and subsequent to currently selected path, up to maxDisplayPaths
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true

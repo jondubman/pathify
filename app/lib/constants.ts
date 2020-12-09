@@ -588,6 +588,9 @@ const constants = {
     subpanelTopOffset: buttonSize + buttonOffset + labelHeightAllowance,
     topOffset: safeAreaTop,
   },
+  sliders: {
+    borderRadius: 20,
+  },
   snapIndex: {
     topButtons: 1,
     activityList: 2,

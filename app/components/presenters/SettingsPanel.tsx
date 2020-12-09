@@ -27,7 +27,6 @@ const {
 } = constants.settingsPanel;
 
 const subpanelLeft = 10;
-const switchLeft = constants.buttonSize + constants.buttonOffset;
 
 const Styles = StyleSheet.create({
   choice: {
@@ -55,7 +54,7 @@ const Styles = StyleSheet.create({
   opacitySlider: {
     borderWidth: 1,
     borderColor: constants.colorThemes.settings,
-    borderRadius: 1,
+    borderRadius: constants.sliders.borderRadius,
     position: 'relative',
     top: 0,
     bottom: 0,
@@ -64,6 +63,7 @@ const Styles = StyleSheet.create({
   },
   opacitySliderView: {
     backgroundColor: colors.opacitySliderBackground,
+    borderRadius: constants.sliders.borderRadius,
     width: constants.panelWidth - subpanelLeft * 2 - 12,
   },
   panel: {
@@ -81,21 +81,20 @@ const Styles = StyleSheet.create({
   },
   subpanel: {
     alignSelf: 'flex-start',
-    display: 'flex',
     flexDirection: 'row',
     marginBottom: 10,
   },
   subpanelContents: {
-    flexDirection: 'column',
+    marginTop: 5,
   },
-  subpanels: {
+  subpanels: { // containing View
     left: subpanelLeft,
     top: constants.settingsPanel.subpanelTopOffset,
   },
   switch: {
   },
   switchContainer: {
-    height: constants.buttonSize + constants.buttonOffset,
+    height: 50,
   },
   switchLabel: {
     paddingTop: 8, // align vertically with center of switch
@@ -188,40 +187,44 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
                   </View>
                 </View>
 
-                <View style={Styles.switchContainer}>
-                  <View style={Styles.switchView}>
-                    <View style={Styles.switchLabel}>
-                      <Text style={Styles.choiceLabelText}>
-                        COLORIZE ACTIVITIES
-                      </Text>
-                    </View>
-                    <View style={Styles.switch}>
-                      <Switch
-                        ios_backgroundColor={switchColors.background}
-                        onValueChange={props.onSetColorizeActivites}
-                        thumbColor={switchColors.thumb}
-                        trackColor={switchColors.track}
-                        value={props.colorizeActivities}
-                      />
+                <View style={Styles.subpanelContents}>
+                  <View style={Styles.switchContainer}>
+                    <View style={Styles.switchView}>
+                      <View style={Styles.switchLabel}>
+                        <Text style={Styles.choiceLabelText}>
+                          COLORIZE ACTIVITIES
+                        </Text>
+                      </View>
+                      <View style={Styles.switch}>
+                        <Switch
+                          ios_backgroundColor={switchColors.background}
+                          onValueChange={props.onSetColorizeActivites}
+                          thumbColor={switchColors.thumb}
+                          trackColor={switchColors.track}
+                          value={props.colorizeActivities}
+                        />
+                      </View>
                     </View>
                   </View>
                 </View>
 
-                <View style={Styles.switchContainer}>
-                  <View style={Styles.switchView}>
-                    <View style={Styles.switchLabel}>
-                      <Text style={Styles.choiceLabelText}>
-                        SHOW SEQUENTIAL PATHS
-                      </Text>
-                    </View>
-                    <View style={Styles.switch}>
-                      <Switch
-                        ios_backgroundColor={switchColors.background}
-                        onValueChange={props.onSetShowSequentialPaths}
-                        thumbColor={switchColors.thumb}
-                        trackColor={switchColors.track}
-                        value={props.showSequentialPaths}
-                      />
+                <View style={Styles.subpanelContents}>
+                  <View style={Styles.switchContainer}>
+                    <View style={Styles.switchView}>
+                      <View style={Styles.switchLabel}>
+                        <Text style={Styles.choiceLabelText}>
+                          SHOW SEQUENTIAL PATHS
+                        </Text>
+                      </View>
+                      <View style={Styles.switch}>
+                        <Switch
+                          ios_backgroundColor={switchColors.background}
+                          onValueChange={props.onSetShowSequentialPaths}
+                          thumbColor={switchColors.thumb}
+                          trackColor={switchColors.track}
+                          value={props.showSequentialPaths}
+                        />
+                      </View>
                     </View>
                   </View>
                 </View>
