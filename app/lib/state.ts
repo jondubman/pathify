@@ -184,11 +184,13 @@ export interface AppState extends InitialAppState {
 // and don't need to be persisted because they don't need to dynamically change in production.
 
 export const persistedFlags = [
+  'colorizeActivities',
   'followingPath',
   'followingUser',
   'labelsEnabled',
   'remoteDebug',
   'requestedLocationPermission',
+  'showSequentialPaths',
   'timelineNow',
 ]
 

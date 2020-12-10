@@ -69,6 +69,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     backTime: 'double',
     clientAlias: 'string',
     clientId: 'string',
+    colorizeActivities: 'bool',
     currentActivityId: 'string?',
     followingUser: 'bool',
     grabBarSnapIndex: 'int',
@@ -85,6 +86,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     remoteDebug: 'bool',
     requestedLocationPermission: 'bool',
     selectedActivityId: 'string?',
+    showSequentialPaths: 'bool',
     timelineNow: 'bool',
     timelineZoomValue: 'double',
     updateTime: 'double',
@@ -96,6 +98,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   backTime: number;
   clientAlias: string;
   clientId: string;
+  colorizeActivities: boolean;
   currentActivityId?: string,
   followingPath: boolean,
   followingUser: boolean,
@@ -113,6 +116,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   remoteDebug: boolean,
   requestedLocationPermission: boolean;
   selectedActivityId: string,
+  showSequentialPaths: boolean;
   timelineNow: boolean,
   timelineZoomValue: number,
   updateTime: number,
@@ -137,6 +141,7 @@ const defaultSettings = { // for a newly installed app
   backTime: 0, // TODO this is pretty rudimentary, should at least be a stack
   clientAlias: '', // none, applies only for remote debugging
   clientId: '', // none
+  colorizeActivities: true,
   currentActivityId: undefined,
   followingPath: false,
   followingUser: false,
@@ -154,6 +159,7 @@ const defaultSettings = { // for a newly installed app
   remoteDebug: false, // This can only be enabled manually during development.
   requestedLocationPermission: false,
   selectedActivityId: undefined,
+  showSequentialPaths: false,
   timelineNow: true,
   timelineZoomValue: constants.timeline.default.zoomValue,
   updateTime: 0,
@@ -164,14 +170,21 @@ let migrationRequired = false;
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
   if (oldRealm.schemaVersion < schemaVersion) {
     // Migrate Settings
-    let oldSettings = {};
+    let newSettings = { ...defaultSettings };
     if (oldRealm.objects('Settings').length > 0) {
       const oldSettingsObject = oldRealm.objects('Settings')[0] as SettingsObject;
       // Spread operator is broken in RealmJS... this is the workaround:
-      // https://github.com/realm/realm-js/issues/2518
-      oldSettings = JSON.parse(JSON.stringify(oldSettingsObject));
+      const keys = Object.keys(oldSettingsObject.toJSON()); // TODO this is ugly but needed for Realm to obtain keys
+      for (const key of keys) {
+        log.debug('migrating settings', key, oldSettingsObject[key]);
+        if (oldSettingsObject[key] !== undefined) {
+          // apply all the saved settings on top of today's defaults
+          newSettings[key] = oldSettingsObject[key];
+        }
+      }
     }
-    newRealm.create('Settings', { ...defaultSettings, ...oldSettings }, Realm.UpdateMode.All);
+    log.debug('newSettings', newSettings);
+    newRealm.create('Settings', newSettings, Realm.UpdateMode.All);
     migrationRequired = true;
   }
 }
@@ -465,7 +478,7 @@ const database = {
   settings: (): any => {
     try {
       const currentState = realm.objects('Settings') as Realm.Results<SettingsObject>;
-      log.trace('settings currentState', currentState[0].toJSON());
+      log.debug('settings currentState', currentState[0].toJSON());
       let r = {} as any;
       if (currentState.length) {
           // Return a copy of all the settings plus schemaVersion.

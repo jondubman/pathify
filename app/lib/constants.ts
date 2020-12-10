@@ -14,7 +14,7 @@ import { interval } from 'lib/timeseries';
 // For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
 // It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
 // as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
-const schemaVersion = 35;
+const schemaVersion = 41;
 
 export enum TimespanKind { // used below
   'ACTIVITY' = 'ACTIVITY',
@@ -84,9 +84,9 @@ export const withOpacity = (color: string, opacity: number): string => (
   color.slice(0, '#123456'.length) + dec1ToHexFF(opacity)
 )
 // undoes withOpacity
-export const withoutOpacity = (color: string): string => color.slice(0, '#123456'.length); // as in, 7
+export const withoutOpacity = (color: string): string => color.slice(0, '#123456'.length);
 
-// colorThemes is pretty simple right now; just colors that are reused
+// colorThemes is pretty simple right now; just colors that are reused.
 const colorThemes = {
   background: namedColors.black,
   help: namedColors.yellow,
@@ -105,8 +105,8 @@ const colorThemes = {
 // constants that are reused when defining other constants:
 const activityListMargin = 16;
 const activityTopBottomBorderHeight = 5;
-const buttonOffset = 6; // from edge
-const buttonSize = 50;
+const buttonOffset = 6; // from edge of screen
+const buttonSize = 50; // applies to various but not all UI buttons, e.g. START, Settings, Help, etc.
 const bottomButtonSpacing = 15;
 const borderRadiusSmall = 5;
 const borderRadiusMedium = 10;
@@ -118,11 +118,11 @@ const mapLogoHeight = 34; // Mapbox logo
 const menuBorderWidth = 1.5;
 const minDeviceHeight = 568; // minimum design height; iPhone SE 1st gen
 const minDeviceWidth = 320; // minimum design width; iPhone SE 1st gen
-const initialTimelineHeight = 90;
+const initialTimelineHeight = 90; // the name looks forward to the day of a resizable timeline
 const panelWidth = 252; // fits on iPhone SE
 const panelHeight = 315; // fits on iPhone SE with Timeline showing (if Timeline 90)
-const scrollbarHeight = 8; // for ActivityList horizontal scrollbar below activities
-const clockHeight = 70;
+const scrollbarHeight = 8; // for the subtle ActivityList horizontal scrollbar below activities
+const clockHeight = 70; // big enough to read and to touch, small enough to fit well
 
 const colors = {
   activityColors: [ // opacity applied separately
