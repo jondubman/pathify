@@ -95,7 +95,7 @@ export const initialAppState = {
     remoteDebug: false, // if true, app calls in to Pathify server, takes requests and queries; false for public release
     requestedLocationPermission: false, // has it been requested through react-native-background-geolocation
     setPaceAfterStart: true, // whether to manually set pace to moving when enabling background geolocation
-    settingsOpen: true, // manually opened by user
+    settingsOpen: false, // manually opened by user
     startMenuOpen: false, // if manually opened by user
     showActivityInfo: true, // generally true
     showAllPastLocations: false, // should the app reveal any past locations outside of an activity? generally false
@@ -147,7 +147,7 @@ export const initialAppState = {
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
-    maxDisplayPaths: 12, // not including current, when showSequentialPaths is enabled
+    maxDisplayPaths: 12, // including current and selected. Should be even, for symmetry.
     nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
     nowTimeRounded: now, // updated on timerTick, minus the fractions of a second
     pathColorOpacity: 0.5, // for colorizing paths, works with activityColors

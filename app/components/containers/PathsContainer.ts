@@ -55,20 +55,17 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
       }
       if (index !== undefined) {
         sequentialPathStartIndex = index;
-        const numPrevious = 3; // TODO
-        const numSubsequent = 3; // TODO
+        const numPrevious = Math.floor(state.options.maxDisplayPaths / 2) - 1;
+        const numSubsequent = numPrevious;
         for (let i = index - numPrevious; i < index + numSubsequent; i++) {
           if (i < 0 || i >= activities.length) {
-            continue;
+            continue; // out of bounds
           }
           const activity = activities[i];
-          if (activity && activity.tEnd) { // avoid currentActivity
+          if (activity && activity.tEnd) { // tEnd check skips currentActivity, which is handled separately below
             const path = database.pathById(activity.id);
             if (path) {
               paths.push(path);
-              if (paths.length >= state.options.maxDisplayPaths) {
-                break; // TODO
-              }
             }
           }
         }

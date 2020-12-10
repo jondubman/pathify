@@ -1,4 +1,5 @@
 // Selector functions for Redux reducer, including some derived quantities not necessarily dependent on Redux state.
+// TODO split this up - getting a bit unwieldly
 
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { createSelector } from 'reselect'
@@ -58,6 +59,37 @@ export const activityIndex = (state: AppState, activityId: string): number | und
     activity.id === activityId
   ))
   return (index < 0) ? undefined : index;
+}
+
+// Relates to listedActivities.
+// If no listed activities, return undefined.
+// If before first activity, return 0, regardless of roundUp.
+// If on an activity, return that activity index
+// If between activities, roundUp flag determines whether next or previous activity index is used.
+// If after last activity, return last activity index, regardless of roundUp.
+export const activityIndexForTimepoint = (state: AppState, t: number, roundUp: boolean = false): number | undefined => {
+  const activities = listedActivities(state);
+  if (!activities.length) {
+    return undefined;
+  }
+  if (t < activities[0].tStart || t < activities[0].tLast) {
+    return 0;
+  }
+  const lastIndex = activities.length - 1;
+  const lastActivity = activities[lastIndex];
+  if (t > lastActivity.tStart) {
+    return lastIndex;
+  }
+  for (let i = 0; i <= lastIndex; i++) {
+    const activity = activities[i];
+    if (t < activity.tStart) {
+      return roundUp ? i - 1 : i;
+    }
+    if (t < activity.tLast) {
+      return i;
+    }
+  }
+  return undefined;
 }
 
 // This version does not require all of state, only the cached activities themselves.
@@ -704,6 +736,7 @@ export const getCachedPathInfo = createSelector(
   }
 )
 
+// Pulsars are pulsing circles indicating a location on the map.
 export const pulsars = (state: AppState): OptionalPulsars => {
   const {
     followingUser,
@@ -714,7 +747,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
     timelineNow,
     trackingActivity,
   } = state.flags;
-  const pulsars = { ...state.options.pulsars };
+  const pulsars = { ...state.options.pulsars }; // These are supplemental to the current and past location (potentially)
   const { colors } = constants;
   if (showCurrentLocation && state.userLocation && (followingUser || !mapIsFullScreen(state) || !mapTapped || trackingActivity)) {
     pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
@@ -744,6 +777,7 @@ export const maxGrabBarSnapIndex = (): number => (
   (utils.windowSize().height > 600) ? 7 : 6
 )
 
+// Supports GrabBar
 export const snapPositions = (): number[] => {
   const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
   const belowTopButtons = dynamicTopBelowButtons();

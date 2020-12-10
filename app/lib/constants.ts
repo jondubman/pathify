@@ -43,7 +43,7 @@ const namedColors = { // note: each must be 6 digits for withOpacity; avoid 3 di
   blue: '#0074d9',
   fuschia: '#f012be',
   gray: '#aaaaaa',
-  green: '#2ecc40',
+  green: '#2ecc40', // strong lime green
   maroon: '#85144b',
   navy: '#001f3f',
   orange: '#ff851b',
@@ -127,6 +127,9 @@ const clockHeight = 70;
 const colors = {
   activityColors: [ // opacity applied separately
     // https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=0074d9&primary.color=EF5350
+    // was helpful as a starting point. These are intended to flow into one another while being moderately distinct,
+    // and not likely to be confused with the lime green currentActivity. There are enough to take at least three
+    // horizontally swiped device-widths through the ActivityList to start repeating.
     '#c62828', // red
     '#ec407a', // pink
     '#f012be', // namedColors.fuschia,
@@ -137,8 +140,8 @@ const colors = {
     '#29b6f6', // light blue
     '#26c6da', // cyan
     '#26a69a', // teal
-    '#B1D470', // light green
-    '#D4E065', // lime
+    '#87d424', // strong green
+    '#c1d43b', // moderate yellow
     '#ffca28', // amber
     '#ef6c00', // orange
   ],
@@ -398,6 +401,7 @@ const constants = {
     itemBorderWidthSelected: 3,
     nowClockMarginLeft: activityListMargin,
     nowClockLabelBottom: 5,
+    renderBatchSize: 50, // smaller # improves time to render at the expense of possibly showing blank area briefly
     scrollbarHeight,
     topBottomBorderHeight: activityTopBottomBorderHeight,
   },

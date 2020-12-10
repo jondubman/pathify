@@ -128,8 +128,8 @@ const getItemLayout = (data: ActivityDataExtended[] | null | undefined, index: n
 let _ref: FlatList<ActivityDataExtended>;
 
 interface ActivityListState {
-  scrolledBetweenActivities: boolean; // note it's possible to scroll between activities without deselecting an activity
-  // and in that case this will ensure we draw the vertical line as appropriate when between activities.
+  scrolledBetweenActivities: boolean; // note it's possible to scroll between activities without *deselecting*
+  // an activity, and in that case this will ensure we draw the vertical line as appropriate when between activities.
 }
 
 class ActivityList extends Component<ActivityListProps, ActivityListState> {
@@ -283,6 +283,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     utils.addToCount('renderActivityList');
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
     const {
+      activityIndex,
       currentActivityId,
       labelsEnabled,
       list,
@@ -309,6 +310,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const labelBottom = constants.activityList.nowClockLabelBottom;
     const clockBottom = labelsEnabled ? labelBottom : -1.5;
     const pointerEvents = visible ? 'auto' : 'none';
+    const { renderBatchSize } = constants.activityList;
     return (
       <View pointerEvents={pointerEvents} style={[Styles.box, { top }, visible ? {} : { opacity: 0 }]}>
         <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
@@ -332,12 +334,13 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
             <View pointerEvents="none" style={[centerLineBase, Styles.centerLine]} />
           </Fragment>
         }
+        {/* TODO note existence of FlatList onScrollToIndexFailed */}
         <FlatList<ActivityDataExtended>
           data={list}
           getItemLayout={getItemLayout}
           horizontal
-          initialNumToRender={40}
-          initialScrollIndex={Math.max(0, list.length - 1) /* end of list, for starters */}
+          initialNumToRender={renderBatchSize}
+          initialScrollIndex={Math.floor(Math.min(0, activityIndex - renderBatchSize / 2))}
           ListHeaderComponent={/* on far left of ActivityList */
             <View style={listHeaderStyle} />}
           ListFooterComponent={/* on far right of ActivityList */
@@ -371,6 +374,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           scrollIndicatorInsets={scrollInsets}
           showsHorizontalScrollIndicator={true}
           style={Styles.list}
+          
         />
       </View>
     )
@@ -399,7 +403,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     )
   }
 
-  // Scroll the ActivityList as appropriate such that the actvity for the given scrollTime aligns with the centerline.
+  // Scroll the ActivityList as appropriate such that the activity for the given scrollTime aligns with the centerline.
   // If scrollTime is within an activity, center the activity under the TopButton, adjusting it so the centerline
   // delineates the elapsed and future portions of the activity, proportionally (with each activity having equal width.)
   // If scrollTime is before / between / after an activity, the list is scrolled to the space adjacent to the
@@ -425,7 +429,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
         return false;
       }); // findIndex
       if (index >= 0) { // found matching activity
-        if (_ref) {
+        // if (_ref) { // TODO this seems unnecessary
           const activity = list[index];
           const end = activity.tEnd || activity.tLastUpdate!;
           const activityElapsedTime = scrollTime - activity.tStart;
@@ -436,7 +440,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           const tTotal = (end && activity.tTotal) ? activity.tTotal : (now - activity.tStart);
           const increment = (activityElapsedTime / tTotal) * activityWidth;
           offset += increment;
-        }
+        // }
       } else { // no match for activity
         if (scrollTime > list[list.length - 1].tLast) {
           // after the last activity
@@ -465,14 +469,15 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       return; // TODO
     }
     const params = {
-      animated: false,
+      animated: false, // animation here is not responsive enough when you are actively scrolling the linked timeline
       offset,
     }
     log.scrollEvent('ActivityList scrollToTime scrollToOffset', params);
-    if (!_ref.scrollToOffset) {
+    if (_ref.scrollToOffset) {
+      _ref.scrollToOffset(params); // This is where the actual scrolling takes place, imperatively.
+    } else {
       log.warn('missing scrollToOffset!');
-    }
-    _ref.scrollToOffset(params);
+    } 
   }
 }
 

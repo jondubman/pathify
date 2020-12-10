@@ -15,6 +15,7 @@ import {
 } from 'lib/activities';
 import {
   activityColorForSelectedActivity,
+  activityIndexForTimepoint,
   dynamicTopBelowButtons,
   shouldShowActivityList,
 } from 'lib/selectors';
@@ -27,6 +28,7 @@ import { Timepoint } from 'lib/timeseries';
 
 interface ActivityListStateProps {
   activityColorOpacity: number;
+  activityIndex: number;
   colorizeActivities: boolean;
   currentActivityId: string | null;
   labelsEnabled: boolean;
@@ -60,10 +62,13 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
   const {
     activityColorOpacity,
     currentActivityId,
+    scrollTime,
     selectedActivityId,
   } = state.options;
+  const activityIndex = activityIndexForTimepoint(state, scrollTime) || 0;
   return {
     activityColorOpacity,
+    activityIndex,
     colorizeActivities,
     currentActivityId,
     labelsEnabled,
