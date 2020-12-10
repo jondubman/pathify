@@ -736,6 +736,10 @@ export const getCachedPathInfo = createSelector(
   }
 )
 
+export const fullScreenUiMinimized = (state: AppState): boolean => (
+  mapIsFullScreen(state) && state.flags.mapTapped && !state.flags.followingPath && !state.flags.followingUser
+)
+
 // Pulsars are pulsing circles indicating a location on the map.
 export const pulsars = (state: AppState): OptionalPulsars => {
   const {

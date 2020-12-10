@@ -6,6 +6,7 @@ import {
 } from 'lib/intro';
 import {
   dynamicTimelineHeight,
+  fullScreenUiMinimized,
   mapIsFullScreen,
   shouldShowTimeline,
  } from 'lib/selectors';
@@ -29,13 +30,16 @@ interface AppUIDispatchProps {
 export type AppUIProps = AppUIStateProps & AppUIDispatchProps;
 
 const mapStateToProps = (state: AppState): AppUIStateProps => {
-  const ui = uiCategories(state);
   const {
     introMode,
     mapTapped,
     showActivityInfo,
     showGrabBar,
   } = state.flags;
+  let ui = uiCategories(state);
+  if (fullScreenUiMinimized(state)) {
+    ui = ui.filter(category => category != UICategory.follow);
+  }
   return {
     introMode,
     mapFullScreen: mapIsFullScreen(state),
