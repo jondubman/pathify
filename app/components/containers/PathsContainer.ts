@@ -13,8 +13,8 @@ import {
   selectedActivityPath,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
-import Paths from 'presenters/Paths';
 import { Path } from 'lib/paths';
+import Paths from 'presenters/Paths';
 
 interface PathsStateProps {
   allActivities: ActivityDataExtended[];
@@ -85,8 +85,16 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
           }
         }
       }
-      // using memoized selector
-      const selectedPath = selectedActivityPath(state);
+    }
+
+    // TODO this memoized selector appears to be causing dropped renders due to race condition or stale Path
+    // just after executing stopActivity, so avoiding use of that selector for now. Investigate.
+    // const selectedPath = selectedActivityPath(state);
+    // if (selectedPath) {
+    //   paths.push(selectedPath);
+    // }
+    if (selectedActivityId && selectedActivityId !== currentActivityId) {
+      const selectedPath = database.pathById(selectedActivityId);
       if (selectedPath) {
         paths.push(selectedPath);
       }
