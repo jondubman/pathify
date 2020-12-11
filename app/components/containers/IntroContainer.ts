@@ -24,7 +24,6 @@ interface IntroDispatchProps {
   onPressReset: () => void;
   pageChanged: (index: number) => void;
   requestLocationPermission: (onDone: Function) => void;
-  snapPositions: number[];
 }
 
 export type IntroProps = IntroStateProps & IntroDispatchProps;

@@ -250,10 +250,10 @@ class Intro extends Component<IntroProps> {
               if (page.ui.includes(UICategory.grabBar)) { // special case
                 headerStyle.push({ top: props.snapPositions[1] + 15});
                 textStyle.push({ top: props.snapPositions[1] + 15 });
-                if (props.grabBarSnapIndexPreview === 0) {
+                if (props.grabBarSnapIndexPreview === 0) { // top position
                   dimPage = true;
                 }
-                if (props.grabBarSnapIndexPreview > 1) {
+                if (props.grabBarSnapIndexPreview > 1) { // lowered position
                   headerStyle.push({ opacity: 0 });
                   text = page.textAlternate || text;
                   textStyle.push({ top: props.snapPositions[1] + 45 });
@@ -271,8 +271,7 @@ class Intro extends Component<IntroProps> {
             })}
           </Swiper>
           {currentPage.buttonNext ? (
-            <View style={[Styles.nextButtonView,
-                  props.grabBarSnapIndexPreview > 1 ? currentPage.buttonNextStyle : null]}>
+            <View style={[Styles.nextButtonView, currentPage.buttonNextStyle]}>
               <TouchableHighlight
                 onPress={currentPage.isFinalPage ? this.props.onPressDone : this.onPressNext}
                 style={Styles.nextButton}

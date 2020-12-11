@@ -20,6 +20,7 @@ export enum UICategory {
   'help' = 'help',
   'map' = 'map',
   'follow' = 'follow',
+  'refTime' = 'refTime',
   'settings' = 'settings',
   'start' = 'start',
   'timelineControls' = 'timelineControls',
@@ -36,6 +37,7 @@ export const uiCategories = (state: AppState): UICategory[] => (
       UICategory.grabBar,
       UICategory.help,
       UICategory.map,
+      UICategory.refTime,
       UICategory.settings,
       UICategory.timelineControls,
       UICategory.start,
@@ -101,7 +103,7 @@ export const introPages: IntroPageTemplate[] = [
     headerColor: headerColors[2],
     text: `Instead of a separate route map inside each activity, Pathify overlays current and prior activities on the same map.
 \nBeautiful, up-to-date maps from Mapbox help you discover lesser-known parks and trails.
-\nAdjust the map style and opacity with the Settings panel.`,
+\nAdjust the map style and opacity with the Settings panel. Dim the map to highlight your path.`,
     ui: [UICategory.help, UICategory.map, UICategory.settings],
   },
   {
@@ -110,32 +112,32 @@ export const introPages: IntroPageTemplate[] = [
     header: 'Two taps to get tracking ',
     headerColor: headerColors[3],
     text: `Tap the START button, then Start New Activity. It's that simple. End Activity the same way, anytime. It even works from here.
-\nTip: to highlight your path, dim the map using Settings.`,
+\nThe Info panel helps you discover more features of the app. Hide the helpful yellow labels for a cleaner, more minimal look.`,
     ui: [UICategory.help, UICategory.start],
   },
   {
     name: 'bar',
     buttonNext: nextButton,
-    buttonNextStyle: { bottom: constants.timeline.default.height + 50 },
+    buttonNextStyle: { bottom: constants.timeline.default.height + 70 },
     header: 'Choose your own\nadventure UI on the fly',
     headerColor: headerColors[4],
-    pageStyle: { flexDirection: 'column', justifyContent: 'flex-start' },
+    pageStyle: { flexDirection: 'column', justifyContent: 'flex-start', marginTop: -10 },
     text: `Slide the horizontal bar down to reveal the timeline and list of activities. 
-\nKeep pulling it down for details like distance, elapsed time, pace, elevation. Or slide the bar way up for all map.
-\nTip: Yellow labels help you learn the app. Hide them using the Info panel for a cleaner UI.\n`,
-    textAlternate: `That's it! With the bar in this lower position, timeline and activity list are revealed.
-\nTap NEXT to continue the intro.`,
-    ui: [UICategory.activities, UICategory.grabBar, UICategory.help, UICategory.map, UICategory.settings, UICategory.start],
+\nKeep pulling it down for details like distance, elapsed time, pace, elevation. Or slide the bar way up for all map.`,
+    textAlternate: `That's it! With the bar in this lower position, the timeline and activity list are revealed.  Tap and slide the clocks to zoom the timeline.`,
+    ui: [UICategory.activities, UICategory.grabBar, UICategory.help, UICategory.map, UICategory.settings, UICategory.start, UICategory.timelineControls],
   },
   {
     name: 'timeline',
     buttonNext: nextButton,
+    buttonNextStyle: { bottom: 30 },
     header: 'Zoom through time,\nfollow your own path',
     headerColor: headerColors[5],
-    text: `Scroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized - like clockwork!
-\nTap the clock to zoom the timeline. Zoom continuously, from your entire history, down to a split second.
-\nUse the blue arrow to follow prior paths on the map, and the green arrow to jump to here and now.`,
-    ui: [UICategory.follow, UICategory.help, UICategory.start],
+    pageStyle: { flexDirection: 'column', justifyContent: 'flex-start', marginTop: -10 },
+    text: `Use the blue arrow to follow prior paths on the map as you scroll through time, and the green arrow to jump to here and now.
+\nScroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized - like clockwork!`,
+    textAlternate: `Scroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized - like clockwork!`,
+    ui: [UICategory.activities, UICategory.follow, UICategory.grabBar, UICategory.help, UICategory.map, UICategory.settings, UICategory.start, UICategory.timelineControls],
   },
   { // Note isFinalPage
     name: 'tips',

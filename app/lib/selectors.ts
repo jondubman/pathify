@@ -191,12 +191,20 @@ export const bottomGivenTimeline = (state: AppState): number => (
 
 // Note that a larger 'bottom' yields a higher position.
 export const dynamicClockBottom = (state: AppState): number => (
-  bottomGivenTimeline(state) + dynamicTimelineHeight(state) + constants.refTime.height + 1
+  bottomGivenTimeline(state) + dynamicTimelineHeight(state) + dynamicRefTimeHeight(state) + 1
 )
 
 // Note that a smaller 'bottom' yields a lower position.
 export const dynamicRefTimeBottom = (state: AppState): number => (
-  dynamicClockBottom(state) - constants.refTime.height
+  dynamicClockBottom(state) - dynamicRefTimeHeight(state)
+)
+
+export const dynamicRefTimeHeight = (state: AppState): number => (
+  (uiCategories(state).includes(UICategory.refTime) ?
+    constants.refTime.height
+    :
+    // This case happens in intro mode.
+    10 + (!shouldShowTimeline(state) ? constants.timeline.default.height : 0))
 )
 
 // TODO should this be just a constant now?
@@ -476,10 +484,10 @@ export const flavorText = (state: AppState): string[] => {
     if (activity) {
       const currentOrPastActivity = currentActivitySelected ? 'CURRENT ACTIVITY' : 'PAST ACTIVITY';
       if (scrollTime === activity.tStart) {
-        return [currentOrPastActivity, '@ START'];
+        return [currentOrPastActivity, '@ START', 'TAP FOR MIDPOINT'];
       }
       if (scrollTime === activity.tLast && !currentActivitySelected) {
-        return [currentOrPastActivity, '@ END'];
+        return [currentOrPastActivity, '@ END', 'TAP FOR START'];
       }
       if (activity.tStart && activity.tLast) {
         const elapsed = scrollTime - activity.tStart;
@@ -514,7 +522,7 @@ export const flavorText = (state: AppState): string[] => {
     const gap = timeGapBetweenActivities(state, scrollTime);
     const previous = previousActivity(state, scrollTime);
     const gapPercent = ((previous === null) ? '?' : (((scrollTime - previous.tLast) / gap) * 100).toFixed(0));
-    return ['', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
+    return ['BETWEEN ACTIVITIES', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
   } catch(err) {
     log.warn('flavorText error', err);
     return [''];
@@ -529,7 +537,7 @@ const getSelectedActivityId = (state: AppState) => (
    state.options.currentActivityId === state.options.selectedActivityId) ? null : state.options.selectedActivityId
 )
 export const selectedActivityPath = createSelector(
-  [getSelectedActivityId],
+  [getSelectedActivityId], // TODO review - this may be missing a dependenency
   (selectedActivityId) => {
     if (!selectedActivityId) {
       return undefined;
@@ -800,7 +808,7 @@ export const snapPositions = (state: AppState): number[] => {
     snapPositionsIntro = [
       topMin, // 0
       belowTopButtons, // 1
-      belowTopButtons + 100, // 2
+      belowTopButtons + 100, // 2 TODO hand-tweaked, maybe brittle
     ]
   }
   if (!snapPositionsNormal.length) {

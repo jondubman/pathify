@@ -57,13 +57,15 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
     <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
-    <View pointerEvents="none" style={[Styles.centerLine, {
-      backgroundColor: backgroundColorFor(props),
-      height: (props.timelineHeight ? props.timelineHeight : constants.safeAreaBottom)
-        + refTime.height + props.zoomClockMoved
-        - timeline.bottomPaddingForAxis
-        + 1
-    }]} />
+    {props.showCenterline ? (
+      <View pointerEvents="none" style={[Styles.centerLine, {
+        backgroundColor: backgroundColorFor(props),
+        height: (props.timelineHeight ? props.timelineHeight : constants.safeAreaBottom)
+          + refTime.height + props.zoomClockMoved
+          - timeline.bottomPaddingForAxis
+          + 1
+      }]} />
+    ) : null}
   </View>
 )
 

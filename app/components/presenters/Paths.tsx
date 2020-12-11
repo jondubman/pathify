@@ -52,6 +52,7 @@ class Paths extends PureComponent<PathsProps> {
       sequentialPathStartIndex,
     } = this.props;
     const shapes = [] as JSX.Element[]; // accumulates Mapbox.ShapeSource components
+    const keys: string[] = []; // guarantee uniqueness TODO review: is anything added twice?
 
     for (let a = 0; a < paths.length; a++) {
       const path = paths[a];
@@ -59,7 +60,12 @@ class Paths extends PureComponent<PathsProps> {
         continue;
       }
       const { id, lons, lats } = path;
+      const key = `pathShape-${id}-${lats.length}-${sequentialPathStartIndex}`;
+      if (keys.includes(key)) {
+        continue;
+      }
       try {
+        keys.push(key);
         if (!lats || !lons || !lats.length || !lons.length || lats.length != lons.length) {
           continue;
         }
@@ -82,7 +88,6 @@ class Paths extends PureComponent<PathsProps> {
             coordinates,
           },
         }
-        const key = `pathShape-${id}-${lats.length}-${sequentialPathStartIndex}`;
         let lineStyle = {...lineLayerStyleOther};
         if (id === currentActivityId) {
           lineStyle = {...lineLayerStyleCurrent};

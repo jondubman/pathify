@@ -1,6 +1,10 @@
 import { connect } from 'react-redux';
 
 import {
+  uiCategories,
+  UICategory,
+} from 'lib/intro';
+import {
   dynamicRefTimeBottom,
   flavorText,
 } from 'lib/selectors';
@@ -53,7 +57,8 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   const flavorLine1 = flavorLines[0];
   const flavorLine2 = flavorLines[1];
   const flavorLine3 = flavorLines[2];
-
+  const ui = uiCategories(state);
+  const hidden = !ui.includes(UICategory.refTime);
   return {
     bottom: dynamicRefTimeBottom(state),
     scrollTime,
@@ -69,8 +74,8 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
     flavorLine1,
     flavorLine2,
     flavorLine3,
-    showLeftSide: !state.flags.zoomClockPressed,
-    showRightSide: !state.flags.zoomClockPressed,
+    showLeftSide: !hidden && !state.flags.zoomClockPressed,
+    showRightSide: !hidden && !state.flags.zoomClockPressed,
   }
 }
 

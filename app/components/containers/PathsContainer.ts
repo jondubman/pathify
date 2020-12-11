@@ -10,7 +10,7 @@ import {
   nextActivity,
   previousActivity,
   selectedActivityIndex,
-  selectedActivityPath,
+  // selectedActivityPath,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import { Path } from 'lib/paths';

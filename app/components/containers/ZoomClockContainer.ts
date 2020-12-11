@@ -6,7 +6,12 @@ import {
 } from 'lib/actions';
 import constants from 'lib/constants';
 import {
+  uiCategories,
+  UICategory,
+} from 'lib/intro';
+import {
   dynamicClockBottom,
+  dynamicRefTimeHeight,
   shouldShowTimeline,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -22,9 +27,11 @@ interface ZoomClockStateProps {
   followingPath: boolean;
   followingUser: boolean;
   haveActivities: boolean;
+  labelClock: boolean;
   labelsEnabled: boolean;
   nowMode: boolean;
   pressed: boolean;
+  refTimeHeight: number;
   trackingActivity: boolean;
 }
 
@@ -48,6 +55,8 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
     trackingActivity,
     zoomClockPressed,
   } = flags;
+  const ui = uiCategories(state);
+  const labelClock = ui.includes(UICategory.refTime);
   return {
     activitySelected: !!options.selectedActivityId,
     allowZoom: shouldShowTimeline(state),
@@ -56,9 +65,11 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
     followingPath,
     followingUser,
     haveActivities: !!(state.cache.activities && state.cache.activities.length),
+    labelClock,
     labelsEnabled,
     nowMode: timelineNow || (options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),
     pressed: zoomClockPressed,
+    refTimeHeight: dynamicRefTimeHeight(state),
     trackingActivity,
   }
 }

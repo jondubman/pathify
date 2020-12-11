@@ -200,6 +200,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
       followingPath,
       followingUser,
       haveActivities,
+      labelClock,
       nowMode,
       pressed,
     } = this.props;
@@ -304,13 +305,14 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
     } as ViewStyle;
     const nowTrackText = 'JUMP TO NOW →';
     const nowTrackTextStyle = [labelRenderTextStyle, { textAlign: 'right' }] as ViewStyle;
+    const labelViewStyle = [Styles.labelView, labelClock ? null : {opacity : 0}] as ViewStyle;
     return (
       <Fragment>
         {pressed ? (
           <Fragment>
           {horizontalLock || verticalLock ? null : (
             // Label when pressed but not yet dragged
-            <View style={[Styles.labelView, pressedLabelBottomStyle]}>
+            <View style={[labelViewStyle, pressedLabelBottomStyle]}>
               <LabelContainer>
                 <View style={labelEmphasisStyle}>
                   <Text style={pressedLabelTextStyle}>
@@ -371,7 +373,7 @@ class ZoomClock extends Component<ZoomClockProps, ZoomClockState> {
           </Fragment>
         ) : (
           // Label when not pressed
-          <View style={[Styles.labelView, labelBottomStyle]}>
+          <View style={[labelViewStyle, labelBottomStyle]}>
             <LabelContainer alwaysShow={true}>
               <Text style={labelRenderTextStyle}>
                 {labelText}

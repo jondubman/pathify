@@ -1,5 +1,9 @@
 import { connect } from 'react-redux';
 
+import {
+  uiCategories,
+  UICategory,
+} from 'lib/intro';
 import { AppState } from 'lib/state';
 import TimelineControls from 'presenters/TimelineControls';
 import {
@@ -11,6 +15,7 @@ import {
 interface TimelineControlsStateProps {
   clockBottom: number;
   refTimeBottom: number;
+  showCenterline: boolean;
   timelineHeight: number;
   timelineScrolling: boolean;
   zoomClockMoved: number;
@@ -25,6 +30,7 @@ const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
     clockBottom: dynamicClockBottom(state),
     refTimeBottom: dynamicRefTimeBottom(state),
+    showCenterline: uiCategories(state).includes(UICategory.refTime),
     timelineHeight: dynamicTimelineHeight(state),
     timelineScrolling: state.flags.timelineScrolling,
     zoomClockMoved: state.options.zoomClockMoved,
