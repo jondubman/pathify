@@ -923,13 +923,22 @@ const sagas = {
   flag_sideEffects: function* (flagName: string) {
     const { flags, options } = yield select((state: AppState) => state);
     const enabledNow = flags[flagName];
-    const { appStartupCompleted } = flags;
+      const { appStartupCompleted, requestedLocationPermission } = flags;
     const { pausedTime, viewTime } = options;
     // Avoid changing settings during startup (instead, we apply previous.)
     if (appStartupCompleted) {
       // Persist persistedFlags in Settings.
       if (persistedFlags.includes(flagName)) {
         yield call(database.changeSettings, { [flagName]: enabledNow }); // Note usage of computed property name.
+      }
+      if (flagName === 'introMode') {
+        yield put(newAction(AppAction.setAppOption, { grabBarSnapIndex: 1, grabBarSnapIndexPreview: 1 }));
+        if (!enabledNow) {
+          if (!requestedLocationPermission) {
+            yield put(newAction(AppAction.requestLocationPermission));
+            yield put(newAction(AppAction.startFollowingUser));
+          }
+        }
       }
       if (flagName === 'timelineNow') {
         if (enabledNow) { // this means we just enabled it
@@ -1423,7 +1432,9 @@ const sagas = {
       yield call(Geo.initializeGeolocation, store, false); // false: not tracking
       yield call(Geo.startBackgroundGeolocation);
     }
-    yield call(params.onDone);
+    if (params && params.onDone) {
+      yield call(params.onDone);
+    }
   },
 
   restartApp: function* () {

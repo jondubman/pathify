@@ -141,13 +141,13 @@ class HelpPanel extends React.Component<HelpPanelProps> {
                   </View>
                   <View style={Styles.linkContainer}>
                     <TouchableHighlight
-                      onPress={props.onReplayIntro}
+                      onPress={props.onSelectIntro}
                       style={Styles.linkButton}
                       underlayColor={constants.colors.topMenu.menuItemUnderlay}
                     >
                       <View style={Styles.linkView}>
                         <Text style={Styles.linkText}>
-                          Review intro...
+                          {props.introLabel}
                         </Text>
                       </View>
                     </TouchableHighlight>

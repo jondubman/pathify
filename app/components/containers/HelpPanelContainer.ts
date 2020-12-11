@@ -1,6 +1,7 @@
 import {
   Linking,
 } from 'react-native';
+import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
@@ -10,15 +11,16 @@ import HelpPanel from 'presenters/HelpPanel';
 import log from 'shared/log';
 
 interface HelpPanelStateProps {
-  version: string;
+  introLabel: string;
   labelsEnabled: boolean;
   open: boolean;
+  version: string;
 }
 
 interface HelpPanelDispatchProps {
   onLinkPrivacy: () => void;
   onLinkWeb: () => void;
-  onReplayIntro: () => void;
+  onSelectIntro: () => void;
   onSetLabelsEnabled: (enabled: boolean) => void;
 }
 
@@ -26,11 +28,18 @@ export type HelpPanelProps = HelpPanelStateProps & HelpPanelDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpPanelStateProps => {
   const { appBuild, appVersion } = state.options;
-  const { devMode, remoteDebug } = state.flags;
+  const { devMode, introMode, remoteDebug } = state.flags;
+  let introLabel: string;
+  if (introMode) {
+    introLabel = 'Exit intro...';
+  } else {
+    introLabel = 'Review intro...';
+  }
   return {
-    version: `Pathify v${appVersion}.${appBuild}${(devMode || remoteDebug) ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
+    introLabel,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
+    version: `Pathify v${appVersion}.${appBuild}${(devMode || remoteDebug) ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
   }
 }
 
@@ -43,10 +52,11 @@ const mapDispatchToProps = (dispatch: Function): HelpPanelDispatchProps => {
     log.debug('HelpPanel onLinkWeb');
     Linking.openURL(constants.urls.pathifyWeb);
   }
-  const onReplayIntro = () => {
-    log.debug('HelpPanel onReplayIntro');
+  const onSelectIntro = () => {
+    log.debug('HelpPanel onSelectIntro');
+    ReactNativeHaptic.generate('impactLight');
     dispatch(newAction(AppAction.flagDisable, 'helpOpen'));
-    dispatch(newAction(AppAction.flagEnable, 'introMode'));
+    dispatch(newAction(AppAction.flagToggle, 'introMode'));
   }
   const onSetLabelsEnabled = (enabled: boolean) => {
     log.debug('HelpPanel onSetLabelsEnabled', enabled);
@@ -55,7 +65,7 @@ const mapDispatchToProps = (dispatch: Function): HelpPanelDispatchProps => {
   const dispatchers = {
     onLinkPrivacy,
     onLinkWeb,
-    onReplayIntro,
+    onSelectIntro,
     onSetLabelsEnabled,
   }
   return dispatchers;

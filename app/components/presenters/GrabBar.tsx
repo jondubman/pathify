@@ -17,7 +17,6 @@ import LabelContainer from 'containers/LabelContainer';
 import constants from 'lib/constants';
 import {
   maxGrabBarSnapIndex,
-  snapPositions,
 } from 'lib/selectors';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -92,7 +91,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         let containedPosition: number | undefined;
         let snap: number | undefined;
         let snapIndex: number | undefined;
-        const snaps = snapPositions();
+        const snaps = props.snapPositions;
         const lastIndex = snaps.length - 1;
         if (currentPosition <= snaps[0]) { // top
           snap = snaps[0];
@@ -125,7 +124,8 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
           }
           const top = containedPosition;
           this._snap = snap;
-          this._snapIndex = snapIndex ? Math.min(snapIndex, maxGrabBarSnapIndex()) : snapIndex;
+          this._snapIndex = snapIndex ?
+            Math.min(snapIndex, maxGrabBarSnapIndex(), this.props.snapPositions.length) : snapIndex;
           this._top = top;
           log.scrollEvent('onPanResponderMove now', this._snap, this._snapIndex, this._top);
           this.forceUpdate(); // TODO explain why
@@ -150,7 +150,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
   }
 
   render() {
-    log.debug('GrabBar render', this._snap, this._snapIndex, this._top);
+    log.trace('GrabBar render', this._snap, this._snapIndex, this._top);
     const topLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',
@@ -171,15 +171,22 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       labelsEnabled,
       pressed,
       snapIndex,
+      snapPositions,
       topMenuOpen,
     } = this.props;
 
     const lineStyle = labelsEnabled ? [lineStyleBase, lineStyleLabeled] : lineStyleBase;
-    const snaps = snapPositions();
+    const snaps = snapPositions;
     let labelText: string;
 
     if (introMode) {
-      labelText = "SLIDE ME";
+      labelText = "SLIDE ME UP OR DOWN";
+      if (!snapIndex) {
+        labelText = "YOU'RE A BAR RAISER! - NOW SLIDE ME BACK"
+      }
+      if (snapIndex == 2) {
+        labelText = "SLIDE BACK UP TO RESTORE PREVIOUS VIEW"
+      }
     } else {
       const noActivitiesText = 'ACTIVITIES WILL BE LISTED CHRONOLOGICALLY';
       const noActivitySelectedText = 'NO ACTIVITY SELECTED';

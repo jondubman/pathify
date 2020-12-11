@@ -781,8 +781,12 @@ export const maxGrabBarSnapIndex = (): number => (
   (utils.windowSize().height > 600) ? 7 : 6
 )
 
+// calculate these once
+let snapPositionsIntro = [] as number[];
+let snapPositionsNormal = [] as number[];
+
 // Supports GrabBar
-export const snapPositions = (): number[] => {
+export const snapPositions = (state: AppState): number[] => {
   const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
   const belowTopButtons = dynamicTopBelowButtons();
   const listDetailsBoundary = belowTopButtons + constants.activityList.height;
@@ -792,15 +796,24 @@ export const snapPositions = (): number[] => {
   const detailsRow3 = detailsRow2 + detailsRowHeight;
   const detailsRow4 = detailsRow3 + detailsRowHeight;
   const detailsRow5 = detailsRow4 + detailsRowHeight;
-  const snapPositions = [
-    topMin, // 0
-    belowTopButtons, // 1
-    listDetailsBoundary, // 2
-    detailsRow1, // 3
-    detailsRow2, // 4
-    detailsRow3, // 5
-    detailsRow4, // 6
-    detailsRow5, // 7
-  ]
-  return snapPositions;
+  if (!snapPositionsIntro.length) {
+    snapPositionsIntro = [
+      topMin, // 0
+      belowTopButtons, // 1
+      belowTopButtons + 100, // 2
+    ]
+  }
+  if (!snapPositionsNormal.length) {
+    snapPositionsNormal = [
+      topMin, // 0
+      belowTopButtons, // 1
+      listDetailsBoundary, // 2
+      detailsRow1, // 3
+      detailsRow2, // 4
+      detailsRow3, // 5
+      detailsRow4, // 6
+      detailsRow5, // 7
+    ]
+  }
+  return (state.flags.introMode ? snapPositionsIntro : snapPositionsNormal);
 }

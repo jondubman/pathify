@@ -41,7 +41,7 @@ const Styles = StyleSheet.create({
   },
   labelView: {
     position: 'absolute',
-    left: 7,
+    left: 2,
   },
 })
 

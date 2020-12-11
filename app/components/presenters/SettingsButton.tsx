@@ -39,13 +39,15 @@ const Styles = StyleSheet.create({
   },
   labelView: {
     position: 'absolute',
-    left: 7,
   },
 })
 
 const SettingsButton = (props: SettingsButtonProps) => (
   <Fragment>
-    <View style={[Styles.labelView, { top: props.topOffset + constants.buttonSize - 1 }]}>
+    <View style={[Styles.labelView, {
+        top: props.topOffset + constants.buttonSize - 1,
+        left: props.open ? 8 : 1,
+    }]}>
       <LabelContainer>
         <Text style={labelTextStyle}>
           SETTINGS

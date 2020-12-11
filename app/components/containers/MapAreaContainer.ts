@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
 import { AppAction, newAction } from 'lib/actions';
+import constants from 'lib/constants';
 import { LonLat } from 'lib/locations';
 import {
   dynamicMapHeight,
@@ -42,7 +43,7 @@ const mapStateToProps = (state: AppState): MapAreaStateProps => {
   return {
     initialBounds: state.mapBoundsInitial!,
     initialHeading: state.mapHeadingInitial!,
-    initialZoomLevel: state.mapZoomInitial!,
+    initialZoomLevel: state.mapZoomInitial || constants.map.default.zoom,
     height: dynamicMapHeight(state),
     mapHidden: mapHidden(state),
     mapStyleURL: mapStyle.url,

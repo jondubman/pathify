@@ -25,6 +25,7 @@ interface GrabBarStateProps {
   snapBack: boolean;
   snapBackTo: number;
   snapIndex: number;
+  snapPositions: number[];
   topMenuOpen: boolean;
 }
 
@@ -36,9 +37,12 @@ interface GrabBarDispatchProps {
 
 export type GrabBarProps = GrabBarStateProps & GrabBarDispatchProps;
 
-const snapPosition = (state: AppState) => (snapPositions()[state.options.grabBarSnapIndex || 0])
-const snapBack = (snap: number) => (
-  Math.min(snap, snapPositions()[constants.snapIndex.activityList])
+const snapPosition = (state: AppState) => (snapPositions(state)[state.options.grabBarSnapIndex || 0])
+const snapBack = (state: AppState, snap: number) => (
+  state.flags.introMode ?
+    snap
+    :
+    Math.min(snap, snapPositions(state)[constants.snapIndex.activityList])
 )
 
 // GrabBar "snaps back" up if you drag it down to show details when there are none to show...
@@ -50,7 +54,7 @@ const shouldSnapBack = (state: AppState) => (
   state.flags.topMenuOpen
 )
 const snapIfNeeded = (state: AppState, snap: number) => (
-  shouldSnapBack(state) ? snapBack(snap) : snap
+  shouldSnapBack(state) ? snapBack(state, snap) : snap
 )
 
 const mapStateToProps = (state: AppState): GrabBarStateProps => {
@@ -63,10 +67,11 @@ const mapStateToProps = (state: AppState): GrabBarStateProps => {
     keyName: snap.toString(),
     labelsEnabled: state.flags.labelsEnabled,
     pressed: state.flags.grabBarPressed,
-    snap,
+    snap, // number
     snapBack: shouldSnapBack(state),
-    snapBackTo: snapBack(snap),
-    snapIndex: state.options.grabBarSnapIndex,
+    snapBackTo: snapBack(state, snap),
+    snapIndex: Math.min(state.options.grabBarSnapIndex, snapPositions(state).length - 1),
+    snapPositions: snapPositions(state),
     topMenuOpen: state.flags.topMenuOpen,
   }
 }

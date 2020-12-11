@@ -98,7 +98,7 @@ class AppUI extends Component<AppUIProps> {
                 ) : null}
               </View>
               {/* TimelineControls (including ZoomClock) can appear even if Timeline itself hidden */}
-              {ui.includes(UICategory.activities) ? <TimelineControlsContainer /> : null}
+              {ui.includes(UICategory.timelineControls) ? <TimelineControlsContainer /> : null}
               <View style={{ position: 'absolute', width }}>
                 {ui.includes(UICategory.help) ? (
                     <HelpPanelContainer /> // includes HelpButton

@@ -235,6 +235,7 @@ const colors = {
       colorThemes.now,
       namedColors.orange,
       namedColors.lighterBlue,
+      // namedColors.purple,
       namedColors.fuschia,
     ],
   },
@@ -531,6 +532,7 @@ const constants = {
       heading: 0,
       opacity: 0.5,
       style: 'Satellite', // e.g. None, Satellite, Topo, Trails, See mapStyles.name
+      zoom: 15,
       zoomStartActivity: 15,
     },
     fitBounds: {

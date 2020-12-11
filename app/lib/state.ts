@@ -75,7 +75,7 @@ export const initialAppState = {
     followingUser: false, // is map following current location of user? (the typical map app follow setting)
     grabBarPressed: false, // grabBar is a full-width horizontal bar for resizing UI
     helpOpen: false, // manually opened by user
-    introMode: false, // Intro experience, possibly replayed from Help menu
+    introMode: true, // Intro experience, possibly replayed from Help menu
     labelsEnabled: true, // yellow UI labels (like training wheels) that can be switched on/off on the Help menu
     locationAuthorized: false, // TODO
     logInDebugVersion: true, // typically true
@@ -145,7 +145,7 @@ export const initialAppState = {
     grabBarSnapIndexPreview: constants.snapIndex.topButtons, // same as grabBarSnapIndex, different only while dragging
     introModePage: 0, // current page of swiper for introMode
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
-    mapOpacityPreview: null as number | null, // helps eliminate re-rendering while adjusting
+    mapOpacityPreview: constants.map.default.opacity, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
     maxDisplayPaths: 12, // including current and selected. Should be even, for symmetry.
     nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
