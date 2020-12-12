@@ -1,5 +1,5 @@
 // Intro mode is driven by introPages below, a template with overridable styles. The Intro pages are somewhat similar.
-// Page-specific styling is thus here, and generic Intro mode styling is in the component.
+// Page-specific styling is here, and generic Intro mode styling is in the component.
 
 import {
   StyleProp,
@@ -14,6 +14,7 @@ import {
 interface IntroPageButton {
   label: string;
 }
+// These act like feature switches on groups of related UI components.
 export enum UICategory {
   'activities' = 'activities',
   'grabBar' = 'grabBar',
@@ -72,6 +73,10 @@ const restartButton = {
 
 const headerColors = constants.colors.introPages.pageHeader;
 
+// The introPages comprise a sequence of Swiper pages that introduce and demo features of the app. introMode is really
+// just a series of streamlined variations on standard app components, plus some additional controls to navigate through
+// the intro. It's driven by flags.introMode, options.introModePage, and introPages.
+
 export const introPages: IntroPageTemplate[] = [
   {
     name: 'welcome',
@@ -109,7 +114,7 @@ export const introPages: IntroPageTemplate[] = [
   {
     name: 'start',
     buttonNext: nextButton,
-    header: 'Two taps to get tracking ',
+    header: 'Two taps to get tracking',
     headerColor: headerColors[3],
     text: `Tap the START button, then Start New Activity. It's that simple. End Activity the same way, anytime. It even works from here.
 \nThe Info panel helps you discover more features of the app. Hide the helpful yellow labels for a cleaner, more minimal look.`,
@@ -124,7 +129,7 @@ export const introPages: IntroPageTemplate[] = [
     pageStyle: { flexDirection: 'column', justifyContent: 'flex-start', marginTop: -10 },
     text: `Slide the horizontal bar down to reveal the timeline and list of activities. 
 \nKeep pulling it down for details like distance, elapsed time, pace, elevation. Or slide the bar way up for all map.`,
-    textAlternate: `That's it! With the bar in this lower position, the timeline and activity list are revealed.  Tap and slide the clocks to zoom the timeline.`,
+    textAlternate: `That's it! With the bar in this lower position, the timeline and activity list appear. Both scroll horizontally in unison. Tap and slide the clock to zoom the timeline.`,
     ui: [UICategory.activities, UICategory.grabBar, UICategory.help, UICategory.map, UICategory.settings, UICategory.start, UICategory.timelineControls],
   },
   {
