@@ -74,6 +74,7 @@ import {
   SequenceParams,
   SleepParams,
   StartActivityParams,
+  StartupActionParams,
   TimelineRelativeZoomParams,
   UserMovedMapParams,
   ZoomToActivityParams,
@@ -1348,7 +1349,7 @@ const sagas = {
     try {
       yield call(log.trace, 'saga refreshCache');
       const timestamp = yield call(utils.now);
-      const realmActivities = yield call(database.activities);
+      const realmActivities = yield call(database.activities); // These are sorted by tStart.
       const activitiesAsArray = Array.from(realmActivities) as ActivityData[]
       const activities = extendedActivities(activitiesAsArray);
       const refreshCount = (yield select((state: AppState) => state.cache.refreshCount)) + 1;
@@ -1744,11 +1745,14 @@ const sagas = {
   // The app may be restarted in the background if tracking an activity and the user has moved beyond a geofence around
   // the last location before the app was terminated. The app may also be restarted manually after having been
   // terminated. If the app is restarted while tracking an activity, continueActivity is invoked.
-  startupActions: function* () {
+  startupActions: function* (action: Action) {
     try {
+      const params = action.params as StartupActionParams || {};
+      const { include } = params; // used to import sample data for UI testing
+
       const runningInBackgroundNow = utils.appInBackground();
       yield call(database.completeAnyMigration);
-      const { devMode, recoveryMode } = yield select((state: AppState) => state.flags);
+      const { devMode, recoveryMode, showIntroIfNeeded } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
 
       // Restore app options from settings
@@ -1814,7 +1818,7 @@ const sagas = {
         const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
         yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
         yield call(Geo.startBackgroundGeolocation);
-      } else {
+      } else if (showIntroIfNeeded) {
         yield put(newAction(AppAction.flagEnable, 'introMode'));
       }
       if (!recoveryMode) {
@@ -1838,8 +1842,10 @@ const sagas = {
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
       const newState = runningInBackgroundNow ? AppStateChange.BACKGROUND : AppStateChange.ACTIVE;
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
-      const flagsNow = yield select((state: AppState) => state.flags);
-      yield call(log.trace, 'timelineNow was', timelineNow, 'and is', flagsNow.timelineNow);
+
+      if (include) {
+        yield put(newAction(AppAction.importActivity, { include }));
+      }
       const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
       yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
       yield put(newAction(AppAction.completeAppStartup));

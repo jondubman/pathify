@@ -155,6 +155,7 @@ export const initialAppState = {
     pausedTime: now, // timepoint where timeline was last paused
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
+    showIntroIfNeeded: false, // so it can be disabled for tests
     startupTime: now, // not persisted, never changed once set
     timelineSpanColorOpacity: 0.5,
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.

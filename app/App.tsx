@@ -55,7 +55,13 @@ export default class App extends Component {
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
-      log.info('TODO pathifyEnv', pathifyEnv); // set (maybe) in PathifyUITests.swift
+
+      log.trace('TODO pathifyEnv', pathifyEnv); // set (maybe) in PathifyUITests.swift
+      let sample: any;
+      if (pathifyEnv) {
+        sample = JSON.parse(pathifyEnv);
+        log.info('sample data', sample);
+      }
       log.info('TODO develop', develop); // set (maybe) in XCode build scheme
       if (devMode || develop === 'true') {
         store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
@@ -81,7 +87,7 @@ export default class App extends Component {
       log.info('windowWidthFactor', utils.windowWidthFactor());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
-      store.dispatch(newAction(AppAction.startupActions));
+      store.dispatch(newAction(AppAction.startupActions, { include: sample }));
 
       // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {
