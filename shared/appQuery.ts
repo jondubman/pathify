@@ -20,12 +20,9 @@ export interface AppQueryDescriptor {
   type: string; // activities, activity, events, eventCount, options, etc. - see appQuery saga.
   // Note this is the type of the AppQueryDescriptor, not the type of the action sent to the app, which is 'appQuery'.
   activityId?: string;
+  activityRangeQueries: ActivityRangeQuery | undefined, // applies to activities
   countOnly?: boolean; // true means count results rather than sending them all
   includeEvents?: boolean; // include low-level events in the results
-
-  activityRangeQueries: ActivityRangeQuery | undefined, // applies to activities
-  visibleOnly?: boolean; // true means filter any activities that do not intersect the current mapBounds
-
   level?: number; // applies to logs (default 0)
   limit?: number; // applies to activities or events
   pageSize?: number; // applies to logs and events, works with startIndex

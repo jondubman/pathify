@@ -1,0 +1,9 @@
+{
+  type: 'appQuery',
+  params: {
+    query: {
+      type: 'exportActivity',
+      activityId: '$selected',
+    },
+  }
+}

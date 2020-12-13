@@ -7,7 +7,6 @@
       },
       // countOnly: true,
       // limit: 8,
-      visibleOnly: true,
     },
   }
 }

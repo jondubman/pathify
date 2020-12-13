@@ -495,7 +495,11 @@ const sagas = {
             response = 'missing activityId';
           } else {
             if (activityId) {
-              const activity = yield call(database.activityById, activityId);
+              let id = activityId;
+              if (activityId === '$selected') { // special case
+                id = yield select((state: AppState) => state.options.selectedActivityId);
+              }
+              const activity = yield call(database.activityById, id);
               if (activity) {
                 response = yield call(exportActivity, activity);
               } else  {

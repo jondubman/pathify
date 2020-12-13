@@ -44,9 +44,9 @@ export const activityIncludesMark = (activityId: string, mark: MarkEvent): boole
   return !!(mark.activityId && activity && mark.activityId === activity.id)
 }
 
-// For now, the defult activity color is based on its index in the ActivityList, with adjacent colors sufficiently
+// For now, the default activity color is based on its index in the ActivityList, with adjacent colors sufficiently
 // distinct to avoid confusion. Note this does not have special coloring for selected, current, etc. - that's applied
-// elsewhere.
+// elsewhere. Selected color is an enhanced version of this color; current is a dedicated shade of green.
 export const activityColorForIndex = (index: number, opacity: number = 1) => {
   const { activityColors } = constants.colors;
   const baseColor = activityColors[index % activityColors.length];

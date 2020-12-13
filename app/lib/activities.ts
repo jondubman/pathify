@@ -179,10 +179,12 @@ export const boundsForActivity = (activity: ActivityDataExtended): Bounds | null
     null
 )
 
-export interface ActivityFilter {
+export interface ActivityFilter { // These are applied in the listedActivities filter.
+  // Activities not wholly contained but whose bounds overlap the current bounds are still allowed, by default.
   excludeOutOfBounds: boolean;
   includeAll?: boolean;
   includeCurrent?: boolean;
   includeSelected?: boolean;
-  strictBoundsCheck: boolean; // activities wholly contained in current map bounds
+  // For use with excludeOutOfBounds. Activities must be wholly contained in current map bounds.
+  strictBoundsCheck: boolean;
 }
