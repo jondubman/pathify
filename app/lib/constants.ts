@@ -133,10 +133,10 @@ const colors = {
     '#c62828', // red
     '#ec407a', // pink
     '#f012be', // namedColors.fuschia,
-    '#ab47bc', // purple
-    '#7e57c2', // deep purple
-    '#5c6bc0', // indigo
-    '#42a5f5', // blue
+    '#ab37bc', // purple
+    '#8e67c2', // deep purple
+    '#7685da', // indigo
+    '#1074e9', // blue
     '#29b6f6', // light blue
     '#26c6da', // cyan
     '#26a69a', // teal
