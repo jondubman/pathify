@@ -621,7 +621,7 @@ const constants = {
     serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
     tickThrottleWhileTracking: 1000,
     timelineCloseToNow: 3000,
-    timelineRelativeZoomStep: 30, // bigger zooms faster
+    timelineRelativeZoomStep: 16,
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode & Now clock.
@@ -645,7 +645,7 @@ const constants = {
     miniBarHeight: 15,
     minimumZoomMsec: 1000, // 1 second
     nearTimeThreshold: interval.seconds(10), // TODO
-    relativeZoomRate: 0.012,
+    relativeZoomRate: 0.015, // previously 0.012
     tickLabelFontSize: 12, // smaller is hard to read; bigger takes up too much room
     topLineHeight: 1,
     widthMultiplier: 10, // >1, important for smooth panning of the timeline. Larger means harder to reach the edge.
@@ -654,88 +654,100 @@ const constants = {
       // For the purpose of formatting tick marks on the Timeline axis, time intervals up to but not beyond the
       // visibleTime threshold should yield the given tickInterval and tickFormat.
       // visibleTime refers to the amount of time visible on screen (any off-screen portions of Timeline do not count.)
+      // It's desirable to have more than one tickmark visible at all times so you have a sense of relative time.
+      // TODO review: are any of the indexes ever off by one in the code that evaluates this?
       //
       { // zoomRange 0
-        tickInterval: interval.weeks(1),
-        tickFormat: '%a %b %d',
-        visibleTime: interval.weeks(4), // upper limit (minimum zoom)
+        tickInterval: interval.weeks(4), // This fist one will not end up applying since it's out of range...
+        tickFormat: '%b %d', // Feb 18
+        visibleTime: interval.weeks(16), // upper limit (minimum zoom)
       },
       { // zoomRange 1
-        tickInterval: interval.weeks(1),
-        tickFormat: '%a %b %d',
-        visibleTime: interval.weeks(1),
+        tickInterval: interval.weeks(2),
+        tickFormat: '%b %d', // Feb 18
+        visibleTime: interval.weeks(6), // until more than this is showing...
       },
       { // zoomRange 2
+        tickInterval: interval.weeks(1),                                    // there's a tick every week
+        tickFormat: '%a %b %d', // Tue Feb 18
+        visibleTime: interval.weeks(3),
+      },
+      { // zoomRange 3
+        tickInterval: interval.days(3),
+        tickFormat: '%a %b %d', // Tue Feb 18
+        visibleTime: interval.weeks(1),
+      },
+      { // zoomRange 4
         tickInterval: interval.days(1),
         tickFormat: '%a %d', // Wed 28
         visibleTime: interval.days(3),
       },
-      { // zoomRange 3
+      { // zoomRange 5
         tickInterval: interval.hours(12),
         tickFormat: ' %a %p %d', // Wed PM 28
         visibleTime: interval.hours(36),
       },
-      { // zoomLevel 4
+      { // zoomLevel 6
         tickInterval: interval.hours(8),
         tickFormat: '%a %-I %p',
         visibleTime: interval.hours(24),
       },
-      { // zoomRange 5
+      { // zoomRange 7
         tickInterval: interval.hours(4),
         tickFormat: '%a %-I %p',
         visibleTime: interval.hours(12),
       },
-      { // zoomRange 6
+      { // zoomRange 8
         tickInterval: interval.hours(2),
         tickFormat: '%a %-I %p',
         visibleTime: interval.hours(4),
       },
-      { // zoomRange 7
+      { // zoomRange 9
         tickInterval: interval.hours(1),
         tickFormat: '%a %-I %p', // Wed 11 AM
         visibleTime: interval.hours(2),
       },
-      { // zoomRange 8
+      { // zoomRange 10
         tickInterval: interval.minutes(30),
         tickFormat: '%-I:%M %p', // 11:00 AM
         visibleTime: interval.hours(1),
       },
-      { // zoomRange 9
+      { // zoomRange 11
         tickInterval: interval.minutes(10),
         tickFormat: '%-I:%M %p',
         visibleTime: interval.minutes(30),
       },
-      { // zoomRange 10
+      { // zoomRange 12
         tickInterval: interval.minutes(5),
         tickFormat: '%-I:%M %p',
         visibleTime: interval.minutes(10),
       },
-      { // zoomRange 11
+      { // zoomRange 13
         tickInterval: interval.minutes(2),
         tickFormat: '%-I:%M %p',
         visibleTime: interval.minutes(5),
       },
-      { // zoomRange 12
+      { // zoomRange 14
         tickInterval: interval.minutes(1),
         tickFormat: '%-I:%M %p',
         visibleTime: interval.minutes(2),
       },
-      { // zoomRange 13
+      { // zoomRange 15
         tickInterval: interval.seconds(30),
         tickFormat: '%-I:%M:%S', // 11:20:10
         visibleTime: interval.minutes(1),
       },
-      { // zoomRange 14
+      { // zoomRange 16
         tickInterval: interval.seconds(10),
         tickFormat: '%-I:%M:%S',
         visibleTime: interval.seconds(30),
       },
-      { // zoomRange 15
+      { // zoomRange 17
         tickInterval: interval.seconds(5),
         tickFormat: '%-I:%M:%S',
         visibleTime: interval.seconds(8),
       },
-      { // zoomRange 16
+      { // zoomRange 18
         tickInterval: interval.seconds(1),
         tickFormat: '%-I:%M:%S',
         visibleTime: interval.seconds(5), // lower limit (maximum zoom)
