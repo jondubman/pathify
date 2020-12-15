@@ -22,18 +22,21 @@ class PathifyUITests: XCTestCase {
         let app = XCUIApplication()
 
         // Note launchEnvironment comes through as props to the App component on the react-native side once launched.
-
-        let testBundle = Bundle(for: type(of: self))
-        guard let asset = NSDataAsset(name: "sample", bundle: testBundle) else {
-            fatalError("Missing data asset: sample")
-        }
-        // https://docs.swift.org/swift-book/LanguageGuide/StringsAndCharacters.html
-        // let json = ""
-        let json = String(decoding: asset.data, as: UTF8.self)
-
-        // This is the trick to pass in props to a launched app in React Native: Set app.launchEnvironment
-        app.launchEnvironment = ["pathifyEnv" : json]
-
+        // let testBundle = Bundle(for: type(of: self))
+        // var index = 0
+        // var samples: [String : String] = [:]
+        // repeat {
+        //   let name = "sample" + String(index)
+        //   guard let asset = NSDataAsset(name: name, bundle: testBundle) else {
+        //     break; // this is ok, we are simply done with samples
+        //   }
+        //   // TODO this json is too long to fit in the launchEnvironment!
+        //   // let json = String(decoding: asset.data, as: UTF8.self)
+        //   samples[name] = name
+        //   index += 1
+        // } while true
+        // app.launchEnvironment = samples
+        
         setupSnapshot(app)
 
         app.launch()

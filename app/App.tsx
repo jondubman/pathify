@@ -9,6 +9,10 @@ import {
 // import FontAwesome5 from 'react-native-vector-icons';
 import { Provider } from 'react-redux';
 
+import {
+  ExportedActivity,
+} from 'lib/activities';
+
 LogBox.ignoreAllLogs(true); // Note this only disables notifications, not uncaught errors.
 
 // Note the following transformer, along with package.json files with a name property, enables import from lib/* etc.
@@ -51,16 +55,23 @@ export default class App extends Component {
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
 
       // Log incoming properties
-      const { appBuild, appVersion, develop, pathifyEnv } = this.props as any;
+      const { props } = this as any;
+      const { appBuild, appVersion, develop, foo, sample0 } = props;
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
+      log.info('foo', foo); // set in AppDelegate.m
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
 
-      log.trace('TODO pathifyEnv', pathifyEnv); // set (maybe) in PathifyUITests.swift
-      let sample: any;
-      if (pathifyEnv) {
-        sample = JSON.parse(pathifyEnv);
-        log.info('sample data', sample);
+      const samples = [] as Array<ExportedActivity>;
+      for (let i = 0; ; i++) {
+        const name = `sample${i}`;
+        if (props[name]) {
+          const sample = JSON.parse(props[name]) as ExportedActivity;
+          // log.trace(name, sample.activity);
+          samples.push(sample);
+        } else {
+          break;
+        }
       }
       log.info('TODO develop', develop); // set (maybe) in XCode build scheme
       if (devMode || develop === 'true') {
@@ -87,7 +98,7 @@ export default class App extends Component {
       log.info('windowWidthFactor', utils.windowWidthFactor());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
-      store.dispatch(newAction(AppAction.startupActions, { include: sample }));
+      store.dispatch(newAction(AppAction.startupActions, { include: samples[0] })); // TODO
 
       // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {

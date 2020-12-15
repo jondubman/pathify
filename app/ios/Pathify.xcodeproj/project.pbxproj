@@ -13,8 +13,9 @@
 		2B26FB67584156A8DFAA5FDC /* libPods-Pathify.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46C527FE3860B20D350AED1F /* libPods-Pathify.a */; };
 		85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC774D0FF4A84A63B4A92DE9 /* libz.tbd */; };
 		AB10087424F5B0EE003D31C8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */; };
+		AB5A2DEB25887E01006947F5 /* PathifyNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5A2DEA25887E01006947F5 /* PathifyNative.swift */; };
 		AB666CE624F09F1E00063DA1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */; };
-		AB729216258616CD009A55FF /* SampleData.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB9F79F62585EA1700E80B04 /* SampleData.xcassets */; };
+		AB83B8E82589579D00B5759F /* SampleData.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB9F79F62585EA1700E80B04 /* SampleData.xcassets */; };
 		AB9F7A012585EBBF00E80B04 /* SampleData.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB9F79F62585EA1700E80B04 /* SampleData.xcassets */; };
 		AB9F7A052585ECB200E80B04 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		ABE839982410C7970051DA47 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE839962410C7960051DA47 /* SnapshotHelper.swift */; };
@@ -66,6 +67,7 @@
 		46C527FE3860B20D350AED1F /* libPods-Pathify.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pathify.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		905DCE60B7E5EAA4C215751D /* Pods-Pathify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.release.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.release.xcconfig"; sourceTree = "<group>"; };
 		AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		AB5A2DEA25887E01006947F5 /* PathifyNative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathifyNative.swift; sourceTree = "<group>"; };
 		AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB9807D723EA6BCE00477115 /* ReactNativeHaptic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeHaptic.xcodeproj; path = "../node_modules/react-native-haptic/ios/ReactNativeHaptic.xcodeproj"; sourceTree = "<group>"; };
 		AB9F79F62585EA1700E80B04 /* SampleData.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SampleData.xcassets; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				AB5A2DEA25887E01006947F5 /* PathifyNative.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */,
@@ -312,7 +315,7 @@
 				AB666CE624F09F1E00063DA1 /* LaunchScreen.storyboard in Resources */,
 				AB10087424F5B0EE003D31C8 /* LaunchScreen.xib in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				AB729216258616CD009A55FF /* SampleData.xcassets in Resources */,
+				AB83B8E82589579D00B5759F /* SampleData.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +409,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				AB5A2DEB25887E01006947F5 /* PathifyNative.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -548,6 +552,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -574,6 +579,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 			};
 			name = Debug;
 		};
@@ -606,6 +612,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -624,6 +631,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -631,6 +639,7 @@
 		ABFBED6C2410C61600A2E0D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -653,6 +662,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dubman.PathifyUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "Pathify-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -663,6 +673,7 @@
 		ABFBED6D2410C61600A2E0D3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -685,6 +696,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dubman.PathifyUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "Pathify-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
