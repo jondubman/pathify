@@ -19,24 +19,7 @@ class PathifyUITests: XCTestCase {
 
     func testExample() {
         // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-
-        // Note launchEnvironment comes through as props to the App component on the react-native side once launched.
-        // let testBundle = Bundle(for: type(of: self))
-        // var index = 0
-        // var samples: [String : String] = [:]
-        // repeat {
-        //   let name = "sample" + String(index)
-        //   guard let asset = NSDataAsset(name: name, bundle: testBundle) else {
-        //     break; // this is ok, we are simply done with samples
-        //   }
-        //   // TODO this json is too long to fit in the launchEnvironment!
-        //   // let json = String(decoding: asset.data, as: UTF8.self)
-        //   samples[name] = name
-        //   index += 1
-        // } while true
-        // app.launchEnvironment = samples
-        
+        let app = XCUIApplication()        
         setupSnapshot(app)
 
         app.launch()
