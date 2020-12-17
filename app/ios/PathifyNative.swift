@@ -17,12 +17,12 @@ import UIKit
   @objc public static func loadSampleData(props: NSMutableDictionary) {
     // print(props)
 
-    let testBundle = Bundle.main
+    let mainBundle = Bundle.main
     var index = 0
     // var samples: [String : String] = [:]
     repeat {
       let name = "sample" + String(index)
-      guard let asset = NSDataAsset(name: name, bundle: testBundle) else {
+      guard let asset = NSDataAsset(name: name, bundle: mainBundle) else {
         break; // this is ok, we are simply done with samples
       }
       // Note this json is too long to fit in the launchEnvironment!
