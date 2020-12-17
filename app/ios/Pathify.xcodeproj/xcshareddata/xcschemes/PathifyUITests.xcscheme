@@ -10,19 +10,19 @@
             buildForTesting = "NO"
             buildForRunning = "YES"
             buildForProfiling = "NO"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Pathify.app"
-               BlueprintName = "Pathify"
+               BlueprintIdentifier = "AB05BE5825895B3800F61526"
+               BuildableName = "PathifyTest.app"
+               BlueprintName = "PathifyTest"
                ReferencedContainer = "container:Pathify.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "YES"
+            buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
@@ -64,16 +64,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Pathify.app"
-            BlueprintName = "Pathify"
-            ReferencedContainer = "container:Pathify.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "develop"

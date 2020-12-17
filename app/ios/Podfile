@@ -4,23 +4,20 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 # Uncomment the next line to define a global platform for your project
 platform :ios, '13.0'
 
-target 'Pathify' do
-  # ignore all warnings from all pods
-  inhibit_all_warnings!
+# ignore all warnings from all pods
+inhibit_all_warnings!
 
-  # from https://stackoverflow.com/questions/13208202/ignore-xcode-warnings-when-using-cocoapods/13209057#13209057
-  # how to ignore warnings from a specific pod
-  # pod 'FBSDKCoreKit', :inhibit_warnings => true
+
+def setupPathifyPods
 
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
   # use_frameworks! :linkage => :static
   # use_modular_headers!
 
-  # target 'PathifyTests' do
-  #   inherit! :search_paths
-  #   # Pods for testing
-  # end
+  # from https://stackoverflow.com/questions/13208202/ignore-xcode-warnings-when-using-cocoapods/13209057#13209057
+  # how to ignore warnings from a specific pod
+  # pod 'FBSDKCoreKit', :inhibit_warnings => true
 
   require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
   config = use_native_modules!
@@ -31,22 +28,7 @@ target 'Pathify' do
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
   # use_flipper!
-  post_install do |installer|
-    # flipper_post_install(installer)
-    installer.generated_projects.each do |project|
-      project.build_configurations.each do |config|
-          if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 13.0
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-          end
-      end
-      project.targets.each do |target|
-        target.build_configurations.each do |config|
-          if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 13.0
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-          end
-        end
-      end
-    end
+
   #   installer.pods_project.targets.each do |target|
   #     # workaround per https://github.com/facebook/react-native/issues/24192
   #     if target.name == "React"
@@ -65,5 +47,36 @@ target 'Pathify' do
   #       target.remove_from_project
   #     end
   #   end
+end
+
+
+target 'PathifyUITests' do
+  inherit! :search_paths
+  # Pods for testing
+end
+
+target 'Pathify' do
+  setupPathifyPods
+end
+
+target 'PathifyTest' do
+  setupPathifyPods
+end
+
+post_install do |installer|
+  # flipper_post_install(installer)
+  installer.generated_projects.each do |project|
+    project.build_configurations.each do |config|
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 13.0
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        end
+    end
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 13.0
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        end
+      end
+    end
   end
 end

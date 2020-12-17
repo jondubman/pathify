@@ -40,7 +40,9 @@ const mapStateToProps = (state: AppState): IntroStateProps => {
 const mapDispatchToProps = (dispatch: Function): IntroDispatchProps => {
   const requestLocationPermission = (onDone: Function) => {
     log.info('Intro requestLocationPermission');
-    dispatch(newAction(AppAction.requestLocationPermission, { onDone }));
+    setTimeout(() => {
+      dispatch(newAction(AppAction.requestLocationPermission, { onDone }));
+    }, 0)
   }
   const pageChanged = (index: number) => {
     log.debug('Intro pageChanged', index);
