@@ -687,6 +687,7 @@
 				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = YES;
+				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
 					"$(inherited)",
@@ -895,6 +896,7 @@
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = YES;
+				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
 					"$(inherited)",
@@ -986,6 +988,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KDB2MK77BH;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = PathifyUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
