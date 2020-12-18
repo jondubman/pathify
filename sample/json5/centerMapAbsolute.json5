@@ -2,6 +2,7 @@
   type: 'centerMap',
   params: {
     center: [ -122.321811, 47.652209 ],
+    heading: 15,
     option: 'absolute',
     zoom: 12,
   }

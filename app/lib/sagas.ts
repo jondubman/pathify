@@ -700,10 +700,10 @@ const sagas = {
       if (map && map.flyTo) {
         const params = action.params as CenterMapParams;
         yield call(log.trace, 'saga centerMap', params);
-        const { center, option, zoom } = params;
+        const { center, heading, option, zoom } = params;
         if (center) {
           let newCenter = center;
-          if (option === AbsoluteRelativeOption.relative) {
+          if (option === AbsoluteRelativeOption.relative) { // TODO what about relative with heading?
             const currentCenter = yield call(map.getCenter as any);
             yield call(log.trace, 'saga centerMap: currentCenter', currentCenter);
             newCenter = [currentCenter[0] + center[0], currentCenter[1] + center[1]];
@@ -712,11 +712,12 @@ const sagas = {
             yield put(newAction(AppAction.stopFollowingPath)); // otherwise map may hop right back
             yield put(newAction(AppAction.stopFollowingUser)); // otherwise map may hop right back
           }
-          if (zoom && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
+          if ((heading || zoom) && newCenter) { // optional in CenterMapParams; applies for both absolute and relative
             const config: CameraSettings = {
               animationDuration: constants.map.centerMapDuration,
               centerCoordinate: newCenter,
-              zoomLevel: zoom,
+              heading: heading || 0,
+              zoomLevel: zoom || 0,
             }
             yield call(map.setCamera as any, config);
           } else {
