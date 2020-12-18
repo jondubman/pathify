@@ -127,6 +127,7 @@ import {
   getStoredLocationEvent,
   loggableOptions,
   mapPadding,
+  mapPosition,
   menuOpen,
   pulsars,
   selectedActivity,
@@ -443,8 +444,7 @@ const sagas = {
           break;
         }
         case 'bounds': { // of map
-          const { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
-          response = { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial };
+          response = mapPosition(state);
           break;
         }
         case 'cache': { // of activities
@@ -575,9 +575,9 @@ const sagas = {
           break;
         }
         case 'status': { // bunch of stuff bundled up
-          const { cache, mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
+          const { cache } = state;
           response = {
-            bounds: { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial },
+            bounds: mapPosition(state),
             cache: {
               activityCount: cache.activities.length,
               populated: cache.populated || false,
@@ -1800,14 +1800,19 @@ const sagas = {
         timelineNow,
       } = settings;
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
+
+      // Set initial map bounds, heading and zoomLevel
       yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
+
+      // Configure the grabBar
       const grabBarSnapIndexPreview = grabBarSnapIndex;
       yield put(newAction(AppAction.setAppOption, {
         grabBarSnapIndexPreview,
       }))
       yield put(newAction(AppAction.flagEnable, 'showGrabBar'));
+
       if (pausedTime) {
         yield call(log.trace, 'startupActions: pausedTime', pausedTime);
         yield put(newAction(AppAction.setAppOption, { // Note all these timestamps are aligned on startup.

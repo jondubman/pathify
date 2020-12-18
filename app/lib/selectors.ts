@@ -304,6 +304,14 @@ export const mapPadding = (state: AppState): [number, number] => {
   return [vertical, horizontal];
 }
 
+export const mapPosition = (state: AppState) => {
+  const { mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial } = state;
+  
+  return { center: utils.centerForBounds(mapBounds),
+           mapBounds, mapBoundsInitial, mapHeading, mapHeadingInitial, mapZoom, mapZoomInitial
+         }
+}
+
 export const mapStyles = (state: AppState): MapStyle[] => (
   constants.mapStyles.filter((mapStyle: MapStyle) => state.flags.allowMapStyleNone || (mapStyle.name !== 'None'))
 )

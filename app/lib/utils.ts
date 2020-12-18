@@ -2,6 +2,7 @@ import {
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to our Redux application state
   Dimensions,
 } from 'react-native';
+import * as turf from '@turf/turf';
 
 import constants from 'lib/constants';
 import { LonLat } from 'lib/locations';
@@ -36,6 +37,20 @@ const utils = {
     utils.locInsideBounds(b[0], a) || // NE corner of b inside a
     utils.locInsideBounds(b[1], a)    // SW corner of b inside a
   ),
+
+  centerForBounds: (bounds: Bounds): LonLat | undefined => {
+    const NE = bounds[0];
+    const SW = bounds[1];
+    const features = turf.featureCollection([turf.point(NE), turf.point(SW)]);
+    const point = turf.center(features) as turf.Feature<turf.Point>;
+    if (!point || !point.geometry || !point.geometry.coordinates) {
+      return undefined;
+    }
+    return point.geometry.coordinates as LonLat;
+    // Old way, before using turf
+    // return [ (NE[0] + SW[0]) / 2,
+    //          (NE[1] + SW[1]) / 2];
+  },
 
   counts: (): any => {
     return _counts;
