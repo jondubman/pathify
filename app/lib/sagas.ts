@@ -459,12 +459,13 @@ const sagas = {
         case 'counts': {
           response = {
             activities: (yield call(database.activities)).length,
-            counts: yield call(utils.counts),
             events: (yield call(database.events)).length,
             logs: (yield call(database.logs)).length,
             paths: (yield call(database.paths)).length,
+            samples: state.samples.length,
             schemaVersion: constants.database.schemaVersion,
             timeSinceAppStartedUp,
+            'utils.counts': yield call(utils.counts),
           }
           break;
         }
@@ -555,6 +556,10 @@ const sagas = {
           response = yield call(pulsars, state);
           break;
         }
+        case 'samples': {
+          response = { count: state.samples.length };
+          break;
+        }
         case 'selectedActivity': {
           let activity = yield call(selectedActivity, state);
           let results = [] as any;
@@ -583,14 +588,15 @@ const sagas = {
               populated: cache.populated || false,
               refreshCount: cache.refreshCount,
             },
-            counts: {
+            counts: { // TODO dry
               activities: (yield call(database.activities)).length,
-              counts: yield call(utils.counts),
               events: (yield call(database.events)).length,
               logs: (yield call(database.logs)).length,
               paths: (yield call(database.paths)).length,
+              samples: state.samples.length,
               schemaVersion: constants.database.schemaVersion,
               timeSinceAppStartedUp,
+              'utils.counts': yield call(utils.counts),
             },
             current: state.current,
             flags: state.flags,
@@ -741,7 +747,6 @@ const sagas = {
         const state = yield select((state: AppState) => state);
         const pathInfo = yield call(getCachedPathInfo, state);
         if (pathInfo) {
-          yield call(log.trace, 'saga centerMapOnPath: missing pathInfo');
           if (state.flags.animateMapWhenFollowingPath) {
             const config: CameraSettings = {
               animationDuration: constants.map.centerMapDuration,
@@ -1854,7 +1859,7 @@ const sagas = {
       yield put(newAction(AppAction.appStateChange, { manual: true, newState }));
 
       if (include) {
-        yield put(newAction(AppAction.importActivity, { include }));
+        yield put(newAction(ReducerAction.SET_SAMPLES, include));
       }
       const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
       yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions

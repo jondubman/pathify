@@ -98,7 +98,7 @@ export default class App extends Component {
       log.info('windowWidthFactor', utils.windowWidthFactor());
       log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
-      store.dispatch(newAction(AppAction.startupActions, { include: samples[0] })); // TODO
+      store.dispatch(newAction(AppAction.startupActions, { include: samples }));
 
       // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {

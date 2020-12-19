@@ -95,6 +95,14 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         }
         break;
 
+      case ReducerAction.SET_SAMPLES:
+        {
+          newState.samples = [
+            ...params, // TODO watch out; zero validation of incoming params!
+          ]
+        }
+        break;
+
       case ReducerAction.SET_TIMER_TICK_INTERVAL:
         {
           const interval = params as number;

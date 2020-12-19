@@ -11,6 +11,10 @@
 // The actions are strings in order to work smoothly with redux-saga. This also makes action objects self-explanatory.
 // There seems to be no way to avoid the repetition on each line given the syntax for TypeScript string enums.
 
+import {
+  ActivityDataExtended,
+} from 'lib/activities';
+
 export enum ReducerAction {
   'CACHE' = 'CACHE',
   'GEOLOCATION' = 'GEOLOCATION',
@@ -18,6 +22,7 @@ export enum ReducerAction {
   'SET_APP_OPTION' = 'SET_APP_OPTION',
   'SET_CURRENT' = 'SET_CURRENT',
   'SET_REF' = 'SET_REF',
+  'SET_SAMPLES' = 'SET_SAMPLES',
   'SET_TIMER_TICK_INTERVAL' = 'SET_TIMER_TICK_INTERVAL', // note this is the actual JS interval, not the # of msec
   'FLAG_DISABLE' = 'FLAG_DISABLE',
   'FLAG_ENABLE' = 'FLAG_ENABLE',
@@ -245,7 +250,7 @@ export interface StartActivityParams {
 }
 
 export interface StartupActionParams {
-  include?: string;
+  include?: Array<ActivityDataExtended>;
 }
 
 export interface TimelineRelativeZoomParams {

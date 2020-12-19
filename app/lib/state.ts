@@ -52,7 +52,7 @@ const devMode = __DEV__ ? true : false; // (debug : release)
 
 export const initialAppState = {
   cache: {
-    activities: [],
+    activities: [] as Array<ActivityDataExtended>,
     populated: false,
     refreshCount: 0,
   } as CacheInfo,
@@ -108,6 +108,7 @@ export const initialAppState = {
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
+    testMode: true, // if true, location is either turned off or synthesized, and options.testScenario applies TODO
     ticksEnabled: true, // normally true, set false only for testing/profiling to disable actions repeated every second.
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
@@ -157,6 +158,7 @@ export const initialAppState = {
     selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
     showIntroIfNeeded: false, // so it can be disabled for tests
     startupTime: now, // not persisted, never changed once set
+    testScenario: '', // relates to flags.testMode
     timelineSpanColorOpacity: 0.5,
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.
@@ -167,6 +169,7 @@ export const initialAppState = {
     activityList: undefined as ActivityList | undefined,
     timelineScroll: undefined as TimelineScroll | undefined,
   },
+  samples: [] as Array<ActivityDataExtended>,
 }
 
 // Canonical interface for AppState, the contents of the Redux store
