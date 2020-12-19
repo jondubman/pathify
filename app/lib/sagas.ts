@@ -81,10 +81,12 @@ import {
   ZoomToActivityParams,
 } from 'lib/actions'
 import {
+  ActivityTimeProps,
   Activity,
   ActivityData,
   ActivityDataExtended,
   exportActivity,
+  ExportedActivity,
   extendActivity,
   extendedActivities,
 } from 'lib/activities';
@@ -114,6 +116,7 @@ import {
   MarkType
 } from 'lib/marks';
 import timeseries, {
+  interval,
   EventType,
   GenericEvent,
   TimeRange,
@@ -558,7 +561,7 @@ const sagas = {
           break;
         }
         case 'samples': {
-          response = { count: state.samples.length };
+          response = state.samples; // This may be a large volume of data.
           break;
         }
         case 'selectedActivity': {
@@ -935,7 +938,38 @@ const sagas = {
     const params = action.params as EnableTestScenarioParams;
     const { scenario } = params;
     log.debug('enableTestScenario:', scenario);
-    // TODO
+
+    switch (scenario) {
+      case 'importSamples':
+        const samples = (yield select((state: AppState) => state.samples)) as Array<ExportedActivity>;
+        if (samples.length) {
+          const { tStart } = samples[0].activity;
+          if (tStart) {
+            const timeShift = (utils.now() - interval.hours(2)) - tStart; // TODO - make sample recent
+            yield call(log.debug, 'timeShift', timeShift);
+            for (const sample of samples) {
+              yield put(newAction(AppAction.importActivity, { include: sample, timeShift }));
+            }
+            yield put(newAction(AppAction.refreshCache));
+          } else {
+            yield call(log.debug, 'cannot timeShift: tStart:', tStart);
+          }
+        } else {
+            yield call(log.debug, 'no samples to import');
+        }
+        break;
+
+      case 'a':
+        yield call(log.debug, 'scenario a');
+        break;
+
+      case 'b':
+        yield call(log.debug, 'scenario b');
+        break;
+
+      default:
+        break;
+    }
   },
 
   // After-effects (i.e. downstream side effects) of modifying app flags are handled here.
@@ -1082,7 +1116,7 @@ const sagas = {
   importActivity: function* (action: Action) {
     try {
       const params = action.params as ImportActivityParams;
-      const { include } = params;
+      const { include, timeShift } = params;
       const { activity, path } = include;
       const { id } = activity;
       const pathLengths = { // just for logging
@@ -1101,7 +1135,21 @@ const sagas = {
       if (existingActivity) {
         yield call(log.warn, 'importActivity: activityId already exists', id);
       } else {
-        yield call(database.updateActivity, activity, path);
+        let shiftedActivity = activity;
+        let shfitedPath = path;
+        if (timeShift) {
+          shiftedActivity = { ...activity };
+          for (const prop of ActivityTimeProps) {
+            shiftedActivity[prop] += timeShift;
+          }
+          shfitedPath = { ...path };
+          const newt = [] as Array<number>;
+          for (const t of shfitedPath.t) {
+            newt.push(t + timeShift);
+          }
+          shfitedPath.t = newt;
+        }
+        yield call(database.updateActivity, shiftedActivity, shfitedPath);
         yield call(log.debug, 'imported');
       }
     } catch (err) {

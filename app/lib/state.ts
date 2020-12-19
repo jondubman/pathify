@@ -6,6 +6,7 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import {
   ActivityDataExtended,
   ActivityFilter,
+  ExportedActivity,
 } from 'lib/activities';
 import { AppStateChange } from 'lib/appEvents';
 import constants from 'lib/constants';
@@ -169,7 +170,7 @@ export const initialAppState = {
     activityList: undefined as ActivityList | undefined,
     timelineScroll: undefined as TimelineScroll | undefined,
   },
-  samples: [] as Array<ActivityDataExtended>,
+  samples: [] as Array<ExportedActivity>,
 }
 
 // Canonical interface for AppState, the contents of the Redux store

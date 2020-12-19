@@ -206,6 +206,7 @@ export interface GeolocationParams {
 
 export interface ImportActivityParams {
   include: ExportedActivity; // Note use of param named include. See json-compose.
+  timeShift?: number;
 }
 
 export interface LogActionParams {

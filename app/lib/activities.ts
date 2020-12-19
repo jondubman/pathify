@@ -60,6 +60,18 @@ export const ActivitySchema: Realm.ObjectSchema = { // Note: keep Activity and A
   },
 }
 
+// When time-shifting sample activities, these props must be adjusted together:
+export const ActivityTimeProps: Array<string> = [
+  'tFirstLoc',
+  'tLastLoc',
+  'tLastRefresh',
+  'tLastUpdate',
+  'tStart',
+  'tEnd',
+  'tMaxGapDistance',
+  'tMaxGapTime',
+]
+
 // ActivityData facilitate creating and updating Activities.
 // All the Activity properties above are included, without extending Realm.Object. Here, all but id are optional.
 export interface ActivityData {
