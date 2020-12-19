@@ -69,7 +69,18 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
 
   constructor(props: GrabBarProps) {
     super(props);
-    this._panResponder = PanResponder.create({
+    this.createPanResponder = this.createPanResponder.bind(this);
+    this._panResponder = this.createPanResponder();
+  }
+
+  componentDidUpdate(prevProps: GrabBarProps) {
+    if (prevProps.keyName !== this.props.keyName) {
+      this._panResponder = this.createPanResponder(); // refresh it
+    }
+  }
+
+  createPanResponder() {
+    return PanResponder.create({
       // Ask to be the responder:
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
@@ -91,7 +102,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
         let containedPosition: number | undefined;
         let snap: number | undefined;
         let snapIndex: number | undefined;
-        const snaps = props.snapPositions;
+        const snaps = this.props.snapPositions;
         const lastIndex = snaps.length - 1;
         if (currentPosition <= snaps[0]) { // top
           snap = snaps[0];

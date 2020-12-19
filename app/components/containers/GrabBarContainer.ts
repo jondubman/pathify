@@ -59,12 +59,13 @@ const snapIfNeeded = (state: AppState, snap: number) => (
 
 const mapStateToProps = (state: AppState): GrabBarStateProps => {
   const snap = snapIfNeeded(state, snapPosition(state));
+  const { introMode } = state.flags;
   // That is the same trick used with the mapOpacity slider to avoid redundant updates.
   return {
     activityCount: state.cache.activities.length || 0,
     activitySelected: !!state.options.selectedActivityId,
-    introMode: state.flags.introMode,
-    keyName: snap.toString(),
+    introMode,
+    keyName: `${introMode}:${snapPositions.toString()}`,
     labelsEnabled: state.flags.labelsEnabled,
     pressed: state.flags.grabBarPressed,
     snap, // number
