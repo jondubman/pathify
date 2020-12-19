@@ -62,6 +62,17 @@ export default class App extends Component {
       log.info('foo', foo); // set in AppDelegate.m
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
 
+      log.info('TODO develop', develop); // set (maybe) in XCode build scheme
+      if (devMode || develop === 'true') {
+        store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
+        log.warn('devMode enabled');
+        devMode = true;
+      }
+      if (test) {
+        store.dispatch(newAction(AppAction.flagEnable, 'testMode'));
+        utils.setTestMode(true);
+        log.warn('testMode enabled');
+      }
       const samples = [] as Array<ExportedActivity>;
       for (let i = 0; ; i++) {
         const name = `sample${i}`;
@@ -72,16 +83,6 @@ export default class App extends Component {
         } else {
           break;
         }
-      }
-      log.info('TODO develop', develop); // set (maybe) in XCode build scheme
-      if (devMode || develop === 'true') {
-        store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
-        log.warn('devMode enabled');
-        devMode = true;
-      }
-      if (test) {
-        store.dispatch(newAction(AppAction.flagEnable, 'testMode'));
-        log.warn('testMode enabled');
       }
       if (flags.logToDatabase) {
         log.registerCallback((level: string, ...args) => {

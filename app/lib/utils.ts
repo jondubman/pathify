@@ -13,6 +13,7 @@ export type Bounds = LonLat[];
 // Counts (e.g. render counts) are stored here privately rather than in the Redux store for simplicity/efficiency.
 // It would be unhelpful for counting to yield any additional chatter between react-redux and the stuff we're measuring.
 const _counts: any = {};
+let _testMode = false;
 
 const utils = {
 
@@ -105,7 +106,11 @@ const utils = {
 
   mapArea: null, // reference to the singleton MapArea component
 
-  now: () => (Date.now()), // TODO allow the app's concept of the current time to be simulated, or real (this is real)
+  now: () => {
+    return _testMode ? (
+      new Date((new Date).setHours(9, 41)).getTime()
+    ) : (Date.now());
+  },
 
   // not currently used
   objectWithoutKey: (object: any, key: string) => {
@@ -116,6 +121,10 @@ const utils = {
   precisionRound: (num: number, precision: number) => {
     const factor = Math.pow(10, precision);
     return Math.round(num * factor) / factor;
+  },
+
+  setTestMode: (testMode: boolean) => {
+    _testMode = testMode; 
   },
 
   floorTime: (t: number) => (Math.floor(t / 1000) * 1000),
