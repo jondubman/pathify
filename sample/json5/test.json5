@@ -1,0 +1,6 @@
+{
+  type: 'setAppOption',
+  params: {
+    testScenario: '$$', // replaced with command-line parameter
+  },
+}

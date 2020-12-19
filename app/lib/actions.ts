@@ -54,6 +54,7 @@ export enum AppAction {
   'continueActivity' = 'continueActivity',
   'delayedAction' = 'delayedAction',
   'deleteActivity' = 'deleteActivity',
+  'enableTestScenario' = 'enableTestScenario',
   'flagDisable' = 'flagDisable',
   'flagEnable' = 'flagEnable',
   'flagToggle' = 'flagToggle',
@@ -187,6 +188,10 @@ export interface DelayedActionParams {
 
 export interface DeleteActivityParams {
   id: string,
+}
+
+export interface EnableTestScenarioParams {
+  scenario: string,
 }
 
 export interface ExportActivityParams {

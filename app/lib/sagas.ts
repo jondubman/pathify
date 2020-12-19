@@ -60,6 +60,7 @@ import {
   ContinueActivityParams,
   DelayedActionParams,
   DeleteActivityParams,
+  EnableTestScenarioParams,
   ExportActivityParams,
   GeolocationParams,
   ImportActivityParams,
@@ -930,6 +931,13 @@ const sagas = {
     }
   },
 
+  enableTestScenario: function* (action: Action) {
+    const params = action.params as EnableTestScenarioParams;
+    const { scenario } = params;
+    log.debug('enableTestScenario:', scenario);
+    // TODO
+  },
+
   // After-effects (i.e. downstream side effects) of modifying app flags are handled here.
   flag_sideEffects: function* (flagName: string) {
     const { flags, options } = yield select((state: AppState) => state);
@@ -1433,15 +1441,20 @@ const sagas = {
 
   requestLocationPermission: function* (action: Action) {
     const params = action.params as RequestLocationPermissionParams;
-    const { requestedLocationPermission } = yield select((state: AppState) => state.flags);
-    if (requestedLocationPermission) {
-      yield call(log.debug, 'requestedLocationPermission already');
+    const { requestedLocationPermission, testMode } = yield select((state: AppState) => state.flags);
+    if (testMode) {
+      yield call(log.debug, 'testMode true, bypassing requestedLocationPermission');
+      yield put(newAction(AppAction.flagEnable, 'requestedLocationPermission')); // Let's not, and say we did.
     } else {
-      const authStatus = yield call(Geo.requestPermission); // TODO store in options so can query later?
-      yield call(log.info, 'requestLocationPermission authStatus', authStatus);
-      yield put(newAction(AppAction.flagEnable, 'requestedLocationPermission'));
-      yield call(Geo.initializeGeolocation, store, false); // false: not tracking
-      yield call(Geo.startBackgroundGeolocation);
+      if (requestedLocationPermission) {
+        yield call(log.debug, 'requestedLocationPermission already');
+      } else {
+        const authStatus = yield call(Geo.requestPermission); // TODO store in options so can query later?
+        yield call(log.info, 'requestLocationPermission authStatus', authStatus);
+        yield put(newAction(AppAction.flagEnable, 'requestedLocationPermission'));
+        yield call(Geo.initializeGeolocation, store, false); // false: not tracking
+        yield call(Geo.startBackgroundGeolocation);
+      }
     }
     if (params && params.onDone) {
       yield call(params.onDone);
@@ -1607,12 +1620,18 @@ const sagas = {
     const {
       activityListScrolling,
       appStartupCompleted,
+      testMode,
       timelineNow,
       timelineScrolling,
     } = state.flags;
     if (!appStartupCompleted) {
       yield call(log.trace, 'setAppOption: app has not finished starting up, so skipping side-effects');
       return;
+    }
+    if (testMode) {
+      if (params.testScenario) {
+        yield put(newAction(AppAction.enableTestScenario, { scenario: params.testScenario }));
+      }
     }
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
@@ -1762,7 +1781,12 @@ const sagas = {
 
       const runningInBackgroundNow = utils.appInBackground();
       yield call(database.completeAnyMigration);
-      const { devMode, recoveryMode, showIntroIfNeeded } = yield select((state: AppState) => state.flags);
+      const {
+        devMode,
+        recoveryMode,
+        showIntroIfNeeded,
+        testMode,
+      } = yield select((state: AppState) => state.flags);
       yield call(log.debug, 'saga startupActions');
 
       // Restore app options from settings
@@ -1829,12 +1853,14 @@ const sagas = {
         }))
       }
       const tracking = !!currentActivityId;
-      if (requestedLocationPermission) {
-        const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
-        yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
-        yield call(Geo.startBackgroundGeolocation);
-      } else if (showIntroIfNeeded) {
-        yield put(newAction(AppAction.flagEnable, 'introMode'));
+      if (!testMode) {
+        if (requestedLocationPermission) {
+          const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
+          yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
+          yield call(Geo.startBackgroundGeolocation);
+        } else if (showIntroIfNeeded) { // auto-launch introMode if we have not yet requestedLocationPermission
+          yield put(newAction(AppAction.flagEnable, 'introMode'));
+        }
       }
       if (!recoveryMode) {
         if (!runningInBackgroundNow) {

@@ -56,7 +56,7 @@ export default class App extends Component {
 
       // Log incoming properties
       const { props } = this as any;
-      const { appBuild, appVersion, develop, foo, sample0 } = props;
+      const { appBuild, appVersion, develop, foo, test } = props;
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
       log.info('foo', foo); // set in AppDelegate.m
@@ -78,6 +78,10 @@ export default class App extends Component {
         store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
         log.warn('devMode enabled');
         devMode = true;
+      }
+      if (test) {
+        store.dispatch(newAction(AppAction.flagEnable, 'testMode'));
+        log.warn('testMode enabled');
       }
       if (flags.logToDatabase) {
         log.registerCallback((level: string, ...args) => {

@@ -108,7 +108,7 @@ export const initialAppState = {
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
-    testMode: true, // if true, location is either turned off or synthesized, and options.testScenario applies TODO
+    testMode: false, // if true, location is either turned off or synthesized, and options.testScenario applies TODO
     ticksEnabled: true, // normally true, set false only for testing/profiling to disable actions repeated every second.
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
