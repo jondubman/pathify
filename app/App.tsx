@@ -2,6 +2,7 @@ import _ from 'lodash'; // for _.throttle
 
 import React, { Component } from 'react';
 import {
+  Alert,
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
   LogBox,
@@ -54,12 +55,23 @@ export default class App extends Component {
       // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
 
+      // Start logging
+      log.info('----- App starting up! (device log)');
+      log.info('windowSize', utils.windowSize());
+      log.info('windowHeightFactor', utils.windowHeightFactor());
+      log.info('windowWidthFactor', utils.windowWidthFactor());
+      log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
+      RNAppState.addEventListener('change', this.handleAppStateChange);
+
       // Log incoming properties
       const { props } = this as any;
       const { appBuild, appVersion, automate, develop, foo, test } = props;
+
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
+      log.info('automate', automate);
       log.info('foo', foo); // set in AppDelegate.m
+      log.info('test', test);
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
 
       log.info('TODO develop', develop); // set (maybe) in XCode build scheme
@@ -70,9 +82,6 @@ export default class App extends Component {
       }
       if (test) {
         store.dispatch(newAction(AppAction.flagEnable, 'testMode'));
-        if (automate) {
-          store.dispatch(newAction(AppAction.flagEnable, 'automate'));
-        }
         utils.setTestMode(true);
         log.warn('testMode enabled');
       }
@@ -99,14 +108,10 @@ export default class App extends Component {
           }, 0);
         })
       }
-      // Start logging
-      log.info('----- App starting up! (device log)');
-      log.info('windowSize', utils.windowSize());
-      log.info('windowHeightFactor', utils.windowHeightFactor());
-      log.info('windowWidthFactor', utils.windowWidthFactor());
-      log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
-      RNAppState.addEventListener('change', this.handleAppStateChange);
-      store.dispatch(newAction(AppAction.startupActions, { include: samples }));
+      if (automate) {
+        store.dispatch(newAction(AppAction.flagEnable, 'automate'));
+      }
+      store.dispatch(newAction(AppAction.startupActions, { include: samples })); // will launch automated test if needed
 
       // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {

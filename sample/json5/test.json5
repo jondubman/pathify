@@ -1,6 +1,6 @@
 {
-  type: 'setAppOption',
+  type: 'enableTestScenario',
   params: {
-    testScenario: '$$', // replaced with command-line parameter
+    scenario: '$$', // replaced with command-line parameter
   },
 }

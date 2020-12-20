@@ -19,18 +19,32 @@ class PathifyUITests: XCTestCase {
 
     func testExample() {
         // UI tests must launch the application that they test.
-        let app = XCUIApplication()        
+        let app = XCUIApplication()  
         setupSnapshot(app)
 
         app.launch()
 
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        snapshot("uitest0")
         sleep(10)
         snapshot("uitest1")
-
-        // sleep(5)
-        // snapshot("uitest2")
+        sleep(10)
+        snapshot("uitest2")
+        sleep(10)
+        snapshot("uitest3")
+        sleep(10)
+        snapshot("uitest4")
+        sleep(10)
+        snapshot("uitest5")
+        sleep(10)
+        snapshot("uitest6")
+        sleep(10)
+        snapshot("uitest7")
+        sleep(10)
+        snapshot("uitest8")
+        sleep(10)
+        snapshot("uitest9")
     }
 
     // func testLaunchPerformance() {

@@ -29,6 +29,8 @@ import UIKit
       print("Stringifying sample data: " + name)
       let json = String(decoding: asset.data, as: UTF8.self)
       props[name] = json
+      props["automate"] = true // This will spur automated tests.
+      props["test"] = true // These are idempotent.
       index += 1
     } while true    
   }

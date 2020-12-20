@@ -87,7 +87,7 @@ static void InitializeFlipper(UIApplication *application) {
   // The function in Swift is just loadSampleData(props), simple as can be, but you have to call it this cryptic way,
   // which you wouldn't even know without digging in the synthesized header file where you find loadSampleDataWithProps:
   [PathifyNative loadSampleDataWithProps:initialPropertiesDictionary];
-
+ 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Pathify"
                                                initialProperties:initialPropertiesDictionary

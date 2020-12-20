@@ -28,18 +28,19 @@ export type HelpPanelProps = HelpPanelStateProps & HelpPanelDispatchProps;
 
 const mapStateToProps = (state: AppState): HelpPanelStateProps => {
   const { appBuild, appVersion } = state.options;
-  const { devMode, introMode, remoteDebug } = state.flags;
+  const { devMode, introMode, remoteDebug, testMode } = state.flags;
   let introLabel: string;
   if (introMode) {
     introLabel = 'Exit intro...';
   } else {
     introLabel = 'Review intro...';
   }
+  const period = devMode || remoteDebug || testMode;
   return {
     introLabel,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
-    version: `Pathify v${appVersion}.${appBuild}${(devMode || remoteDebug) ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
+    version: `Pathify v${appVersion}.${appBuild}${period ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
   }
 }
 

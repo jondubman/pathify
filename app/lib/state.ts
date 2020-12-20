@@ -67,6 +67,7 @@ export const initialAppState = {
     animateMapWhenFollowingPath: true, // animation pans more smoothly
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
+    automate: false, // for automated testing TODO
     colorizeActivities: true, // auto-color activities based on their index in the ActivityList
     centerMapContinuously: false, // false means map recentered only when you near the edge (see locWellBounded)
     deleteEventsWhenDeletingActivity: true, // but if "orphaned" events remain, they should not cause issues.
@@ -109,7 +110,7 @@ export const initialAppState = {
     showTimelineMarks: false, // generally true
     showTimelineSpans: true, // generally true
     storeAllLocationEvents: false, // should the app store location events outside of activity tracking? generally false
-    testMode: false, // if true, location is either turned off or synthesized, and options.testScenario applies TODO
+    testMode: false, // if true, location is either turned off or synthesized
     ticksEnabled: true, // normally true, set false only for testing/profiling to disable actions repeated every second.
     timelineNow: false, // is the timeline continuously scrolling to show the current time?
     timelineScrolling: false, // is the timeline currently actively being scrolled?
@@ -160,7 +161,6 @@ export const initialAppState = {
     selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
     showIntroIfNeeded: false, // so it can be disabled for tests
     startupTime: now, // not persisted, never changed once set
-    testScenario: '', // relates to flags.testMode
     timelineSpanColorOpacity: 0.5,
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.

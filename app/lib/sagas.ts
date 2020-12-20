@@ -941,7 +941,7 @@ const sagas = {
 
     switch (scenario) {
 
-      case 'automated':
+      case 'automate':
         const wait = interval.seconds(15);
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'reset' }));
         yield delay(wait);
@@ -1762,11 +1762,6 @@ const sagas = {
       yield call(log.trace, 'setAppOption: app has not finished starting up, so skipping side-effects');
       return;
     }
-    if (testMode) {
-      if (params.testScenario) {
-        yield put(newAction(AppAction.enableTestScenario, { scenario: params.testScenario }));
-      }
-    }
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.
     // Note that the AppAction.setAppOption within this block recurses back into this saga, but only one level deep.
@@ -2023,7 +2018,7 @@ const sagas = {
         yield put(newAction(ReducerAction.SET_SAMPLES, include));
       }
       if (automate) {
-        yield put(newAction(AppAction.enableTestScenario, 'automate')); // may rely on SET_SAMPLES
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'automate' })); // may rely on SET_SAMPLES
       } else {
         const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
@@ -2032,7 +2027,7 @@ const sagas = {
       yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (TODO still needed?)
 
       // After appStartupCompleted, we are able to persist changes to Settings.
-      if (devMode || remoteDebug) {
+      if (devMode || remoteDebug || testMode) {
         // In devMode, attempt to stay in regular contact with the Pathify server.
         // Set and persist clientId for this app if needed.
         if (!settings.clientId || !settings.clientId.length) {
