@@ -940,7 +940,28 @@ const sagas = {
     log.debug('enableTestScenario:', scenario);
 
     switch (scenario) {
-      case 'importSamples':
+
+      case 'automated':
+        const wait = interval.seconds(15);
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'reset' }));
+        yield delay(wait);
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'load' }));
+        yield delay(wait);
+        yield put(newAction(AppAction.enableTestScenario, { scenario: '1' }));
+        yield delay(wait);
+        yield put(newAction(AppAction.enableTestScenario, { scenario: '2' }));
+        yield delay(wait);
+        yield put(newAction(AppAction.enableTestScenario, { scenario: '3' }));
+        yield delay(wait);
+        yield call(log.debug, 'Automated test complete');
+        break;
+
+      case 'reset':
+        yield put(newAction(AppAction.clearStorage));
+        break;
+
+      case 'load':
+        yield put(newAction(AppAction.reorientMap));
         const samples = (yield select((state: AppState) => state.samples)) as Array<ExportedActivity>;
         if (samples.length) {
           const { tStart } = samples[0].activity;
@@ -951,6 +972,8 @@ const sagas = {
               yield put(newAction(AppAction.importActivity, { include: sample, timeShift }));
             }
             yield put(newAction(AppAction.refreshCache));
+            yield put(newAction(AppAction.startFollowingUser));
+            yield put(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() }));
           } else {
             yield call(log.debug, 'cannot timeShift: tStart:', tStart);
           }
@@ -959,12 +982,73 @@ const sagas = {
         }
         break;
 
-      case 'a':
-        yield call(log.debug, 'scenario a');
+      case '1':
+        const sampleId1 = "a2bf3cc8-f12e-46f1-b3d4-a83654d8eec1";
+        yield call(log.debug, 'scenario 1');
+        yield put(newAction(AppAction.flagEnable, 'labelsEnabled'));
+        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+        yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
+        yield put(newAction(AppAction.setAppOption, {
+          grabBarSnapIndex: 2,
+          grabBarSnapIndexPreview: 2,
+          mapOpacity: 0.5,
+          mapOpacityPreview: 0.5,
+          mapStyle: 'Satellite',
+        }))
+        yield put(newAction(AppAction.reorientMap));
+        yield put(newAction(AppAction.selectActivity, {
+          id: sampleId1,
+          proportion: 0.5,
+        }))
+        yield put(newAction(AppAction.zoomToActivity, {
+          id: sampleId1,
+          zoomMap: true,
+          zoomTimeline: true,
+        }))
         break;
 
-      case 'b':
-        yield call(log.debug, 'scenario b');
+      case '2':
+        const sampleId2 = "c5b6c70f-26a5-4403-a40d-9796973f911f";
+        yield call(log.debug, 'scenario 2');
+        yield put(newAction(AppAction.reorientMap));
+        yield put(newAction(AppAction.selectActivity, {
+          id: sampleId2,
+          proportion: 0.8,
+        }))
+        yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
+        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+        yield put(newAction(AppAction.flagEnable, 'showSequentialPaths'));
+        yield put(newAction(AppAction.startFollowingPath));
+        yield put(newAction(AppAction.setAppOption, {
+          grabBarSnapIndex: 6,
+          grabBarSnapIndexPreview: 6,
+          mapOpacity: 0.3,
+          mapOpacityPreview: 0.3,
+          mapStyle: 'Satellite',
+        }))
+        break;
+
+      case '3':
+        yield call(log.debug, 'scenario 3');
+        yield put(newAction(AppAction.reorientMap));
+        yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
+        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+        yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
+        yield put(newAction(AppAction.stopFollowingUser));
+        yield put(newAction(AppAction.setAppOption, {
+          grabBarSnapIndex: 1,
+          grabBarSnapIndexPreview: 1,
+          mapOpacity: 1,
+          mapOpacityPreview: 1,
+          mapStyle: 'Trails',
+          scrollTime: utils.now(),
+        }))
+        yield put(newAction(AppAction.centerMap, {
+          center: [ -122.64707782213318, 48.406072004409396 ],
+          heading: 330,
+          option: 'absolute',
+          zoom: 14.385161869876807,
+        }))
         break;
 
       default:
@@ -1558,7 +1642,7 @@ const sagas = {
   selectActivity: function* (action: Action) {
     try {
       const params = action.params as SelectActivityParams;
-      const { id } = params;
+      const { follow, id } = params;
       yield call(log.debug, 'saga selectActivity', id);
       const state = yield select((state: AppState) => state);
       const activity = yield call(cachedActivity, state, id);
@@ -1603,13 +1687,15 @@ const sagas = {
           }
           log.debug('selectActivity setting appOptions', appOptions);
           yield put(newAction(AppAction.setAppOption, appOptions));
-          if (activity.tEnd) { // prior activity
-            yield put(newAction(AppAction.startFollowingPath));
-          } else { // current activity
-            const now = yield call(utils.now);
-            yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
-            yield put(newAction(AppAction.flagEnable, 'timelineNow'));
-            yield put(newAction(AppAction.startFollowingUser));
+          if (follow) {
+            if (activity.tEnd) { // prior activity
+              yield put(newAction(AppAction.startFollowingPath));
+            } else { // current activity
+              const now = yield call(utils.now);
+              yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in selectActivity
+              yield put(newAction(AppAction.flagEnable, 'timelineNow'));
+              yield put(newAction(AppAction.startFollowingUser));
+            }
           }
         }
       }
@@ -1830,6 +1916,7 @@ const sagas = {
       const runningInBackgroundNow = utils.appInBackground();
       yield call(database.completeAnyMigration);
       const {
+        automate,
         devMode,
         recoveryMode,
         showIntroIfNeeded,
@@ -1935,8 +2022,12 @@ const sagas = {
       if (include) {
         yield put(newAction(ReducerAction.SET_SAMPLES, include));
       }
-      const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
-      yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
+      if (automate) {
+        yield put(newAction(AppAction.enableTestScenario, 'automate')); // may rely on SET_SAMPLES
+      } else {
+        const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
+        yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
+      }
       yield put(newAction(AppAction.completeAppStartup));
       yield take(AppAction.appStartupCompleted); // wait for state flag to be enabled (TODO still needed?)
 

@@ -242,6 +242,7 @@ export interface ScrollTimelineParams {
 }
 
 export interface SelectActivityParams {
+  follow: boolean;
   id: string;
   proportion?: number; // 0 means start, 1 means end (or NOW for currentActivity), 0.5 means midpoint
 }

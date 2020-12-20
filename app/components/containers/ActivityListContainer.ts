@@ -86,7 +86,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
 const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const onPressActivity = (id: string): void => {
     ReactNativeHaptic.generate('impactLight');
-    dispatch(newAction(AppAction.selectActivity, { id } as SelectActivityParams));
+    dispatch(newAction(AppAction.selectActivity, { id, follow: true } as SelectActivityParams));
   }
   const onPressFutureZone = (): void => {
     ReactNativeHaptic.generate('impactHeavy');

@@ -56,7 +56,7 @@ export default class App extends Component {
 
       // Log incoming properties
       const { props } = this as any;
-      const { appBuild, appVersion, develop, foo, test } = props;
+      const { appBuild, appVersion, automate, develop, foo, test } = props;
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
       log.info('foo', foo); // set in AppDelegate.m
@@ -70,6 +70,9 @@ export default class App extends Component {
       }
       if (test) {
         store.dispatch(newAction(AppAction.flagEnable, 'testMode'));
+        if (automate) {
+          store.dispatch(newAction(AppAction.flagEnable, 'automate'));
+        }
         utils.setTestMode(true);
         log.warn('testMode enabled');
       }

@@ -137,6 +137,7 @@ export const initialAppState = {
     appBuild: '0', // set on startup in App component
     appVersion: 0, // set on startup in App component
     appState: AppStateChange.STARTUP as AppStateChange,
+    automate: false, // whether to run automated tests when app loads
     backTime: now, // time you go back to if you jump to NOW on the Timeline, and then go back
     centerTime: now, // for Timeline's scrollable domain, near or equal to viewTime, set as side effect in setAppOption.
     clientAlias: '', // shorthand way to refer to an development-version app instance for convenience, none by default
