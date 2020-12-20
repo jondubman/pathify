@@ -797,23 +797,23 @@ const sagas = {
     log.info('logs cleared');
   },
 
-  // // Caution: clearStorage is highly destructive, without warning or confirmation!
-  // // Only for development purposes, commented out to avoid accidental use.
-  //
-  // clearStorage: function* () {
-  //   try {
-  //     if (__DEV__) { // No way should we do this on production version. With confirmation, if ever...
-  //       yield call(log.warn, 'saga clearStorage on debug version of app - deleting all persisted data!');
-  //       yield call(database.reset); // including Settings
-  //       yield call(Geo.destroyLocations);
-  //       yield call(Geo.destroyLog);
-  //     } else {
-  //       yield call(log.warn, 'saga clearStorage - taking no action, production version!');
-  //     }
-  //   } catch (err) {
-  //     yield call(log.error, 'saga clearStorage', err);
-  //   }
-  // },
+  // Caution: clearStorage is highly destructive, without warning or confirmation!
+  clearStorage: function* () {
+    try {
+      const { devMode, testMode } = yield select((state: AppState) => state.flags);
+      if (devMode || testMode) { // No way should we do this on production version. With confirmation, if ever...
+        yield call(log.warn, 'saga clearStorage on debug version of app - deleting all persisted data!');
+        yield call(database.reset); // including Settings!
+        yield call(Geo.destroyLocations);
+        yield call(Geo.destroyLog);
+        yield put(newAction(AppAction.refreshCache));
+      } else {
+        yield call(log.warn, 'saga clearStorage - taking no action, production version!');
+      }
+    } catch (err) {
+      yield call(log.error, 'saga clearStorage', err);
+    }
+  },
 
   clockPress: function* (action: Action) {
     const params = action.params as ClockPressParams;
@@ -1133,25 +1133,25 @@ const sagas = {
       // Guard against importing an activityId already in use.
       const existingActivity = yield call(database.activityById, id);
       if (existingActivity) {
+        // TODO let's permit a time-adjusted activity to overwrite an old one so it's easier for tests to be idempotent.
         yield call(log.warn, 'importActivity: activityId already exists', id);
-      } else {
-        let shiftedActivity = activity;
-        let shfitedPath = path;
-        if (timeShift) {
-          shiftedActivity = { ...activity };
-          for (const prop of ActivityTimeProps) {
-            shiftedActivity[prop] += timeShift;
-          }
-          shfitedPath = { ...path };
-          const newt = [] as Array<number>;
-          for (const t of shfitedPath.t) {
-            newt.push(t + timeShift);
-          }
-          shfitedPath.t = newt;
-        }
-        yield call(database.updateActivity, shiftedActivity, shfitedPath);
-        yield call(log.debug, 'imported');
       }
+      let shiftedActivity = activity;
+      let shfitedPath = path;
+      if (timeShift) {
+        shiftedActivity = { ...activity };
+        for (const prop of ActivityTimeProps) {
+          shiftedActivity[prop] += timeShift;
+        }
+        shfitedPath = { ...path };
+        const newt = [] as Array<number>;
+        for (const t of shfitedPath.t) {
+          newt.push(t + timeShift);
+        }
+        shfitedPath.t = newt;
+      }
+      yield call(database.updateActivity, shiftedActivity, shfitedPath);
+      yield call(log.debug, 'imported');
     } catch (err) {
       yield call(log.error, 'importActivity', err);
     }

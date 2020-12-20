@@ -500,15 +500,13 @@ const database = {
     }
   },
 
-  // Caution: This will simply, instantly delete EVERYTHING in the database! There is no undo!
-  // Only for development purposes, commented out to avoid accidental use.
-  //
-  // reset: async () => {
-  //   log.debug('Resetting Realm database!');
-  //   realm.write(() => {
-  //     realm.deleteAll(); // Boom!
-  //   })
-  // },
+  // Caution: This will simply, instantly delete EVERYTHING in the database! There is no undo!  
+  reset: async () => {
+    log.debug('Resetting Realm database!');
+    realm.write(() => {
+      realm.deleteAll(); // Boom!
+    })
+  },
 }
 
 export default database;
