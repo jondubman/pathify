@@ -67,6 +67,7 @@ import {
   LogActionParams,
   RefreshActivityParams,
   RefreshCachedActivityParams,
+  ReorientMapParams,
   RepeatedActionParams,
   RequestLocationPermissionParams,
   ScrollActivityListParams,
@@ -938,15 +939,14 @@ const sagas = {
     const params = action.params as EnableTestScenarioParams;
     const { scenario } = params;
     log.debug('enableTestScenario:', scenario);
+    const postPrep = interval.seconds(1); // time for prep actions to complete
 
     switch (scenario) {
 
       case 'automate':
         const wait = interval.seconds(15);
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'reset' }));
-        yield delay(wait);
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'load' }));
-        yield delay(wait);
         yield put(newAction(AppAction.enableTestScenario, { scenario: '1' }));
         yield delay(wait);
         yield put(newAction(AppAction.enableTestScenario, { scenario: '2' }));
@@ -961,7 +961,7 @@ const sagas = {
         break;
 
       case 'load':
-        yield put(newAction(AppAction.reorientMap));
+        yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
         const samples = (yield select((state: AppState) => state.samples)) as Array<ExportedActivity>;
         if (samples.length) {
           const { tStart } = samples[0].activity;
@@ -982,12 +982,22 @@ const sagas = {
         }
         break;
 
+      case 'prep':
+        yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
+        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+        yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
+        yield put(newAction(AppAction.stopFollowingPath));
+        yield put(newAction(AppAction.stopFollowingUser));
+        yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
+        yield delay(postPrep);
+        break;
+
       case '1':
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
+        yield delay(postPrep);
         const sampleId1 = "a2bf3cc8-f12e-46f1-b3d4-a83654d8eec1";
         yield call(log.debug, 'scenario 1');
         yield put(newAction(AppAction.flagEnable, 'labelsEnabled'));
-        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
-        yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
         yield put(newAction(AppAction.setAppOption, {
           grabBarSnapIndex: 2,
           grabBarSnapIndexPreview: 2,
@@ -995,7 +1005,6 @@ const sagas = {
           mapOpacityPreview: 0.5,
           mapStyle: 'Satellite',
         }))
-        yield put(newAction(AppAction.reorientMap));
         yield put(newAction(AppAction.selectActivity, {
           id: sampleId1,
           proportion: 0.5,
@@ -1008,15 +1017,15 @@ const sagas = {
         break;
 
       case '2':
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
+        yield delay(postPrep);
         const sampleId2 = "c5b6c70f-26a5-4403-a40d-9796973f911f";
         yield call(log.debug, 'scenario 2');
-        yield put(newAction(AppAction.reorientMap));
         yield put(newAction(AppAction.selectActivity, {
           id: sampleId2,
           proportion: 0.8,
         }))
         yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
-        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
         yield put(newAction(AppAction.flagEnable, 'showSequentialPaths'));
         yield put(newAction(AppAction.startFollowingPath));
         yield put(newAction(AppAction.setAppOption, {
@@ -1029,12 +1038,9 @@ const sagas = {
         break;
 
       case '3':
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
+        yield delay(postPrep);
         yield call(log.debug, 'scenario 3');
-        yield put(newAction(AppAction.reorientMap));
-        yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
-        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
-        yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
-        yield put(newAction(AppAction.stopFollowingUser));
         yield put(newAction(AppAction.setAppOption, {
           grabBarSnapIndex: 1,
           grabBarSnapIndexPreview: 1,
@@ -1051,7 +1057,12 @@ const sagas = {
         }))
         break;
 
+      case 'reorient':
+        yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
+        break;
+
       default:
+        yield call(log.warn, 'enableTestScenario: scenario unknown');
         break;
     }
   },
@@ -1556,13 +1567,15 @@ const sagas = {
   },
 
   // Set map bearing to 0 (true north) typically in response to user action (button).
-  reorientMap: function* () {
+  reorientMap: function* (action: Action) {
+    const params = action.params as ReorientMapParams;
     const map = MapUtils();
+    const animationDuration = params.reorientationTime || constants.map.reorientationTime;
     if (map) {
       yield call(log.debug, 'saga reorientMap');
       yield put(newAction(AppAction.flagEnable, 'mapMoving'));
       yield put(newAction(AppAction.flagEnable, 'mapReorienting'));
-      const obj = { heading: 0, animationDuration: constants.map.reorientationTime };
+      const obj = { heading: 0, animationDuration };
       map.setCamera(obj);
     }
   },

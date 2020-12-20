@@ -224,6 +224,10 @@ export interface RefreshCachedActivityParams {
   remove: boolean;
 }
 
+export interface ReorientMapParams {
+  reorientationTime?: number;
+}
+
 export interface RepeatedActionParams {
   repeat: Action,
   times: number,

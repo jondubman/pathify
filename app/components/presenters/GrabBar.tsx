@@ -161,7 +161,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
   }
 
   render() {
-    log.trace('GrabBar render', this._snap, this._snapIndex, this._top);
+    // log.trace('GrabBar render', this._snap, this._snapIndex, this._top);
     const topLayoutStyle = {
       flexDirection: 'column',
       position: 'absolute',

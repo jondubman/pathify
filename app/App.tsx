@@ -65,11 +65,11 @@ export default class App extends Component {
 
       // Log incoming properties
       const { props } = this as any;
-      const { appBuild, appVersion, automate, develop, foo, test } = props;
+      const { appBuild, appVersion, automate, develop, foo, manual, test } = props;
 
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
-      log.info('automate', automate);
+      log.info('automate', automate, 'manual', manual);
       log.info('foo', foo); // set in AppDelegate.m
       log.info('test', test);
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
@@ -108,10 +108,12 @@ export default class App extends Component {
           }, 0);
         })
       }
-      if (automate) {
+      if (automate && !manual) {
         store.dispatch(newAction(AppAction.flagEnable, 'automate'));
+        store.dispatch(newAction(AppAction.startupActions, { include: samples })); // will launch automated test if needed
+      } else {
+        store.dispatch(newAction(AppAction.startupActions));
       }
-      store.dispatch(newAction(AppAction.startupActions, { include: samples })); // will launch automated test if needed
 
       // Configure the timerTick interval, used for clocks etc.
       const interval = setInterval(() => {
