@@ -939,20 +939,22 @@ const sagas = {
     const params = action.params as EnableTestScenarioParams;
     const { scenario } = params;
     log.debug('enableTestScenario:', scenario);
-    const postPrep = interval.seconds(1); // time for prep actions to complete
+    const postPrep = interval.seconds(2); // time for prep actions to complete
 
     switch (scenario) {
 
       case 'automate':
-        const wait = interval.seconds(15);
+        const waitAwhile = interval.seconds(15);
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'reset' }));
+        yield delay(postPrep);
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'load' }));
+        yield delay(postPrep);
         yield put(newAction(AppAction.enableTestScenario, { scenario: '1' }));
-        yield delay(wait);
+        yield delay(waitAwhile);
         yield put(newAction(AppAction.enableTestScenario, { scenario: '2' }));
-        yield delay(wait);
+        yield delay(waitAwhile);
         yield put(newAction(AppAction.enableTestScenario, { scenario: '3' }));
-        yield delay(wait);
+        yield delay(waitAwhile);
         yield call(log.debug, 'Automated test complete');
         break;
 
@@ -1071,7 +1073,7 @@ const sagas = {
   flag_sideEffects: function* (flagName: string) {
     const { flags, options } = yield select((state: AppState) => state);
     const enabledNow = flags[flagName];
-      const { appStartupCompleted, requestedLocationPermission } = flags;
+    const { appStartupCompleted, requestedLocationPermission } = flags;
     const { pausedTime, viewTime } = options;
     // Avoid changing settings during startup (instead, we apply previous.)
     if (appStartupCompleted) {
@@ -1266,6 +1268,7 @@ const sagas = {
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     const mapRegionUpdate = action.params as MapRegionUpdate;
+    yield call(log.trace, 'mapRegionChanged', mapRegionUpdate);
     yield put(newAction(ReducerAction.MAP_REGION, mapRegionUpdate));
     yield put(newAction(AppAction.flagDisable, 'mapMoving'));
     yield put(newAction(AppAction.flagDisable, 'mapReorienting'));
@@ -1570,7 +1573,7 @@ const sagas = {
   reorientMap: function* (action: Action) {
     const params = action.params as ReorientMapParams;
     const map = MapUtils();
-    const animationDuration = params.reorientationTime || constants.map.reorientationTime;
+    const animationDuration = params?.reorientationTime || constants.map.reorientationTime;
     if (map) {
       yield call(log.debug, 'saga reorientMap');
       yield put(newAction(AppAction.flagEnable, 'mapMoving'));
@@ -1997,11 +2000,13 @@ const sagas = {
       }
       const tracking = !!currentActivityId;
       if (!testMode) {
+        yield call(log.debug, `startupActions: !testMode`);
         if (requestedLocationPermission) {
           const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
           yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
           yield call(Geo.startBackgroundGeolocation);
         } else if (showIntroIfNeeded) { // auto-launch introMode if we have not yet requestedLocationPermission
+          yield call(log.debug, `startupActions: showIntroIfNeeded is true. Enabling introMode.`);
           yield put(newAction(AppAction.flagEnable, 'introMode'));
         }
       }

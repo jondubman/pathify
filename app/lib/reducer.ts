@@ -65,7 +65,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           if (mapRegionUpdate.bounds) {
             newState.mapBounds = [ ...mapRegionUpdate.bounds ]; // ensure reference inequality
           }
-          if (mapRegionUpdate.heading) {
+          if (mapRegionUpdate.heading !== undefined) {
             newState.mapHeading = mapRegionUpdate.heading; // required, 0 is default (due north orientation)
           }
           if (mapRegionUpdate.zoomLevel) {

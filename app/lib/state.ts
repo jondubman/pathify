@@ -104,6 +104,7 @@ export const initialAppState = {
     showCurrentLocation: true, // should the map reveal the location if known; may still be hidden due to mapTapped
     showFutureTimespan: true, // denotes the future - everything to the right of now - on the timeline
     showGrabBar: false, // generally true, enabled on startup
+    showIntroIfNeeded: true, // so it can be disabled for tests
     showPathsOnMap: true, // generally true
     showPastLocation: true, // as a Pulsar on the map, if known, as a blue dot
     showSequentialPaths: true, // show paths prior and subsequent to currently selected path, up to maxDisplayPaths
@@ -159,7 +160,6 @@ export const initialAppState = {
     pausedTime: now, // timepoint where timeline was last paused
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
-    showIntroIfNeeded: false, // so it can be disabled for tests
     startupTime: now, // not persisted, never changed once set
     timelineSpanColorOpacity: 0.5,
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.

@@ -20,6 +20,8 @@ class PathifyUITests: XCTestCase {
   func testExample() {
     // UI tests must launch the application that they test.
     let app = XCUIApplication()  
+    // app.terminate()
+
     setupSnapshot(app)
 
     app.launch()
@@ -27,14 +29,14 @@ class PathifyUITests: XCTestCase {
     // Use recording to get started writing UI tests.
     // Use XCTAssert and related functions to verify your tests produce the correct results.
     let first = 10 // With a two digit index, snapshots will appear in sequence whatever sorting approach is used.
-    let last = 20
-    let naptime = 5
+    let last = 30
+    let naptime: UInt32 = 2
 
     for index in first...last {
       snapshot("step\(index)")
       sleep(naptime)
     }
-    sleep(naptime * 5) // sleep a little extra to allow screenshots time to complete
+    sleep(naptime * 10) // sleep a little extra to allow screenshots time to complete
   }
 
   // func testLaunchPerformance() {

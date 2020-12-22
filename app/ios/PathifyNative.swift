@@ -10,6 +10,7 @@ import UIKit
   {
   }
 
+  // This just tests whether the Swift bridging header magically summoned via @objc is working.
   @objc public static func foo() -> String {
     return "bar"
   }
@@ -30,7 +31,7 @@ import UIKit
       let json = String(decoding: asset.data, as: UTF8.self)
       props[name] = json
       props["automate"] = true // This will spur automated tests.
-      props["test"] = true // These are idempotent.
+      props["test"] = true // Setting these will be idempotent.
       index += 1
     } while true    
   }
