@@ -88,6 +88,7 @@ export const initialAppState = {
     mapRendered: false, // set when map has been fully rendered, the first time
     mapReorienting: false, // is the map currently reorienting? (rotating back to North up)
     mapTapped: false, // tapping the map in full screen mode hides the current and past location markers
+    movieMode: false, // used to generate demo videos on a real device for App Store submission
     recoveryMode: false, // for debugging
     receiveLocations: true, // normally true; if false, incoming geolocations are ignored (useful for testing)
     receiveActivityChangeEvents: true, // TODO
@@ -194,6 +195,7 @@ export const persistedFlags = [
   'followingPath',
   'followingUser',
   'labelsEnabled',
+  'movieMode',
   'remoteDebug',
   'requestedLocationPermission',
   'showSequentialPaths',

@@ -82,6 +82,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     mapOpacity: 'double',
     mapStyle: 'string',
     mapZoomLevel: 'double',
+    movieMode: 'bool',
     pausedTime: 'double',
     remoteDebug: 'bool',
     requestedLocationPermission: 'bool',
@@ -112,6 +113,7 @@ export interface SettingsObject extends Realm.Object { // returned from Realm, r
   mapOpacity: number,
   mapStyle: string,
   mapZoomLevel: number;
+  movieMode: boolean;
   pausedTime: number,
   remoteDebug: boolean,
   requestedLocationPermission: boolean;
@@ -155,6 +157,7 @@ const defaultSettings = { // for a newly installed app
   mapOpacity: constants.map.default.opacity,
   mapStyle: constants.map.default.style,
   mapZoomLevel: 0,
+  movieMode: false,
   pausedTime: 0,
   remoteDebug: false, // This can only be enabled manually during development.
   requestedLocationPermission: false,
