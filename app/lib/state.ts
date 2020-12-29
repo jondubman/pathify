@@ -164,7 +164,7 @@ export const initialAppState = {
     startupTime: now, // not persisted, never changed once set
     timelineSpanColorOpacity: 0.5,
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
-    timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating the analog clock, timeline scrollTime, etc.
+    timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating  analog clock, timeline scrollTime, etc.
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)
     zoomClockMoved: 0, // amount ZoomClock has been moved up or down
   },

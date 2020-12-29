@@ -28,6 +28,7 @@ import {
   GeolocationParams,
   newAction,
 } from 'lib/actions';
+import constants from 'lib/constants';
 import {
   LocationEvent,
   LocationEvents,
@@ -191,7 +192,7 @@ const newLocationEvent = (info: Location, activityId: string | undefined): Locat
   const confidence = info.activity ? info.activity.confidence : 0;
   const mode = info.activity ? (mapActivityToMode[info.activity.activity] || null) : null;
   return {
-    ...timeseries.newEvent(t, activityId),
+    ...timeseries.newEvent(t, activityId), // helper to construct an event object
     type: EventType.LOC,
     accuracy: info.coords.accuracy,
     battery: info.battery.level,
@@ -498,7 +499,9 @@ export const Geo = {
         locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
         store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, forceRefresh: true }));
         // TODO is there any possibility the above might not have worked and we might be at risk of losing data here?
-        await Geo.destroyLocations();
+        setTimeout(async () => {
+          await Geo.destroyLocations(); // This can be slightly postponed in order to focus on processing the new data.
+        }, constants.timing.delayBeforeDeletingProcessedLocations)
         log.debug(`processSavedLocations added: ${locationEvents.length}`);
 
         // AppAction.geolocation

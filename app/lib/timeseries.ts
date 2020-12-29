@@ -169,7 +169,7 @@ const timeseries = {
     const timestamp = t || utils.now();
     return {
       activityId,
-      source: 'client', // TODO replace with client ID (a UUID) that will differ per app installation
+      source: 'client', // TODO could replace with client ID (a UUID) that will differ per app installation
       t: Math.round(timestamp), // TODO for now, avoid creating events with sub-millisecond precision timestamps
       // The following are placeholders, to be overridden:
       type: EventType.NONE,

@@ -10,6 +10,7 @@ import timeseries, {
   Timepoint,
 } from 'lib/timeseries';
 
+// Notice only the lat and lon and their associated Realm-indexed values are truly required; all others are optional.
 export interface LocationEvent extends GenericEvent {
   accuracy?: number; // meters
   battery?: number; // 0 to 1

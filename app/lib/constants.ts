@@ -615,6 +615,7 @@ const constants = {
   },
   timing: { // msec
     activityListInitialAutoscroll: 2000,
+    delayBeforeDeletingProcessedLocations: 2500,
     devServerPollTimeout: 90000,
     opacitySliderThrottle: 50, // throttle rate: slider should issue no more than this #/sec of change events
     pulsarPulse: 1000,
