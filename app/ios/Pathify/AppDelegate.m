@@ -80,7 +80,7 @@ static void InitializeFlipper(UIApplication *application) {
   NSString *buildNumber = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleVersion"];
   [initialPropertiesDictionary setValue:buildNumber forKey:@"appBuild"];
 
-  // Note this is how you make a simple function call with no parameters from Objective-C to Swift and get a value back: 
+  // Example of how to do Swift function call with no parameters from Objective-C and pass the result to the app:
   [initialPropertiesDictionary setValue:[PathifyNative foo] forKey:@"foo"];
 
   // Objective-C to Swift with a parameter:
@@ -89,7 +89,7 @@ static void InitializeFlipper(UIApplication *application) {
   [PathifyNative loadSampleDataWithProps:initialPropertiesDictionary];
  
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"Pathify"
+                                                      moduleName:@"Pathify" // Corresponds to name in app.json
                                                initialProperties:initialPropertiesDictionary
                                                    launchOptions:launchOptions];
 

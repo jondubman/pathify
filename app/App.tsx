@@ -70,11 +70,11 @@ export default class App extends Component {
       log.info('appVersion', appVersion); // set in AppDelegate.m
       log.info('appBuild', appBuild); // set in AppDelegate.m
       log.info('automate', automate, 'manual', manual);
+      log.info('develop', develop); // set (maybe) in XCode build scheme
       log.info('foo', foo); // set in AppDelegate.m
-      log.info('test', test);
+      log.info('test', test); // set in loadSampleData in PathifyNative.swift
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
 
-      log.info('TODO develop', develop); // set (maybe) in XCode build scheme
       if (devMode || develop === 'true') {
         store.dispatch(newAction(AppAction.flagEnable, 'devMode'));
         log.warn('devMode enabled');

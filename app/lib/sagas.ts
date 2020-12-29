@@ -943,6 +943,7 @@ const sagas = {
 
     switch (scenario) {
 
+      // At the moment there's only one automated test that is controlled from the JS side, for generating screenshots.
       case 'automate':
         const waitAwhile = interval.seconds(15);
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'reset' }));
@@ -985,9 +986,14 @@ const sagas = {
         break;
 
       case 'prep':
+        yield put(newAction(AppAction.flagEnable, 'colorizeActivities'));
         yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
+        yield put(newAction(AppAction.flagDisable, 'helpOpen'));
+        yield put(newAction(AppAction.flagDisable, 'helpOpen'));
         yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+        yield put(newAction(AppAction.flagDisable, 'startMenuOpen'));
         yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
+        yield put(newAction(AppAction.flagDisable, 'topMenuOpen'));
         yield put(newAction(AppAction.stopFollowingPath));
         yield put(newAction(AppAction.stopFollowingUser));
         yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
@@ -1085,6 +1091,8 @@ const sagas = {
         yield put(newAction(AppAction.setAppOption, { grabBarSnapIndex: 1, grabBarSnapIndexPreview: 1 }));
         if (!enabledNow) {
           if (!requestedLocationPermission) {
+            // This handles the case of requesting location permission on a manual early exit from introMode.
+            // In the natural course of things, the request is made earlier, just after viewing the Privacy page.
             yield put(newAction(AppAction.requestLocationPermission));
             yield put(newAction(AppAction.startFollowingUser));
           }

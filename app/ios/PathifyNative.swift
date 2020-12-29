@@ -26,12 +26,13 @@ import UIKit
       guard let asset = NSDataAsset(name: name, bundle: mainBundle) else {
         break; // this is ok, we are simply done with samples
       }
-      // Note this json is too long to fit in the launchEnvironment!
+      // We have sample data, which never ships with the production app, only with PathifyTest app, hence testMode.
       print("Stringifying sample data: " + name)
+      // Note this json is too long to fit in the launchEnvironment!
       let json = String(decoding: asset.data, as: UTF8.self)
       props[name] = json
       props["automate"] = true // This will spur automated tests.
-      props["test"] = true // Setting these will be idempotent.
+      props["test"] = true // This will spur testMode, which won't run anything automatically unless automate is true.
       index += 1
     } while true    
   }
