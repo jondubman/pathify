@@ -238,7 +238,7 @@ export interface RequestLocationPermissionParams {
 }
 
 export interface ScrollActivityListParams {
-  scrollTime: number;
+  scrollTime?: number;
 }
 
 export interface ScrollTimelineParams {

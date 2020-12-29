@@ -1,9 +1,9 @@
 import React, {
   Component,
 } from 'react';
+
 import ReactNativeHaptic from 'react-native-haptic';
 import { connect } from 'react-redux';
-
 
 import {
   AppAction,
@@ -13,6 +13,7 @@ import {
 import {
   ActivityDataExtended,
 } from 'lib/activities';
+import constants from 'lib/constants';
 import {
   activityColorForSelectedActivity,
   activityIndexForTimepoint,
@@ -98,6 +99,9 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const register = (component) => {
     setTimeout(() => {
       dispatch(newAction(AppAction.setRef, { activityList: component }));
+      setTimeout(() => {
+        dispatch(newAction(AppAction.scrollActivityList, { /* use implicit scrollTime */ })); // in register
+      }, constants.timing.activityListInitialAutoscroll)
     }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the ActivityList.
   }
   const scrollTimeline = (t: Timepoint) => {

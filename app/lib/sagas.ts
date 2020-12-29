@@ -1629,7 +1629,8 @@ const sagas = {
   scrollActivityList: function* (action: Action) {
     yield call(log.scrollEvent, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
-    const { scrollTime } = params;
+    const { flags, options } = (yield select((state: AppState) => state)) as AppState;
+    const scrollTime = params.scrollTime || (flags.timelineNow ? utils.now() : options.scrollTime); // fallback
     const refs = yield select((state: AppState) => state.refs);
     const { activityList } = refs;
     if (activityList !== undefined && activityList.scrollToTime) {
@@ -1778,7 +1779,6 @@ const sagas = {
     const {
       activityListScrolling,
       appStartupCompleted,
-      testMode,
       timelineNow,
       timelineScrolling,
     } = state.flags;
@@ -1991,7 +1991,7 @@ const sagas = {
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
 
       // Configure the grabBar
-      const grabBarSnapIndexPreview = grabBarSnapIndex;
+      const grabBarSnapIndexPreview = grabBarSnapIndex; // duplicate the current setting
       yield put(newAction(AppAction.setAppOption, {
         grabBarSnapIndexPreview,
       }))

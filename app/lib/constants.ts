@@ -614,6 +614,7 @@ const constants = {
     width: 240,
   },
   timing: { // msec
+    activityListInitialAutoscroll: 2000,
     devServerPollTimeout: 90000,
     opacitySliderThrottle: 50, // throttle rate: slider should issue no more than this #/sec of change events
     pulsarPulse: 1000,
