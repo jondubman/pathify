@@ -187,31 +187,61 @@ const mapActivityToMode = {
   still: ModeType.STILL,
 }
 
-const newLocationEvent = (info: Location, activityId: string | undefined): LocationEvent => {
-  const t = new Date(info.timestamp).getTime();
-  const confidence = info.activity ? info.activity.confidence : 0;
-  const mode = info.activity ? (mapActivityToMode[info.activity.activity] || null) : null;
+// Info from the plugin's Location object that we care about, that can also be reverse-engineered from PathInfo.
+// This intermediate form is the missing link between location simulation and running background-geolocation for real.
+// A LocationEvent is all the same info, in slightly modified form, to persist in the database, among general Events.
+export interface LocationInfo {
+  accuracy?: number;
+  battery?: number;
+  charging?: boolean;
+  confidence?: number;
+  ele?: number;
+  heading?: number;
+  lat: number; // required
+  lon: number; // required
+  mode?: ModeType;
+  odo?: number;
+  speed?: number;
+  t: number; // required
+}
+
+const locationInfoFromLocation = (location: Location): LocationInfo => ({
+  accuracy: location.coords.accuracy,
+  battery: location.battery.level,
+  charging: location.battery.is_charging,
+  confidence: location.activity ? location.activity.confidence : 0,
+  ele: location.coords.altitude,
+  heading: location.coords.heading,
+  lat: location.coords.latitude,
+  lon: location.coords.longitude,
+  mode: location.activity ? (mapActivityToMode[location.activity.activity] || null) : null,
+  odo: Math.round(location.odometer), // It's meters and accuracy is not <1m. Half a meter on the odo is just confusing.
+  speed: location.coords.speed, // meters per second
+  t: new Date(location.timestamp).getTime(),
+})
+
+const newLocationEvent = (info: LocationInfo, activityId: string | undefined): LocationEvent => {
   return {
-    ...timeseries.newEvent(t, activityId), // helper to construct an event object
+    ...timeseries.newEvent(info.t, activityId), // helper to construct an event object
     type: EventType.LOC,
-    accuracy: info.coords.accuracy,
-    battery: info.battery.level,
-    charging: info.battery.is_charging,
-    confidence,
-    ele: info.coords.altitude,
-    heading: info.coords.heading,
-    lat: info.coords.latitude,
-    latIndexed: Math.round(info.coords.latitude * 1000000), // * 1 million
-    lon: info.coords.longitude,
-    lonIndexed: Math.round(info.coords.longitude * 1000000), // * 1 million
-    mode,
-    odo: Math.round(info.odometer), // It's meters and accuracy is not <1m. Half a meter on the odo is just confusing.
-    speed: info.coords.speed, // meters per second
+    accuracy: info.accuracy,
+    battery: info.battery,
+    charging: info.charging,
+    confidence: info.confidence,
+    ele: info.ele,
+    heading: info.heading,
+    lat: info.lat,
+    latIndexed: Math.round(info.lat * 1000000), // * 1 million
+    lon: info.lon,
+    lonIndexed: Math.round(info.lon * 1000000), // * 1 million
+    mode: info.mode,
+    odo: info.odo ? Math.round(info.odo) : undefined,
+    speed: info.speed, // meters per second
   }
 }
 
-const newMotionEvent = (info: Location, isMoving: boolean, activityId: string | undefined): MotionEvent => {
-  const t = new Date(info.timestamp).getTime();
+const newMotionEvent = (location: Location, isMoving: boolean, activityId: string | undefined): MotionEvent => {
+  const t = new Date(location.timestamp).getTime();
   return {
     ...timeseries.newEvent(t, activityId),
     type: EventType.MOTION,
@@ -431,7 +461,8 @@ export const Geo = {
       const activityId = state.options.currentActivityId || '';
       if (appActive) {
         // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${trackingActivity}`);
-        const locationEvent = newLocationEvent(location, activityId);
+        const locationInfo = locationInfoFromLocation(location);
+        const locationEvent = newLocationEvent(locationInfo, activityId);
         const geoloc: GeolocationParams = {
           locationEvent,
           t: new Date(location.timestamp).getTime(),
@@ -493,7 +524,8 @@ export const Geo = {
           if (location.sample) {
             continue; // ignore sample locations
           }
-          const locationEvent = newLocationEvent(location, activityId);
+          const locationInfo = locationInfoFromLocation(location);
+          const locationEvent = newLocationEvent(locationInfo, activityId);
           locationEvents.push(locationEvent);
         }
         locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));

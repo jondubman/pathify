@@ -320,7 +320,10 @@ const sagas = {
                 t = latestLocEvent.t;
                 // modeNumeric left alone
               } else {
+                // Handle EventType.MODE
                 const current: Current = yield select((state: AppState) => state.current);
+                // TODO review: is current almost guaranteed to be wrong when we are adding a bunch of events at once?
+                // In that case, we don't want the current location; we want the location last seen in this loop.
                 if (current.ele && current.lon && current.lat && current.odo && current.speed && current.tChangedMoving) {
                   ele = current.ele;
                   lon = current.lon;
@@ -482,7 +485,7 @@ const sagas = {
           break;
         }
         case 'emailLog': {
-          Geo.emailLog(); // TODO This is one of the ways to debug react-native-background-geolocation.
+          yield call(Geo.emailLog); // TODO This is one of the ways to debug react-native-background-geolocation.
           break;
         }
         case 'eventCount': { // quick count of the total, no overhead
@@ -1173,12 +1176,12 @@ const sagas = {
         t: locationEvent.t,
         moving: !!locationEvent.speed,
       } as any as Current;
-      yield put(newAction(ReducerAction.SET_CURRENT, current));
+      yield put(newAction(ReducerAction.SET_CURRENT, current)); // this sets state.current
 
-      const { lat, lon } = locationEvent;
       const previousUserLocation = yield select((state: AppState) => state.userLocation);
-      const { mapMoving } = yield select((state: AppState) => state.flags);
       yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
+
+      const { mapMoving } = yield select((state: AppState) => state.flags);
       if (recheckMapBounds && !mapMoving) {
         const appActive = yield select((state: AppState) => state.flags.appActive);
         if (appActive) {
@@ -1188,6 +1191,7 @@ const sagas = {
             const { centerMapContinuously, followingUser } = yield select((state: AppState) => state.flags);
             const bounds = yield call(map.getVisibleBounds);
             if (followingUser) {
+              const { lat, lon } = locationEvent;
               const loc = [lon, lat] as LonLat;
               const outOfBounds = bounds && !utils.locWellBounded(loc, bounds);
               if (!previousUserLocation || outOfBounds || centerMapContinuously) {
