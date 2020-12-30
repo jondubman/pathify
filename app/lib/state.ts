@@ -57,7 +57,7 @@ const devMode = __DEV__ ? true : false; // (debug : release)
 export const initialAppState = {
   cache: {
     activities: [], // an array
-    exportedActivities: {}, // an object not an array
+    exportedActivities: {}, // an object, not an array
     populated: false, // really refers to the activities
     refreshCount: 0,
   } as CacheInfo,
@@ -155,7 +155,7 @@ export const initialAppState = {
     grabBarSnapIndexPreview: constants.snapIndex.topButtons, // same as grabBarSnapIndex, different only while dragging
     introModePage: 0, // current page of swiper for introMode
     locationSimulation: {
-      activityId: '',
+      activityId: '', // of ExportedActivity in state.cache
       startTime:  0,
     } as LocationSimulationOptions,
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!

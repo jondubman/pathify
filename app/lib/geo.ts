@@ -36,6 +36,7 @@ import {
   ModeType,
   MotionEvent
 } from 'lib/locations';
+import { AppState } from 'lib/state';
 import store, { Store } from 'lib/store';
 import utils from 'lib/utils';
 import log from 'shared/log';
@@ -195,14 +196,14 @@ export interface LocationInfo {
   battery?: number;
   charging?: boolean;
   confidence?: number;
-  ele?: number;
+  ele?: number; // present in Path
   heading?: number;
-  lat: number; // required
-  lon: number; // required
-  mode?: ModeType;
-  odo?: number;
-  speed?: number;
-  t: number; // required
+  lat: number; // required, present in Path
+  lon: number; // required, present in Path
+  mode?: ModeType; // present in Path
+  odo?: number; // present in Path
+  speed?: number; // present in Path
+  t: number; // required, present in Path
 }
 
 const locationInfoFromLocation = (location: Location): LocationInfo => ({
@@ -249,6 +250,7 @@ const newMotionEvent = (location: Location, isMoving: boolean, activityId: strin
   }
 }
 
+// TODO simulate these too?
 const newModeChangeEvent = (activity: string, confidence: number, activityId: string | undefined): ModeChangeEvent => {
   const t = utils.now(); // TODO
   const mode = mapActivityToMode[activity] || `unknown activity: ${activity}`;
@@ -469,7 +471,8 @@ export const Geo = {
           recheckMapBounds: true,
         }
         store.dispatch(newAction(AppAction.geolocation, geoloc));
-        if ((activityId && activityId !== '') || storeAllLocationEvents) {
+        if (activityId || storeAllLocationEvents) {
+          // Adding events will yield a cascade of updates in the database, the store, and ultimately the UI.
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         }
       } else {
@@ -501,6 +504,37 @@ export const Geo = {
       if (error === 2) errorMessage = 'Location network error';
       if (error === 408) errorMessage = 'Location timeout';
       log.info('LocationError', errorMessage || error);
+    }
+  },
+
+  // There's overlap between onSimulateLocation and onLocation, but onSimulateLocation takes locationInfo, as opposed to
+  // the plugin's Location object, and does nothing in the background, as location simulation is foreground only.
+  onSimulateLocation: async (locationInfo: LocationInfo, state: AppState) => {
+    try {
+      const activityId = state.options.currentActivityId || '';
+      const {
+        appActive,
+        receiveLocations,
+        storeAllLocationEvents,
+      } = state.flags;
+      if (!receiveLocations) {
+        return;
+      }
+      if (appActive) {
+        const locationEvent = newLocationEvent(locationInfo, activityId);
+        const geoloc: GeolocationParams = {
+          locationEvent,
+          t: locationInfo.t,
+          recheckMapBounds: true,
+        }
+        store.dispatch(newAction(AppAction.geolocation, geoloc));
+        if (activityId || storeAllLocationEvents) {
+          // Adding events will yield a cascade of updates in the database, the store, and ultimately the UI.
+          store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
+        }
+      }
+    } catch (err) {
+      log.error('onSimulateLocation', err);
     }
   },
 

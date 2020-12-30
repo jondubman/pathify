@@ -1956,7 +1956,7 @@ const sagas = {
         }
       }
       const locationSimulation: LocationSimulationOptions = {
-        activityId,
+        activityId, // should be in the cache
         startTime: yield call(utils.now),
       }
       yield put(newAction(AppAction.setAppOption, { locationSimulation }));
