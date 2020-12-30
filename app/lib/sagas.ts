@@ -76,7 +76,9 @@ import {
   SequenceParams,
   SleepParams,
   StartActivityParams,
+  StartSimulatingLocationParams,
   StartupActionParams,
+  StopSimulatingLocationParams,
   TimelineRelativeZoomParams,
   UserMovedMapParams,
   ZoomToActivityParams,
@@ -90,6 +92,7 @@ import {
   ExportedActivity,
   extendActivity,
   extendedActivities,
+  LocationSimulationOptions,
 } from 'lib/activities';
 import {
   AppUserActionEvent,
@@ -369,7 +372,7 @@ const sagas = {
                 }
               }
             }
-            activityUpdate.tLastUpdate = utils.now();
+            activityUpdate.tLastUpdate = yield call(utils.now);
             yield call(database.updateActivity, activityUpdate);
           }
         }
@@ -389,7 +392,7 @@ const sagas = {
     try {
       const state = (yield select((state: AppState) => state)) as AppState;
       let response: any = `generic response to appQuery with uuid ${uuid}`; // fallback response
-      const queryStartTime = utils.now(); // milliseconds
+      const queryStartTime = yield call(utils.now); // milliseconds
       const timeSinceAppStartedUp = msecToString(queryStartTime - state.options.startupTime);
       const queryType = query ? query.type : null;
       switch (queryType) {
@@ -618,7 +621,8 @@ const sagas = {
           break;
         }
       }
-      const queryTime = utils.now() - queryStartTime; // adding this to reveal any performance issues / outliers
+      // reveal any performance issues / outliers
+      const queryTime = ((yield call(utils.now)) as number) - queryStartTime;
       const appQueryResponse: AppQueryResponse = { response, queryTime, uuid };
       yield call(postToServer as any, 'push/appQueryResponse', { type: 'appQueryResponse', params: appQueryResponse });
     } catch (err) {
@@ -649,8 +653,9 @@ const sagas = {
     const activating = (newState === AppStateChange.ACTIVE);
     yield put(newAction(activating ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     yield put(newAction(AppAction.setAppOption, { appState: newState }));
+    const now = (yield call(utils.now)) as number;
     const newAppStateChangeEvent = (newState: AppStateChange): AppStateChangeEvent => ({
-      t: utils.now(),
+      t: now,
       type: EventType.APP,
       newState,
     })
@@ -969,14 +974,15 @@ const sagas = {
         if (samples.length) {
           const { tStart } = samples[0].activity;
           if (tStart) {
-            const timeShift = (utils.now() - interval.hours(2)) - tStart; // TODO - make sample recent
+            const now = (yield call(utils.now)) as number;
+            const timeShift = (now - interval.hours(2)) - tStart; // TODO - make sample recent
             yield call(log.debug, 'timeShift', timeShift);
             for (const sample of samples) {
               yield put(newAction(AppAction.importActivity, { include: sample, timeShift }));
             }
             yield put(newAction(AppAction.refreshCache));
             yield put(newAction(AppAction.startFollowingUser));
-            yield put(newAction(AppAction.scrollActivityList, { scrollTime: utils.now() }));
+            yield put(newAction(AppAction.scrollActivityList, { scrollTime: yield call(utils.now) }));
           } else {
             yield call(log.debug, 'cannot timeShift: tStart:', tStart);
           }
@@ -1055,7 +1061,7 @@ const sagas = {
           mapOpacity: 1,
           mapOpacityPreview: 1,
           mapStyle: 'Trails',
-          scrollTime: utils.now(),
+          scrollTime: yield call(utils.now),
         }))
         yield put(newAction(AppAction.centerMap, {
           center: [ -122.64707782213318, 48.406072004409396 ],
@@ -1100,7 +1106,7 @@ const sagas = {
       }
       if (flagName === 'timelineNow') {
         if (enabledNow) { // this means we just enabled it
-          const now = utils.now();
+          const now = yield call(utils.now);
           const setOptions = { centerTime: now } as any;
           if (Math.abs(viewTime - pausedTime) > constants.timing.timelineCloseToNow) {
             setOptions.pausedTime = viewTime;
@@ -1211,7 +1217,7 @@ const sagas = {
     const { viewTime } = yield select((state: AppState) => state.options);
     if (!timelineNow) {
       yield put(newAction(AppAction.setAppOption, { backTime: viewTime })); // TODO might actually want history feature
-      const now = utils.now() + constants.timing.timelineCloseToNow; // TODO should not need this fudge factor
+      const now = (yield call(utils.now)) as number + constants.timing.timelineCloseToNow; // TODO justify fudge factor
       yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in jumpToNow
       yield put(newAction(AppAction.scrollTimeline, { scrollTime: now })); // in jumpToNow
       yield put(newAction(AppAction.flagEnable, 'timelineNow'));
@@ -1441,7 +1447,7 @@ const sagas = {
           }
           activityUpdate.tFirstLoc = Math.min(activityUpdate.tFirstLoc || t, t);
           activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max redundant when events sorted by t
-          activityUpdate.tLastRefresh = utils.now();
+          activityUpdate.tLastRefresh = yield call(utils.now);
           activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
 
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
@@ -1630,7 +1636,8 @@ const sagas = {
     yield call(log.scrollEvent, 'saga scroll scrollActivityList');
     const params = action.params as ScrollActivityListParams;
     const { flags, options } = (yield select((state: AppState) => state)) as AppState;
-    const scrollTime = params.scrollTime || (flags.timelineNow ? utils.now() : options.scrollTime); // fallback
+    const now = (yield call(utils.now)) as number;
+    const scrollTime = params.scrollTime || (flags.timelineNow ? now : options.scrollTime); // fallback
     const refs = yield select((state: AppState) => state.refs);
     const { activityList } = refs;
     if (activityList !== undefined && activityList.scrollToTime) {
@@ -1881,7 +1888,7 @@ const sagas = {
         yield call(Vibration.vibrate, constants.timing.vibration);
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
         yield call(Geo.setConfig, true, background);
-        const now = utils.now();
+        const now = yield call(utils.now);
         let activityId: string;
         if (continueActivityId) {
           // should already have the AppUserActionEvent and MarkEvent from before; just set currentActivityId.
@@ -1911,7 +1918,7 @@ const sagas = {
           { currentActivityId: activityId, selectedActivityId: activityId }));
         yield put(newAction(AppAction.refreshCachedActivity, { activityId }));
         yield delay(0); // TODO was required to allow ActivityList to ready itself to scroll... race condition? still?
-        const scrollTime = utils.now();
+        const scrollTime = yield call(utils.now);
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startActivity
         if (!continueActivityId) {
           yield delay(0); // TODO review: At one point this was added for a race condition. Is it necessary?
@@ -1923,6 +1930,51 @@ const sagas = {
     }
   },
 
+  // As with stopSimulatingLocation, this is only for test and dev scenarios.
+  startSimulatingLocation: function* (action: Action) {
+    try {
+      yield call(log.debug, `saga startSimulatingLocation`);
+      const params = action.params as StartSimulatingLocationParams || {};
+      const { activityId } = params;
+      const { cache } = (yield select((state: AppState) => state)) as AppState;
+      let extendedActivity = cache.exportedActivities[activityId];
+      if (extendedActivity) {
+        yield call(log.debug, `saga startSimulatingLocation: cache hit for ${activityId}`);
+      } else {
+        const activity = cache.activities.find(activity => activity.id === activityId);
+        if (activity === undefined) {
+          yield call(log.warn, `saga startSimulatingLocation: no cache hit for ${activityId}`);
+          return; // early return
+        } else {
+          extendedActivity = yield call(exportActivity, activity);
+          // Note use of computed key [activityId]
+          yield put(newAction(AppAction.cache, { exportedActivities: { [activityId]: extendActivity }}));
+        }
+      }
+      const locationSimulation: LocationSimulationOptions = {
+        activityId,
+        startTime: yield call(utils.now),
+      }
+      yield put(newAction(AppAction.setAppOption, { locationSimulation }));
+
+      // just for debugging
+      yield delay(1000); // otherwise the cache may not be populated yet
+      const state = (yield select(state => state)) as AppState;
+      yield call(log.debug, 'cache.exportedActivities', Object.keys(state.cache.exportedActivities));
+    } catch (err) {
+      yield call(log.error, 'saga startSimulatingLocation', err);
+    }
+  },
+
+  // As with startSimulatingLocation, this is only for test and dev scenarios.
+  stopSimulatingLocation: function* (action: Action) {
+    try {
+      const params = action.params as StopSimulatingLocationParams || {};
+    } catch (err) {
+      yield call(log.error, 'saga stopSimulatingLocation', err);
+    }
+  },
+  
   // This saga is run when the app first starts up, and also when it is restarted after being suspended/terminated.
   // The app may be restarted in the background if tracking an activity and the user has moved beyond a geofence around
   // the last location before the app was terminated. The app may also be restarted manually after having been
@@ -2046,7 +2098,7 @@ const sagas = {
       if (automate) {
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'automate' })); // may rely on SET_SAMPLES
       } else {
-        const scrollTime = (timelineNow && pausedTime) ? utils.now() : pausedTime;
+        const scrollTime = (timelineNow && pausedTime) ? yield call(utils.now) : pausedTime;
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
       }
       yield put(newAction(AppAction.completeAppStartup));
@@ -2102,7 +2154,7 @@ const sagas = {
         yield put(newAction(AppAction.flagDisable, 'trackingActivity'));
         yield call(Vibration.vibrate, constants.timing.vibration);
         const activityId = yield select((state: AppState) => state.options.currentActivityId);
-        const now = utils.now();
+        const now = (yield call(utils.now)) as number;
         const stopEvent: AppUserActionEvent = {
           ...timeseries.newEvent(now, activityId),
           type: EventType.USER_ACTION,
@@ -2225,7 +2277,8 @@ const sagas = {
     if (timelineScrolling && !activityListScrolling) {
       yield call(log.scrollEvent, 'timelineZoomed', scrollTime);
       yield put(newAction(AppAction.setAppOption, { scrollTime, viewTime: scrollTime }));
-      if (scrollTime < utils.now() - constants.timing.timelineCloseToNow) {
+      const now = (yield call(utils.now)) as number;
+      if (scrollTime < now - constants.timing.timelineCloseToNow) {
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
       }
     }
@@ -2377,7 +2430,8 @@ const sagas = {
       if (zoomTimeline) {
         // Zoom Timeline to show the entire activity, in context. Note we are not resetting its viewTime, just zooming.
         // If there is no tTotal yet (which is the case for a currentActivity), we use the current now time as the end.
-        const tTotal = activity.tTotal || (utils.now() - activity.tStart);
+        const now = (yield call(utils.now)) as number;
+        const tTotal = activity.tTotal || (now - activity.tStart);
         if (activity.tTotal) {
           const newTimelineZoomValue = yield call(timelineZoomValue, tTotal);
           yield call(log.scrollEvent, 'newTimelineZoomValue', newTimelineZoomValue);

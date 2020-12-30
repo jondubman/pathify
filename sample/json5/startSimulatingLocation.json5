@@ -1,0 +1,6 @@
+{
+  type: 'startSimulatingLocation',
+  params: {
+    activityId: '$$',
+  },
+}

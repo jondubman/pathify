@@ -92,6 +92,7 @@ export enum AppAction {
   'startActivity' = 'startActivity',
   'startFollowingPath' = 'startFollowingPath',
   'startFollowingUser' = 'startFollowingUser',
+  'startSimulatingLocation' = 'startSimulatingLocation',
   'stopFollowing' = 'stopFollowing',
   'stopFollowingPath' = 'stopFollowingPath',
   'stopFollowingUser' = 'stopFollowingUser',
@@ -100,6 +101,7 @@ export enum AppAction {
   'stoppedFollowingUser' = 'stoppedFollowingUser',
   'startupActions' = 'startupActions',
   'stopActivity' = 'stopActivity',
+  'stopSimulatingLocation' = 'stopSimulatingLocation',
   'timelineRelativeZoom' = 'timelineRelativeZoom',
   'timelineZoomed' = 'timelineZoomed',
   'timelineZooming' = 'timelineZooming',
@@ -257,12 +259,19 @@ export interface SleepParams {
   for: number,
 }
 
+export interface StartSimulatingLocationParams {
+  activityId: string;
+}
+
 export interface StartActivityParams {
   continueActivityId?: string;
 }
 
 export interface StartupActionParams {
   include?: Array<ActivityDataExtended>;
+}
+
+export interface StopSimulatingLocationParams {
 }
 
 export interface TimelineRelativeZoomParams {

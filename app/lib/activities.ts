@@ -131,10 +131,14 @@ export interface ExportedActivity {
   path: PathUpdate;
 }
 
+export type ExportedActivities =  { [key: string]: ExportedActivity }; // key is activityId
+
 export const extendedActivities = (activities: ActivityData[]) => {
   return activities.map((activityData) => extendActivity(activityData));
 }
 
+// This doesn't really "export" an activity, it just returns data that could be exported and then imported into this or
+// another app container (perhaps a test app) for testing, demoing, simulating location, etc.
 export const exportActivity = (activity: ActivityData): ExportedActivity | null => {
   const pathUpdate = database.pathUpdateById(activity.id);
   if (pathUpdate) {
@@ -199,4 +203,9 @@ export interface ActivityFilter { // These are applied in the listedActivities f
   includeSelected?: boolean;
   // For use with excludeOutOfBounds. Activities must be wholly contained in current map bounds.
   strictBoundsCheck: boolean;
+}
+
+export interface LocationSimulationOptions {
+  activityId: string; // should match an id key in state.cache.exportedActivities. See startSimulatingLocation.
+  startTime: number; // current clock time (utils.now) when simulation was started
 }

@@ -27,11 +27,15 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
         {
           const cacheInfo = params as CacheInfo; // what info is being cached now?
           if (cacheInfo.activities) {
-            newState.cache.activities = [ ...cacheInfo.activities ];
+            newState.cache.activities = [...cacheInfo.activities];
             if (cacheInfo.populated) {
               newState.cache.populated = cacheInfo.populated;
             }
             newState.cache.refreshCount = cacheInfo.refreshCount;
+          }
+          if (cacheInfo.exportedActivities) {
+            // These just accumulate and cannot really be deleted. This is a cache, so none of this is persisted.
+            newState.cache.exportedActivities = {...state.cache.exportedActivities, ...cacheInfo.exportedActivities};
           }
         }
         break;
@@ -63,7 +67,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           }
           // Set these whenever they are provided.
           if (mapRegionUpdate.bounds) {
-            newState.mapBounds = [ ...mapRegionUpdate.bounds ]; // ensure reference inequality
+            newState.mapBounds = [...mapRegionUpdate.bounds]; // ensure reference inequality
           }
           if (mapRegionUpdate.heading !== undefined) {
             newState.mapHeading = mapRegionUpdate.heading; // required, 0 is default (due north orientation)

@@ -6,7 +6,9 @@ import { OptionalPulsars } from 'containers/PulsarsContainer';
 import {
   ActivityDataExtended,
   ActivityFilter,
+  ExportedActivities,
   ExportedActivity,
+  LocationSimulationOptions,
 } from 'lib/activities';
 import { AppStateChange } from 'lib/appEvents';
 import constants from 'lib/constants';
@@ -21,6 +23,7 @@ import utils from 'lib/utils';
 // ActivityDataExtended are slightly enhanced versions of a canonical Activity in the Realm DB. Cached for performance.
 export interface CacheInfo {
   activities: ActivityDataExtended[];
+  exportedActivities: ExportedActivities;
   populated: boolean;
   refreshCount: number;
 }
@@ -53,8 +56,9 @@ const devMode = __DEV__ ? true : false; // (debug : release)
 
 export const initialAppState = {
   cache: {
-    activities: [] as Array<ActivityDataExtended>,
-    populated: false,
+    activities: [], // an array
+    exportedActivities: {}, // an object not an array
+    populated: false, // really refers to the activities
     refreshCount: 0,
   } as CacheInfo,
   counts: {
@@ -150,6 +154,10 @@ export const initialAppState = {
     grabBarSnapIndex: constants.snapIndex.topButtons, // User can drag bar up and down to reveal more/less UI over map.
     grabBarSnapIndexPreview: constants.snapIndex.topButtons, // same as grabBarSnapIndex, different only while dragging
     introModePage: 0, // current page of swiper for introMode
+    locationSimulation: {
+      activityId: '',
+      startTime:  0,
+    } as LocationSimulationOptions,
     mapOpacity: constants.map.default.opacity, // opacity < 1 helps dynamic data and UI stand out. 0 looks like no map!
     mapOpacityPreview: constants.map.default.opacity, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
