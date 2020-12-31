@@ -452,7 +452,7 @@ export const Geo = {
   onLocation: async (location: Location) => {
     try {
       const state = store.getState();
-      if (location.sample || !state.flags.receiveLocations) {
+      if (location.sample || !state.flags.receiveLocations || state.options.locationSimulation.activityId) {
         return;
       }
       const {
@@ -508,10 +508,15 @@ export const Geo = {
   },
 
   // There's overlap between onSimulateLocation and onLocation, but onSimulateLocation takes locationInfo, as opposed to
-  // the plugin's Location object, and does nothing in the background, as location simulation is foreground only.
+  // the plugin's Location object, and does nothing in the background, as location simulation is foreground only and
+  // does not insertLocation into the plugin's internal SQLite DB.
   onSimulateLocation: async (locationInfo: LocationInfo, state: AppState) => {
     try {
+      if (!state.options.locationSimulation.activityId) {
+        return; // early return if locationSimulation is not currently enabled
+      }
       const activityId = state.options.currentActivityId || '';
+      log.debug('onSimulateLocation', locationInfo, activityId);
       const {
         appActive,
         receiveLocations,
@@ -532,7 +537,7 @@ export const Geo = {
           // Adding events will yield a cascade of updates in the database, the store, and ultimately the UI.
           store.dispatch(newAction(AppAction.addEvents, { events: [locationEvent] }));
         }
-      }
+      } // else take no action
     } catch (err) {
       log.error('onSimulateLocation', err);
     }

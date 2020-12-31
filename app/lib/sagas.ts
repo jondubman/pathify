@@ -74,6 +74,7 @@ import {
   ScrollTimelineParams,
   SelectActivityParams,
   SequenceParams,
+  SimulateLocationParams,
   SleepParams,
   StartActivityParams,
   StartSimulatingLocationParams,
@@ -105,7 +106,10 @@ import database, {
   LogMessage,
   SettingsObject
 } from 'lib/database';
-import { Geo } from 'lib/geo';
+import {
+  Geo,
+  LocationInfo,
+} from 'lib/geo';
 import locations, {
   LocationEvent,
   LonLat,
@@ -113,6 +117,7 @@ import locations, {
   modeChangeToNumber,
   modeIsMoving,
   MotionEvent,
+  numberToModeType,
 } from 'lib/locations';
 import log from 'shared/log';
 import {
@@ -309,7 +314,7 @@ const sagas = {
               const { type } = event;
               if (type === EventType.LOC) { // take whatever info we can from this LOC event
                 latestLocEvent = event as LocationEvent;
-                if (latestLocEvent.accuracy  && latestLocEvent.accuracy > constants.paths.metersAccuracyRequired) {
+                if (latestLocEvent.accuracy && latestLocEvent.accuracy > constants.paths.metersAccuracyRequired) {
                   continue;
                 }
                 ele = latestLocEvent.ele;
@@ -1160,9 +1165,11 @@ const sagas = {
     yield sagas.flag_sideEffects(flagName);
   },
 
-  // Update state.userLocation as appropriate in response to geolocation events.
-  // TODO If these events are old or known to be semi-inaccurate, do we still want to do that?
-  // Note it is not the responsibility of this saga to add events when locations comes in. See addEvents.
+  // Update state.current, state.userLocation, and re-center the map if needed, in response to geolocation events.
+  // (TODO If these events are old or known to be semi-inaccurate, do we still want to do that?)
+  // Commmon to, and downstream from, both the background-geolocation plugin as well as location simulation scenarios.
+  // Note it is not the responsibility of this saga to add events when locations come in.
+  // That is done with AppAction.addEvents in Geo.onLocation and Geo.onSimulateLocation.
   geolocation: function* (action: Action) {
     try {
       const geoloc = action.params as GeolocationParams;
@@ -1425,7 +1432,7 @@ const sagas = {
             yield call(log.trace, 'refreshActivity: ignoring t < tStart', t, tStart);
             continue;
           }
-          if (accuracy && accuracy <= constants.paths.metersAccuracyRequired) { // if sufficiently accurate
+          if (!accuracy || accuracy <= constants.paths.metersAccuracyRequired) { // if sufficiently accurate
             // ele
             pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
             // lats
@@ -1872,6 +1879,63 @@ const sagas = {
     }
   },
 
+  // Simulate a location update, if needed, based on the exportedActivity indicated by state.options.locationSimulation.
+  simulateLocation: function* (action: Action) {
+    try {
+      const params = action.params as SimulateLocationParams || {};
+      const state = (yield select(state => state)) as AppState;
+      // startTime is the clock time when this simulation started.
+      const { activityId, startTime } = state.options.locationSimulation;
+      if (activityId && startTime) {
+        const now = (yield call(utils.now)) as number;
+        if (now >= startTime) {
+          const extendedActivity = state.cache.exportedActivities[activityId];
+          if (extendedActivity) {
+            const { activity, path } = extendedActivity;
+            // It's reasonable to insist an activity must have started before any simulation based on it.
+            if (activity && activity.tStart && activity.tStart <= startTime) {
+              const timeShift = startTime - activity.tStart;
+              // Now we can just add timeShift to any timepoint we see in the activity itself or in the path.t array
+              // to convert from the exportedActivity's timeframe to the current timeframe.
+              let latestIndex: number | undefined = undefined;
+              let latestTimepoint: number | undefined = undefined;
+              for (let i = 0; i < path.t.length; i++) {
+                const t = path.t[i] + timeShift;
+                if (t > now) {
+                  break;
+                }
+                latestIndex = i;
+                latestTimepoint = t;
+              }
+              // Done scanning path.
+              if (latestIndex !== undefined && latestTimepoint && (latestTimepoint !== state.current.t)) {
+                const ele = path.ele[latestIndex];
+                const lat = path.lats[latestIndex];
+                const lon = path.lons[latestIndex];
+                const mode = numberToModeType(path.mode[latestIndex]);
+                const odo = path.odo[latestIndex];
+                const speed = path.speed[latestIndex];
+                const t = latestTimepoint;
+                const locationInfo: LocationInfo = {
+                  ele,
+                  lat,
+                  lon,
+                  mode,
+                  odo,
+                  speed,
+                  t,
+                }
+                yield call(Geo.onSimulateLocation, locationInfo, state);
+              }
+            }
+          }
+        }
+      }
+    } catch (err) {
+      yield call(log.error, 'saga simulateLocation', err);
+    }
+  },
+
   // sleep is a non-production script-originated action, to facilitate automated testing.
   // Note sleep only works as expected if enclosed in a sequence action; sequence is where sleep is really implemented.
   // Behavior is odd when nesting sequences involving sleep and repeated actions if not enclosed in a sequence.
@@ -1952,7 +2016,7 @@ const sagas = {
         } else {
           extendedActivity = yield call(exportActivity, activity);
           // Note use of computed key [activityId]
-          yield put(newAction(AppAction.cache, { exportedActivities: { [activityId]: extendActivity }}));
+          yield put(newAction(AppAction.cache, { exportedActivities: { [activityId]: extendedActivity }}));
         }
       }
       const locationSimulation: LocationSimulationOptions = {
@@ -1974,6 +2038,7 @@ const sagas = {
   stopSimulatingLocation: function* (action: Action) {
     try {
       const params = action.params as StopSimulatingLocationParams || {};
+      yield put(newAction(AppAction.setAppOption, { locationSimulation: { activityId: '', startTime: 0 }}));
     } catch (err) {
       yield call(log.error, 'saga stopSimulatingLocation', err);
     }
@@ -2308,7 +2373,7 @@ const sagas = {
   // One second is the approximate frequency of location updates and it's the minimum for updating the analog clock
   // and the timeline. More frequent timer ticks make the second hand move more smoothly.
   timerTick: function* (action: Action) {
-    const state = yield select((state: AppState) => state);
+    const state = (yield select((state: AppState) => state)) as AppState;
     const {
       appActive,
       followingPath,
@@ -2320,17 +2385,23 @@ const sagas = {
       const now = action.params as number; // note that 'now' is a parameter here. It need not be the real now.
       const nowTimeRounded = Math.floor(now / 1000) * 1000;
       if (nowTimeRounded === state.options.nowTimeRounded) {
-        // Most of the time, only this happens:
+        // Most of the time, only this happens.
+        // TODO if it's basically only for smooth motion of the second hands on the clock that we do this more than once
+        // per second, maybe there's a lighter-weight solution that bypasses this semi-expensive AppAction.setAppOption,
+        // which can't help but yield a whole cascade of downstream effects with react-redux that will add up.
         yield put(newAction(AppAction.setAppOption, { nowTime: now }));
       } else {
         // But when nowTimeRounded bumps up to the next whole second, we do this:
-        yield put(newAction(AppAction.refreshCachedCurrentActivity)); // TODO review
+        yield put(newAction(AppAction.refreshCachedCurrentActivity)); // TODO review. Should be lightweight.
         const options = { nowTime: now, nowTimeRounded } as any; // always update nowTime
         if (timelineNow) {
           options.scrollTime = now;
           if (!timelineScrolling) { // because if timelineScrolling, user's actions are more important
             options.viewTime = now;
           }
+        }
+        if (state.options.locationSimulation.activityId) {
+          yield put(newAction(AppAction.simulateLocation, { }));
         }
         yield put(newAction(AppAction.setAppOption, options));
 
@@ -2371,7 +2442,7 @@ const sagas = {
     }
   },
 
-  // Stop following user after panning the map.
+  // Stop following user after panning the map -- unless the map was moved only slighly and the user is still in bounds.
   userMovedMap: function* (action: Action) {
     try {
       const { center } = action.params as UserMovedMapParams;

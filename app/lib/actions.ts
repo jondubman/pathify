@@ -88,6 +88,7 @@ export enum AppAction {
   'setAppOption' = 'setAppOption',
   'setAppOptionASAP' = 'setAppOptionASAP',
   'setRef' = 'setRef',
+  'simulateLocation' = 'simulateLocation',
   'sleep' = 'sleep',
   'startActivity' = 'startActivity',
   'startFollowingPath' = 'startFollowingPath',
@@ -254,6 +255,9 @@ export interface SelectActivityParams {
 }
 
 export type SequenceParams = Action[];
+
+export interface SimulateLocationParams {
+}
 
 export interface SleepParams {
   for: number,
