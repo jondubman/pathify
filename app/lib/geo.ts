@@ -180,6 +180,12 @@ const geoconfig_tracking_background: Config = {
   showsBackgroundLocationIndicator: true,
 }
 
+// const geoconfig_movieMode: Config = {
+//   ...geoconfig_default,  
+//   stopOnTerminate: true,
+//   startOnBoot: false,
+// }
+
 const mapActivityToMode = {
   in_vehicle: ModeType.VEHICLE,
   on_bicycle: ModeType.BICYCLE,
@@ -639,10 +645,9 @@ export const Geo = {
     }
   },
 
-  // TODO not currently needed
-  // stopBackgroundGeolocation: async () => {
-  //   return await BackgroundGeolocation.stop();
-  // },
+  stopBackgroundGeolocation: async () => {
+    return await BackgroundGeolocation.stop();
+  },
 }
 
 // On heading vs course:

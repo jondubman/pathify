@@ -1000,6 +1000,15 @@ const sagas = {
         }
         break;
 
+      case 'moviePrep':
+        yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
+        yield put(newAction(AppAction.flagEnable, 'movieMode'));
+        yield put(newAction(AppAction.flagDisable, 'requestedLocationPermission'));
+        yield call(Geo.stopBackgroundGeolocation); // to stop the background service so it doesn't auto-restart
+        yield delay(5000);
+        yield call(Alert.alert, 'To complete moviePrep, go to Settings : General : Reset Location & Privacy and restart the app.');
+        break;
+
       case 'prep':
         yield put(newAction(AppAction.flagEnable, 'colorizeActivities'));
         yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
@@ -2101,6 +2110,7 @@ const sagas = {
         grabBarSnapIndex,
         mapHeading,
         mapZoomLevel,
+        movieMode,
         remoteDebug,
         requestedLocationPermission,
         timelineNow,
@@ -2131,7 +2141,7 @@ const sagas = {
       const tracking = !!currentActivityId;
       if (!testMode) {
         yield call(log.debug, `startupActions: !testMode`);
-        if (requestedLocationPermission) {
+        if (requestedLocationPermission && !movieMode) {
           const launchedInBackground = yield call(Geo.initializeGeolocation, store, tracking);
           yield call(log.debug, `startupActions: launchedInBackground ${launchedInBackground}`);
           yield call(Geo.startBackgroundGeolocation);
