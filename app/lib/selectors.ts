@@ -531,7 +531,7 @@ export const flavorText = (state: AppState): string[] => {
     const previous = previousActivity(state, scrollTime);
     const gapPercent = ((previous === null) ? '?' : (((scrollTime - previous.tLast) / gap) * 100).toFixed(0));
     return ['BETWEEN ACTIVITIES', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
-  } catch(err) {
+  } catch (err) {
     log.warn('flavorText error', err);
     return [''];
   }
@@ -561,33 +561,42 @@ const getActivityListFilter = (state: AppState): ActivityFilter | null => (
 const getCachedActivities = (state: AppState) => state.cache.activities;
 const getCurrentActivityId = (state: AppState) => state.options.currentActivityId;
 const getMapBounds = (state: AppState) => state.mapBounds;
+const getMovieMode = (state: AppState) => state.flags.movieMode;
+const getStartupTime = (state: AppState) => state.options.startupTime;
 
 export const listedActivities = createSelector(
-  [getActivityListFilter, getCachedActivities, getCurrentActivityId, getMapBounds, getSelectedActivityId],
-  (filter, activities, currentActivityId, mapBounds, selectedActivityId): ActivityDataExtended[] => {
+  [getActivityListFilter, getCachedActivities, getCurrentActivityId, getMapBounds, getMovieMode, getSelectedActivityId, getStartupTime],
+  (filter,                activities,          currentActivityId,    mapBounds,    movieMode,    selectedActivityId,    startupTime): ActivityDataExtended[] => {
     if (!activities || !activities.length) {
       return [];
     }
-    if (!filter || filter.includeAll) {
+    if (!movieMode && (!filter || filter.includeAll)) {
       return activities;
     }
     const filteredActivities = activities.filter(activity => {
-      if (filter.includeCurrent && activity.id === currentActivityId) {
-        return true;
+      if (movieMode && activity.tLast && activity.tLast < startupTime) {
+        return false;
       }
-      if (filter.includeSelected && activity.id === selectedActivityId) {
-        return true;
-      }
-      if (filter.excludeOutOfBounds) {
-        const activityBounds = boundsForActivity(activity);
-        if (activityBounds) {
-          return filter.strictBoundsCheck ?
-            utils.boundsContained(activityBounds, mapBounds)
-            :
-            utils.boundsOverlap(activityBounds, mapBounds)
+      if (filter) {
+        if (filter.includeCurrent && activity.id === currentActivityId) {
+          return true;
         }
+        if (filter.includeSelected && activity.id === selectedActivityId) {
+          return true;
+        }
+        if (filter.excludeOutOfBounds) {
+          const activityBounds = boundsForActivity(activity);
+          if (activityBounds) {
+            return filter.strictBoundsCheck ?
+              utils.boundsContained(activityBounds, mapBounds)
+              :
+              utils.boundsOverlap(activityBounds, mapBounds)
+          }
+        }
+        return false;
+      } else {
+        return true;
       }
-      return false;
     })
     return filteredActivities;
   }
@@ -746,7 +755,7 @@ export const getCachedPathInfo = createSelector(
         }
       } // if activity
       return null;
-    } catch(err) {
+    } catch (err) {
       log.warn('Exception in getCachedPathInfo', err);
       return null;
     }

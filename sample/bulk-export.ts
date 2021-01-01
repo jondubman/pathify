@@ -87,7 +87,7 @@ const main = async () => {
       }
       log(`exported ${ids.length} to ${folder}`);
     }
-  } catch(err) {
+  } catch (err) {
     console.error('error', err);
   }
 }

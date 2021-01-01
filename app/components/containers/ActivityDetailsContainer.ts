@@ -176,7 +176,7 @@ const mapStateToProps = (state: AppState): ActivityDetailsStateProps => {
     } else {
       return defaults;
     }
-  } catch(err) {
+  } catch (err) {
     log.warn('Exception in ActivityDetailsContainer mapStateToProps', err);
     return defaults;
   }

@@ -710,7 +710,7 @@ const sagas = {
   cache: function* (action: Action) {
     try {
       yield put(newAction(ReducerAction.CACHE, action.params as CacheInfo));
-    } catch(err) {
+    } catch (err) {
       yield call(log.error, 'saga cache', err);
     }
   },
@@ -1286,7 +1286,7 @@ const sagas = {
       const params = action.params as LogActionParams;
       const { level, message } = params;
       yield call(log[level || 'debug'], message);
-    } catch(err) {
+    } catch (err) {
       // eat it
     }
   },
@@ -1360,7 +1360,7 @@ const sagas = {
         yield call(log.trace, 'saga modeChange - handling event in background', modeChangeEvent);
         yield call(database.createEvents, [modeChangeEvent]);
       }
-    } catch(err) {
+    } catch (err) {
       yield call(log.error, 'saga modeChange', err);
     }
   },
@@ -1502,7 +1502,7 @@ const sagas = {
       }
       yield call(database.updateActivity, activityUpdate, pathUpdate);
       yield call(utils.addToCount, 'refreshedActivities');
-    } catch(err) {
+    } catch (err) {
       yield call(log.error, 'saga refreshActivity', err);
     } finally {
       yield put(newAction(AppAction.refreshActivityDone));
@@ -1547,7 +1547,7 @@ const sagas = {
       const now = yield call(utils.now);
       yield call(log.debug, 'new refreshCount', refreshCount, 'msec', now - timestamp, 'count', activities.length);
       yield put(newAction(AppAction.refreshCacheDone));
-    } catch(err) {
+    } catch (err) {
       yield call(log.error, 'saga refreshCache', err);
     }
   },

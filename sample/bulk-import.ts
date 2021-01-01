@@ -60,7 +60,7 @@ const main = async () => {
       log(command);
       const { stderr, stdout } = await exec(command, options);
     }
-  } catch(err) {
+  } catch (err) {
     console.error('error', err);
   }
 }

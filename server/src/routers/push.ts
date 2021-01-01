@@ -77,11 +77,11 @@ router.post('/', function (req, res) {
         log.info(`response from clientId CID=${clientId}: ${responseReadable}`);
         // forward response to whoever requested that we post this JSON to the app
         res.send(JSON.stringify(response));
-      }).catch(error => {
+      }).catch (error => {
         try {
           log.info(`appQuery timeout, clientAlias ${clientAlias || 'undefined'}, clientId CID=${clientId}`);
           res.send({ error });
-        } catch(err) {
+        } catch (err) {
           log.error('subsequent error, probably: Cannot set headers after they are sent to the client');
         }
       })

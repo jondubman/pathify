@@ -70,7 +70,7 @@ export const handlePollRequest = (req: any, res: any, timeout: number) => {
     if (messages[clientId] && messages[clientId].length) {
       respond(clientId, 'client poll');
     }
-  } catch(err) {
+  } catch (err) {
     log.error('handlePollRequest', err);
   }
 }
@@ -87,7 +87,7 @@ export const pushToClient = (message: any, clientId: string, clientAlias: string
       messageToLog(message));
     messages[clientId].push(message);
     respond(clientId, 'server push');
-  } catch(err) {
+  } catch (err) {
     log.error('pushToClient', err);
   }
 }
@@ -115,7 +115,7 @@ const respond = (clientId: string, reason: string = 'unspecified reason') => {
       try {
         messages[clientId] = []; // clear all pending messages right away so nothing gets sent twice
         pollRequest.res.send(pendingMessages);
-      } catch(err) {
+      } catch (err) {
         log.warn('respond exception:', err);
         // put these back since something went wrong when attempting to send
         messages[clientId] = messages[clientId].concat(pendingMessages);
@@ -123,7 +123,7 @@ const respond = (clientId: string, reason: string = 'unspecified reason') => {
     } else {
       log.warn(`respond: no poll request pending for clientId ${clientId}`);
     }
-  } catch(err) {
+  } catch (err) {
     log.error('respond', err);
   }
 }

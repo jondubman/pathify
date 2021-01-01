@@ -178,7 +178,7 @@ class MapArea extends Component<MapAreaProps> {
           camera.fitBounds(neCoords, swCoords, paddingVerticalHorizontal, duration);
         }
       }
-    } catch(err) {
+    } catch (err) {
       log.error('map fitBounds', err);
     }
   }
@@ -190,7 +190,7 @@ class MapArea extends Component<MapAreaProps> {
         const camera = this._camera!;
         camera.flyTo(coordinates, duration);
       }
-    } catch(err) {
+    } catch (err) {
       log.error('map flyTo', err);
     }
   }

@@ -162,74 +162,78 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // Handle ActivityList scroll event.
   // This often causes Timeline to scroll to stay synced up, and will also enable timelineNow if you scroll to the end.
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    const { x } = event.nativeEvent.contentOffset;
-    log.scrollEvent('ActivityList handleScroll', x);
-    // const now = utils.now();
-    // const { timeStamp } = event;
-    // log.trace('ActivityList handleScroll', x, timeStamp, new Date(timeStamp).toString(), now, msecToString(now - timeStamp));
+    try {
+      const { x } = event.nativeEvent.contentOffset;
+      log.scrollEvent('ActivityList handleScroll', x);
+      // const now = utils.now();
+      // const { timeStamp } = event;
+      // log.trace('ActivityList handleScroll', x, timeStamp, new Date(timeStamp).toString(), now, msecToString(now - timeStamp));
 
-    const { list } = this.props;
+      const { list } = this.props;
 
-    // ActivityList has been scrolled to position x. Convert to Timepoint and pass to onScroll.
-    // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
-    // Before all activities maps to the start of the first activity
-    // After all activities maps to the end of the last one.
-    // Between activities, no scroll is propagated to the timeline.
-    const totalWidthPerActivity = activityMargin + activityWidth;
-    const baseX = x - activityMargin;
-    const ratio = baseX / totalWidthPerActivity;
-    const index = Math.floor(ratio);
-    const remainder = baseX - (index * totalWidthPerActivity);
-    const proportion = remainder / activityWidth;
-    const activity = list[index];
-    if (activity && activity.tTotal && proportion <= 1) { // if scrolled within an activity
-      const timeWithinActivity = proportion * activity.tTotal;
-      const t: Timepoint = activity.tStart + timeWithinActivity;
-      log.scrollEvent('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
-      this.props.scrollTimeline(t);
-      this.setState({ scrolledBetweenActivities: false });
-    } else {
-      log.scrollEvent('handleScroll outside activity', baseX, ratio, index, proportion);
-    }
-    const xScrolledAfterActivity = remainder - activityWidth;
-    // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
-    const xLeftSelectStart = (activityMargin / 2 - 2); // amount left of an activity you can scroll to select start
-    const xRightSelectEnd = (activityMargin / 2 + 2); // amount right of an activity you can scroll to select end
+      // ActivityList has been scrolled to position x. Convert to Timepoint and pass to onScroll.
+      // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
+      // Before all activities maps to the start of the first activity
+      // After all activities maps to the end of the last one.
+      // Between activities, no scroll is propagated to the timeline.
+      const totalWidthPerActivity = activityMargin + activityWidth;
+      const baseX = x - activityMargin;
+      const ratio = baseX / totalWidthPerActivity;
+      const index = Math.floor(ratio);
+      const remainder = baseX - (index * totalWidthPerActivity);
+      const proportion = remainder / activityWidth;
+      const activity = list[index];
+      if (activity && activity.tTotal && proportion <= 1) { // if scrolled within an activity
+        const timeWithinActivity = proportion * activity.tTotal;
+        const t: Timepoint = activity.tStart + timeWithinActivity;
+        log.scrollEvent('handleScroll', baseX, ratio, index, proportion, timeWithinActivity, t);
+        this.props.scrollTimeline(t);
+        this.setState({ scrolledBetweenActivities: false });
+      } else {
+        log.scrollEvent('handleScroll outside activity', baseX, ratio, index, proportion);
+      }
+      const xScrolledAfterActivity = remainder - activityWidth;
+      // The +-1 below is a slight fudge factor so there's at least a couple of unclaimed pixels left in the center.
+      const xLeftSelectStart = (activityMargin / 2 - 2); // amount left of an activity you can scroll to select start
+      const xRightSelectEnd = (activityMargin / 2 + 2); // amount right of an activity you can scroll to select end
 
-    if ((list.length && index >= list.length) || // if way at the end...
-                                (index === list.length - 1 && // ...or if in right half of last margin after activities
-                                 proportion > 1 &&
-                                 xScrolledAfterActivity > xLeftSelectStart)) {
-      log.debug('ActivityList handleScroll reachedEnd');
-    } else if (proportion > 1) {
-      log.scrollEvent('ActivityList handleScroll: proportion', proportion,
-        'amountScrolledAfterActivity', xScrolledAfterActivity, 'index', index, 'remainder', remainder);
-      if (activity && activity.tEnd && (xScrolledAfterActivity <= xLeftSelectStart)) {
-        const { tLast } = activity;
-        if (tLast) {
-          this.props.scrollTimeline(tLast); // This may change selectedActivityId.
-          this.setState({ scrolledBetweenActivities: false });
-        }
-      } else if ((activity || index === -1) && xScrolledAfterActivity >= xRightSelectEnd) {
-        // Note the -1 case above handles the margin just to the left of the first activity.
-        if (list.length) {
-          const nextActivity = list[index + 1];
-          if (nextActivity) {
-            const tStart = nextActivity.tStart;
-            if (tStart) {
-              this.props.scrollTimeline(tStart); // This may change selectedActivityId.
-              this.setState({ scrolledBetweenActivities: false });
-            }
-          } else {
-            this.props.onPressFutureZone();
+      if ((list.length && index >= list.length) || // if way at the end...
+                                  (index === list.length - 1 && // ...or if in right half of last margin after activities
+                                  proportion > 1 &&
+                                  xScrolledAfterActivity > xLeftSelectStart)) {
+        log.debug('ActivityList handleScroll reachedEnd');
+      } else if (proportion > 1) {
+        log.scrollEvent('ActivityList handleScroll: proportion', proportion,
+          'amountScrolledAfterActivity', xScrolledAfterActivity, 'index', index, 'remainder', remainder);
+        if (activity && activity.tEnd && (xScrolledAfterActivity <= xLeftSelectStart)) {
+          const { tLast } = activity;
+          if (tLast) {
+            this.props.scrollTimeline(tLast); // This may change selectedActivityId.
             this.setState({ scrolledBetweenActivities: false });
           }
+        } else if ((activity || index === -1) && xScrolledAfterActivity >= xRightSelectEnd) {
+          // Note the -1 case above handles the margin just to the left of the first activity.
+          if (list.length) {
+            const nextActivity = list[index + 1];
+            if (nextActivity) {
+              const tStart = nextActivity.tStart;
+              if (tStart) {
+                this.props.scrollTimeline(tStart); // This may change selectedActivityId.
+                this.setState({ scrolledBetweenActivities: false });
+              }
+            } else {
+              this.props.onPressFutureZone();
+              this.setState({ scrolledBetweenActivities: false });
+            }
+          }
+        } else {
+          // Exactly in the center - which is where you will get put if you scroll the Timeline out of activity bounds.
+          // This is the only scenario where scrolledBetweenActivities gets set to true.
+          this.setState({ scrolledBetweenActivities: true });
         }
-      } else {
-        // Exactly in the center - which is where you will get put if you scroll the Timeline out of activity bounds.
-        // This is the only scenario where scrolledBetweenActivities gets set to true.
-        this.setState({ scrolledBetweenActivities: true });
       }
+    } catch (err) {
+      log.error('handleScroll', err);
     }
   }
 
@@ -239,29 +243,33 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   }
 
   handleScrollEndDrag(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    const { x } = event.nativeEvent.contentOffset;
-    log.trace('ActivityList handleScrollEndDrag', x);
-    const { list } = this.props;
-    const totalWidthPerActivity = activityMargin + activityWidth;
-    const baseX = x - activityMargin;
-    const ratio = baseX / totalWidthPerActivity;
-    const index = Math.floor(ratio);
-    const remainder = baseX - (index * totalWidthPerActivity);
-    const proportion = remainder / activityWidth;
-    const xScrolledAfterActivity = remainder - activityWidth;
-    const xRightSelectEnd = (activityMargin / 2 + 2); // amount right of an activity you can scroll to select end
-    if (index >= list.length || ((index === list.length - 1) && (proportion > 1))) {
+    try {
+      const { x } = event.nativeEvent.contentOffset;
+      log.trace('ActivityList handleScrollEndDrag', x);
       const { list } = this.props;
-      if ((index === list.length - 1) && (xScrolledAfterActivity <= xRightSelectEnd && list[index].tEnd)) {
-        this.props.scrollTimeline(list[list.length - 1].tLast); // This may change selectedActivityId.
-        this.setState({ scrolledBetweenActivities: false });
-        this.props.setTimelineNow(false);
+      const totalWidthPerActivity = activityMargin + activityWidth;
+      const baseX = x - activityMargin;
+      const ratio = baseX / totalWidthPerActivity;
+      const index = Math.floor(ratio);
+      const remainder = baseX - (index * totalWidthPerActivity);
+      const proportion = remainder / activityWidth;
+      const xScrolledAfterActivity = remainder - activityWidth;
+      const xRightSelectEnd = (activityMargin / 2 + 2); // amount right of an activity you can scroll to select end
+      if (index >= list.length || ((index === list.length - 1) && (proportion > 1))) {
+        const { list } = this.props;
+        if ((index === list.length - 1) && (xScrolledAfterActivity <= xRightSelectEnd && list[index].tEnd)) {
+          this.props.scrollTimeline(list[list.length - 1].tLast); // This may change selectedActivityId.
+          this.setState({ scrolledBetweenActivities: false });
+          this.props.setTimelineNow(false);
+        } else {
+          this.props.onPressFutureZone();
+          this.setState({ scrolledBetweenActivities: false });
+        }
       } else {
-        this.props.onPressFutureZone();
-        this.setState({ scrolledBetweenActivities: false });
+        this.props.setTimelineNow(false);
       }
-    } else {
-      this.props.setTimelineNow(false);
+    } catch (err) {
+      log.error('handleScrollEndDrag', err);
     }
   }
 

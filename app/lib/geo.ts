@@ -306,7 +306,7 @@ export const Geo = {
           const { location } = event;
           log.debug('onHeartbeat', location.timestamp);
           Geo.onLocation(location);
-        } catch(err) {
+        } catch (err) {
           log.warn('onHeartbeat error', err);
         }
       }
@@ -456,9 +456,13 @@ export const Geo = {
       }
       const {
         appActive,
+        movieMode,
         storeAllLocationEvents,
         trackingActivity,
       } = state.flags;
+      if (movieMode) {
+        return; // never show real location in movieMode
+      }
       const activityId = state.options.currentActivityId || '';
       if (appActive) {
         // log.trace(`onLocation: appActive ${location.timestamp}, tracking ${trackingActivity}`);
