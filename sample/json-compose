@@ -32,7 +32,7 @@ const main = () => {
       // We need separate magic values for quoted vs. non-quoted parameters. Both must make it through the JSON5 parser.
       const magicNonQuotedValue = 1234567890; // This actually works for boolean, null, number, anything sans quotes.
       const magicStringValue = '$$'; // something short and human-recognizable but otherwise quite unlikely to appear
-      commandJson = commandJson.replace(magicStringValue, optionalParameter);
+      commandJson = commandJson.replace(magicStringValue, optionalParameter || '');
       commandJson = commandJson.replace(magicNonQuotedValue, optionalParameter);
       const command = JSON.parse(commandJson);
 

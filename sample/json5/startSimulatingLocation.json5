@@ -1,6 +1,6 @@
 {
   type: 'startSimulatingLocation',
   params: {
-    activityId: '$$',
+    activityId: '$$', // replaced with command-line parameter
   },
 }

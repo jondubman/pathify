@@ -90,10 +90,11 @@ export const modeChangeToNumber = (modeChange: ModeChange): number => (
   modeToNumber[modeChange.mode] + (modeChange.confidence / 1000)
 )
 
-export const numberToModeChange = (num: number): ModeChange => ({
-  mode: numberToModeType[num],
-  confidence: Math.round((num - Math.floor(num)) * 1000),
-})
+// TODO needed?
+// export const numberToModeChange = (num: number): ModeChange => ({
+//   mode: numberToModeType[num],
+//   confidence: Math.round((num - Math.floor(num)) * 1000),
+// })
 
 export interface MotionEvent extends GenericEvent {
   isMoving: boolean;

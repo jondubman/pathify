@@ -200,7 +200,7 @@ export interface LocationInfo {
   heading?: number;
   lat: number; // required, present in Path
   lon: number; // required, present in Path
-  mode?: ModeType; // present in Path
+  mode?: ModeType; // based on number present in Path
   odo?: number; // present in Path
   speed?: number; // present in Path
   t: number; // required, present in Path
@@ -250,7 +250,6 @@ const newMotionEvent = (location: Location, isMoving: boolean, activityId: strin
   }
 }
 
-// TODO simulate these too?
 const newModeChangeEvent = (activity: string, confidence: number, activityId: string | undefined): ModeChangeEvent => {
   const t = utils.now(); // TODO
   const mode = mapActivityToMode[activity] || `unknown activity: ${activity}`;
@@ -508,9 +507,9 @@ export const Geo = {
   },
 
   // There's overlap between onSimulateLocation and onLocation, but onSimulateLocation takes locationInfo, as opposed to
-  // the plugin's Location object, and does nothing in the background, as location simulation is foreground only and
-  // does not insertLocation into the plugin's internal SQLite DB.
-  onSimulateLocation: async (locationInfo: LocationInfo, state: AppState) => {
+  // the plugin's Location object, and does nothing in the background, because location simulation is foreground only
+  // and doesn't insertLocation into the plugin's internal SQLite DB.
+  onSimulateLocation: async (locationInfo: LocationInfo, state: AppState, forceModeChange: boolean = false) => {
     try {
       if (!state.options.locationSimulation.activityId) {
         return; // early return if locationSimulation is not currently enabled
@@ -519,13 +518,26 @@ export const Geo = {
       log.debug('onSimulateLocation', locationInfo, activityId);
       const {
         appActive,
+        receiveActivityChangeEvents,
         receiveLocations,
         storeAllLocationEvents,
+        trackingActivity,
       } = state.flags;
       if (!receiveLocations) {
         return;
       }
       if (appActive) {
+        if (activityId && trackingActivity && receiveActivityChangeEvents) {
+          if (state.userLocation?.mode !== locationInfo.mode || forceModeChange) {
+            const modeChangeEvent = {
+              ...timeseries.newEvent(locationInfo.t, activityId!),
+              type: EventType.MODE,
+              mode: locationInfo.mode,
+              confidence: 100, // 100%, total confidence!
+            }
+            store.dispatch(newAction(AppAction.modeChange, modeChangeEvent));
+          }
+        }
         const locationEvent = newLocationEvent(locationInfo, activityId);
         const geoloc: GeolocationParams = {
           locationEvent,

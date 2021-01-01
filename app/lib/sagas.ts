@@ -116,6 +116,7 @@ import locations, {
   ModeChangeEvent,
   modeChangeToNumber,
   modeIsMoving,
+  ModeType,
   MotionEvent,
   numberToModeType,
 } from 'lib/locations';
@@ -135,6 +136,7 @@ import {
   cachedActivity,
   cachedActivityForTimepoint,
   currentActivity,
+  currentOrSelectedActivity,
   currentCachedActivity,
   getCachedPathInfo,
   getStoredLocationEvent,
@@ -508,23 +510,22 @@ const sagas = {
         case 'exportActivity': {
           const { activityId } = params.query as ExportActivityParams;
           yield call(log.debug, 'exportActivity', activityId);
-          if (activityId === undefined) {
-            response = 'missing activityId';
-          } else {
-            if (activityId) {
-              let id = activityId;
-              if (activityId === '$selected') { // special case
-                id = yield select((state: AppState) => state.options.selectedActivityId);
-              }
-              const activity = yield call(database.activityById, id);
-              if (activity) {
-                response = yield call(exportActivity, activity);
-              } else  {
-                response = `activityId not found: ${activityId}`;
-              }
-            } else {
-              response = 'no activityId included';
+          let id: String | undefined = activityId;
+          if (!activityId) {
+            id = currentOrSelectedActivity(state)?.id;
+          }
+          if (activityId === '$selected') { // special case
+            id = yield select((state: AppState) => state.options.selectedActivityId);
+          }
+          if (id) {
+            const activity = yield call(database.activityById, id);
+            if (activity) {
+              response = yield call(exportActivity, activity);
+            } else  {
+              response = `activityId not found: ${id}`;
             }
+          } else {
+            response = 'no activityId';
           }
           break;
         }
@@ -1889,9 +1890,9 @@ const sagas = {
       if (activityId && startTime) {
         const now = (yield call(utils.now)) as number;
         if (now >= startTime) {
-          const extendedActivity = state.cache.exportedActivities[activityId];
-          if (extendedActivity) {
-            const { activity, path } = extendedActivity;
+          const exportedActivity = state.cache.exportedActivities[activityId];
+          if (exportedActivity) {
+            const { activity, path } = exportedActivity;
             // It's reasonable to insist an activity must have started before any simulation based on it.
             if (activity && activity.tStart && activity.tStart <= startTime) {
               const timeShift = startTime - activity.tStart;
