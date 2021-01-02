@@ -6,7 +6,6 @@ import React, {
 
 import {
   StyleSheet,
-  TouchableHighlight,
   View,
 } from 'react-native';
 

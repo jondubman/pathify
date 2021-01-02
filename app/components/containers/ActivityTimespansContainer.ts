@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
 import {
+  listedActivities,
   timepointVisibleOnTimeline,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
@@ -10,9 +11,9 @@ import {
 } from 'lib/activities';
 
 export interface ActivityTimespansStateProps {
-  allActivities: ActivityDataExtended[];
   colorizeActivites: boolean;
   currentActivityId: string;
+  listedActivities: ActivityDataExtended[];
   selectedActivityId: string;
   timelineSpanColorOpacity: number;
   visibleActivities: ActivityDataExtended[];
@@ -30,17 +31,17 @@ const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
     selectedActivityId,
     timelineSpanColorOpacity,
   } = state.options;
-  const allActivities = state.cache.activities;
+  const allListedActivities = listedActivities(state);
   // Filter out any ActivityTimespans that are completely out of visible range on the timeline, as an optimization.
-  const visibleActivities = allActivities.filter((activity: ActivityDataExtended) => (
+  const visibleActivities = allListedActivities.filter((activity: ActivityDataExtended) => (
     timepointVisibleOnTimeline(state, activity.tStart) || // can see activity start
     timepointVisibleOnTimeline(state, activity.tLast) || // or can see activity end
     (activity.tStart < scrollTime && activity.tLast > scrollTime) // or activity spans scrollTime
   ))
   return {
-    allActivities,
     colorizeActivites: state.flags.colorizeActivities,
     currentActivityId: currentActivityId || '',
+    listedActivities: allListedActivities,
     selectedActivityId: selectedActivityId || '',
     timelineSpanColorOpacity,
     visibleActivities,

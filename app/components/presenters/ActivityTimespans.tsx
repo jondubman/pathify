@@ -36,7 +36,6 @@ class ActivityTimespans extends React.Component<ActivityTimespansExtendedProps> 
     if (!colorizeActivites && activity.id === this.props.selectedActivityId) {
       return constants.colors.timeline.selectedActivity;
     }
-    const brightness = 2; // 1 for no change, or anything <1, or anything >1
     return (!colorizeActivites || listIndex === undefined) ?
       constants.colors.timeline.timespans[TimespanKind.ACTIVITY] // default
       :
@@ -45,12 +44,12 @@ class ActivityTimespans extends React.Component<ActivityTimespansExtendedProps> 
 
   render() {
     utils.addToCount('renderActivityTimespans');
-    const { allActivities, visibleActivities } = this.props;
+    const { listedActivities, visibleActivities } = this.props;
     const { scale } = this.props as any;
     return visibleActivities.map((activity: ActivityDataExtended, index: number) => (
       <TimelineSpan
         key={`${scale.x(activity.tStart)}-${scale.x(activity.tLast)}-${index}`}
-        color={this.timespanColor(activity, activityListIndex(allActivities, activity.id))}
+        color={this.timespanColor(activity, activityListIndex(listedActivities, activity.id))}
         kind={TimespanKind.ACTIVITY}
         xStart={scale.x(activity.tStart)}
         xEnd={scale.x(activity.tLast)}

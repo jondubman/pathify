@@ -43,7 +43,7 @@ const mapStateToProps = (state: AppState): RefTimeStateProps => {
   const { scrollTime } = state.options;
   const d = new Date(scrollTime);
   const { twoDigitString } = utils;
-  const hours24 = d.getHours(); // TODO 24-hour clock
+  const hours24 = d.getHours(); // TODO 24-hour clock option
   const hours = (hours24 % 12) ? (hours24 % 12).toString() : '12'; // '12' for hours24 of 0 or 12
   const minutes = twoDigitString(d.getMinutes());
   const seconds = twoDigitString(d.getSeconds());

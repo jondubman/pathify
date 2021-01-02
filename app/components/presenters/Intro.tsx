@@ -144,7 +144,7 @@ const headerColors = constants.colors.introPages.pageHeader;
 const renderPagination = (index: number, total: number, swiper: Swiper) => {
   const { width } = utils.windowSize();
   const containingViewStyle = { ...Styles.paginationContainer, width };
-  const pageBubbles = [] as any[]; // TODO proper type?
+  const pageBubbles = [] as React.ReactElement[];
   for (let i = 0; i < total; i++) {
     const defaultBubbleStyle = Styles.paginationBubble;
     let bubbleStyle: StyleProp<ViewStyle> = defaultBubbleStyle;

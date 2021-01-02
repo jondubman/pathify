@@ -57,7 +57,7 @@ const mapDispatchToProps = (dispatch: Function): SettingsPanelDispatchProps => {
   }
   // Unlike full screen switch, the Settings panel stays open while adjusting the opacity, style settings.
   const onSetMapOpacity = (mapOpacity: number) => {
-    dispatch(newAction(AppAction.setAppOption, { mapOpacity }));
+    dispatch(newAction(AppAction.setAppOption, { mapOpacity, mapOpacityPreview: mapOpacity })); // set both
   }
   const onSetMapOpacityPreview = (mapOpacityPreview: number) => {
     dispatch(newAction(AppAction.setAppOptionASAP, { mapOpacityPreview })); // ASAP really speeds things up here

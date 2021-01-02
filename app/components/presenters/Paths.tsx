@@ -43,9 +43,9 @@ class Paths extends PureComponent<PathsProps> {
 
   render() {
     const {
-      allActivities,
       colorizeActivities,
       currentActivityId,
+      listedActivities,
       pathColorOpacity,
       paths,
       selectedActivityId,
@@ -95,7 +95,7 @@ class Paths extends PureComponent<PathsProps> {
           lineStyle = {...lineLayerStyleSelected};
         }
         if (colorizeActivities && id !== currentActivityId) {
-          const activityIndex = activityListIndex(allActivities, id);
+          const activityIndex = activityListIndex(listedActivities, id);
           if (activityIndex !== undefined) {
             let color = withOpacity(activityColorForIndex(activityIndex), pathColorOpacity);
             if (id === selectedActivityId) {

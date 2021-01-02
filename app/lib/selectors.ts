@@ -104,7 +104,7 @@ export const activityColorForSelectedActivity = (state: AppState) => {
   const { colorizeActivities } = state.flags;
   const { selectedActivityId } = state.options;
   if (colorizeActivities && selectedActivityId) {
-    const index = activityListIndex(state.cache.activities, selectedActivityId);
+    const index = activityListIndex(listedActivities(state), selectedActivityId);
     if (index !== undefined) {
       return activityColorForIndex(index);
     }
@@ -122,10 +122,10 @@ export const selectedActivityIndex = (state: AppState) => {
 
 // This returns a string for display in the bubble above the TopMenu.
 export const activityIndexBubbleText = (state: AppState): string => {
-  if (!state.cache.activities || !state.cache.activities.length) {
+  const list = listedActivities(state);
+  if (!list.length) {
     return '';
   }
-  const list = listedActivities(state);
   let s = '';
   if (selectedActivityIndex(state) !== undefined) {
     s = `${selectedActivityIndex(state)! + 1}/${list.length}` // (selectedActivityIndex / count)
@@ -531,7 +531,7 @@ export const flavorText = (state: AppState): string[] => {
     const previous = previousActivity(state, scrollTime);
     const gapPercent = ((previous === null) ? '?' : (((scrollTime - previous.tLast) / gap) * 100).toFixed(0));
     return ['BETWEEN ACTIVITIES', `${msecToString(ago)} AGO`, gap ? `${msecToString(gap)} GAP ${gapPercent}%` : ''];
-  } catch (err) {
+  } catch(err) {
     log.warn('flavorText error', err);
     return [''];
   }
@@ -755,7 +755,7 @@ export const getCachedPathInfo = createSelector(
         }
       } // if activity
       return null;
-    } catch (err) {
+    } catch(err) {
       log.warn('Exception in getCachedPathInfo', err);
       return null;
     }

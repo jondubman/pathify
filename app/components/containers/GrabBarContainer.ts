@@ -7,6 +7,7 @@ import {
 import constants from 'lib/constants';
 import {
   getCachedPathInfo,
+  listedActivities,
   showActivityDetailsRows,
   snapPositions,
 } from 'lib/selectors';
@@ -62,7 +63,7 @@ const mapStateToProps = (state: AppState): GrabBarStateProps => {
   const { introMode } = state.flags;
   // That is the same trick used with the mapOpacity slider to avoid redundant updates.
   return {
-    activityCount: state.cache.activities.length || 0,
+    activityCount: listedActivities(state).length || 0,
     activitySelected: !!state.options.selectedActivityId,
     introMode,
     keyName: `${introMode}:${snapPositions.toString()}`,

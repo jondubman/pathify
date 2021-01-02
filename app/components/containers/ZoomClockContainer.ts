@@ -13,6 +13,7 @@ import {
   dynamicClockBottom,
   dynamicRefTimeHeight,
   shouldShowTimeline,
+  listedActivities,
 } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import utils from 'lib/utils';
@@ -64,7 +65,7 @@ const mapStateToProps = (state: AppState): ZoomClockStateProps => {
     currentActivitySelected: !!(options.selectedActivityId && options.selectedActivityId === options.currentActivityId),
     followingPath,
     followingUser,
-    haveActivities: !!(state.cache.activities && state.cache.activities.length),
+    haveActivities: !!(listedActivities(state).length),
     labelClock,
     labelsEnabled,
     nowMode: timelineNow || (options.scrollTime > utils.now() - constants.timing.timelineCloseToNow),

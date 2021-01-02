@@ -77,7 +77,8 @@ const Styles = StyleSheet.create({
     fontSize: 14,
   },
   staticTextView: {
-    marginTop: 30, // TODO good for now
+    marginTop: 30,
+    opacity: 0.5,
   },
   subpanel: {
   },

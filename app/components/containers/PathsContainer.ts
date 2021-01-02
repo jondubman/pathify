@@ -17,9 +17,9 @@ import { Path } from 'lib/paths';
 import Paths from 'presenters/Paths';
 
 interface PathsStateProps {
-  allActivities: ActivityDataExtended[];
   colorizeActivities: boolean;
   currentActivityId: string | null;
+  listedActivities: ActivityDataExtended[];
   pathColorOpacity: number;
   paths: Path[]; // These will be rendered from back to front.
   selectedActivityId: string | null;
@@ -34,12 +34,14 @@ export type PathsProps = PathsStateProps & PathsDispatchProps;
 const mapStateToProps = (state: AppState): PathsStateProps => {
   const { currentActivityId, scrollTime, selectedActivityId } = state.options;
 
+  const listed = listedActivities(state);
+
   // TODO reselector
   const paths: Path[] = [];
   let sequentialPathStartIndex = -1;
   if (state.flags.showPathsOnMap) {
     if (state.flags.showSequentialPaths) {
-      const activities = listedActivities(state);
+      const activities = listed;
       let index = selectedActivityIndex(state);
       if (index === undefined) {
         const prev = previousActivity(state, scrollTime);
@@ -72,7 +74,7 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
       }
     } else { // don't showSequentialPaths
       if (state.flags.filterActivityList) { // TODO dev feature only for now
-        for (const activity of listedActivities(state)) {
+        for (const activity of listed) {
           const { id } = activity;
           if (id !== currentActivityId && id !== selectedActivityId) {
             const path = database.pathById(id);
@@ -108,9 +110,9 @@ const mapStateToProps = (state: AppState): PathsStateProps => {
     }
   }
   return {
-    allActivities: state.cache.activities,
     colorizeActivities: state.flags.colorizeActivities,
     currentActivityId,
+    listedActivities: listed,
     pathColorOpacity: state.options.pathColorOpacity,
     paths,
     selectedActivityId,

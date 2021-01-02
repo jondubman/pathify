@@ -128,8 +128,8 @@ const colors = {
   activityColors: [ // opacity applied separately
     // https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=0074d9&primary.color=EF5350
     // was helpful as a starting point. These are intended to flow into one another while being moderately distinct,
-    // and not likely to be confused with the lime green currentActivity. There are enough to take at least three
-    // horizontally swiped device-widths through the ActivityList to start repeating.
+    // and not likely to be confused with the lime green currentActivity. There are enough (14) to take at least three
+    // full-width horizontal swipes through the ActivityList to start repeating.
     '#c62828', // red
     '#ec407a', // pink
     '#f012be', // namedColors.fuschia,

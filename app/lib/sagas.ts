@@ -1004,6 +1004,7 @@ const sagas = {
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
         yield put(newAction(AppAction.flagEnable, 'movieMode'));
         yield put(newAction(AppAction.flagDisable, 'requestedLocationPermission'));
+        yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield call(Geo.stopBackgroundGeolocation); // to stop the background service so it doesn't auto-restart
         yield delay(5000);
         yield call(Alert.alert, 'To complete moviePrep, go to Settings : General : Reset Location & Privacy and restart the app.');
@@ -2084,6 +2085,9 @@ const sagas = {
         }
       }
       const propagatedSettings = {} as any; // TODO use the type of AppState options
+      if (newSettings.mapOpacity) { // special case
+        propagatedSettings.mapOpacityPreview = newSettings.mapOpacity;
+      }
       if (newSettings.pausedTime) {
         propagatedSettings.centerTime = newSettings.pausedTime;
         propagatedSettings.scrollTime = newSettings.pausedTime;
