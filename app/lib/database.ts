@@ -171,24 +171,28 @@ const defaultSettings = { // for a newly installed app
 let migrationRequired = false;
 
 const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): void => {
-  if (oldRealm.schemaVersion < schemaVersion) {
-    // Migrate Settings
-    let newSettings = { ...defaultSettings };
-    if (oldRealm.objects('Settings').length > 0) {
-      const oldSettingsObject = oldRealm.objects('Settings')[0] as SettingsObject;
-      // Spread operator is broken in RealmJS... this is the workaround:
-      const keys = Object.keys(oldSettingsObject.toJSON()); // TODO this is ugly but needed for Realm to obtain keys
-      for (const key of keys) {
-        log.debug('migrating settings', key, oldSettingsObject[key]);
-        if (oldSettingsObject[key] !== undefined) {
-          // apply all the saved settings on top of today's defaults
-          newSettings[key] = oldSettingsObject[key];
+  try {
+    if (oldRealm.schemaVersion < schemaVersion) {
+      // Migrate Settings
+      const newSettings = { ...defaultSettings };
+      if (oldRealm.objects('Settings').length > 0) {
+        const oldSettingsObject = oldRealm.objects('Settings')[0] as SettingsObject;
+        // Spread operator is broken in RealmJS... this is the workaround:
+        const keys = Object.keys(oldSettingsObject.toJSON()); // TODO this is ugly but needed for Realm to obtain keys
+        for (const key of keys) {
+          log.debug('migrating settings', key, oldSettingsObject[key]);
+          if (oldSettingsObject[key] !== undefined) {
+            // apply all the saved settings on top of today's defaults
+            newSettings[key] = oldSettingsObject[key];
+          }
         }
       }
+      log.debug('newSettings', newSettings);
+      newRealm.create('Settings', newSettings, Realm.UpdateMode.All);
+      migrationRequired = true;
     }
-    log.debug('newSettings', newSettings);
-    newRealm.create('Settings', newSettings, Realm.UpdateMode.All);
-    migrationRequired = true;
+  } catch (err) {
+    log.error('migration error', err);
   }
 }
 
