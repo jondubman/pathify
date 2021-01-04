@@ -1002,51 +1002,62 @@ const sagas = {
 
       case 'moviePrep':
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
+        yield delay(postPrep);
+        yield put(newAction(AppAction.flagEnable, 'labelsEnabled'));
         yield put(newAction(AppAction.flagEnable, 'movieMode'));
         yield put(newAction(AppAction.flagDisable, 'requestedLocationPermission'));
         yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield call(Geo.stopBackgroundGeolocation); // to stop the background service so it doesn't auto-restart
-        yield delay(5000);
+        yield delay(postPrep);
         yield call(Alert.alert, 'To complete moviePrep, go to Settings : General : Reset Location & Privacy and restart the app.');
         break;
 
-      case 'prep':
-        yield put(newAction(AppAction.flagEnable, 'colorizeActivities'));
-        yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
-        yield put(newAction(AppAction.flagDisable, 'helpOpen'));
-        yield put(newAction(AppAction.flagDisable, 'helpOpen'));
-        yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
-        yield put(newAction(AppAction.flagDisable, 'startMenuOpen'));
-        yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
-        yield put(newAction(AppAction.flagDisable, 'topMenuOpen'));
-        yield put(newAction(AppAction.stopFollowingPath));
-        yield put(newAction(AppAction.stopFollowingUser));
-        yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
-        yield delay(postPrep);
+      case 'prep': {
+          yield put(newAction(AppAction.flagEnable, 'colorizeActivities'));
+          yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
+          yield put(newAction(AppAction.flagDisable, 'helpOpen'));
+          yield put(newAction(AppAction.flagDisable, 'settingsOpen'));
+          yield put(newAction(AppAction.flagDisable, 'startMenuOpen'));
+          yield put(newAction(AppAction.flagDisable, 'showSequentialPaths'));
+          yield put(newAction(AppAction.flagDisable, 'topMenuOpen'));
+          yield put(newAction(AppAction.stopFollowingPath));
+          yield put(newAction(AppAction.stopFollowingUser));
+          yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
+          const { opacity } = constants.map.default;
+          yield put(newAction(AppAction.setAppOption, {
+            mapOpacity: opacity,
+            mapOpacityPreview: opacity,
+            mapStyle: 'Satellite',
+            timelineZoomValue: constants.timeline.default.zoomValue,
+          }))
+          yield delay(postPrep);
+        }
         break;
 
-      case '1':
-        yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
-        yield delay(postPrep);
-        const sampleId1 = "a2bf3cc8-f12e-46f1-b3d4-a83654d8eec1";
-        yield call(log.debug, 'scenario 1');
-        yield put(newAction(AppAction.flagEnable, 'labelsEnabled'));
-        yield put(newAction(AppAction.setAppOption, {
-          grabBarSnapIndex: 2,
-          grabBarSnapIndexPreview: 2,
-          mapOpacity: 0.5,
-          mapOpacityPreview: 0.5,
-          mapStyle: 'Satellite',
-        }))
-        yield put(newAction(AppAction.selectActivity, {
-          id: sampleId1,
-          proportion: 0.5,
-        }))
-        yield put(newAction(AppAction.zoomToActivity, {
-          id: sampleId1,
-          zoomMap: true,
-          zoomTimeline: true,
-        }))
+      case '1': { // as in, step 1
+          yield put(newAction(AppAction.enableTestScenario, { scenario: 'prep' }));
+          yield delay(postPrep);
+          const sampleId1 = "a2bf3cc8-f12e-46f1-b3d4-a83654d8eec1";
+          yield call(log.debug, 'scenario 1');
+          yield put(newAction(AppAction.flagEnable, 'labelsEnabled'));
+          const { opacity } = constants.map.default;
+          yield put(newAction(AppAction.setAppOption, {
+            grabBarSnapIndex: 2,
+            grabBarSnapIndexPreview: 2,
+            mapOpacity: opacity,
+            mapOpacityPreview: opacity,
+            mapStyle: 'Satellite',
+          }))
+          yield put(newAction(AppAction.selectActivity, {
+            id: sampleId1,
+            proportion: 0.5,
+          }))
+          yield put(newAction(AppAction.zoomToActivity, {
+            id: sampleId1,
+            zoomMap: true,
+            zoomTimeline: true,
+          }))
+        }
         break;
 
       case '2':
@@ -1058,7 +1069,6 @@ const sagas = {
           id: sampleId2,
           proportion: 0.8,
         }))
-        yield put(newAction(AppAction.flagDisable, 'labelsEnabled'));
         yield put(newAction(AppAction.flagEnable, 'showSequentialPaths'));
         yield put(newAction(AppAction.startFollowingPath));
         yield put(newAction(AppAction.setAppOption, {
@@ -1088,10 +1098,6 @@ const sagas = {
           option: 'absolute',
           zoom: 14.385161869876807,
         }))
-        break;
-
-      case 'reorient':
-        yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
         break;
 
       default:
@@ -1510,7 +1516,9 @@ const sagas = {
           activityUpdate.tEnd = activityUpdate.tLastUpdate;
         }
       }
-      yield call(database.updateActivity, activityUpdate, pathUpdate);
+      if (tStart) { // only if we saw a START mark
+        yield call(database.updateActivity, activityUpdate, pathUpdate);
+      }
       yield call(utils.addToCount, 'refreshedActivities');
     } catch (err) {
       yield call(log.error, 'saga refreshActivity', err);
