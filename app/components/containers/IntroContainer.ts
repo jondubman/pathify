@@ -64,7 +64,7 @@ const mapDispatchToProps = (dispatch: Function): IntroDispatchProps => {
       }, 0)
     }
     if (index > 0 && introPages[index - 1].yieldsLocationRequest) {
-      requestLocationPermission(onDone)
+      requestLocationPermission(onDone);
     } else {
       onDone();
     }

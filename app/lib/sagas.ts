@@ -1827,14 +1827,12 @@ const sagas = {
       yield call(log.trace, 'setAppOption: app has not finished starting up, so skipping side-effects');
       return;
     }
-    if (params.introModePage) {
-      const {
-        introModePage,
-      } = state.options;
+    if (introMode && params.introModePage) {
       const activity = currentOrSelectedActivity(state);
       if (activity) {
-          const page = introPages[introModePage];
+          const page = introPages[params.introModePage];
           if (page.zoomsToActivity) {
+            yield delay(constants.timing.delayBeforeUsingNewMap); // Allow time for map to show up if it's being un-hidden.
             yield put(newAction(AppAction.zoomToActivity, {
               id: activity.id,
               zoomMap: true,
