@@ -1114,7 +1114,7 @@ const sagas = {
     const { flags, options } = yield select((state: AppState) => state);
     const enabledNow = flags[flagName];
     const { appStartupCompleted, requestedLocationPermission } = flags;
-    const { pausedTime, viewTime } = options;
+    const { introModePage, pausedTime, viewTime } = options;
     // Avoid changing settings during startup (instead, we apply previous.)
     if (appStartupCompleted) {
       // Persist persistedFlags in Settings.
@@ -1123,7 +1123,9 @@ const sagas = {
       }
       if (flagName === 'introMode') {
         yield put(newAction(AppAction.setAppOption, { grabBarSnapIndex: 1, grabBarSnapIndexPreview: 1 }));
-        if (!enabledNow) {
+        if (enabledNow) {
+          yield put(newAction(AppAction.setAppOption, { introModePage })); // TODO doing this for the option side effect
+        } else {
           if (!requestedLocationPermission) {
             // This handles the case of requesting location permission on a manual early exit from introMode.
             // In the natural course of things, the request is made earlier, just after viewing the Privacy page.
