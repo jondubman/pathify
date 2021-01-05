@@ -110,6 +110,9 @@ import {
   Geo,
   LocationInfo,
 } from 'lib/geo';
+import {
+  introPages,
+} from 'lib/intro';
 import locations, {
   LocationEvent,
   LonLat,
@@ -977,7 +980,7 @@ const sagas = {
         yield put(newAction(AppAction.clearStorage));
         break;
 
-      case 'load':
+      case 'load': // sample data
         yield put(newAction(AppAction.reorientMap, { reorientationTime: 0 } ));
         const samples = (yield select((state: AppState) => state.samples)) as Array<ExportedActivity>;
         if (samples.length) {
@@ -1009,7 +1012,7 @@ const sagas = {
         yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield call(Geo.stopBackgroundGeolocation); // to stop the background service so it doesn't auto-restart
         yield delay(postPrep);
-        yield call(Alert.alert, 'To complete moviePrep, go to Settings : General : Reset Location & Privacy and restart the app.');
+        yield call(Alert.alert, 'To complete moviePrep, terminate the app and do Settings : General : Reset Location & Privacy.');
         break;
 
       case 'prep': {
@@ -1816,12 +1819,29 @@ const sagas = {
     const {
       activityListScrolling,
       appStartupCompleted,
+      introMode,
       timelineNow,
       timelineScrolling,
     } = state.flags;
     if (!appStartupCompleted) {
       yield call(log.trace, 'setAppOption: app has not finished starting up, so skipping side-effects');
       return;
+    }
+    if (params.introModePage) {
+      const {
+        introModePage,
+      } = state.options;
+      const activity = currentOrSelectedActivity(state);
+      if (activity) {
+          const page = introPages[introModePage];
+          if (page.zoomsToActivity) {
+            yield put(newAction(AppAction.zoomToActivity, {
+              id: activity.id,
+              zoomMap: true,
+              zoomTimeline: true,
+            }))
+          }
+      }
     }
     // An important side effect: Whenever viewTime is set, pausedTime may also be updated.
     // Note that setting scrollTime (which changes as the Timeline is scrolled) lacks these side effects.

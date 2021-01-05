@@ -60,6 +60,7 @@ export interface IntroPageTemplate {
   textStyle?: StyleProp<ViewStyle>;
   ui: UICategory[];
   yieldsLocationRequest?: boolean;
+  zoomsToActivity?: boolean;
 }
 const doneButton = {
   label: 'DONE',
@@ -131,6 +132,7 @@ export const introPages: IntroPageTemplate[] = [
 \nKeep pulling it down for details like distance, elapsed time, pace, elevation. Or slide the bar way up for all map.`,
     textAlternate: `That's it! With the bar in this lower position, the timeline and activity list appear. Both scroll horizontally in unison. Tap and slide the clock to zoom the timeline.`,
     ui: [UICategory.activities, UICategory.grabBar, UICategory.help, UICategory.map, UICategory.settings, UICategory.start, UICategory.timelineControls],
+    zoomsToActivity: true,
   },
   {
     name: 'timeline',
@@ -143,6 +145,7 @@ export const introPages: IntroPageTemplate[] = [
 \nScroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized - like clockwork!`,
     textAlternate: `Scroll the timeline or activity list to spin the clock and retrace your path on the map. It's all synchronized - like clockwork!`,
     ui: [UICategory.activities, UICategory.follow, UICategory.grabBar, UICategory.help, UICategory.map, UICategory.settings, UICategory.start, UICategory.timelineControls],
+    zoomsToActivity: true,
   },
   { // Note isFinalPage
     name: 'tips',

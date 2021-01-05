@@ -127,15 +127,17 @@ const clockHeight = 70; // big enough to read and to touch, small enough to fit 
 const colors = {
   activityColors: [ // opacity applied separately
     // https://material.io/resources/color/#!/?view.left=0&view.right=0&secondary.color=0074d9&primary.color=EF5350
-    // was helpful as a starting point. These are intended to flow into one another while being moderately distinct,
-    // and not likely to be confused with the lime green currentActivity. There are enough (14) to take at least three
-    // full-width horizontal swipes through the ActivityList to start repeating.
-    '#c62828', // red
-    '#ec407a', // pink
-    '#f012be', // namedColors.fuschia,
-    '#ab37bc', // purple
-    '#8e67c2', // deep purple
-    '#7685da', // indigo
+    // was helpful as a starting point. These are intended to be distinct, to cycle, and avoid confusion with certain
+    // other colors used elsewhere in this UI. There are enough (14) to take at least three full-width horizontal swipes
+    // through the ActivityList to start repeating.
+    //
+    // In color space, we bob and weave a bit to obtain colors that complement each other and the rest of the palette.
+    // We start with a blue which is close to the default blue when colorizeActivities is disabled, which looks good
+    // alongside the currentActivity lime green users will see when tracking their second activity.
+    //
+    // From that blue, via cyan, we swing near that green while avoiding it, also avoiding the labelsEnabled yellow,
+    // and circle around, with as many pinks and purples as the eye can distinguish.
+    // 
     '#1074e9', // blue
     '#29b6f6', // light blue
     '#26c6da', // cyan
@@ -144,6 +146,12 @@ const colors = {
     '#c1d43b', // moderate yellow
     '#ffca28', // amber
     '#ef6c00', // orange
+    '#c62828', // red
+    '#ec407a', // pink
+    '#f012be', // namedColors.fuschia,
+    '#ab37bc', // purple
+    '#8e67c2', // deep purple
+    '#7685da', // indigo
   ],
   activityDetails: {
     backgroundCurrentNow: withOpacity(colorThemes.now, 0.20),
