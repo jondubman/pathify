@@ -1,0 +1,6 @@
+{
+  type: 'setAppOption',
+  params: {
+    minLatOrLonZoomRange: 1234567890, // magic# indicates command-line numeric parameter
+  }
+}

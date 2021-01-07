@@ -1,6 +1,6 @@
 {
   type: 'setAppOption',
   params: {
-    maxDisplayPaths: 1234567890,
+    maxDisplayPaths: 1234567890, // magic# indicates command-line numeric parameter
   }
 }

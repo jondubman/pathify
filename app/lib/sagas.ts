@@ -1009,6 +1009,7 @@ const sagas = {
         yield put(newAction(AppAction.flagEnable, 'labelsEnabled'));
         yield put(newAction(AppAction.flagEnable, 'movieMode'));
         yield put(newAction(AppAction.flagDisable, 'requestedLocationPermission'));
+        yield put(newAction(AppAction.flagEnable, 'showSequentialPaths'));
         yield put(newAction(AppAction.flagEnable, 'timelineNow'));
         yield call(Geo.stopBackgroundGeolocation); // to stop the background service so it doesn't auto-restart
         yield delay(postPrep);
@@ -2533,7 +2534,7 @@ const sagas = {
       const map = MapUtils();
       if (zoomMap && map && map.fitBounds) {
         yield put(newAction(AppAction.stopFollowing));
-        const { latMax, latMin, lonMax, lonMin } = activity;
+        let { latMax, latMin, lonMax, lonMin } = activity;
         yield call(log.trace, 'saga zoomToActivity',
           { latMax, latMin, lonMax, lonMin, zoomMap, zoomTimeline });
         if (!state.flags.mapRendered) {
@@ -2541,6 +2542,18 @@ const sagas = {
           yield take(AppAction.mapRendered);
         }
         if (latMax !== undefined && latMin !== undefined && lonMax !== undefined && lonMin !== undefined) {
+          // Enlarge bounds so we don't zoom too far in when just starting out.
+          const rangeMin = state.options.minLatOrLonZoomRange;
+          if (Math.abs(latMax - latMin) < rangeMin || Math.abs(latMax - latMin) < rangeMin) {
+            const latMid = (latMin + latMax) / 2;
+            const lonMid = (lonMin + lonMax) / 2;
+            latMin = latMid - rangeMin/2;
+            latMax = latMid + rangeMin/2;
+            lonMin = lonMid - rangeMin/2;
+            lonMax = lonMid + rangeMin/2;
+            yield call(log.trace, 'saga zoomToActivity - expanded bounds',
+              { latMax, latMin, lonMax, lonMin, zoomMap, zoomTimeline });
+          }
           map.fitBounds([lonMax, latMax], [lonMin, latMin], mapPadding(state), duration);
           yield call(log.trace, 'saga zoomToActivity: did fitBounds');
         }

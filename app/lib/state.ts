@@ -162,6 +162,7 @@ export const initialAppState = {
     mapOpacityPreview: constants.map.default.opacity, // helps eliminate re-rendering while adjusting
     mapStyle: constants.map.default.style, // friendly name that maps to MapBox style URL
     maxDisplayPaths: 12, // including current and selected. Should be even, for symmetry.
+    minLatOrLonZoomRange: 0.001, // only applies to zoomToActivity, not zooming manually
     nowTime: now, // obviously out of date quickly in the real world, but updated on clock tick
     nowTimeRounded: now, // updated on timerTick, minus the fractions of a second
     pathColorOpacity: 0.5, // for colorizing paths, works with activityColors

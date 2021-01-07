@@ -162,7 +162,7 @@ const defaultSettings = { // for a newly installed app
   remoteDebug: false, // This can only be enabled manually during development.
   requestedLocationPermission: false,
   selectedActivityId: undefined,
-  showSequentialPaths: false,
+  showSequentialPaths: true,
   timelineNow: true,
   timelineZoomValue: constants.timeline.default.zoomValue,
   updateTime: 0,
