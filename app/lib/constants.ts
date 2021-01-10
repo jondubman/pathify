@@ -573,7 +573,7 @@ const constants = {
   panelHeight,
   panelWidth,
   paths: {
-    elevationUnvailable: -1000, // Magic# for elevation that won't be confused with 0 or small negatives in places
+    elevationUnavailable: -1000,// Magic# for elevation that won't be confused with 0 or small negatives in places
                                 // with legitimate negative elevation like Death Valley and the Salton Sink
     metersAccuracyRequired: 40, // Locations with accuracy less than this are excluded from the Path
     width: 8, // visual width of the paths on the map

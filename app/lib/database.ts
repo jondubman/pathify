@@ -428,7 +428,7 @@ const database = {
     const path = database.pathById(update.id);
     if (path && update.lats && update.lons && update.lats.length === update.lons.length) {
       realm.write(() => {
-        path.ele.push(...update.ele || constants.paths.elevationUnvailable);
+        path.ele.push(...update.ele || constants.paths.elevationUnavailable);
         path.lats.push(...update.lats);
         path.lons.push(...update.lons);
         path.mode.push(...update.mode);

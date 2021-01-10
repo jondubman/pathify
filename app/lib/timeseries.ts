@@ -2,8 +2,6 @@ import Realm from 'realm';
 
 import utils from 'lib/utils';
 
-export type Events = Realm.Results<Realm.Object>;
-
 // TimeRange tuple is always inclusive of its endpoints.
 // Use 0 as the first number to indicate a range with no start (TODO is this actually valid?)
 // Use 0 as the second number to indicate a range with no end (open-ended time range).
@@ -83,6 +81,8 @@ export interface GenericEvent {
   type: EventType;
   source?: string; // generally either our own client ID, or something else if from server (like 'server')
 }
+
+export type Events = Realm.Results<Realm.Object>;
 
 export type EventFilter = (event: GenericEvent) => Boolean; // true: event passes filter // TODO-Realm postpone
 export type EventsFilter = (events: GenericEvents, filter: EventFilter) => GenericEvents; // TODO-Realm postpone

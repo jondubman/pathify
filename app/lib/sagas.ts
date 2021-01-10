@@ -104,7 +104,7 @@ import {
 import constants from 'lib/constants';
 import database, {
   LogMessage,
-  SettingsObject
+  SettingsObject,
 } from 'lib/database';
 import {
   Geo,
@@ -128,9 +128,11 @@ import {
   MarkEvent,
   MarkType
 } from 'lib/marks';
+import { PathUpdate } from 'lib/paths';
 import timeseries, {
   interval,
   EventType,
+  Events,
   GenericEvent,
   TimeRange,
 } from 'lib/timeseries';
@@ -359,7 +361,7 @@ const sagas = {
                 activityUpdate.latMin = Math.min(activity.latMin || Infinity, lat!);
                 activityUpdate.lonMax = Math.max(activity.lonMax || -Infinity, lon!);
                 activityUpdate.lonMin = Math.min(activity.lonMin || Infinity, lon!);
-                pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
+                pathUpdate.ele.push(ele || constants.paths.elevationUnavailable);
                 pathUpdate.lats.push(lat);
                 pathUpdate.lons.push(lon);
                 pathUpdate.mode.push(modeNumeric);
@@ -1418,21 +1420,25 @@ const sagas = {
         id = yield select((state: AppState) => state.options.selectedActivityId); // which is used in appQuery
       }
       yield call(log.trace, 'saga refreshActivity', id);
-      const eventsForActivity = yield call(database.eventsForActivity, id);
+      const eventsForActivity = (yield call(database.eventsForActivity, id)) as Events;
       const { currentActivityId } = yield select((state: AppState) => state.options);
       const { schemaVersion } = constants.database;
       const activityUpdate: ActivityData = { id, schemaVersion };
-      const pathUpdate = yield call(database.newPathUpdate, id);
+      const pathUpdate = (yield call(database.newPathUpdate, id)) as PathUpdate;
       activityUpdate.count = eventsForActivity.length;
       let prevLocEvent: LocationEvent | null = null;
       let tStart = 0;
-      let latestLocEvent: LocationEvent | undefined = undefined;
+      let latestLocEvent: LocationEvent | null = null;
       let modeNumeric = 0;
       for (const e of eventsForActivity) { // Loop through all the events. events are already sorted by time.
         const event = e as any as GenericEvent;
         const { type } = event;
         if (type === EventType.LOC) {
           latestLocEvent = event as LocationEvent;
+          if (prevLocEvent && latestLocEvent.t === prevLocEvent!.t) {
+            // log.trace('refreshActivity: ignoring t =', event.t);
+            continue; // ignore consecutive LOC events with identical timestamp
+          }
         }
         if (type == EventType.MODE) {
           const {
@@ -1441,7 +1447,8 @@ const sagas = {
           } = event as ModeChangeEvent;
           modeNumeric = (confidence && mode) ? modeChangeToNumber({ confidence, mode }) : 0;
         }
-        if (latestLocEvent && (type == EventType.LOC || type == EventType.MODE)) {
+        log.trace('refreshActivity event', e.toJSON());
+        if (latestLocEvent && (type === EventType.LOC || type === EventType.MODE)) {
           const {
             accuracy,
             ele,
@@ -1452,12 +1459,11 @@ const sagas = {
             t,
           } = latestLocEvent;
           if (!tStart || t < tStart) {
-            yield call(log.trace, 'refreshActivity: ignoring t < tStart', t, tStart);
             continue;
           }
           if (!accuracy || accuracy <= constants.paths.metersAccuracyRequired) { // if sufficiently accurate
             // ele
-            pathUpdate.ele.push(ele || constants.paths.elevationUnvailable);
+            pathUpdate.ele.push(ele || constants.paths.elevationUnavailable);
             // lats
             pathUpdate.lats.push(lat);
             activityUpdate.latMax = Math.max(activityUpdate.latMax || -Infinity, lat);
@@ -1469,19 +1475,19 @@ const sagas = {
             // mode
             pathUpdate.mode.push(modeNumeric);
             // odo
-            pathUpdate.odo.push(odo);
+            pathUpdate.odo.push(odo || 0); // TODO || 0
             if (odo) {
               activityUpdate.odo = Math.max(activityUpdate.odo || -Infinity, odo);
               activityUpdate.odoStart = Math.min(activityUpdate.odoStart || Infinity, odo);
             }
             // speed
-            pathUpdate.speed.push(speed);
+            pathUpdate.speed.push(speed || 0); // TODO || 0
             // t
             pathUpdate.t.push(t);
           }
           activityUpdate.tFirstLoc = Math.min(activityUpdate.tFirstLoc || t, t);
           activityUpdate.tLastLoc = Math.max(activityUpdate.tLastLoc || 0, t); // max redundant when events sorted by t
-          activityUpdate.tLastRefresh = yield call(utils.now);
+          activityUpdate.tLastRefresh = utils.now(); // TODO was: yield call(utils.now); but that yields crash in Realm!
           activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastUpdate || 0, t); // which they should be
 
           // maxGaps (maxGapTime, tMaxGapTime, maxGapDistance, tMaxGapDistance)
@@ -1504,25 +1510,24 @@ const sagas = {
             }
           }
           prevLocEvent = latestLocEvent;
-        } else if (event.type == EventType.MARK) {
+        } else if (event.type === EventType.MARK && event.t) {
           const markEvent = event as MarkEvent;
           if (markEvent.subtype === MarkType.START) {
-            tStart = markEvent.t;
-            yield call(log.trace, 'refreshActivity: Found START mark at t:', tStart);
-            activityUpdate.tStart = markEvent.t;
+            tStart = event.t;
+            activityUpdate.tStart = event.t;
           }
           if (markEvent.subtype === MarkType.END) {
-            yield call(log.trace, 'refreshActivity: Found END mark at t:', markEvent.t);
-            activityUpdate.tEnd = markEvent.t;
+            activityUpdate.tEnd = event.t;
           }
         }
         activityUpdate.tLastUpdate = Math.max(activityUpdate.tLastLoc || 0, activityUpdate.tEnd || 0);
-        if (id !== currentActivityId && !activityUpdate.tEnd) {
+      }
+      log.trace('refreshActivity: done with events');
+      if (tStart) { // only if we saw a START mark
+        if (id !== currentActivityId && !activityUpdate.tEnd && activityUpdate.tLastUpdate) {
           // This only happens if the END MARK event did not get properly inserted.
           activityUpdate.tEnd = activityUpdate.tLastUpdate;
         }
-      }
-      if (tStart) { // only if we saw a START mark
         yield call(database.updateActivity, activityUpdate, pathUpdate);
       }
       yield call(utils.addToCount, 'refreshedActivities');
