@@ -180,6 +180,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       introMode,
       keyName,
       labelsEnabled,
+      mapTapped,
       pressed,
       snapIndex,
       snapPositions,
@@ -203,7 +204,7 @@ class GrabBar extends Component<GrabBarProps, GrabBarState> {
       const noActivitySelectedText = 'NO ACTIVITY SELECTED';
       const noActivityText = activityCount ? noActivitySelectedText : noActivitiesText;
       if (snapIndex === 0) { // full screen mode
-        labelText = 'SLIDE DOWN TO RESTORE UI';
+        labelText = `SLIDE TO RESTORE, TAP MAP TO ${mapTapped ? 'SHOW' : 'HIDE'} LOC`;
       } else if (snapIndex === 1) { // ActivityList hidden
         labelText = 'SLIDE DOWN TO REVEAL';
       } else if (snapIndex === 2) { // ActivityList shown, but ActivityDetails hidden

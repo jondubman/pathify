@@ -21,6 +21,7 @@ interface GrabBarStateProps {
   introMode: boolean;
   keyName: string;
   labelsEnabled: boolean;
+  mapTapped: boolean;
   pressed: boolean;
   snap: number;
   snapBack: boolean;
@@ -60,21 +61,27 @@ const snapIfNeeded = (state: AppState, snap: number) => (
 
 const mapStateToProps = (state: AppState): GrabBarStateProps => {
   const snap = snapIfNeeded(state, snapPosition(state));
-  const { introMode } = state.flags;
+  const {
+    introMode,
+    labelsEnabled,
+    mapTapped,
+    topMenuOpen
+  } = state.flags;
   // That is the same trick used with the mapOpacity slider to avoid redundant updates.
   return {
     activityCount: listedActivities(state).length || 0,
     activitySelected: !!state.options.selectedActivityId,
     introMode,
     keyName: `${introMode}:${snapPositions.toString()}`,
-    labelsEnabled: state.flags.labelsEnabled,
+    labelsEnabled,
+    mapTapped,
     pressed: state.flags.grabBarPressed,
     snap, // number
     snapBack: shouldSnapBack(state),
     snapBackTo: snapBack(state, snap),
     snapIndex: Math.min(state.options.grabBarSnapIndex, snapPositions(state).length - 1),
     snapPositions: snapPositions(state),
-    topMenuOpen: state.flags.topMenuOpen,
+    topMenuOpen,
   }
 }
 
