@@ -14,7 +14,7 @@ import { interval } from 'lib/timeseries';
 // For Realm database. Very meaningful to Realm! This MUST be increased whenever any of the DB schemas are updated.
 // It is stored along with such things as Activity and Path, which may not get migrated instantly when schema is updated
 // as that could take a long time. Migration may be deferred and gradual to make the performance hit less noticeable.
-const schemaVersion = 42;
+const schemaVersion = 43;
 
 export enum TimespanKind { // used below
   'ACTIVITY' = 'ACTIVITY',
@@ -413,6 +413,7 @@ const constants = {
     renderBatchSize: 50, // smaller # improves time to render at the expense of possibly showing blank area briefly
     scrollbarHeight,
     topBottomBorderHeight: activityTopBottomBorderHeight,
+    windowSize: 30, // default is 21
   },
   appName: 'Pathify',
   borderRadiusSmall,
@@ -622,7 +623,6 @@ const constants = {
     width: 240,
   },
   timing: { // msec
-    activityListInitialAutoscroll: 2000,
     delayBeforeDeletingProcessedLocations: 2500,
     delayBeforeUsingNewMap: 1000,
     devServerPollTimeout: 90000,

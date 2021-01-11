@@ -150,9 +150,10 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   autoScroll() {
     log.scrollEvent('ActivityList autoScroll', 'refreshCount', this.props.refreshCount,
       'length', this.props.list.length);
-    const state = store.getState(); // TODO not great form, but this yields fresh state.
-    const scrollTime = state.flags.timelineNow ? utils.now() : state.options.scrollTime;
     setTimeout(() => {
+      const state = store.getState(); // TODO not great form, but this yields fresh state.
+      const scrollTime = state.flags.timelineNow ? utils.now() : state.options.scrollTime;
+      log.scrollEvent('ActivityList autoScroll scrollTime', scrollTime);
       this.scrollToTime(scrollTime);
     }, 0)
   }
@@ -164,12 +165,22 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
     try {
       const { x } = event.nativeEvent.contentOffset;
-      log.scrollEvent('ActivityList handleScroll', x);
+      const {
+        activityIndex,
+        list,
+        selectedActivityId,
+      } = this.props;
+      log.scrollEvent('ActivityList handleScroll', x, activityIndex, selectedActivityId);
+      if (!this.props.cachePopulated) {
+        log.debug('ActivityList handleScroll early return: cache not yet populated');
+        return;
+      }
+      if (x === constants.activityList.activityMargin && activityIndex) { // TODO review:
+        return; // There seems to be a spurious call to this function at startup, and this is an inelegant workaround.
+      }
       // const now = utils.now();
       // const { timeStamp } = event;
       // log.trace('ActivityList handleScroll', x, timeStamp, new Date(timeStamp).toString(), now, msecToString(now - timeStamp));
-
-      const { list } = this.props;
 
       // ActivityList has been scrolled to position x. Convert to Timepoint and pass to onScroll.
       // If x is on/within an activity, then position t is within the activity's time range, and is set proportionally.
@@ -292,6 +303,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const scrollInsets = { top: 0, bottom: 0, left: 0, right: 0 };
     const {
       activityIndex,
+      appStartupCompleted,
       currentActivityId,
       labelsEnabled,
       list,
@@ -303,6 +315,9 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
       visible,
     } = this.props;
 
+    if (!appStartupCompleted) {
+      return null;
+    }
     const { scrolledBetweenActivities } = this.state;
     const selectedIsCurrent = (selectedActivityId === currentActivityId);
     const centerLineLeft = centerline() - centerLineWidth / 2;
@@ -318,7 +333,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
     const labelBottom = constants.activityList.nowClockLabelBottom;
     const clockBottom = labelsEnabled ? labelBottom : -1.5;
     const pointerEvents = visible ? 'auto' : 'none';
-    const { renderBatchSize } = constants.activityList;
+    const { renderBatchSize, windowSize } = constants.activityList;
     return (
       <View pointerEvents={pointerEvents} style={[Styles.box, { top }, visible ? {} : { opacity: 0 }]}>
         <View pointerEvents="none" style={[Styles.borderLine, { top: 0 }]} />
@@ -348,7 +363,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           getItemLayout={getItemLayout}
           horizontal
           initialNumToRender={renderBatchSize}
-          initialScrollIndex={Math.floor(Math.min(0, activityIndex - renderBatchSize / 2))}
+          /*initialScrollIndex={activityIndex}*/
           ListHeaderComponent={/* on far left of ActivityList */
             <View style={listHeaderStyle} />}
           ListFooterComponent={/* on far right of ActivityList */
@@ -372,6 +387,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
               </View>
             </TouchableHighlight>
           }
+          maxToRenderPerBatch={renderBatchSize}
           onLayout={this.autoScroll}
           onScroll={this.handleScroll}
           onScrollBeginDrag={this.handleScrollBeginDrag}
@@ -382,7 +398,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           scrollIndicatorInsets={scrollInsets}
           showsHorizontalScrollIndicator={true}
           style={Styles.list}
-          
+          windowSize={windowSize}
         />
       </View>
     )
@@ -417,7 +433,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
   // If scrollTime is before / between / after an activity, the list is scrolled to the space adjacent to the
   // closest activity.
   scrollToTime(scrollTime: number) {
-    log.scrollEvent('ActivityList scrollToTime', scrollTime);
+    log.scrollEvent('ActivityList scrollToTime', scrollTime, this.props.list.length);
     const {
       list,
       trackingActivity,
@@ -472,20 +488,21 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           }
         }
       }
+      const params = {
+        animated: false, // animation here is not responsive enough when you are actively scrolling the linked timeline
+        offset,
+      }
+      log.scrollEvent('ActivityList scrollToTime scrollToOffset', params);
+      if (_ref.scrollToOffset) {
+        _ref.scrollToOffset(params); // This is where the actual scrolling takes place, imperatively.
+      } else {
+        log.warn('missing scrollToOffset!');
+      } 
     } else { // empty list
       log.trace('ActivityList: scrollToTime: empty list');
+      // This happens when the cache is not populated yet.
       return; // TODO
     }
-    const params = {
-      animated: false, // animation here is not responsive enough when you are actively scrolling the linked timeline
-      offset,
-    }
-    log.scrollEvent('ActivityList scrollToTime scrollToOffset', params);
-    if (_ref.scrollToOffset) {
-      _ref.scrollToOffset(params); // This is where the actual scrolling takes place, imperatively.
-    } else {
-      log.warn('missing scrollToOffset!');
-    } 
   }
 }
 

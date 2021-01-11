@@ -71,6 +71,7 @@ const SettingsSchema: Realm.ObjectSchema = { // singleton bucket for anything el
     clientId: 'string',
     colorizeActivities: 'bool',
     currentActivityId: 'string?',
+    followingPath: 'bool',
     followingUser: 'bool',
     grabBarSnapIndex: 'int',
     labelsEnabled: 'bool',

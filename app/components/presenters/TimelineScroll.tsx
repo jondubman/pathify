@@ -76,8 +76,8 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
       const { scrollTime } = store.getState().options;
       if (scrollTime) {
         setTimeout(() => { // This setTimeout is needed for the scroll to take effect.
-          this.scrollToTime(scrollTime);
           log.scrollEvent('timelineScroll componentDidUpdate', prevProps, this.props);
+          this.scrollToTime(scrollTime);
         }, 0)
       }
     }
@@ -150,7 +150,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
   }
 
   onScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    log.scrollEvent('onScroll');
+    log.scrollEvent('onScroll timeline');
     if (!this._scrolling) {
       return;
     }
@@ -270,7 +270,7 @@ class TimelineScroll extends PureComponent<TimelineScrollProps> {
         centerTime,
         scrollableWidth,
         visibleWidth,
-        visibleTime
+        visibleTime,
       } = this.props;
       const scrollToX = (visibleWidth * ((scrollTime - centerTime) / visibleTime))
         + (scrollableWidth / 2) - (visibleWidth / 2);

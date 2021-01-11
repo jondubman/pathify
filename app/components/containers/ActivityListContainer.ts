@@ -13,7 +13,6 @@ import {
 import {
   ActivityDataExtended,
 } from 'lib/activities';
-import constants from 'lib/constants';
 import {
   activityColorForSelectedActivity,
   activityIndexForTimepoint,
@@ -30,6 +29,8 @@ import { Timepoint } from 'lib/timeseries';
 interface ActivityListStateProps {
   activityColorOpacity: number;
   activityIndex: number;
+  appStartupCompleted: boolean;
+  cachePopulated: boolean;
   colorizeActivities: boolean;
   currentActivityId: string | null;
   labelsEnabled: boolean;
@@ -55,6 +56,7 @@ export type ActivityListProps = ActivityListStateProps & ActivityListDispatchPro
 
 const mapStateToProps = (state: AppState): ActivityListStateProps => {
   const {
+    appStartupCompleted,
     colorizeActivities,
     labelsEnabled,
     timelineNow,
@@ -66,14 +68,18 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     scrollTime,
     selectedActivityId,
   } = state.options;
-  const activityIndex = activityIndexForTimepoint(state, scrollTime) || 0;
+  const index = activityIndexForTimepoint(state, scrollTime);
+  const list = listedActivities(state);
+  const activityIndex = index === undefined ? list.length - 1 : index; // TODO review
   return {
     activityColorOpacity,
     activityIndex,
+    appStartupCompleted,
+    cachePopulated: state.cache.populated,
     colorizeActivities,
     currentActivityId,
     labelsEnabled,
-    list: listedActivities(state),
+    list,
     refreshCount: state.cache.refreshCount,
     selectedActivityColor: activityColorForSelectedActivity(state),
     selectedActivityId,
@@ -99,9 +105,6 @@ const mapDispatchToProps = (dispatch: Function): ActivityListDispatchProps => {
   const register = (component) => {
     setTimeout(() => {
       dispatch(newAction(AppAction.setRef, { activityList: component }));
-      setTimeout(() => {
-        dispatch(newAction(AppAction.scrollActivityList, { /* use implicit scrollTime */ })); // in register
-      }, constants.timing.activityListInitialAutoscroll)
     }, 0) // note the purpose of the setTimeout 0 is to defer this until we are out of the render of the ActivityList.
   }
   const scrollTimeline = (t: Timepoint) => {

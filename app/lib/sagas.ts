@@ -219,9 +219,10 @@ const sagas = {
   activityListScrolled: function* (action: Action) {
     const params = action.params as ActivityListScrolledParams;
     const { t } = params;
-    const { timelineScrolling } = yield select((state: AppState) => state.flags);
-    yield call(log.trace, 'activityListScrolled, timelineScrolling:', timelineScrolling, 't:', t);
-    if (!timelineScrolling) {
+    const { appStartupCompleted, timelineScrolling } = yield select((state: AppState) => state.flags);
+    const cachePopulated = yield select((state: AppState) => state.cache.populated);
+    if (appStartupCompleted && cachePopulated && !timelineScrolling) {
+      // yield call(log.trace, 'activityListScrolled, timelineScrolling:', timelineScrolling, 't:', t);
       yield put(newAction(AppAction.setAppOption, { scrollTime: t, viewTime: t }));
     }
   },
@@ -523,7 +524,7 @@ const sagas = {
             id = yield select((state: AppState) => state.options.selectedActivityId);
           }
           if (id) {
-            const activity = yield call(database.activityById, id);
+            const activity = yield call(database.activityById, id as string);
             if (activity) {
               response = yield call(exportActivity, activity);
             } else  {
@@ -882,7 +883,7 @@ const sagas = {
       const { activityId } = params;
       yield call(log.info, 'saga continueActivity', activityId);
       yield put(newAction(AppAction.startActivity, { continueActivityId: activityId }));
-      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomTimeline: true, zoomMap: true })); // in continueActivity
+      yield put(newAction(AppAction.zoomToActivity, { id: activityId, zoomMap: true, zoomTimeline: true })); // in continueActivity
       // const scrollTime = yield select((state: AppState) => state.options.scrollTime);
       // yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in continueActivity
     } catch (err) {
@@ -1566,7 +1567,7 @@ const sagas = {
   // optimized, but it'll never match an in-memory JS cache. This operation is not expensive; there's no path traversal.
   refreshCache: function* (action: Action) {
     try {
-      yield call(log.trace, 'saga refreshCache');
+      yield call(log.info, 'saga refreshCache');
       const timestamp = yield call(utils.now);
       const realmActivities = yield call(database.activities); // These are sorted by tStart.
       const activitiesAsArray = Array.from(realmActivities) as ActivityData[]
@@ -2196,14 +2197,6 @@ const sagas = {
         if (tracking) {
           yield call(log.info, 'Continuing previous activity...');
           yield put(newAction(AppAction.continueActivity, { activityId: currentActivityId })); // this will follow user
-        } else {
-          if (pausedTime && !timelineNow) {
-            const activity = (yield call(database.activityForTimepoint, pausedTime)) as Activity | null;
-            if (activity && activity.id) {
-              yield call(log.trace, 'startupActions: activity.id', activity.id);
-              yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: false, zoomMap: false })); // in startupActions
-            }
-          }
         }
       }
       // Now that we are through all the startup actions, ready to change appState from STARTUP to ACTIVE or BACKGROUND.
@@ -2217,6 +2210,11 @@ const sagas = {
         yield put(newAction(AppAction.enableTestScenario, { scenario: 'automate' })); // may rely on SET_SAMPLES
       } else {
         const scrollTime = (timelineNow && pausedTime) ? yield call(utils.now) : pausedTime;
+        const populated = yield select((state: AppState) => state.cache.populated);
+        if (!populated) {
+          yield put(newAction(AppAction.refreshCache));
+          yield take(AppAction.refreshCacheDone); // You can't expect to scroll a list based on a non-existent cache...
+        }
         yield put(newAction(AppAction.scrollActivityList, { scrollTime })); // in startupActions
       }
       yield put(newAction(AppAction.completeAppStartup));
@@ -2299,7 +2297,7 @@ const sagas = {
         yield put(newAction(AppAction.flagDisable, 'timelineNow'));
         yield put(newAction(AppAction.setAppOption,
           { currentActivityId: null, selectedActivityId: activityId, scrollTime: now, viewTime: now }));
-        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomTimeline: true, zoomMap: true })); // in stopActivity
+        yield put(newAction(AppAction.zoomToActivity, { id: activity.id, zoomMap: true, zoomTimeline: true })); // in stopActivity
         yield put(newAction(AppAction.scrollActivityList, { scrollTime: now })); // in stopActivity
         if (refreshActivityOnStop) {
           yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
