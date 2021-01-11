@@ -575,9 +575,9 @@ export const listedActivities = createSelector(
     }
     const filteredActivities = activities.filter(activity => {
       // Note currentActivity is allowed through in movieMode.
-      if (movieMode && activity.tLast && activity.tLast < startupTime && activity.id !== currentActivityId) {
-        return false;
-      }
+      // if (movieMode && activity.tLast && activity.tLast < startupTime && activity.id !== currentActivityId) {
+      //   return false;
+      // }
       if (filter) {
         if (filter.includeCurrent && activity.id === currentActivityId) {
           return true;

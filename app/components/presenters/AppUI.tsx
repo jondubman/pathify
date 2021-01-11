@@ -63,11 +63,13 @@ class AppUI extends Component<AppUIProps> {
     const pointerEvents = showTimeline ? 'auto' : 'none';
     const timelineOpacity = { opacity: showTimeline ? 1 : 0 };
     const width = utils.windowSize().width;
+    const hideStatusBar = mapFullScreen;
     return (
       <View style={AppStyles.containingAppView}>
         <StatusBar
           backgroundColor={constants.colors.appBackground}
           barStyle="light-content"
+          hidden={hideStatusBar}
         />
         <View style={AppStyles.mainAppView}>
           <MapAreaContainer />
