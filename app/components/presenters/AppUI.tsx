@@ -54,6 +54,7 @@ class AppUI extends Component<AppUIProps> {
     const {
       introMode,
       mapFullScreen,
+      movieMode,
       showActivityInfo,
       showGrabBar,
       showTimeline,
@@ -63,7 +64,7 @@ class AppUI extends Component<AppUIProps> {
     const pointerEvents = showTimeline ? 'auto' : 'none';
     const timelineOpacity = { opacity: showTimeline ? 1 : 0 };
     const width = utils.windowSize().width;
-    const hideStatusBar = mapFullScreen;
+    const hideStatusBar = mapFullScreen || movieMode;
     return (
       <View style={AppStyles.containingAppView}>
         <StatusBar

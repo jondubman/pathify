@@ -17,6 +17,7 @@ interface AppUIStateProps {
   introMode: boolean;
   mapFullScreen: boolean;
   mapTapped: boolean;
+  movieMode: boolean;
   showActivityInfo: boolean;
   showGrabBar: boolean;
   showTimeline: boolean;
@@ -33,6 +34,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
   const {
     introMode,
     mapTapped,
+    movieMode,
     showActivityInfo,
     showGrabBar,
   } = state.flags;
@@ -44,6 +46,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     introMode,
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
+    movieMode,
     showActivityInfo,
     showGrabBar: showGrabBar && ui.includes(UICategory.activities) || ui.includes(UICategory.grabBar),
     showTimeline: shouldShowTimeline(state) && ui.includes(UICategory.activities),
