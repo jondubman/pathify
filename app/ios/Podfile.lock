@@ -277,7 +277,7 @@ PODS:
     - React-Core (= 0.63.2)
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
-  - RealmJS (10.1.2):
+  - RealmJS (10.6.0):
     - GCDWebServer
     - React
   - RNBackgroundFetch (3.1.0):
@@ -461,7 +461,7 @@ SPEC CHECKSUMS:
   React-RCTText: 1b6773e776e4b33f90468c20fe3b16ca3e224bb8
   React-RCTVibration: 4d2e726957f4087449739b595f107c0d4b6c2d2d
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
-  RealmJS: df43088c1afaab91567cd31bd36965e4100d5914
+  RealmJS: c903034b0d767fcef11dc8207e91b6f07e60d7b8
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
   RNBackgroundGeolocation: c591c7119b3f4d3aaac6ebb4a33d6614259f6879
   RNDeviceInfo: 6ecb1d1c87d20e4c62354be0348de23362824dcd
