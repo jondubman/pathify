@@ -2229,7 +2229,7 @@ const sagas = {
           yield put(newAction(AppAction.setAppOption, { clientId }));
         }
         yield call(log.debug, `startupActions: devMode ${devMode}, remoteDebug ${remoteDebug}, polling server`);
-        yield call(setTimeout, pollServer, 0); // pollServer requires clientId
+        yield call(setTimeout as any, pollServer, 0); // pollServer requires clientId. setTimeout has weird type error.
       }
     } catch (err) {
       yield call(log.error, 'startupActions exception', err);
