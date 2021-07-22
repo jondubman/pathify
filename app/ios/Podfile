@@ -68,14 +68,14 @@ post_install do |installer|
   # flipper_post_install(installer)
   installer.generated_projects.each do |project|
     project.build_configurations.each do |config|
-        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 13.0
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 14.1
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.1'
         end
     end
     project.targets.each do |target|
       target.build_configurations.each do |config|
-        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 13.0
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 14.1
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.1'
         end
       end
     end

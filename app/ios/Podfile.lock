@@ -1,9 +1,9 @@
 PODS:
   - "@react-native-mapbox-gl-mapbox-static (6.2.1)"
   - boost-for-react-native (1.63.0)
-  - CocoaLumberjack (3.6.2):
-    - CocoaLumberjack/Core (= 3.6.2)
-  - CocoaLumberjack/Core (3.6.2)
+  - CocoaLumberjack (3.7.2):
+    - CocoaLumberjack/Core (= 3.7.2)
+  - CocoaLumberjack/Core (3.7.2)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.2)
   - FBReactNativeSpec (0.63.2):
@@ -28,7 +28,7 @@ PODS:
   - glog (0.3.5)
   - Mapbox-iOS-SDK (6.2.2):
     - MapboxMobileEvents (~> 0.10.4)
-  - MapboxMobileEvents (0.10.7)
+  - MapboxMobileEvents (0.10.8)
   - RCTRequired (0.63.2)
   - RCTRestart (0.0.13):
     - React
@@ -201,20 +201,23 @@ PODS:
     - React-Core
   - react-native-haptic (1.0.1):
     - React
-  - react-native-mapbox-gl (8.1.0-rc.4):
+  - react-native-mapbox-gl (8.1.0):
     - "@react-native-mapbox-gl-mapbox-static (~> 6.2.1)"
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
-    - react-native-mapbox-gl/DynamicLibrary (= 8.1.0-rc.4)
-    - react-native-mapbox-gl/StaticLibraryFixer (= 8.1.0-rc.4)
-  - react-native-mapbox-gl/DynamicLibrary (8.1.0-rc.4):
+    - React-Core
+    - react-native-mapbox-gl/DynamicLibrary (= 8.1.0)
+    - react-native-mapbox-gl/StaticLibraryFixer (= 8.1.0)
+  - react-native-mapbox-gl/DynamicLibrary (8.1.0):
     - "@react-native-mapbox-gl-mapbox-static (~> 6.2.1)"
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
-  - react-native-mapbox-gl/StaticLibraryFixer (8.1.0-rc.4):
+    - React-Core
+  - react-native-mapbox-gl/StaticLibraryFixer (8.1.0):
     - "@react-native-mapbox-gl-mapbox-static (~> 6.2.1)"
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
+    - React-Core
   - react-native-slider (3.0.3):
     - React
   - React-RCTActionSheet (0.63.2):
@@ -282,14 +285,14 @@ PODS:
     - React
   - RNBackgroundFetch (3.1.0):
     - React
-  - RNBackgroundGeolocation (3.9.3):
-    - CocoaLumberjack (~> 3.6.1)
+  - RNBackgroundGeolocation (4.1.1):
+    - CocoaLumberjack (~> 3.7.2)
     - React-Core
-  - RNDeviceInfo (7.3.1):
+  - RNDeviceInfo (8.1.4):
     - React-Core
   - RNStaticSafeAreaInsets (2.1.1):
     - React
-  - RNSVG (12.1.0):
+  - RNSVG (12.1.1):
     - React
   - RNVectorIcons (7.1.0):
     - React
@@ -427,7 +430,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   "@react-native-mapbox-gl-mapbox-static": 4977ead914e1cf135258e9a125e52524bbdaa34f
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  CocoaLumberjack: bd155f2dd06c0e0b03f876f7a3ee55693122ec94
+  CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3ef4a7f62e7db01092f9d517d2ebc0d0677c4a37
   FBReactNativeSpec: dc7fa9088f0f2a998503a352b0554d69a4391c5a
@@ -435,7 +438,7 @@ SPEC CHECKSUMS:
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   Mapbox-iOS-SDK: fde296562b3cf788844f497f882beff1a89bb959
-  MapboxMobileEvents: d0a581dedd8f47411cc65ea520b965e83914316e
+  MapboxMobileEvents: 36ff53b135aac486eed94b61f813c7967a0c2c6f
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
@@ -449,7 +452,7 @@ SPEC CHECKSUMS:
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
   react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
   react-native-haptic: d90a0a661333a22cb2b434c7094a65f27aed773d
-  react-native-mapbox-gl: 9439a4a069335803fd590f0c59bfbd84c0ab8f26
+  react-native-mapbox-gl: bdb2063dc7b7bbc9e0c2799d2b1294d9b412f76a
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5
   React-RCTAnimation: 9a883bbe1e9d2e158d4fb53765ed64c8dc2200c6
@@ -463,13 +466,13 @@ SPEC CHECKSUMS:
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
   RealmJS: c903034b0d767fcef11dc8207e91b6f07e60d7b8
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
-  RNBackgroundGeolocation: c591c7119b3f4d3aaac6ebb4a33d6614259f6879
-  RNDeviceInfo: 6ecb1d1c87d20e4c62354be0348de23362824dcd
+  RNBackgroundGeolocation: b6159114ccbde8f0ddac48d82022b40f2e88a2ed
+  RNDeviceInfo: 0b3e0154c1c659ea9779cb3e883e66ece92326a9
   RNStaticSafeAreaInsets: 6103cf09647fa427186d30f67b0f5163c1ae8252
-  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
 
-PODFILE CHECKSUM: 13e764dfb5cff0a05b71f3b22a172b8adb0e95cc
+PODFILE CHECKSUM: 2994d0836ea388e7591179e8ac94eb929b060923
 
 COCOAPODS: 1.10.1
