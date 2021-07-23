@@ -4,7 +4,7 @@ const constants = {
   locationUpdateMaxAge: 10000, // (msec) location update queue is flushed to server when it reaches this age
   locationUpdateMaxQueueSize: 10, // location update queue is flushed to server when it reaches this count of updates
   serverPollTimeout: 10000, // (msec) timeout when calling /poll
-  subdomain: 'www.pathify.app',
+  subdomain: 'pathify.us',
 }
 
 export { constants };
