@@ -22,8 +22,8 @@ import { utils } from 'lib/utils';
 
 log.info('--------------------------');
 
-const cert = utils.getSecret('pathify-app.crt');
-const key = utils.getSecret('pathify.app.key');
+const cert = utils.getSecret('pathify-us.crt');
+const key = utils.getSecret('pathify-us.key');
 const useSecureServer = (cert && key);
 
 const app = express();

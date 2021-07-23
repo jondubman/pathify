@@ -589,7 +589,7 @@ const constants = {
   },
   safeAreaBottom, // see bottomWithoutTimeline
   safeAreaTop,
-  serverUrl: 'https://www.pathify.app:3000/', // TODO change subdomain
+  serverUrl: 'https://pathify.us:3000/',
   settingsButton: {
     leftOffset: buttonOffset,
     opacityWhenClosed: defaultOpacity,

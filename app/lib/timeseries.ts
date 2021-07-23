@@ -13,7 +13,7 @@ export interface TimeReference { // relative or absolute
   relative: boolean;
 }
 
-export enum EventType { // TODO keep in sync with datamodel.prisma
+export enum EventType {
   'APP' = 'APP', // see AppStateChange
   'LOC' = 'LOC', // geolocation result
   'MARK' = 'MARK', // timeline mark, whether user-defined or automatically placed
