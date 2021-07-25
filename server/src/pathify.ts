@@ -23,6 +23,7 @@ import { utils } from 'lib/utils';
 log.info('--------------------------');
 
 const cert = utils.getSecret('pathify-us.crt');
+const ca = utils.getSecret('pathify-us.ca-bundle');
 const key = utils.getSecret('pathify-us.key');
 const useSecureServer = (cert && key);
 
@@ -89,7 +90,7 @@ const startServer = () => {
     via = 'https';
     log.info('Using subdomain', constants.subdomain);
     app.use(vhost(constants.subdomain, app));
-    server = https.createServer({ cert, key }, app);
+    server = https.createServer({ cert, ca, key }, app);
   } else if (allowInsecure) {
     log.warn('Launching insecure server via http');
     server = app;
