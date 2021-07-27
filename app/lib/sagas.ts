@@ -681,9 +681,16 @@ const sagas = {
       trackingActivity,
     } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
-      // Follow user, and jump to NOW mode, when reactivating app while tracking.
-      // TODO add flag to make these actions optional?
+      // Put up the start menu to give the user the option of ending the activity.
       if (trackingActivity) {
+        const timestamp_background = yield select((state: AppState) => state.options.timestamp_background);
+        const timeInBackground = timestamp_background ? utils.now() - timestamp_background : 0;
+        if (timeInBackground > constants.timing.backgroundTimeBeforeAutomaticStartMenu) {
+          yield put(newAction(AppAction.closePanels, { option: 'otherThanStartMenu' }));
+          yield put(newAction(AppAction.flagEnable, 'startMenuOpen'));
+        }
+        // Follow user, and jump to NOW mode, when reactivating app while tracking.
+        // TODO add flag to make these actions optional?
         yield put(newAction(AppAction.startFollowingUser));
         yield put(newAction(AppAction.jumpToNow));
       }
@@ -700,8 +707,9 @@ const sagas = {
       if (!populated) {
         yield put(newAction(AppAction.refreshCache));
       }
-    } else {
-      if (newState === AppStateChange.BACKGROUND) {
+    } else { // not activating
+      if (newState === AppStateChange.BACKGROUND || newState == AppStateChange.INACTIVE) {
+        yield put(newAction(AppAction.setAppOption, { timestamp_background: utils.now() }))
         yield call(Geo.setConfig, trackingActivity, true); // background true
       }
     }

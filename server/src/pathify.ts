@@ -25,7 +25,7 @@ log.info('--------------------------');
 const cert = utils.getSecret('pathify-us.crt');
 const ca = utils.getSecret('pathify-us.ca-bundle');
 const key = utils.getSecret('pathify-us.key');
-const useSecureServer = (cert && key);
+const useSecureServer = (cert && ca && key);
 
 const app = express();
 

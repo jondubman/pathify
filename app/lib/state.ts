@@ -175,6 +175,7 @@ export const initialAppState = {
     viewTime: now, // By design this remains constant, as scrollTime changes, while user is scrolling the timeline.
     timerTickIntervalMsec: constants.timing.timerTickInterval, // for updating  analog clock, timeline scrollTime, etc.
     timelineZoomValue: constants.timeline.default.zoomValue, // 0 <= value <= 1 (logarithmic, see constants.timeline)
+    timestamp_background: 0, // timestamp when app was last in the background
     zoomClockMoved: 0, // amount ZoomClock has been moved up or down
   },
   refs: { // references to React components so they can be called explicitly when needed e.g. for imperative scrolling

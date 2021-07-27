@@ -623,6 +623,7 @@ const constants = {
     width: 240,
   },
   timing: { // msec
+    backgroundTimeBeforeAutomaticStartMenu: 5000, // beyond this time threshold, put up StartMenu when app is reactivated
     delayBeforeDeletingProcessedLocations: 2500,
     delayBeforeUsingNewMap: 1000,
     devServerPollTimeout: 90000,
