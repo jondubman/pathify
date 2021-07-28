@@ -70,5 +70,3 @@ const TimelineControls = (props: TimelineControlsProps) => (
 )
 
 export default React.memo(TimelineControls); // Note use of memo (optimization based on shallow comparison of props)
-
-// top: (utils.windowSize().height - props.clockBottom),

@@ -13,7 +13,6 @@ import {
 } from 'lib/selectors';
 
 interface TimelineControlsStateProps {
-  clockBottom: number;
   refTimeBottom: number;
   showCenterline: boolean;
   timelineHeight: number;
@@ -28,7 +27,6 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
-    clockBottom: dynamicClockBottom(state),
     refTimeBottom: dynamicRefTimeBottom(state),
     showCenterline: uiCategories(state).includes(UICategory.refTime),
     timelineHeight: dynamicTimelineHeight(state),

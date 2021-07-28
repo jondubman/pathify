@@ -13,12 +13,15 @@ import constants from 'lib/constants';
 import { AppState } from 'lib/state';
 import StartMenu from 'presenters/StartMenu';
 import {
+  dynamicStartMenuBottom,
   dynamicTimelineHeight,
 } from 'lib/selectors';
 import log from 'shared/log';
 
 interface StartMenuStateProps {
+  bottom: number;
   height: number;
+  left: number;
   open: boolean;
   timelineHeight: number;
   trackingActivity: boolean;
@@ -35,7 +38,9 @@ export type StartMenuProps = StartMenuStateProps & StartMenuDispatchProps;
 
 const mapStateToProps = (state: AppState): StartMenuStateProps => {
   return {
+    bottom: dynamicStartMenuBottom(state),
     height: constants.startMenu.height,
+    left: constants.buttonOffset,
     open: state.flags.startMenuOpen,
     timelineHeight: dynamicTimelineHeight(state),
     trackingActivity: state.flags.trackingActivity,

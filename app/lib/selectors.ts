@@ -185,13 +185,19 @@ export const dynamicAreaTop = (): number => (
   constants.safeAreaTop || getStatusBarHeight()
 )
 
+// Note this is *from* the bottom, so small number means close to bottom.
 export const bottomGivenTimeline = (state: AppState): number => (
   (shouldShowTimeline(state) || !constants.safeAreaBottom) ? 0 : constants.bottomWithoutTimeline
 )
 
-// Note that a larger 'bottom' yields a higher position.
+// Note that a larger 'bottom' yields a higher position...
 export const dynamicClockBottom = (state: AppState): number => (
   bottomGivenTimeline(state) + dynamicTimelineHeight(state) + dynamicRefTimeHeight(state) + 1
+)
+
+// This returns the distance above any timeline to the bottom of the start menu.
+export const dynamicStartMenuBottom = (state: AppState): number => (
+  dynamicRefTimeHeight(state) + constants.clock.height + constants.safeAreaBottom
 )
 
 // Note that a smaller 'bottom' yields a lower position.

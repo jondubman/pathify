@@ -56,19 +56,10 @@ class StartMenu extends React.Component<StartMenuProps> {
     const panelStyle = {
       backgroundColor: colors.dimmerBackground,
       flexDirection: 'column',
-      left: 0,
       height: utils.windowSize().height,
-      justifyContent: 'center',
+      justifyContent: 'flex-end', // bottom
       position: 'absolute',
-      top: 0,
       width: utils.windowSize().width,
-    } as StyleProp<ViewStyle>;
-
-    const subpanelContentsStyle = {
-      justifyContent: 'space-evenly',
-      height: props.height,
-      marginHorizontal: menuItemMarginHorizontal,
-      marginVertical: menuItemMarginVertical,
     } as StyleProp<ViewStyle>;
 
     const menuItemContainerStyle = {
@@ -78,15 +69,23 @@ class StartMenu extends React.Component<StartMenuProps> {
     } as StyleProp<ViewStyle>;
 
     const subpanelStyle = {
-      alignSelf: 'center',
       backgroundColor: colors.panelBackground,
       borderRadius: constants.borderRadiusLarge,
       borderColor: colors.border,
       borderWidth: constants.startMenu.borderWidth,
-      flexDirection: 'column',
+      flexDirection: 'column', // stacks buttons vertically
       height: props.height,
-      justifyContent: 'center',
+      justifyContent: 'center', // centers buttons vertically within the panel
+      marginBottom: props.bottom,
+      marginLeft: props.left,
       width: props.width,
+    } as StyleProp<ViewStyle>;
+
+    const subpanelContentsStyle = {
+      justifyContent: 'space-evenly',
+      height: props.height,
+      marginHorizontal: menuItemMarginHorizontal,
+      marginVertical: menuItemMarginVertical,
     } as StyleProp<ViewStyle>;
 
     const timelineSpaceStyle = { // for layout
