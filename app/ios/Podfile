@@ -64,6 +64,11 @@ target 'PathifyTest' do
   setupPathifyPods
 end
 
+# https://github.com/react-native-mapbox-gl/maps/blob/master/CHANGELOG.md#820-beta1
+pre_install do |installer|
+  $RNMBGL.pre_install(installer)
+end
+
 post_install do |installer|
   # flipper_post_install(installer)
   installer.generated_projects.each do |project|
@@ -80,4 +85,6 @@ post_install do |installer|
       end
     end
   end
+# https://github.com/react-native-mapbox-gl/maps/blob/master/CHANGELOG.md#820-beta1
+  $RNMBGL.post_install(installer)
 end

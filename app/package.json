@@ -13,7 +13,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.1",
     "@react-native-community/cli": "^4.13.1",
     "@react-native-community/slider": "^3.0.3",
-    "@react-native-mapbox-gl/maps": "8.1.0",
+    "@react-native-mapbox-gl/maps": "8.2.1",
     "@turf/distance": "^6.0.1",
     "@turf/helpers": "^6.1.4",
     "@turf/turf": "^6.4.0",
