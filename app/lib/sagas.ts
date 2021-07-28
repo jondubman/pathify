@@ -1461,7 +1461,7 @@ const sagas = {
           } = event as ModeChangeEvent;
           modeNumeric = (confidence && mode) ? modeChangeToNumber({ confidence, mode }) : 0;
         }
-        log.trace('refreshActivity event', e.toJSON());
+        // log.trace('refreshActivity event', e.toJSON());
         if (latestLocEvent && (type === EventType.LOC || type === EventType.MODE)) {
           const {
             accuracy,
