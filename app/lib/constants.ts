@@ -622,24 +622,24 @@ const constants = {
     menuItemMarginVertical: 20,
     width: 240,
   },
-  timing: { // msec
-    backgroundTimeBeforeAutomaticStartMenu: 5000, // beyond this time threshold, put up StartMenu when app is reactivated
+  timing: { // all in msec
+    // backgroundTimeBeforeAutomaticStartMenu: 5000, // beyond this time threshold, put up StartMenu when app is reactivated
     delayBeforeDeletingProcessedLocations: 2500,
     delayBeforeUsingNewMap: 1000,
     devServerPollTimeout: 90000,
     opacitySliderThrottle: 50, // throttle rate: slider should issue no more than this #/sec of change events
-    pulsarPulse: 1000,
+    pulsarPulse: 1000, // for Pulsar animation
     scrollViewWaitForMomentumScroll: 20, // TODO empirically, this works well, though it seems small.
     serverDelayAfterFailedRequest: interval.seconds(5), // TODO may want to back off for some time if things go offline.
-    tickThrottleWhileTracking: 1000,
-    timelineCloseToNow: 3000,
+    tickThrottleWhileTracking: 1000, // when tracking an activity, timerTickInterval may be slowed down to this.
+    timelineCloseToNow: 3000, // if timeline is scrolled this close to now, it is considered now.
     timelineRelativeZoomStep: 16,
     // timerTickInterval: 1000, // once per second - this is good enough for the second hand on the clock - lower power.
     // The app will work fine with a one-second timerTickInterval and in fact can function almost entirely without any
     // ticks at all including recording activities as the ticks are mostly just to support timelineNow mode & Now clock.
     // 50 generates buttery smooth motion of second hand on the clock, but may drop JS frame.
     // 100 looks smooth but seems a bit CPU intensive. Above 200, the stepping motion becomes more apparent.
-    timerTickInterval: 200,
+    timerTickInterval: 500, // Note: a low number, like <200, may impact performance of nowMode when app is not tracking
     // Note that every component's mapStateToProps will be called via react-redux Connect this often, so if there are
     // any perf issues there, they will rapidly reveal themselves by lowering this interval.
     vibration: 400, // TODO ignored on iOS?
