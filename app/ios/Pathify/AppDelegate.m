@@ -4,6 +4,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
+#if !TARGET_OS_SIMULATOR
+#endif
 #import <TSBackgroundFetch/TSBackgroundFetch.h>
 
 #if RCT_DEV
@@ -108,9 +110,10 @@ static void InitializeFlipper(UIApplication *application) {
   launchScreenView.frame = self.window.bounds;
   rootView.loadingView = launchScreenView;
 
+#if !TARGET_OS_SIMULATOR
+#endif
   // [REQUIRED] Register BackgroundFetch
   [[TSBackgroundFetch sharedInstance] didFinishLaunching];
-
   return YES;
 }
 

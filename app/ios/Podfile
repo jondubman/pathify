@@ -2,12 +2,14 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 # Uncomment the next line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '14.1'
 
 # ignore all warnings from all pods
+# TODO really? Review.
 inhibit_all_warnings!
 
-ENV['REACT_NATIVE_MAPBOX_MAPBOX_IOS_VERSION'] = '~> 6.2.1';
+# ENV['REACT_NATIVE_MAPBOX_MAPBOX_IOS_VERSION'] = '~> 6.2.1';
+$ReactNativeMapboxGLIOSVersion = "~> 6.2.1"
 
 def setupPathifyPods
 
