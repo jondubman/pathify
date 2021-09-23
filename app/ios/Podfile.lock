@@ -27,7 +27,7 @@ PODS:
   - glog (0.3.5)
   - Mapbox-iOS-SDK (6.2.2):
     - MapboxMobileEvents (~> 0.10.4)
-  - MapboxMobileEvents (0.10.8)
+  - MapboxMobileEvents (0.10.11)
   - RCTRequired (0.63.2)
   - RCTRestart (0.0.13):
     - React
@@ -276,7 +276,7 @@ PODS:
     - React-Core (= 0.63.2)
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
-  - RealmJS (10.6.0):
+  - RealmJS (10.8.0):
     - GCDWebServer
     - React
   - RNBackgroundFetch (3.1.0):
@@ -432,7 +432,7 @@ SPEC CHECKSUMS:
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   Mapbox-iOS-SDK: fde296562b3cf788844f497f882beff1a89bb959
-  MapboxMobileEvents: 36ff53b135aac486eed94b61f813c7967a0c2c6f
+  MapboxMobileEvents: 1176afebbeca86806614a3dc409840bc02a3dd89
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTRestart: dd19aab87fc1118e05b6b5b91b959105647f56b4
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
@@ -458,7 +458,7 @@ SPEC CHECKSUMS:
   React-RCTText: 1b6773e776e4b33f90468c20fe3b16ca3e224bb8
   React-RCTVibration: 4d2e726957f4087449739b595f107c0d4b6c2d2d
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
-  RealmJS: c903034b0d767fcef11dc8207e91b6f07e60d7b8
+  RealmJS: 7271bc9f8579716260511cb43b0fb6b0321ce206
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
   RNBackgroundGeolocation: 1184aff02a730e243785482561d0b8d9649548a3
   RNDeviceInfo: cc7de0772378f85d8f36ae439df20f05c590a651
@@ -469,4 +469,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f2280b93ef1313e608ec42481eb3c6ff01b7e209
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.11.2
