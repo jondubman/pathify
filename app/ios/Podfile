@@ -24,7 +24,14 @@ def setupPathifyPods
 
   require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
   config = use_native_modules!
-  use_react_native!(:path => config["reactNativePath"])
+
+  # old way TODO remove:
+  # use_react_native!(:path => config["reactNativePath"])
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => false
+  )
 
   # Enables Flipper.
   #
@@ -51,7 +58,6 @@ def setupPathifyPods
   #     end
   #   end
 end
-
 
 target 'PathifyUITests' do
   inherit! :search_paths
@@ -87,6 +93,15 @@ post_install do |installer|
       end
     end
   end
-# https://github.com/react-native-mapbox-gl/maps/blob/master/CHANGELOG.md#820-beta1
+  react_native_post_install(installer)
+  # https://github.com/react-native-mapbox-gl/maps/blob/master/CHANGELOG.md#820-beta1
   $RNMBGL.post_install(installer)
+
+  # From https://github.com/facebook/react-native/issues/31480#issuecomment-902912841
+  #
+  # ...but if you bump iOS deployment target, Flipper barfs again "Time.h:52:17: error: typedef redefinition with different types"
+  # We need to make one crude patch to RCT-Folly - set `__IPHONE_10_0` to our iOS target + 1
+  # https://github.com/facebook/flipper/issues/834 - 84 comments and still going...
+  `sed -i -e  $'s/__IPHONE_10_0/__IPHONE_15_0/' Pods/RCT-Folly/folly/portability/Time.h`
+
 end

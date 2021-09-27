@@ -16,8 +16,8 @@
     "**/.settings": false,
     "**/.factorypath": true
   },
-  "workbench.colorTheme": "Tomorrow Night Blue",
   "workbench.colorCustomizations": {
+    "editor.background": "#394379",
     "editor.selectionBackground": "#ca1f1f",
     "editor.findMatchBackground": "#6122d6",
     "editor.findMatchHighlightBackground": "#0f8f3392",
@@ -29,5 +29,6 @@
   "search.exclude": {
     "**/app/shared": true,
     "**/server/src/shared": true
-  }
+  },
+  "workbench.colorTheme": "Visual Studio Dark"
 }

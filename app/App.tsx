@@ -2,7 +2,6 @@ import _ from 'lodash'; // for _.throttle
 
 import React, { Component } from 'react';
 import {
-  Alert,
   AppRegistry,
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
   LogBox,
