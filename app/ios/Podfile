@@ -30,6 +30,7 @@ def setupPathifyPods
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
+    # Note: Realm is the laggard at supporting Hermes (as of 9-27-2021), but support is planned
     :hermes_enabled => false
   )
 
