@@ -5,6 +5,7 @@
   "scripts": {
     "devtools": "react-devtools",
     "ios": "react-native run-ios",
+    "pods": "pushd .; cd app; rm -rf Pods Podfile.lock; pod cache clean --all; pod install --repo-update; popd",
     "start": "pushd .; cd ../shared; yarn share; popd; node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
