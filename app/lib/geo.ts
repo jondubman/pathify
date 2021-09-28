@@ -590,11 +590,8 @@ export const Geo = {
           locationEvents.push(locationEvent);
         }
         locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
-        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, forceRefresh: true }));
-        // TODO is there any possibility the above might not have worked and we might be at risk of losing data here?
-        setTimeout(async () => {
-          await Geo.destroyLocations(); // This can be slightly postponed in order to focus on processing the new data.
-        }, constants.timing.delayBeforeDeletingProcessedLocations)
+        // Note use of preventRefresh. refreshActivity is triggered manually below.
+        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: true }));
         log.debug(`processSavedLocations added: ${locationEvents.length}`);
 
         // AppAction.geolocation
@@ -605,6 +602,13 @@ export const Geo = {
           t: new Date(lastNewEvent.t).getTime(),
         }
         store.dispatch(newAction(AppAction.geolocation, geoloc));
+
+        store.dispatch(newAction(AppAction.refreshActivity, { id: activityId }));
+
+        // TODO is there any possibility the above might not have worked and we might be at risk of losing data here?
+        setTimeout(async () => {
+          await Geo.destroyLocations(); // This can be slightly postponed in order to focus on processing the new data.
+        }, constants.timing.delayBeforeDeletingProcessedLocations)
       }
     } catch (err) {
       log.error('processSavedLocations', err);

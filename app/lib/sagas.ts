@@ -231,10 +231,17 @@ const sagas = {
   addEvents: function* (action: Action) {
     try {
       const params = action.params as AddEventsParams;
-      const { events, forceRefresh } = params;
+      const {
+        events,
+        forceRefresh,
+        preventRefresh,
+      } = params;
       // First, add the given events. This is the easy part. The rest is side effects.
       if (events && events.length) {
         yield call(database.createEvents, events);
+      }
+      if (preventRefresh) {
+        return; // early return
       }
       // Now update any Activity/Activities related to the added events.
       // The Activity is essentially a redundant, persisted summary of events with the same activityId.
@@ -287,14 +294,14 @@ const sagas = {
             activityUpdate.tFirstLoc = firstNewLoc.t;
           }
           // If the firstNewLoc comes after activity's tLastUpdate, we are simply appending. !! converts to boolean.
-          // The typical case of simply appending one or more events to an Activity is handled here with little work.
-          // We simply append to the path and avoid reformulating it entirely.
-          // The case of inserting events in the middle of an existing Activity is handled by the else block below.
           const appending: boolean = !!(!firstNewLoc || (activity.tLastUpdate && firstNewLoc.t > activity.tLastUpdate));
           if (forceRefresh || !appending) {
-            // not simply appending events; recalc entire path et al (note new events were already added above)
+            // This handles the case of inserting events in the middle of an existing Activity.
+            // Note new events were already added above.
             yield put(newAction(AppAction.refreshActivity, { id: activity.id }));
           } else {
+            // The typical case of simply appending one or more events to an Activity is handled here.
+            // We simply append to the path and avoid reformulating it entirely.
             let latestLocEvent: LocationEvent | undefined = undefined; // TODO need to remember this
             // odoStart
             if (firstNewOdo) {
