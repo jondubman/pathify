@@ -3,11 +3,7 @@
 // Most of the constants are here, including colors. Some constants that are very specific to component layouts, not
 // of general interest, and not shared across comoponents are hard-coded in component styles etc. for convenience.
 
-import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 import { DomainTuple } from 'victory-native';
-const safeAreaTop = StaticSafeAreaInsets.safeAreaInsetsTop;
-const safeAreaBottom = StaticSafeAreaInsets.safeAreaInsetsBottom;
-const bottomPaddingForAxis = safeAreaBottom ? 28 : 14; // empirically optimized for displays with/without home button
 
 import { interval } from 'lib/timeseries';
 
@@ -512,7 +508,6 @@ const constants = {
     height: panelHeight,
     rightOffset: buttonOffset,
     subpanelTopOffset: buttonOffset + labelHeightAllowance,
-    topOffset: safeAreaTop,
   },
   headers: {
     Accept: 'application/json',
@@ -521,6 +516,7 @@ const constants = {
   hitSlop: {
     top: buttonOffset, bottom: buttonOffset, left: buttonOffset, right: buttonOffset,
   },
+  initialTimelineHeight,
   labels: {
     fontFamily,
     fontSize: 12,
@@ -587,21 +583,17 @@ const constants = {
     topSpace: 16,
     width: 160 - buttonOffset * 2, // was 126, which fits on smallest device without overlap
   },
-  safeAreaBottom, // see bottomWithoutTimeline
-  safeAreaTop,
   serverUrl: 'https://pathify.us:3000/',
   settingsButton: {
     leftOffset: buttonOffset,
     opacityWhenClosed: defaultOpacity,
     opacityWhenOpen: 1,
     size: buttonSize,
-    topOffset: safeAreaTop,
   },
   settingsPanel: {
     height: panelHeight,
     leftOffset: buttonOffset,
     subpanelTopOffset: buttonSize + buttonOffset + labelHeightAllowance,
-    topOffset: safeAreaTop,
   },
   sliders: {
     borderRadius: 20,
@@ -647,11 +639,10 @@ const constants = {
   timeline: {
     activityZoomFactor: 1.25, // 1 means zoom Timeline to exact duration of Activity. Should be somewhat >1 for context.
     barHeight: 40, // big enough to be touchable
-    bottomPaddingForAxis,
     bottomPaddingForBars: 0,
     centerLineWidth: 3,
     default: {
-      height: initialTimelineHeight + bottomPaddingForAxis,
+      height: initialTimelineHeight,
       zoomValue: 0.64, // between 0 (min zoom) and 1 (max zoom) relative to zoomRanges below (0.64 is a good default)
     },
     miniBarHeight: 15,

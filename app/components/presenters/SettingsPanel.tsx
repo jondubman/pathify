@@ -18,12 +18,12 @@ import Slider from '@react-native-community/slider';
 import SettingsButtonContainer from 'containers/SettingsButtonContainer';
 import { SettingsPanelProps } from 'containers/SettingsPanelContainer';
 import constants, { MapStyle } from 'lib/constants';
+import utils from 'lib/utils';
 
 const colors = constants.colors.settingsPanel;
 const {
   height,
   leftOffset,
-  topOffset,
 } = constants.settingsPanel;
 
 const subpanelLeft = 10;
@@ -76,7 +76,6 @@ const Styles = StyleSheet.create({
     height,
     paddingLeft: constants.buttonOffset,
     position: 'absolute',
-    top: topOffset,
     width: constants.panelWidth,
   },
   subpanel: {
@@ -127,6 +126,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
     super(props);
     this.onValueChange = _.throttle(this.onValueChange.bind(this), constants.timing.opacitySliderThrottle);
     this.onSlidingComplete = this.onSlidingComplete.bind(this);
+    this.panelStyle = { ...Styles.panel, top: utils.safeAreaTop() }
   }
 
   onValueChange(value: number) {
@@ -137,6 +137,8 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
     this.props.onSetMapOpacity(value);
   }
 
+  panelStyle: {}
+
   render() {
     const switchColors = constants.colors.switches;
     const { props } = this;
@@ -144,7 +146,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
       <View style={Styles.view}>
         {props.open ?
           <View style={Styles.view}>
-            <View style={Styles.panel}>
+            <View style={this.panelStyle}>
               <View style={Styles.subpanels}>
 
                 <View style={Styles.subpanel}>

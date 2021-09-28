@@ -4,6 +4,7 @@ import * as Victory from 'victory-native';
 const Rect = (Victory as any).Rect; // Primitives are missing from TypeScript type definitions for Victory
 
 import constants, { TimespanKind } from 'lib/constants';
+import { timelineHeightIfShowing } from 'lib/selectors';
 import utils from 'lib/utils';
 
 export interface TimelineSpanStateProps {
@@ -20,7 +21,7 @@ export interface TimelineSpanProps extends TimelineSpanStateProps, TimelineSpanD
 // yBase is at the bottom of the timeline. y should decrease from there. Notice this function is recursive.
 const yTop = (kind: TimespanKind): number => {
   const { timeline } = constants;
-  const yBase = timeline.default.height - timeline.bottomPaddingForAxis - timeline.bottomPaddingForBars;
+  const yBase = timelineHeightIfShowing() - utils.bottomPaddingForAxis() - timeline.bottomPaddingForBars;
   switch (kind) {
     case TimespanKind.ACTIVITY:
       return Math.round(yBase / 2) - height(kind) / 2;

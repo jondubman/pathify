@@ -22,7 +22,6 @@ const {
   opacityWhenClosed,
   opacityWhenOpen,
   size,
-  topOffset
 } = constants.settingsButton;
 
 const Styles = StyleSheet.create({
@@ -34,7 +33,6 @@ const Styles = StyleSheet.create({
     left: leftOffset,
     paddingTop: size / 4 - 2, // adjusts icon inside circle
     position: 'absolute',
-    top: topOffset,
     width: size,
   },
   labelView: {
@@ -58,6 +56,7 @@ const SettingsButton = (props: SettingsButtonProps) => (
       style={[Styles.button, {
         backgroundColor: props.open ? colors.backgroundOpen : colors.background,
         opacity: props.open ? opacityWhenOpen : opacityWhenClosed,
+        top: props.topOffset,
       }]}
       onPressIn={props.onPressIn}
       underlayColor={props.open ? colors.background : colors.underlay}

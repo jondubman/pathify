@@ -14,12 +14,12 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import HelpButtonContainer from 'containers/HelpButtonContainer';
 import { HelpPanelProps } from 'containers/HelpPanelContainer';
 import constants from 'lib/constants';
+import utils from 'lib/utils';
 
 const colors = constants.colors.helpPanel;
 const {
   rightOffset,
   subpanelTopOffset,
-  topOffset,
 } = constants.helpPanel;
 
 const Styles = StyleSheet.create({
@@ -68,7 +68,6 @@ const Styles = StyleSheet.create({
     paddingRight: constants.buttonOffset,
     position: 'absolute',
     right: rightOffset,
-    top: topOffset,
     width: constants.panelWidth,
   },
   staticText: {
@@ -111,7 +110,10 @@ class HelpPanel extends React.Component<HelpPanelProps> {
 
   constructor(props: any) {
     super(props);
+    this.panelStyle = { ...Styles.panel, top: utils.safeAreaTop() }
   }
+
+  panelStyle: {}
 
   render() {
     const colors = constants.colors.labelSwitch;
@@ -120,7 +122,7 @@ class HelpPanel extends React.Component<HelpPanelProps> {
     return (
       <React.Fragment>
         { props.open ?
-          <View style={Styles.panel}>
+          <View style={this.panelStyle}>
             <View style={Styles.subpanels}>
               <View style={Styles.subpanel}>
                 <View style={Styles.subpanelContents}>

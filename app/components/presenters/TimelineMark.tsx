@@ -8,8 +8,9 @@ import {
   MarkEvent,
   MarkType
 } from 'lib/marks';
-import { activityIncludesMark } from 'lib/selectors';
+import { activityIncludesMark, timelineHeightIfShowing } from 'lib/selectors';
 import { Timepoint } from 'lib/timeseries';
+import utils from 'lib/utils';
 
 interface TimelineMarkProps {
   currentActivityId: string;
@@ -46,7 +47,7 @@ class TimelineMark extends React.Component<TimelineMarkProps> {
     const centerLine_x1 = (t: Timepoint): number => (Math.round(scale.x(t)));
     const centerLine_x2 = centerLine_x1; // vertical line: identical x1, x2
     const centerLine_y1 = (t: Timepoint): number => 0;
-    const centerLine_y2 = (t: Timepoint): number => timeline.default.height - timeline.bottomPaddingForAxis;
+    const centerLine_y2 = (t: Timepoint): number => timelineHeightIfShowing() - utils.bottomPaddingForAxis();
 
     const colorFor = (mark: MarkEvent): string => {
       const { subtype, synthetic } = mark;

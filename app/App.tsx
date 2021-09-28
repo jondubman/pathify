@@ -59,7 +59,6 @@ export default class App extends Component {
       log.info('windowSize', utils.windowSize());
       log.info('windowHeightFactor', utils.windowHeightFactor());
       log.info('windowWidthFactor', utils.windowWidthFactor());
-      log.info('safeAreaTop', constants.safeAreaTop, 'safeAreaBottom', constants.safeAreaBottom);
       RNAppState.addEventListener('change', this.handleAppStateChange);
 
       // Log incoming properties

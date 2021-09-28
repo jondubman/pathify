@@ -23,6 +23,7 @@ import TimelineFutureSpanContainer from 'containers/TimelineFutureSpanContainer'
 import ActivityTimespansContainer from 'containers/ActivityTimespansContainer';
 import TimelineMarksContainer from 'containers/TimelineMarksContainer';
 import constants from 'lib/constants';
+import { timelineHeightIfShowing } from 'lib/selectors';
 import utils from 'lib/utils';
 import timeseries, { interval } from 'lib/timeseries';
 
@@ -33,7 +34,7 @@ type State = Readonly<typeof initialState>
 const TimelineStyles = StyleSheet.create({
   timeline: {
     backgroundColor: constants.colors.timeline.background,
-    height: constants.timeline.default.height,
+    height: timelineHeightIfShowing(),
     opacity: 1,
   },
 })
@@ -138,9 +139,9 @@ class Timeline extends Component<TimelineProps> {
               onZoomDomainChange={this.handleZoom}
             />
           }
-          height={constants.timeline.default.height}
+          height={timelineHeightIfShowing()}
           width={timelineWidth}
-          padding={{ bottom: constants.timeline.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
+          padding={{ bottom: utils.bottomPaddingForAxis(), left: 0, right: 0, top: 0 }}
         >
           <VictoryAxis
             style={axisStyle}

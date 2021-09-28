@@ -182,12 +182,12 @@ export const mapIsFullScreen = (state: AppState): boolean => (
 
 // Note this does not depend on state.
 export const dynamicAreaTop = (): number => (
-  constants.safeAreaTop || getStatusBarHeight()
+  utils.safeAreaTop() || getStatusBarHeight()
 )
 
 // Note this is *from* the bottom, so small number means close to bottom.
 export const bottomGivenTimeline = (state: AppState): number => (
-  (shouldShowTimeline(state) || !constants.safeAreaBottom) ? 0 : constants.bottomWithoutTimeline
+  (shouldShowTimeline(state) || !utils.safeAreaBottom()) ? 0 : constants.bottomWithoutTimeline
 )
 
 // Note that a larger 'bottom' yields a higher position...
@@ -197,7 +197,7 @@ export const dynamicClockBottom = (state: AppState): number => (
 
 // This returns the distance above any timeline to the bottom of the start menu.
 export const dynamicStartMenuBottom = (state: AppState): number => (
-  dynamicRefTimeHeight(state) + constants.clock.height + constants.safeAreaBottom
+  dynamicRefTimeHeight(state) + constants.clock.height + utils.safeAreaBottom()
 )
 
 // Note that a smaller 'bottom' yields a lower position.
@@ -226,11 +226,14 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
   constants.mapStyles.find((mapStyle: MapStyle) => (mapStyle.name === state.options.mapStyle)) as MapStyle
 )
 
+export const timelineHeightIfShowing = () => (
+  constants.initialTimelineHeight + utils.bottomPaddingForAxis()
+)
+
 export const dynamicTimelineHeight = (state: AppState): number => (
   !shouldShowTimeline(state) || mapIsFullScreen(state) ?
     0
-    :
-    constants.timeline.default.height
+    : timelineHeightIfShowing()
 )
 
 // pixel width of entire of timeline including off-screen portion

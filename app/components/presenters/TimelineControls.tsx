@@ -21,7 +21,7 @@ const colors = constants.colors.timeline;
 
 const Styles = StyleSheet.create({
   centerLine: {
-    bottom: timeline.bottomPaddingForAxis,
+    bottom: utils.bottomPaddingForAxis(),
     left: centerline() - timeline.centerLineWidth / 2,
     position: 'absolute',
     width: timeline.centerLineWidth,
@@ -60,9 +60,9 @@ const TimelineControls = (props: TimelineControlsProps) => (
     {props.showCenterline ? (
       <View pointerEvents="none" style={[Styles.centerLine, {
         backgroundColor: backgroundColorFor(props),
-        height: (props.timelineHeight ? props.timelineHeight : constants.safeAreaBottom)
+        height: (props.timelineHeight ? props.timelineHeight : utils.safeAreaBottom())
           + refTime.height + props.zoomClockMoved
-          - timeline.bottomPaddingForAxis
+          - utils.bottomPaddingForAxis()
           + 1
       }]} />
     ) : null}
