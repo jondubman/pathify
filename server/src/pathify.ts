@@ -5,7 +5,6 @@
 
 require('module-alias/register'); // for module import alias resolution. See tsconfig.json and package.json
 
-import * as bodyParser from 'body-parser'; // Unbundled from Express as of Express 4
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as helmet from 'helmet';
@@ -34,12 +33,14 @@ app.use(helmet()); // https://expressjs.com/en/advanced/best-practice-security.h
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
+  process.nextTick(() => {
+    next();
+  })
 })
 
 // NOTE: This must be done BEFORE wiring app.post handler in order to receive anything in req.body!
 // app.use(bodyParser.json());
-app.use(bodyParser.json({ limit: '500mb' })); // TODO use constant for limit. Is this always sufficient?
+app.use(express.json({ limit: '500mb' })); // TODO use constant for limit. Is this always sufficient?
 
 app.use(cookieParser());
 
