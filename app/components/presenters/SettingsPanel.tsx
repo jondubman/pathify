@@ -126,7 +126,7 @@ class SettingsPanel extends React.Component<SettingsPanelProps> {
     super(props);
     this.onValueChange = _.throttle(this.onValueChange.bind(this), constants.timing.opacitySliderThrottle);
     this.onSlidingComplete = this.onSlidingComplete.bind(this);
-    this.panelStyle = { ...Styles.panel, top: utils.safeAreaTop() }
+    this.panelStyle = { ...Styles.panel, top: props.topOffset }
   }
 
   onValueChange(value: number) {

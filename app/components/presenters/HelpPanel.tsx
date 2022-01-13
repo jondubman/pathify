@@ -107,13 +107,12 @@ type State = Readonly<typeof initialState>
 class HelpPanel extends React.Component<HelpPanelProps> {
 
   readonly state: State = initialState;
-
   constructor(props: any) {
     super(props);
-    this.panelStyle = { ...Styles.panel, top: utils.safeAreaTop() }
+    this.panelStyle = { ...Styles.panel, top: props.topOffset }
   }
 
-  panelStyle: {}
+  panelStyle: { }
 
   render() {
     const colors = constants.colors.labelSwitch;

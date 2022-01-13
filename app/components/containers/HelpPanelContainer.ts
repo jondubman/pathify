@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
 import constants from 'lib/constants';
+import { dynamicAreaTop } from 'lib/selectors';
 import { AppState } from 'lib/state';
 import HelpPanel from 'presenters/HelpPanel';
 import log from 'shared/log';
@@ -14,6 +15,7 @@ interface HelpPanelStateProps {
   introLabel: string;
   labelsEnabled: boolean;
   open: boolean;
+  topOffset: number;
   version: string;
 }
 
@@ -40,6 +42,7 @@ const mapStateToProps = (state: AppState): HelpPanelStateProps => {
     introLabel,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
+    topOffset: dynamicAreaTop(),
     version: `Pathify v${appVersion}.${appBuild}${period ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
   }
 }

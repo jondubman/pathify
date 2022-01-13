@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { AppAction, newAction } from 'lib/actions';
 import constants, { MapStyle } from 'lib/constants';
 import {
+  dynamicAreaTop,
   dynamicMapStyle,
   mapStyles,
 } from 'lib/selectors';
@@ -18,6 +19,7 @@ interface SettingsPanelStateProps {
   open: boolean;
   showAllPastLocations: boolean;
   showSequentialPaths: boolean;
+  topOffset: number;
 }
 
 interface SettingsPanelDispatchProps {
@@ -39,6 +41,7 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
     open: state.flags.settingsOpen,
     showAllPastLocations: state.flags.showAllPastLocations,
     showSequentialPaths: state.flags.showSequentialPaths,
+    topOffset: dynamicAreaTop(),
   }
 }
 
