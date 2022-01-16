@@ -576,6 +576,10 @@ const constants = {
     width: 8, // visual width of the paths on the map
     widthSecondary: 5, // when de-emphasized, like in showSequentialPaths mode
   },
+  processSavedLocations: {
+    bucketSize: 100, // How many locations to process at once
+    sleepBetweenSteps: 10, // ms (timing)
+  },
   refTime: {
     bottomMargin: 7, // leaves enough room for iOS control center access at bottom of screen when timeline hidden
     height: 65,
@@ -615,8 +619,6 @@ const constants = {
     width: 240,
   },
   timing: { // all in msec
-    // backgroundTimeBeforeAutomaticStartMenu: 5000, // beyond this time threshold, put up StartMenu when app is reactivated
-    delayBeforeDeletingProcessedLocations: 2500,
     delayBeforeUsingNewMap: 1000,
     devServerPollTimeout: 90000,
     opacitySliderThrottle: 50, // throttle rate: slider should issue no more than this #/sec of change events

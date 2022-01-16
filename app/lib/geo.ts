@@ -576,39 +576,52 @@ export const Geo = {
         log.trace('processSavedLocations: ignoring locations');
         return;
       }
+      // Insert a bucket at a time instead of all locations at once to avoid blocking the UI thread.
+      const { bucketSize, sleepBetweenSteps } = constants.processSavedLocations;
       const activityId = state.options.currentActivityId;
       const locations = await BackgroundGeolocation.getLocations() as Location[];
       log.info(`processSavedLocations: count: ${locations.length}`);
+
       if (locations.length && activityId) {
-        const locationEvents: LocationEvents = [];
-        for (const location of locations) {
-          if (location.sample) {
-            continue; // ignore sample locations
+        let lastNewEvent: LocationEvent | null = null;
+        while (locations.length) {
+          const locationEvents: LocationEvents = [];
+          const bucketOfLocations = locations.splice(0, bucketSize); // This shrinks the locations array.
+
+          // Process each bucketOfLocations in sequence
+          for (const location of bucketOfLocations) {
+            if (!location.sample) { // ignore sample locations
+              const locationInfo = locationInfoFromLocation(location);
+              const locationEvent = newLocationEvent(locationInfo, activityId);
+              locationEvents.push(locationEvent);
+            }
           }
-          const locationInfo = locationInfoFromLocation(location);
-          const locationEvent = newLocationEvent(locationInfo, activityId);
-          locationEvents.push(locationEvent);
-        }
-        locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
-        // Note use of preventRefresh. refreshActivity is triggered manually below.
-        store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: true }));
-        log.debug(`processSavedLocations added: ${locationEvents.length}`);
+          locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
 
-        // AppAction.geolocation
-        const lastNewEvent = locationEvents[locationEvents.length - 1];
-        const geoloc: GeolocationParams = {
-          locationEvent: lastNewEvent,
-          recheckMapBounds: true,
-          t: new Date(lastNewEvent.t).getTime(),
-        }
-        store.dispatch(newAction(AppAction.geolocation, geoloc));
+          store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: false }));
+          log.debug(`added locationEvents bucket with count: ${locationEvents.length}`);
+          lastNewEvent = locationEvents[locationEvents.length - 1];
 
+          await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
+        }
+        await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
+
+        // Performance note: This does do redundant work by refreshing after each bucket, but it's a pretty fast, linear
+        // operation that animates nicely. TODO How much can the basic insertions can be optimized?
         store.dispatch(newAction(AppAction.refreshActivity, { id: activityId }));
+        await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
 
-        // TODO is there any possibility the above might not have worked and we might be at risk of losing data here?
-        setTimeout(async () => {
-          await Geo.destroyLocations(); // This can be slightly postponed in order to focus on processing the new data.
-        }, constants.timing.delayBeforeDeletingProcessedLocations)
+        if (lastNewEvent) {
+          // AppAction.geolocation
+          const geoloc: GeolocationParams = {
+            locationEvent: lastNewEvent,
+            recheckMapBounds: true,
+            t: new Date(lastNewEvent.t).getTime(),
+          }
+          store.dispatch(newAction(AppAction.geolocation, geoloc));
+        }
+        // TODO any conceivable possibility of data loss here if there was some kind of uncaught error above?
+        await Geo.destroyLocations(); // This can be slightly postponed in order to focus on processing the new data.
       }
     } catch (err) {
       log.error('processSavedLocations', err);

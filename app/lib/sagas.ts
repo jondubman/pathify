@@ -688,17 +688,7 @@ const sagas = {
       trackingActivity,
     } = yield select((state: AppState) => state.flags);
     if (activating) { // Don't do this in the background... might take too long
-      // Experiment: Put up the start menu automatically to give the user the option of ending the activity.
-      // TODO remove this and constants.timing.backgroundTimeBeforeAutomaticStartMenu
-      // let openedStartMenu;
       if (trackingActivity) {
-        // const timestamp_background = yield select((state: AppState) => state.options.timestamp_background);
-        // const timeInBackground = timestamp_background ? utils.now() - timestamp_background : 0;
-        // if (timeInBackground > constants.timing.backgroundTimeBeforeAutomaticStartMenu) {
-        //   yield put(newAction(AppAction.closePanels, { option: 'otherThanStartMenu' }));
-        //   yield put(newAction(AppAction.flagEnable, 'startMenuOpen'));
-        //   openedStartMenu = true;
-        // }
         // Follow user, and jump to NOW mode, when reactivating app while tracking.
         // TODO add flag to make these actions optional?
         yield put(newAction(AppAction.startFollowingUser));

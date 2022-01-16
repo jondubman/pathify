@@ -142,7 +142,9 @@ export default class App extends Component {
 
   handleAppStateChange(newState: string) {
     log.debug('app state change:', newState);
-    store.dispatch(newAction(AppAction.appStateChange, { newState: mapNewStateToAppStateChange[newState] }));
+    store.dispatch(newAction(AppAction.appStateChange, {
+      newState: mapNewStateToAppStateChange[newState]
+    }))
   }
 
   render() {
