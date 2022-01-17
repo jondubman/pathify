@@ -577,7 +577,7 @@ const constants = {
     widthSecondary: 5, // when de-emphasized, like in showSequentialPaths mode
   },
   processSavedLocations: {
-    bucketSize: 100, // How many locations to process at once
+    batchSize: 100, // How many locations to process at once
     sleepBetweenSteps: 10, // ms (timing)
   },
   refTime: {

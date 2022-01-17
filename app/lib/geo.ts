@@ -576,20 +576,47 @@ export const Geo = {
         log.trace('processSavedLocations: ignoring locations');
         return;
       }
-      // Insert a bucket at a time instead of all locations at once to avoid blocking the UI thread.
-      const { bucketSize, sleepBetweenSteps } = constants.processSavedLocations;
+      // Insert a batch at a time instead of all locations at once to avoid blocking the UI thread.
+      const { batchSize, sleepBetweenSteps } = constants.processSavedLocations;
       const activityId = state.options.currentActivityId;
       const locations = await BackgroundGeolocation.getLocations() as Location[];
       log.info(`processSavedLocations: count: ${locations.length}`);
 
-      if (locations.length && activityId) {
-        let lastNewEvent: LocationEvent | null = null;
-        while (locations.length) {
-          const locationEvents: LocationEvents = [];
-          const bucketOfLocations = locations.splice(0, bucketSize); // This shrinks the locations array.
+      await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
 
-          // Process each bucketOfLocations in sequence
-          for (const location of bucketOfLocations) {
+      // Step 1: Preprocess locations, thus:
+      // Shuffle the locations such that there is a big enough sampling at the start to show the basic outline of
+      // the path under most circumstances, if we can't show the completed path immediately.
+      let initialBatch: Location[] = [];
+      const initialBatchInterval = Math.max(1, Math.floor(locations.length / batchSize)); // Integer >= 1
+      let rest: Location[] = [];
+
+      let count = 0;
+      for (const loc of locations) {
+        if (initialBatchInterval > 1 && count % initialBatchInterval > 0) {
+          rest.push(loc);
+        } else {
+          // When count is a multiple of initialBatchInterval, we arrive here. This is best understood with an exanple.
+          // If there are 1200 new locations and the batchSize is 100, the initialBatchInterval will be 12.
+          // This means, we'll sample every 12th location, starting with the first, yielding batchSize (100) locations
+          // in this initialBatch. The rest go into... rest, above.
+          // If, however, there are fewer than batchSize locations to process, everything ends up in this initialBatch.
+          initialBatch.push(loc);
+        }
+        count += 1;
+      }
+      const preprocessedLocations = initialBatch.concat(rest);
+
+      // Step 2: Now that we have preprocessedLocations, process them all, a batch at a time.
+
+      if (preprocessedLocations.length && activityId) {
+        let lastNewEvent: LocationEvent | null = null;
+        while (preprocessedLocations.length) {
+          const locationEvents: LocationEvents = [];
+          const batch = preprocessedLocations.splice(0, batchSize); // This shrinks preprocessedLocations.
+
+          // Process each batch in sequence
+          for (const location of batch) {
             if (!location.sample) { // ignore sample locations
               const locationInfo = locationInfoFromLocation(location);
               const locationEvent = newLocationEvent(locationInfo, activityId);
@@ -599,7 +626,7 @@ export const Geo = {
           locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
 
           store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: false }));
-          log.debug(`added locationEvents bucket with count: ${locationEvents.length}`);
+          log.debug(`added locationEvents count: ${locationEvents.length}`);
           lastNewEvent = locationEvents[locationEvents.length - 1];
 
           await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
