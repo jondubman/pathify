@@ -580,7 +580,8 @@ export const Geo = {
       const { batchSize, sleepBetweenSteps } = constants.processSavedLocations;
       const activityId = state.options.currentActivityId;
       const locations = await BackgroundGeolocation.getLocations() as Location[];
-      log.info(`processSavedLocations: count: ${locations.length}`);
+      const total = locations.length;
+      log.info(`processSavedLocations: total count: ${total}`);
 
       await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
 
@@ -626,7 +627,7 @@ export const Geo = {
           locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
 
           store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: false }));
-          log.debug(`added locationEvents count: ${locationEvents.length}`);
+          log.debug(`added ${locationEvents.length} locationEvents, ${preprocessedLocations.length} remaining`);
           lastNewEvent = locationEvents[locationEvents.length - 1];
 
           await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
