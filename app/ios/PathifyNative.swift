@@ -1,13 +1,11 @@
 import Foundation
 import UIKit
 @objc public class PathifyNative: NSObject {
-  public override init()
-  {
+  public override init() {
     super.init()
   }
 
-  deinit
-  {
+  deinit {
   }
 
   // This just tests whether the Swift bridging header magically summoned via @objc is working.

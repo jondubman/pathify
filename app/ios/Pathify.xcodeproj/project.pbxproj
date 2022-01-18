@@ -27,7 +27,6 @@
 		AB9F7A052585ECB200E80B04 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		ABDD667525897EC700709810 /* PathifyNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDD667425897EC700709810 /* PathifyNative.swift */; };
 		ABDD667625897EC700709810 /* PathifyNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDD667425897EC700709810 /* PathifyNative.swift */; };
-		ABDD6697258980EE00709810 /* PathifyTest-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ABDD6696258980EE00709810 /* PathifyTest-Info.plist */; };
 		ABE839982410C7970051DA47 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE839962410C7960051DA47 /* SnapshotHelper.swift */; };
 		ABFBED682410C61600A2E0D3 /* PathifyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABFBED672410C61600A2E0D3 /* PathifyUITests.swift */; };
 		CE6655D991B9A07596C0379E /* libPods-PathifyTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611ED8D7E0BE091FEA3211C7 /* libPods-PathifyTest.a */; };
@@ -339,7 +338,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1210;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
@@ -353,10 +352,9 @@
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Pathify" */;
 			compatibilityVersion = "Xcode 13.0";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -405,7 +403,6 @@
 			files = (
 				AB05BE6325895B3800F61526 /* LaunchScreen.storyboard in Resources */,
 				AB05BE6425895B3800F61526 /* LaunchScreen.xib in Resources */,
-				ABDD6697258980EE00709810 /* PathifyTest-Info.plist in Resources */,
 				AB05BE6525895B3800F61526 /* Images.xcassets in Resources */,
 				AB05BE6625895B3800F61526 /* SampleData.xcassets in Resources */,
 			);
