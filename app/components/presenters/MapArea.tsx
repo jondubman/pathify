@@ -61,7 +61,7 @@ class MapArea extends Component<MapAreaProps> {
   }
 
   componentDidMount() {
-    Mapbox.setTelemetryEnabled(false); // TODO
+    Mapbox.setTelemetryEnabled(false); // TODO review
   }
 
   getMap(): IMapUtils{

@@ -687,7 +687,8 @@ const sagas = {
       setPaceAfterStart,
       trackingActivity,
     } = yield select((state: AppState) => state.flags);
-    if (activating) { // Don't do this in the background... might take too long
+
+    if (activating) {
       if (trackingActivity) {
         // Follow user, and jump to NOW mode, when reactivating app while tracking.
         // TODO add flag to make these actions optional?
@@ -707,9 +708,6 @@ const sagas = {
       if (!populated) {
         yield put(newAction(AppAction.refreshCache));
       }
-      // if (openedStartMenu) {
-      //     yield put(newAction(AppAction.closePanels));
-      // }
     } else { // not activating
       if (newState === AppStateChange.BACKGROUND || newState == AppStateChange.INACTIVE) {
         yield put(newAction(AppAction.setAppOption, { timestamp_background: utils.now() }))

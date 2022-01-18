@@ -5,8 +5,6 @@ import Label from 'presenters/Label';
 
 interface LabelStateProps {
   alwaysShow: boolean;
-  // TODO this might be part of solving TS error 2741 below
-  // children?: React.ReactNode;
   labelsEnbled: boolean;
 }
 
@@ -35,6 +33,6 @@ const mapDispatchToProps = (dispatch: Function): LabelDispatchProps => {
 const LabelContainer = connect<LabelStateProps, LabelDispatchProps, OwnProps>(
   mapStateToProps as any,
   mapDispatchToProps
-)(Label) as any; // TODO "as any" is not ideal but otherwise getting TS error 2741 which seems to be a rabbit hole
+)(Label);
 
 export default LabelContainer;

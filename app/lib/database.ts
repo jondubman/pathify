@@ -179,7 +179,7 @@ const migration: Realm.MigrationCallback = (oldRealm: Realm, newRealm: Realm): v
       if (oldRealm.objects('Settings').length > 0) {
         const oldSettingsObject = oldRealm.objects('Settings')[0] as SettingsObject;
         // Spread operator is broken in RealmJS... this is the workaround:
-        const keys = Object.keys(oldSettingsObject.toJSON()); // TODO this is ugly but needed for Realm to obtain keys
+        const keys = Object.keys(oldSettingsObject.toJSON()); // TODO ugly but required for Realm to obtain keys
         for (const key of keys) {
           log.debug('migrating settings', key, oldSettingsObject[key]);
           if (oldSettingsObject[key] !== undefined) {

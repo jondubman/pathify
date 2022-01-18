@@ -631,10 +631,7 @@ export const Geo = {
 
           await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
         }
-        await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
-
-        // Performance note: This does do redundant work by refreshing after each bucket, but it's a pretty fast, linear
-        // operation that animates nicely. TODO How much can the basic insertions can be optimized?
+        // Performance note: This does do some redundant work by refreshing after each batch, but each pass is fast.
         store.dispatch(newAction(AppAction.refreshActivity, { id: activityId }));
         await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
 

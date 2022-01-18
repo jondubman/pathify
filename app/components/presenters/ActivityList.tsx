@@ -392,7 +392,7 @@ class ActivityList extends Component<ActivityListProps, ActivityListState> {
           onScroll={this.handleScroll}
           onScrollBeginDrag={this.handleScrollBeginDrag}
           onScrollEndDrag={this.handleScrollEndDrag}
-          onMomentumScrollEnd={this.handleScrollEndDrag /* TODO was experiment */}
+          onMomentumScrollEnd={this.handleScrollEndDrag}
           ref={this.refHandler}
           renderItem={this.renderItem}
           scrollIndicatorInsets={scrollInsets}
