@@ -222,17 +222,17 @@ PODS:
     - React-Core
   - react-native-haptic (1.0.1):
     - React
-  - react-native-mapbox-gl (8.3.0):
+  - react-native-mapbox-gl (8.5.0):
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
     - React-Core
-    - react-native-mapbox-gl/DynamicLibrary (= 8.3.0)
-    - react-native-mapbox-gl/StaticLibraryFixer (= 8.3.0)
-  - react-native-mapbox-gl/DynamicLibrary (8.3.0):
+    - react-native-mapbox-gl/DynamicLibrary (= 8.5.0)
+    - react-native-mapbox-gl/StaticLibraryFixer (= 8.5.0)
+  - react-native-mapbox-gl/DynamicLibrary (8.5.0):
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
     - React-Core
-  - react-native-mapbox-gl/StaticLibraryFixer (8.3.0):
+  - react-native-mapbox-gl/StaticLibraryFixer (8.5.0):
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
     - React-Core
@@ -488,7 +488,7 @@ SPEC CHECKSUMS:
   React-logger: 5d42caeaf0c31a9b29efb33e10e7f7031f958bfd
   react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
   react-native-haptic: d90a0a661333a22cb2b434c7094a65f27aed773d
-  react-native-mapbox-gl: 213954f0d70493af72c6ad1105c4a13bb63b5251
+  react-native-mapbox-gl: eeada731ae51261f9fba5e34726380aa8c4aa13c
   react-native-restart: aaad36f3ed7031daac3565f4a79d67e4f3884a50
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   React-perflogger: 9454d63e7027e0830fa3e527628558160684f5dd
