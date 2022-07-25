@@ -238,7 +238,7 @@ PODS:
     - React-Core
   - react-native-restart (0.0.23):
     - React-Core
-  - react-native-slider (4.2.0):
+  - react-native-slider (4.2.1):
     - React-Core
   - React-perflogger (0.67.1)
   - React-RCTActionSheet (0.67.1):
@@ -313,7 +313,7 @@ PODS:
   - RNBackgroundGeolocation (3.10.0):
     - CocoaLumberjack (~> 3.6.1)
     - React-Core
-  - RNDeviceInfo (8.4.8):
+  - RNDeviceInfo (8.5.1):
     - React-Core
   - RNStaticSafeAreaInsets (2.1.1):
     - React
@@ -490,7 +490,7 @@ SPEC CHECKSUMS:
   react-native-haptic: d90a0a661333a22cb2b434c7094a65f27aed773d
   react-native-mapbox-gl: eeada731ae51261f9fba5e34726380aa8c4aa13c
   react-native-restart: aaad36f3ed7031daac3565f4a79d67e4f3884a50
-  react-native-slider: 37e1cf275dab20d3c015e40969aa9f5c309645a8
+  react-native-slider: 241935e3ea8e47599c317f512f96ee8de607d4cb
   React-perflogger: 9a6172711d9c4c8c7ac0a426717317c3c6ecf85c
   React-RCTActionSheet: ed408b54b08278e6af8a75e08679675041da61ae
   React-RCTAnimation: 0163b497a423a9576a776685c6e3fe276f934758
@@ -506,7 +506,7 @@ SPEC CHECKSUMS:
   RealmJS: de65cc7c3ea041750d66beaa28b30585222c3d94
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
   RNBackgroundGeolocation: 1184aff02a730e243785482561d0b8d9649548a3
-  RNDeviceInfo: 0400a6d0c94186d1120c3cbd97b23abc022187a9
+  RNDeviceInfo: 8d4177859b062334835962799460528869a487fb
   RNStaticSafeAreaInsets: 6103cf09647fa427186d30f67b0f5163c1ae8252
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
@@ -514,4 +514,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: ce1b732bdf9ce68d2bbfa830b1b9f8994b5658a2
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

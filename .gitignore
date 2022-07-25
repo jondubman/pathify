@@ -1,2 +1,3 @@
+.watchman*
 node_modules/
 scripts/
