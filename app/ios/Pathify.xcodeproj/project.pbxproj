@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		135E025C8B315B3DE19105A5 /* libPods-PathifyUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A16E51C24C6EE21DBB5D5A /* libPods-PathifyUITests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		42B4AF824F4E681F9CE34826 /* libPods-Pathify.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B8323FCF6B97522D803F97 /* libPods-Pathify.a */; };
+		5E770FC77EDAE74F98C5E9A5 /* libPods-Pathify.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832D698B72A95550C6C08F3B /* libPods-Pathify.a */; };
 		85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC774D0FF4A84A63B4A92DE9 /* libz.tbd */; };
+		87DAE9924093329BAB4A558C /* libPods-PathifyTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D92454352FCC1C591D8C1A /* libPods-PathifyTest.a */; };
+		8E5E043C7873FB7A1E28239B /* libPods-PathifyUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543FA5E913DDCC9F611B234F /* libPods-PathifyUITests.a */; };
 		AB05BE5B25895B3800F61526 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		AB05BE5D25895B3800F61526 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		AB05BE5F25895B3800F61526 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4C23D5B4554C66A054E423 /* libc++.tbd */; };
@@ -29,7 +30,6 @@
 		ABDD667625897EC700709810 /* PathifyNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDD667425897EC700709810 /* PathifyNative.swift */; };
 		ABE839982410C7970051DA47 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE839962410C7960051DA47 /* SnapshotHelper.swift */; };
 		ABFBED682410C61600A2E0D3 /* PathifyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABFBED672410C61600A2E0D3 /* PathifyUITests.swift */; };
-		CE6655D991B9A07596C0379E /* libPods-PathifyTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611ED8D7E0BE091FEA3211C7 /* libPods-PathifyTest.a */; };
 		F789174928D04A6FA7655088 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4C23D5B4554C66A054E423 /* libc++.tbd */; };
 /* End PBXBuildFile section */
 
@@ -84,20 +84,20 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		03659F535B28F812BA829511 /* Pods-Pathify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.release.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Pathify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pathify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Pathify/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Pathify/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Pathify/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Pathify/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Pathify/main.m; sourceTree = "<group>"; };
+		2636874F2C944349329D7B74 /* Pods-Pathify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.debug.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.debug.xcconfig"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		38CE0B7DD5314491A6525F89 /* libRealmReact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRealmReact.a; sourceTree = "<group>"; };
-		5B55ECEB104E05FEF3A5EBA8 /* Pods-PathifyTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyTest.release.xcconfig"; path = "Target Support Files/Pods-PathifyTest/Pods-PathifyTest.release.xcconfig"; sourceTree = "<group>"; };
-		611ED8D7E0BE091FEA3211C7 /* libPods-PathifyTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PathifyTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EB398FE8D8889AB0F68998B /* Pods-PathifyTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyTest.debug.xcconfig"; path = "Target Support Files/Pods-PathifyTest/Pods-PathifyTest.debug.xcconfig"; sourceTree = "<group>"; };
-		7B96BD84FF819616415F6AE2 /* Pods-PathifyUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyUITests.debug.xcconfig"; path = "Target Support Files/Pods-PathifyUITests/Pods-PathifyUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		8059A1F3DBF76255A1CCACAD /* Pods-Pathify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.debug.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.debug.xcconfig"; sourceTree = "<group>"; };
+		543FA5E913DDCC9F611B234F /* libPods-PathifyUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PathifyUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AAA3618CE3FD838FD164CB2 /* Pods-PathifyUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyUITests.release.xcconfig"; path = "Target Support Files/Pods-PathifyUITests/Pods-PathifyUITests.release.xcconfig"; sourceTree = "<group>"; };
+		832D698B72A95550C6C08F3B /* libPods-Pathify.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pathify.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6D92454352FCC1C591D8C1A /* libPods-PathifyTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PathifyTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7BE8E456C3F2B487EF974BF /* Pods-PathifyTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyTest.release.xcconfig"; path = "Target Support Files/Pods-PathifyTest/Pods-PathifyTest.release.xcconfig"; sourceTree = "<group>"; };
 		AB05BE6E25895B3800F61526 /* PathifyTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PathifyTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		AB666CE524F09F1E00063DA1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -112,10 +112,10 @@
 		ABFBED672410C61600A2E0D3 /* PathifyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathifyUITests.swift; sourceTree = "<group>"; };
 		ABFBED692410C61600A2E0D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC774D0FF4A84A63B4A92DE9 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		D2A16E51C24C6EE21DBB5D5A /* libPods-PathifyUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PathifyUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E6B8323FCF6B97522D803F97 /* libPods-Pathify.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pathify.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C407D43FD5A9730EC53DD781 /* Pods-PathifyUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyUITests.debug.xcconfig"; path = "Target Support Files/Pods-PathifyUITests/Pods-PathifyUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D556AAE1BA7B7A80DDE46A7E /* Pods-PathifyTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyTest.debug.xcconfig"; path = "Target Support Files/Pods-PathifyTest/Pods-PathifyTest.debug.xcconfig"; sourceTree = "<group>"; };
 		EE4C23D5B4554C66A054E423 /* libc++.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		FA77D29ECAD56DC3F9D5B7CB /* Pods-PathifyUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyUITests.release.xcconfig"; path = "Target Support Files/Pods-PathifyUITests/Pods-PathifyUITests.release.xcconfig"; sourceTree = "<group>"; };
+		F8E98619FF1BCD39D216D136 /* Pods-Pathify.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.release.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,7 +125,7 @@
 			files = (
 				F789174928D04A6FA7655088 /* libc++.tbd in Frameworks */,
 				85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */,
-				42B4AF824F4E681F9CE34826 /* libPods-Pathify.a in Frameworks */,
+				5E770FC77EDAE74F98C5E9A5 /* libPods-Pathify.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +135,7 @@
 			files = (
 				AB05BE5F25895B3800F61526 /* libc++.tbd in Frameworks */,
 				AB05BE6025895B3800F61526 /* libz.tbd in Frameworks */,
-				CE6655D991B9A07596C0379E /* libPods-PathifyTest.a in Frameworks */,
+				87DAE9924093329BAB4A558C /* libPods-PathifyTest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +143,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				135E025C8B315B3DE19105A5 /* libPods-PathifyUITests.a in Frameworks */,
+				8E5E043C7873FB7A1E28239B /* libPods-PathifyUITests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,9 +176,9 @@
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				EE4C23D5B4554C66A054E423 /* libc++.tbd */,
 				BC774D0FF4A84A63B4A92DE9 /* libz.tbd */,
-				E6B8323FCF6B97522D803F97 /* libPods-Pathify.a */,
-				611ED8D7E0BE091FEA3211C7 /* libPods-PathifyTest.a */,
-				D2A16E51C24C6EE21DBB5D5A /* libPods-PathifyUITests.a */,
+				832D698B72A95550C6C08F3B /* libPods-Pathify.a */,
+				A6D92454352FCC1C591D8C1A /* libPods-PathifyTest.a */,
+				543FA5E913DDCC9F611B234F /* libPods-PathifyUITests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -186,12 +186,12 @@
 		779C8486C9E12252034CC719 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8059A1F3DBF76255A1CCACAD /* Pods-Pathify.debug.xcconfig */,
-				03659F535B28F812BA829511 /* Pods-Pathify.release.xcconfig */,
-				6EB398FE8D8889AB0F68998B /* Pods-PathifyTest.debug.xcconfig */,
-				5B55ECEB104E05FEF3A5EBA8 /* Pods-PathifyTest.release.xcconfig */,
-				7B96BD84FF819616415F6AE2 /* Pods-PathifyUITests.debug.xcconfig */,
-				FA77D29ECAD56DC3F9D5B7CB /* Pods-PathifyUITests.release.xcconfig */,
+				2636874F2C944349329D7B74 /* Pods-Pathify.debug.xcconfig */,
+				F8E98619FF1BCD39D216D136 /* Pods-Pathify.release.xcconfig */,
+				D556AAE1BA7B7A80DDE46A7E /* Pods-PathifyTest.debug.xcconfig */,
+				A7BE8E456C3F2B487EF974BF /* Pods-PathifyTest.release.xcconfig */,
+				C407D43FD5A9730EC53DD781 /* Pods-PathifyUITests.debug.xcconfig */,
+				7AAA3618CE3FD838FD164CB2 /* Pods-PathifyUITests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -271,13 +271,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Pathify" */;
 			buildPhases = (
-				613FA9699B49E0E279C3284A /* [CP] Check Pods Manifest.lock */,
+				4143FB4F82C38608C91C6DD6 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				D312569BF69658D0A97AE252 /* [CP] Embed Pods Frameworks */,
-				38492DBE5EDD5783B81D8071 /* [CP] Copy Pods Resources */,
+				6BB56DBD91D84B394D04F682 /* [CP] Embed Pods Frameworks */,
+				00FFF5C04D03E8ED4E272303 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 				AB5CD68E258478E900509FA3 /* PBXBuildRule */,
@@ -293,13 +293,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB05BE6B25895B3800F61526 /* Build configuration list for PBXNativeTarget "PathifyTest" */;
 			buildPhases = (
-				DBC95F7DB9FDC13A09534AF5 /* [CP] Check Pods Manifest.lock */,
+				05C51BE15CAB97B9F7FFDC20 /* [CP] Check Pods Manifest.lock */,
 				AB05BE5A25895B3800F61526 /* Sources */,
 				AB05BE5E25895B3800F61526 /* Frameworks */,
 				AB05BE6225895B3800F61526 /* Resources */,
 				AB05BE6725895B3800F61526 /* Bundle React Native code and images */,
-				057C05818180B112DEED6542 /* [CP] Embed Pods Frameworks */,
-				C36D4B1044D2B9C3FD5492F2 /* [CP] Copy Pods Resources */,
+				16C0883A40BFDA1E58A74CAB /* [CP] Embed Pods Frameworks */,
+				840AA70F849A49C2A0454D24 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 				AB05BE6A25895B3800F61526 /* PBXBuildRule */,
@@ -315,7 +315,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = ABFBED6F2410C61600A2E0D3 /* Build configuration list for PBXNativeTarget "PathifyUITests" */;
 			buildPhases = (
-				857600CA7BBE6000969DFEA9 /* [CP] Check Pods Manifest.lock */,
+				4CA8FF56E1C2E165673B9E2C /* [CP] Check Pods Manifest.lock */,
 				ABFBED612410C61600A2E0D3 /* Sources */,
 				ABFBED622410C61600A2E0D3 /* Frameworks */,
 				ABFBED632410C61600A2E0D3 /* Resources */,
@@ -434,24 +434,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		057C05818180B112DEED6542 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		38492DBE5EDD5783B81D8071 /* [CP] Copy Pods Resources */ = {
+		00FFF5C04D03E8ED4E272303 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -468,7 +451,46 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Pathify/Pods-Pathify-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		613FA9699B49E0E279C3284A /* [CP] Check Pods Manifest.lock */ = {
+		05C51BE15CAB97B9F7FFDC20 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PathifyTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		16C0883A40BFDA1E58A74CAB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4143FB4F82C38608C91C6DD6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -490,7 +512,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		857600CA7BBE6000969DFEA9 /* [CP] Check Pods Manifest.lock */ = {
+		4CA8FF56E1C2E165673B9E2C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -512,38 +534,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AB05BE6725895B3800F61526 /* Bundle React Native code and images */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Bundle React Native code and images";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
-		};
-		C36D4B1044D2B9C3FD5492F2 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D312569BF69658D0A97AE252 /* [CP] Embed Pods Frameworks */ = {
+		6BB56DBD91D84B394D04F682 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -560,27 +551,36 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Pathify/Pods-Pathify-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DBC95F7DB9FDC13A09534AF5 /* [CP] Check Pods Manifest.lock */ = {
+		840AA70F849A49C2A0454D24 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-PathifyTest-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PathifyTest/Pods-PathifyTest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		AB05BE6725895B3800F61526 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -632,7 +632,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8059A1F3DBF76255A1CCACAD /* Pods-Pathify.debug.xcconfig */;
+			baseConfigurationReference = 2636874F2C944349329D7B74 /* Pods-Pathify.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -679,7 +679,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03659F535B28F812BA829511 /* Pods-Pathify.release.xcconfig */;
+			baseConfigurationReference = F8E98619FF1BCD39D216D136 /* Pods-Pathify.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -850,7 +850,7 @@
 		};
 		AB05BE6C25895B3800F61526 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6EB398FE8D8889AB0F68998B /* Pods-PathifyTest.debug.xcconfig */;
+			baseConfigurationReference = D556AAE1BA7B7A80DDE46A7E /* Pods-PathifyTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -901,7 +901,7 @@
 		};
 		AB05BE6D25895B3800F61526 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B55ECEB104E05FEF3A5EBA8 /* Pods-PathifyTest.release.xcconfig */;
+			baseConfigurationReference = A7BE8E456C3F2B487EF974BF /* Pods-PathifyTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -952,7 +952,7 @@
 		};
 		ABFBED6C2410C61600A2E0D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B96BD84FF819616415F6AE2 /* Pods-PathifyUITests.debug.xcconfig */;
+			baseConfigurationReference = C407D43FD5A9730EC53DD781 /* Pods-PathifyUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -987,7 +987,7 @@
 		};
 		ABFBED6D2410C61600A2E0D3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA77D29ECAD56DC3F9D5B7CB /* Pods-PathifyUITests.release.xcconfig */;
+			baseConfigurationReference = 7AAA3618CE3FD838FD164CB2 /* Pods-PathifyUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
