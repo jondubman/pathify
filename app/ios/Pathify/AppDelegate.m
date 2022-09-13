@@ -53,10 +53,11 @@ static void InitializeFlipper(UIApplication *application) {
 
 // https://facebook.github.io/react-native/docs/running-on-device
 #ifdef DEBUG
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+  
   
   // TODO warning: bridge currently unused
   RCTBridge *bridge = [[RCTBridge alloc] initWithBundleURL:jsCodeLocation
@@ -120,7 +121,7 @@ static void InitializeFlipper(UIApplication *application) {
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif

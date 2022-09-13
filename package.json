@@ -8,5 +8,8 @@
   "repository": "git@github.com:jondubman/pathify.git",
   "author": "jondubman <jon@dubman.com>",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@react-native-community/cli": "7.0.3",
+    "eslint": "^8.23.1"
+  }
 }
