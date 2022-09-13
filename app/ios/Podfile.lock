@@ -218,7 +218,7 @@ PODS:
   - React-jsinspector (0.67.1)
   - React-logger (0.67.1):
     - glog
-  - react-native-get-random-values (1.7.2):
+  - react-native-get-random-values (1.8.0):
     - React-Core
   - react-native-haptic (1.0.1):
     - React
@@ -236,7 +236,7 @@ PODS:
     - Mapbox-iOS-SDK (~> 6.2.1)
     - React
     - React-Core
-  - react-native-restart (0.0.23):
+  - react-native-restart (0.0.24):
     - React-Core
   - react-native-slider (4.2.1):
     - React-Core
@@ -315,10 +315,10 @@ PODS:
     - React-Core
   - RNDeviceInfo (8.5.1):
     - React-Core
-  - RNStaticSafeAreaInsets (2.1.1):
-    - React
-  - RNSVG (12.1.1):
-    - React
+  - RNStaticSafeAreaInsets (2.2.0):
+    - React-Core
+  - RNSVG (13.1.0):
+    - React-Core
   - RNVectorIcons (7.1.0):
     - React
   - Yoga (1.14.0)
@@ -486,10 +486,10 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 1af5de75a4c834c05d53a77c1512e5aa6c18412f
   React-jsinspector: ab80bcdb02f28cdfc0dbbaea6db1241565d59002
   React-logger: b08f354e4c928ff794ca477347fea0922aaf11c3
-  react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
+  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-haptic: d90a0a661333a22cb2b434c7094a65f27aed773d
   react-native-mapbox-gl: eeada731ae51261f9fba5e34726380aa8c4aa13c
-  react-native-restart: aaad36f3ed7031daac3565f4a79d67e4f3884a50
+  react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-slider: 241935e3ea8e47599c317f512f96ee8de607d4cb
   React-perflogger: 9a6172711d9c4c8c7ac0a426717317c3c6ecf85c
   React-RCTActionSheet: ed408b54b08278e6af8a75e08679675041da61ae
@@ -507,8 +507,8 @@ SPEC CHECKSUMS:
   RNBackgroundFetch: 8dbb63141792f1473e863a0797ffbd5d987af2fc
   RNBackgroundGeolocation: 1184aff02a730e243785482561d0b8d9649548a3
   RNDeviceInfo: 8d4177859b062334835962799460528869a487fb
-  RNStaticSafeAreaInsets: 6103cf09647fa427186d30f67b0f5163c1ae8252
-  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
+  RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
+  RNSVG: 1153e8eeb34c788841016c517dba9f57f20b762f
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   Yoga: 5cbf25add73edb290e1067017690f7ebf56c5468
 
