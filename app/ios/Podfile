@@ -15,7 +15,7 @@ def setupPathifyPods
 
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
-  # use_frameworks! :linkage => :static
+  use_frameworks! :linkage => :static
   # use_modular_headers!
 
   # from https://stackoverflow.com/questions/13208202/ignore-xcode-warnings-when-using-cocoapods/13209057#13209057

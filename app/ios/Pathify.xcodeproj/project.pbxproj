@@ -10,9 +10,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		5E770FC77EDAE74F98C5E9A5 /* libPods-Pathify.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832D698B72A95550C6C08F3B /* libPods-Pathify.a */; };
+		7BD503D67C11459F2E053F86 /* Pods_PathifyTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40E1568539A4A2ACC03F1263 /* Pods_PathifyTest.framework */; };
 		85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC774D0FF4A84A63B4A92DE9 /* libz.tbd */; };
-		87DAE9924093329BAB4A558C /* libPods-PathifyTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D92454352FCC1C591D8C1A /* libPods-PathifyTest.a */; };
 		8E5E043C7873FB7A1E28239B /* libPods-PathifyUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 543FA5E913DDCC9F611B234F /* libPods-PathifyUITests.a */; };
 		AB05BE5B25895B3800F61526 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		AB05BE5D25895B3800F61526 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -30,6 +29,7 @@
 		ABDD667625897EC700709810 /* PathifyNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDD667425897EC700709810 /* PathifyNative.swift */; };
 		ABE839982410C7970051DA47 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE839962410C7960051DA47 /* SnapshotHelper.swift */; };
 		ABFBED682410C61600A2E0D3 /* PathifyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABFBED672410C61600A2E0D3 /* PathifyUITests.swift */; };
+		EEAAF418A69F75242846BC09 /* Pods_Pathify.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5360131E78D60F7C833F6ED7 /* Pods_Pathify.framework */; };
 		F789174928D04A6FA7655088 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EE4C23D5B4554C66A054E423 /* libc++.tbd */; };
 /* End PBXBuildFile section */
 
@@ -93,10 +93,10 @@
 		2636874F2C944349329D7B74 /* Pods-Pathify.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pathify.debug.xcconfig"; path = "Target Support Files/Pods-Pathify/Pods-Pathify.debug.xcconfig"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		38CE0B7DD5314491A6525F89 /* libRealmReact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRealmReact.a; sourceTree = "<group>"; };
+		40E1568539A4A2ACC03F1263 /* Pods_PathifyTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PathifyTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5360131E78D60F7C833F6ED7 /* Pods_Pathify.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pathify.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		543FA5E913DDCC9F611B234F /* libPods-PathifyUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PathifyUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AAA3618CE3FD838FD164CB2 /* Pods-PathifyUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyUITests.release.xcconfig"; path = "Target Support Files/Pods-PathifyUITests/Pods-PathifyUITests.release.xcconfig"; sourceTree = "<group>"; };
-		832D698B72A95550C6C08F3B /* libPods-Pathify.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pathify.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6D92454352FCC1C591D8C1A /* libPods-PathifyTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PathifyTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7BE8E456C3F2B487EF974BF /* Pods-PathifyTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PathifyTest.release.xcconfig"; path = "Target Support Files/Pods-PathifyTest/Pods-PathifyTest.release.xcconfig"; sourceTree = "<group>"; };
 		AB05BE6E25895B3800F61526 /* PathifyTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PathifyTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB10087224F5B0EE003D31C8 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 			files = (
 				F789174928D04A6FA7655088 /* libc++.tbd in Frameworks */,
 				85140DE50F794047B0FF06A9 /* libz.tbd in Frameworks */,
-				5E770FC77EDAE74F98C5E9A5 /* libPods-Pathify.a in Frameworks */,
+				EEAAF418A69F75242846BC09 /* Pods_Pathify.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +135,7 @@
 			files = (
 				AB05BE5F25895B3800F61526 /* libc++.tbd in Frameworks */,
 				AB05BE6025895B3800F61526 /* libz.tbd in Frameworks */,
-				87DAE9924093329BAB4A558C /* libPods-PathifyTest.a in Frameworks */,
+				7BD503D67C11459F2E053F86 /* Pods_PathifyTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,9 +176,9 @@
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				EE4C23D5B4554C66A054E423 /* libc++.tbd */,
 				BC774D0FF4A84A63B4A92DE9 /* libz.tbd */,
-				832D698B72A95550C6C08F3B /* libPods-Pathify.a */,
-				A6D92454352FCC1C591D8C1A /* libPods-PathifyTest.a */,
 				543FA5E913DDCC9F611B234F /* libPods-PathifyUITests.a */,
+				5360131E78D60F7C833F6ED7 /* Pods_Pathify.framework */,
+				40E1568539A4A2ACC03F1263 /* Pods_PathifyTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
