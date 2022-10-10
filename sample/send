@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/zsh
 
-# This bash script is used to communicate with any running app instance for which remote debugging is enabled.
+# This zsh script is used to communicate with any running app instance for which remote debugging is enabled.
 # It is intended to be run from the sample directory.
 
 # The clientAlias mechanism is just for convenience; a valid clientId is always sufficient to send messages to an app.
