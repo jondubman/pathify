@@ -247,7 +247,7 @@ PODS:
     - React-Core
   - react-native-restart (0.0.24):
     - React-Core
-  - react-native-slider (4.3.1):
+  - react-native-slider (4.4.0):
     - React-Core
   - React-perflogger (0.68.3)
   - React-RCTActionSheet (0.68.3):
@@ -503,7 +503,7 @@ SPEC CHECKSUMS:
   react-native-haptic: d90a0a661333a22cb2b434c7094a65f27aed773d
   react-native-mapbox-gl: eeada731ae51261f9fba5e34726380aa8c4aa13c
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
-  react-native-slider: d3ae4270cf8a8cc45a69912db0cc42b151560d5a
+  react-native-slider: d2938a12c4e439a227c70eec65d119136eb4aeb5
   React-perflogger: fa15d1d29ff7557ee25ea48f7f59e65896fb3215
   React-RCTActionSheet: e83515333352a3cc19c146e3c7a63a8a9269da8f
   React-RCTAnimation: 8032daa2846e3db7ac28c4c5a207d0bfb5e1e3ad
