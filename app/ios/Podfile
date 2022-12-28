@@ -6,7 +6,7 @@ platform :ios, '14.1'
 
 # ignore all warnings from all pods
 # TODO really? Review.
-inhibit_all_warnings!
+# inhibit_all_warnings!
 
 # ENV['REACT_NATIVE_MAPBOX_MAPBOX_IOS_VERSION'] = '~> 6.2.1';
 $ReactNativeMapboxGLIOSVersion = "~> 6.2.1"
