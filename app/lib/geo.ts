@@ -9,6 +9,7 @@ import BackgroundGeolocation, {
   // State,
   Config,
   Location,
+  LocationAuthorizationRequest,
   LocationError,
   // Geofence,
   GeofenceEvent,
@@ -54,7 +55,7 @@ const geoconfig_default: Config = {
   // (device moving at highway speeds -> locations returned at ~1/km)
   disableElasticity: true, // default false
   // stopAfterElapsedMinutes: 30,
-  stopOnStationary: false, // default false
+  // stopOnStationary: false, // default false
 
   // ----------------------------
   // Activity Recognition Options
@@ -84,16 +85,16 @@ const geoconfig_default: Config = {
   // Only 20 geofences can be simultaneously monitored on iOS, and 100 on Android.
   // Plugin allows arbitrary # of geofences (thousands even). Plugin stores in its database
   // database and uses spatial queries to determine which 20 or 100 geofences to activate.
-  geofenceProximityRadius: 1000, // meters
+  // geofenceProximityRadius: 1000, // meters
 
   // Set false to disable triggering a geofence immediately if device is already inside it.
-  geofenceInitialTriggerEntry: true, // default true
+  // geofenceInitialTriggerEntry: true, // default true
 
   // -----------------------
   // Logging & Debug options
   // -----------------------
   // https://github.com/transistorsoft/react-native-background-geolocation/wiki/Debug-Sounds
-  debug: false, // with debug sounds, default false
+  // debug: false, // with debug sounds, default false
   // iOS NOTE: In addition, you must manually enable the Audio and Airplay background mode
   // in Background Capabilities to hear these debugging sounds
 
@@ -103,8 +104,8 @@ const geoconfig_default: Config = {
   // when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   // stationaryRadius: 1,
-  useSignificantChangesOnly: false, // default false
-  locationAuthorizationRequest: 'Always', // either Always or WhenInUse
+  // useSignificantChangesOnly: false, // default false
+  locationAuthorizationRequest: 'Always' as LocationAuthorizationRequest, // either Always or WhenInUse
   // locationAuthorizationAlert: {}, // default {} TODO can customize
 
   // https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype
@@ -112,7 +113,7 @@ const geoconfig_default: Config = {
   activityType: BackgroundGeolocation.ACTIVITY_TYPE_OTHER,
   // activityType: BackgroundGeolocation.ACTIVITY_TYPE_FITNESS, // TODO
   // Note plugin is highly optimized for motion-activity-updates. Disabling these is not advised.
-  disableMotionActivityUpdates: false, // default false
+  // disableMotionActivityUpdates: false, // default false
 
   // Configure the initial tracking- state after BackgroundGeolocation.start is called.
   // The plugin will immediately enter the tracking-state, bypassing the stationary state.
@@ -140,7 +141,6 @@ const geoconfig_default: Config = {
 const geoconfig_tracking: Config = {
   ...geoconfig_default,
 
-  desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_NAVIGATION, // higher than DESIRED_ACCURACY_HIGH, on iOS
   disableStopDetection: false, // using false is vastly more power-efficient!
   distanceFilter: 1, // meters device must move to generate update event, default 10
   forceReloadOnBoot: true,
@@ -153,7 +153,6 @@ const geoconfig_tracking: Config = {
   // stationaryRadius: when stopped, the minimum distance (meters) the device must move beyond the stationary location
   // for aggressive background-tracking to engage (default 25)
   stationaryRadius: 1, // meters
-  startOnBoot: true, // set to true to enable background-tracking after the device reboots
   stopDetectionDelay: 10, // Allows the iOS stop-detection system to be delayed from activating after becoming still
   stopTimeout: 10, // Minutes to wait in moving state with no movement before considering the device stationary
 
@@ -352,18 +351,21 @@ export const Geo = {
       if (utils.appInBackground()) {
         config = geoconfig_tracking_background;
       }
-      BackgroundGeolocation.ready(config,
-      pluginState => {
-        if (pluginState.enabled) {
-          log.trace('BackgroundGeolocation configured and ready', pluginState);
+      BackgroundGeolocation.ready(
+        config,
+        pluginState => {
+          if (pluginState.enabled) {
+            log.trace('BackgroundGeolocation configured and ready', pluginState);
+          }
+          // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
+          log.trace(`BackgroundGeolocation didLaunchInBackground ${pluginState.didLaunchInBackground}`);
+          BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
+          return pluginState.didLaunchInBackground;
+        }, err => {
+          log.error('BackgroundGeolocation failed to configure', err);
         }
-        // https://transistorsoft.github.io/react-native-background-geolocation/interfaces/_react_native_background_geolocation_.state.html#didlaunchinbackground
-        log.trace(`BackgroundGeolocation didLaunchInBackground ${pluginState.didLaunchInBackground}`);
-        BackgroundGeolocation.getCurrentPosition({}, Geo.onLocation); // fetch an initial location
-        return pluginState.didLaunchInBackground;
-      }, err => {
-        log.error('BackgroundGeolocation failed to configure', err);
-      })
+      )
+      log.trace('BackgroundGeolocation.ready completed');
     } catch (err) {
       log.error('BackgroundGeolocation exception', err);
     }
@@ -420,10 +422,14 @@ export const Geo = {
   setConfig: async (tracking: boolean = false, background: boolean = false) => {
     try {
       const config = tracking ? (background ? geoconfig_tracking_background : geoconfig_tracking) : geoconfig_default;
-      log.trace(`Geo.setConfig tracking: ${tracking}, background: ${background}`);
-      await BackgroundGeolocation.setConfig(config);
+      log.trace(`Geo.setConfig tracking: ${tracking}, background: ${background}, config: ${JSON.stringify(config)}`);
+      BackgroundGeolocation.setConfig(
+        config,
+      ).then(() => {
+        log.trace(`Geo.setConfig done`);
+      })
     } catch (err) {
-      log.error('geo setConfig', err);
+      log.error('Geo.setConfig', err);
     }
   },
 

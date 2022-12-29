@@ -10,8 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@fortawesome/free-brands-svg-icons": "^5.15.4",
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@react-native-community/slider": "^4.3.1",
     "@react-native-mapbox-gl/maps": "8.5.0",
     "@turf/distance": "^6.0.1",
@@ -35,7 +35,7 @@
     "react-native": "0.68.3",
     "react-native-background-fetch": "4.1.7",
     "react-native-background-geolocation": "4.9.4",
-    "react-native-device-info": "^8.4.8",
+    "react-native-device-info": "^10.3.0",
     "react-native-dotenv": "0.2.0",
     "react-native-get-random-values": "^1.8.0",
     "react-native-haptic": "^1.0.1",

@@ -694,12 +694,15 @@ const sagas = {
         // TODO add flag to make these actions optional?
         yield put(newAction(AppAction.startFollowingUser));
         yield put(newAction(AppAction.jumpToNow));
+
+        yield call(log.trace, 'Geo.setConfig trace 1');
+        yield call(Geo.setConfig, trackingActivity, false); // background false, meaning foreground
+        yield call(log.trace, 'Geo.setConfig trace 2');
       }
       // const count = yield call(Geo.countLocations); // TODO use count?
       if (!recoveryMode) {
         yield call(Geo.processSavedLocations); // Let's get this started ASAP.
       }
-      yield call(Geo.setConfig, trackingActivity, false); // background false, meaning foreground
       if (setPaceAfterStart && trackingActivity) {
         yield call(Geo.changePace, true, () => {}); // manually set pace to moving when activating TODO review
       }
@@ -711,7 +714,9 @@ const sagas = {
     } else { // not activating
       if (newState === AppStateChange.BACKGROUND || newState == AppStateChange.INACTIVE) {
         yield put(newAction(AppAction.setAppOption, { timestamp_background: utils.now() }))
+        yield call(log.trace, 'Geo.setConfig trace 3');
         yield call(Geo.setConfig, trackingActivity, true); // background true
+        yield call(log.trace, 'Geo.setConfig trace 4');
       }
     }
   },
@@ -2010,7 +2015,9 @@ const sagas = {
         yield put(newAction(AppAction.flagEnable, 'trackingActivity'));
         yield call(Vibration.vibrate, constants.timing.vibration);
         const background = yield select((state: AppState) => !!(state.options.appState === AppStateChange.BACKGROUND));
+        yield call(log.trace, 'Geo.setConfig trace 5');
         yield call(Geo.setConfig, true, background);
+        yield call(log.trace, 'Geo.setConfig trace 6');
         const now = yield call(utils.now);
         let activityId: string;
         if (continueActivityId) {

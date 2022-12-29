@@ -18,6 +18,7 @@
     "commander": "^6.2.0",
     "get-stdin": "^8.0.0",
     "json5": "^2.2.2",
+    "minimist": "^1.2.7",
     "promisify-child-process": "^4.1.1"
   }
 }
