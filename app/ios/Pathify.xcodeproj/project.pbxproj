@@ -636,13 +636,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 84;
+				CURRENT_PROJECT_VERSION = 86;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(SRCROOT)/../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.xcframework/ios-arm64_i386_x86_64-simulator",
 					"$(inherited)",
@@ -685,13 +683,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 84;
+				CURRENT_PROJECT_VERSION = 86;
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(SRCROOT)/../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.xcframework/ios-arm64_i386_x86_64-simulator",
 					"$(inherited)",
