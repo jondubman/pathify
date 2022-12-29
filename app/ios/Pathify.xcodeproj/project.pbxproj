@@ -641,6 +641,9 @@
 				DEVELOPMENT_TEAM = KDB2MK77BH;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(SRCROOT)/../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.xcframework/ios-arm64_i386_x86_64-simulator",
 					"$(inherited)",
 				);
@@ -687,6 +690,9 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+				);
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = (
 					"$(SRCROOT)/../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.xcframework/ios-arm64_i386_x86_64-simulator",
 					"$(inherited)",
 				);
