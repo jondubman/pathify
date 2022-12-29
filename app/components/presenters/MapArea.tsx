@@ -142,7 +142,7 @@ class MapArea extends Component<MapAreaProps> {
               styleURL={mapStyleURL}
               zoomEnabled={true}
             >
-              <Mapbox.Camera
+              {initialBounds ? <Mapbox.Camera
                 animationDuration={0}
                 followUserLocation={false}
                 bounds={{
@@ -155,7 +155,7 @@ class MapArea extends Component<MapAreaProps> {
                 heading={initialHeading}
                 zoomLevel={initialZoomLevel}
                 ref={camera => { this._camera = camera }}
-              />
+              /> : null}
               <MapDimmerContainer />
               <PathsContainer />
               <PulsarsContainer />
