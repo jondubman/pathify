@@ -7,7 +7,10 @@ import React, {
   PureComponent,
 } from 'react';
 
-import Mapbox from '@react-native-mapbox-gl/maps';
+import {
+  FillLayer,
+  ShapeSource,
+} from '@rnmapbox/maps';
 
 import { MapDimmerProps } from 'containers/MapDimmerContainer';
 import constants from 'lib/constants';
@@ -51,9 +54,9 @@ class MapDimmer extends PureComponent<MapDimmerProps> {
       },
     }
     return (
-      <Mapbox.ShapeSource id={'dimmerShape'} key='dimmerShape' shape={this.dimmerShape}>
-        <Mapbox.FillLayer id={'dimmerLayer'} key='dimmerFill' style={dimmerStyle} />
-      </Mapbox.ShapeSource>
+      <ShapeSource id={'dimmerShape'} key='dimmerShape' shape={this.dimmerShape}>
+        <FillLayer id={'dimmerLayer'} key='dimmerFill' style={dimmerStyle} />
+      </ShapeSource>
     )
   }
 }

@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 
-import Mapbox from '@react-native-mapbox-gl/maps';
+import Mapbox from '@rnmapbox/maps';
 
 import constants from 'lib/constants';
 import { LonLat } from 'lib/locations';

@@ -7,11 +7,10 @@ import {
   View,
 } from 'react-native';
 
-// https://github.com/react-native-mapbox-gl/maps/blob/master/docs/MapView.md
-import Mapbox, {
+import {
   CameraSettings,
-  RegionPayload
-} from '@react-native-mapbox-gl/maps';
+  RegionPayload,
+} from '@rnmapbox/maps';
 
 export interface MapRegionUpdate {
   bounds: LonLat[];
@@ -20,6 +19,7 @@ export interface MapRegionUpdate {
 }
 
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
+import Mapbox from '@rnmapbox/maps';
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 import { MapAreaProps } from 'containers/MapAreaContainer';

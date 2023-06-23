@@ -5,7 +5,7 @@ import React, {
   Fragment,
 } from 'react';
 
-import Mapbox from '@react-native-mapbox-gl/maps';
+import Mapbox from '@rnmapbox/maps';
 
 import { PathsProps } from 'containers/PathsContainer';
 import constants, { withOpacity } from 'lib/constants';
