@@ -317,6 +317,8 @@ PODS:
   - RNBackgroundGeolocation (4.9.4):
     - CocoaLumberjack (~> 3.7.2)
     - React-Core
+  - RNDateTimePicker (7.3.0):
+    - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
   - rnmapbox-maps (10.0.9-rc.0):
@@ -379,6 +381,7 @@ DEPENDENCIES:
   - RealmJS (from `../node_modules/realm`)
   - RNBackgroundFetch (from `../node_modules/react-native-background-fetch`)
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNStaticSafeAreaInsets (from `../node_modules/react-native-static-safe-area-insets`)
@@ -474,6 +477,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-fetch"
   RNBackgroundGeolocation:
     :path: "../node_modules/react-native-background-geolocation"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   rnmapbox-maps:
@@ -533,6 +538,7 @@ SPEC CHECKSUMS:
   RealmJS: 2c1f4abe7eeb0b00881f3cbd08d18a208d5e6bd1
   RNBackgroundFetch: 13fbe7b23d4a082eac8caa7b08c5bcbeabd92f79
   RNBackgroundGeolocation: 8f64068cbcd2b249ca6f57cde9557c50480a9b8b
+  RNDateTimePicker: 01e6d27ba2e0931cd05049c5bff6171c3c027ea8
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
   rnmapbox-maps: bc5a35e8caf7dd1fd9cf557dae63834c23b342bf
   RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8

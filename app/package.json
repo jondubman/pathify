@@ -12,6 +12,7 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
+    "@react-native-community/datetimepicker": "^7.3.0",
     "@react-native-community/slider": "^4.4.2",
     "@rnmapbox/maps": "rnmapbox/maps",
     "@turf/distance": "^6.5.0",

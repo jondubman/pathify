@@ -26,7 +26,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   CameraSettings,
-} from '@react-native-mapbox-gl/maps';
+} from '@rnmapbox/maps';
 import {
   Alert,
   AlertButton,

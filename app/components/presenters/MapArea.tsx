@@ -52,9 +52,8 @@ class MapArea extends Component<MapAreaProps> {
     this.getZoom = this.getZoom.bind(this);
     this.moveTo = this.moveTo.bind(this);
     this.fitBounds = this.fitBounds.bind(this);
-    this.onRegionIsChanging = this.onRegionIsChanging.bind(this);
-    this.onRegionDidChange = this.onRegionDidChange.bind(this);
-    this.onDidFinishRenderingMapFully = this.onDidFinishRenderingMapFully.bind(this);
+    this.onCameraChanged = this.onCameraChanged.bind(this);
+    this.onMapIdle = this.onMapIdle.bind(this);
     this.onPress = this.onPress.bind(this);
     this.setCamera = this.setCamera.bind(this);
     this.zoomTo = this.zoomTo.bind(this);
@@ -105,7 +104,7 @@ class MapArea extends Component<MapAreaProps> {
       const viewStyle = {
         height,
       }
-      if (mapHidden) {
+      if (mapHidden || !initialBounds || initialBounds[0] === null || initialBounds[1] === null) {
         // TODO this loses map orientation, position, zoom, etc. but on the plus side, it stops consuming resources.
         // onPressIn is instantaneous, unlike onPress which waits for the tap to end.
         return (
@@ -118,19 +117,20 @@ class MapArea extends Component<MapAreaProps> {
           </View>
         )
       }
+      // log.trace('initialBounds', initialBounds)
+      // TODO contentInset is deprecated
       // Note contentInset must be symmetric (matching inset on top/bottom) in to avoid panning map on hide/show timeline.
+      // contentInset={[timelineHeight, 0, timelineHeight, 0]}
       return (
         <View style={flexStyle}>
           <View style={viewStyle}>
             <Mapbox.MapView
               attributionEnabled={true}
               compassEnabled={false}
-              contentInset={[timelineHeight, 0, timelineHeight, 0]}
               logoEnabled={true}
-              onDidFinishRenderingMapFully={this.onDidFinishRenderingMapFully}
               onPress={this.onPress}
-              onRegionDidChange={this.onRegionDidChange}
-              onRegionIsChanging={this.onRegionIsChanging}
+              onMapIdle={this.onMapIdle}
+              onCameraChanged={this.onCameraChanged}
               pitchEnabled={false}
               ref={map => {
                 this._map = map as Mapbox.MapView;
@@ -147,12 +147,9 @@ class MapArea extends Component<MapAreaProps> {
                 followUserLocation={false}
                 bounds={{
                   ne: initialBounds[0], sw: initialBounds[1],
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  paddingTop: 0,
-                  paddingBottom: 0,
                 }}
                 heading={initialHeading}
+                padding={0}
                 zoomLevel={initialZoomLevel}
                 ref={camera => { this._camera = camera }}
               /> : null}
@@ -264,38 +261,32 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  onRegionIsChanging(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+  onCameraChanged(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
     try {
       const { isUserInteraction } = args.properties;
       if (isUserInteraction) {
-        log.trace('onRegionIsChanging', args.geometry.coordinates);
+        log.trace('onCameraChanged', args.geometry.coordinates);
       }
       this.props.mapRegionChanging();
     } catch (err) {
-      log.error('map onRegionIsChanging', err);
+      log.error('map onCameraChanged', err);
     }
   }
 
-  onRegionDidChange(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+  onMapIdle(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
     try {
       const { heading, isUserInteraction, zoomLevel } = args.properties;
       const { visibleBounds } = args.properties as any; // TODO: TS definition is off
-      log.trace(`onRegionDidChange bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+      log.trace(`onMapIdle bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+      this.props.mapRendered();
       if (isUserInteraction) {
         this.props.userMovedMap(args.geometry.coordinates as LonLat);
       }
-      this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel });
+      if (visibleBounds) {
+        this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel });
+      }
     } catch (err) {
-      log.error('map onRegionDidChange', err);
-    }
-  }
-
-  onDidFinishRenderingMapFully(...args) {
-    try {
-      log.trace('onDidFinishRenderingMapFully --> mapRendered', args);
-      this.props.mapRendered();
-    } catch (err) {
-      log.error('map onDidFinishRenderingMapFully', err);
+      log.error('map onMapIdle', err);
     }
   }
 
