@@ -6,7 +6,7 @@
     "clean": "rm -rf dist; mkdir -p dist; mkdir -p logs",
     "build": "yarn clean; cd ../shared; yarn share; cd ../server; tsc; cp -R src/config dist; cp -R src/secrets dist; echo 'built to /server/dist'",
     "build-test": "yarn build; yarn test",
-    "launch": "NODE_ENV=development node dist/pathify.js",
+    "launch": "NODE_ENV=development node --max-old-space-size=4096 dist/pathify.js",
     "log-trace": "tail -f logs/complete.log | bunyan -l trace",
     "log-debug": "tail -f logs/complete.log | bunyan -l debug",
     "log": "tail -f logs/complete.log | bunyan -l debug",
@@ -14,7 +14,7 @@
     "log-warn": "tail -f logs/complete.log | bunyan -l warn",
     "test": "NODE_ENV=development mocha dist/test/*.js",
     "restart": "yarn build; yarn launch",
-    "start": "yarn; yarn build; yarn launch",
+    "start": "git pull; yarn; yarn build; yarn launch",
     "start-test": "yarn; yarn build-test; yarn launch"
   },
   "author": "Jonathan Dubman",
