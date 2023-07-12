@@ -813,7 +813,7 @@ const sagas = {
       const map = MapUtils();
       if (map && map.flyTo) {
         const userLocation = yield select((state: AppState) => state.userLocation);
-        if (userLocation && userLocation.lon && userLocation.lat) {
+        if (userLocation && userLocation.lon !== null && userLocation.lat !== null) {
           yield call(map.flyTo as any, locations.lonLat(userLocation));
         } else {
           yield call(log.info, 'saga centerMapOnUser: missing userLocation');
@@ -2516,7 +2516,7 @@ const sagas = {
       let loc: LonLat | null = null;
       if (followingUser) {
         const userLocation = yield select((state: AppState) => state.userLocation);
-        if (userLocation) {
+        if (userLocation && userLocation.lon !== null && userLocation.lat !== null) {
           loc = [userLocation.lon, userLocation.lat] as LonLat;
         }
       }

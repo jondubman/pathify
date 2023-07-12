@@ -790,7 +790,7 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars }; // These are supplemental to the current and past location (potentially)
   const { colors } = constants;
   const { userLocation } = state;
-  if (userLocation) {
+  if (userLocation && userLocation.lon != null && userLocation.lat != null) {
     const { lon, lat } = userLocation;
     const userLocationValid = lon !== null && lat !== null;
     // log.trace('userLocation', state.userLocation)
