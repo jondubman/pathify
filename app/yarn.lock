@@ -1505,8 +1505,8 @@
   integrity sha512-1dgmkh+3so0+LlBWRhGA33ua4MYr7tUOj+a9Si28vUi0IUFNbff1T3sgpeDJI/LaC75bBYnQ0A3wXjn0OrRNBA==
 
 "@rnmapbox/maps@rnmapbox/maps":
-  version "10.0.9-rc.0"
-  resolved "https://codeload.github.com/rnmapbox/maps/tar.gz/9f094c4183e1f5962a649823c49e97aa73053660"
+  version "10.0.10-rc.1"
+  resolved "https://codeload.github.com/rnmapbox/maps/tar.gz/6ada9f0d9ce5a7a12552878041480a7f77febaa0"
   dependencies:
     "@turf/along" "6.5.0"
     "@turf/distance" "6.5.0"

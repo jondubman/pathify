@@ -1229,7 +1229,7 @@ const sagas = {
       yield put(newAction(ReducerAction.GEOLOCATION, geoloc)); // this sets state.userLocation
 
       const { mapMoving } = yield select((state: AppState) => state.flags);
-      if (recheckMapBounds && !mapMoving) {
+      if (recheckMapBounds /* && !mapMoving */) {
         const appActive = yield select((state: AppState) => state.flags.appActive);
         if (appActive) {
           // Potential cascading AppAction.centerMapOnUser:
@@ -1333,11 +1333,11 @@ const sagas = {
   // Triggered by Mapbox
   mapRegionChanged: function* (action: Action) {
     const mapRegionUpdate = action.params as MapRegionUpdate;
-    yield call(log.trace, 'mapRegionChanged', mapRegionUpdate);
+    yield call(log.debug, 'mapRegionChanged', mapRegionUpdate);
     yield put(newAction(ReducerAction.MAP_REGION, mapRegionUpdate));
     yield put(newAction(AppAction.flagDisable, 'mapMoving'));
     yield put(newAction(AppAction.flagDisable, 'mapReorienting'));
-    const { bounds, heading, zoomLevel } = mapRegionUpdate;
+    const { bounds, heading, zoom } = mapRegionUpdate;
     const latMax = bounds[0][1];
     const latMin = bounds[1][1];
     const lonMax = bounds[0][0];
@@ -1350,7 +1350,7 @@ const sagas = {
       yield call(database.changeSettings, {
         latMax, latMin, lonMax, lonMin,
         mapHeading: heading,
-        mapZoomLevel: zoomLevel,
+        mapZoomLevel: zoom,
       })
     }
   },
@@ -1646,8 +1646,9 @@ const sagas = {
     const animationDuration = params?.reorientationTime || constants.map.reorientationTime;
     if (map) {
       yield call(log.debug, 'saga reorientMap');
-      yield put(newAction(AppAction.flagEnable, 'mapMoving'));
-      yield put(newAction(AppAction.flagEnable, 'mapReorienting'));
+      // TODO these are supposed to get cleared in onMapIdle, but that isn't getting called due to Mapbox v10 bug
+      // yield put(newAction(AppAction.flagEnable, 'mapMoving'));
+      // yield put(newAction(AppAction.flagEnable, 'mapReorienting'));
       const obj = { heading: 0, animationDuration };
       map.setCamera(obj);
     }
@@ -2172,8 +2173,8 @@ const sagas = {
       } = settings;
       const bounds = [[lonMax, latMax], [lonMin, latMin]];
 
-      // Set initial map bounds, heading and zoomLevel
-      yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoomLevel: mapZoomLevel }));
+      // Set initial map bounds, heading and zoom
+      yield put(newAction(ReducerAction.MAP_REGION, { bounds, heading: mapHeading, zoom: mapZoomLevel }));
       yield call(log.debug, `startupActions: initial map bounds ${bounds}, heading ${mapHeading} zoom ${mapZoomLevel}`);
       yield put(newAction(AppAction.flagEnable, 'mapEnable'));
 

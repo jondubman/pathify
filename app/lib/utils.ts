@@ -72,6 +72,11 @@ const utils = {
     `${(new Date(t)).toDateString()} ` +
     `${(new Date(t)).toTimeString().split(' ')[0]}:${t.toString().slice(t.toString().length - 4, t.toString().length)}`
   ),
+  
+  // Return true if given LonLat is valid
+  haveLonLat: (loc: LonLat | null | undefined): boolean => (
+      loc !== null && loc !== undefined && (!!loc[0] || loc[0] === 0) && (!!loc[1] || loc[1] === 0)
+  ),
 
   // Return true if given loc is inside given bounds, thus:
   // lonInset and latInset of 0 yield the simplest containment test.

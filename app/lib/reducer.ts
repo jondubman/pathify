@@ -63,7 +63,7 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
             newState.mapHeadingInitial = mapRegionUpdate.heading;
           }
           if (state.mapZoomInitial === null) {
-            newState.mapZoomInitial = mapRegionUpdate.zoomLevel;
+            newState.mapZoomInitial = mapRegionUpdate.zoom;
           }
           // Set these whenever they are provided.
           if (mapRegionUpdate.bounds) {
@@ -72,8 +72,8 @@ const reducer = (state: AppState = initialAppState, action: Action): AppState =>
           if (mapRegionUpdate.heading !== undefined) {
             newState.mapHeading = mapRegionUpdate.heading; // required, 0 is default (due north orientation)
           }
-          if (mapRegionUpdate.zoomLevel) {
-            newState.mapZoom = mapRegionUpdate.zoomLevel; // also required, even though these may seem sort of redundant
+          if (mapRegionUpdate.zoom) {
+            newState.mapZoom = mapRegionUpdate.zoom; // also required, even though these may seem sort of redundant
           }
         }
         break;

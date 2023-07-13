@@ -790,16 +790,16 @@ export const pulsars = (state: AppState): OptionalPulsars => {
   const pulsars = { ...state.options.pulsars }; // These are supplemental to the current and past location (potentially)
   const { colors } = constants;
   const { userLocation } = state;
-  if (userLocation && userLocation.lon != null && userLocation.lat != null) {
+  if (userLocation) {
     const { lon, lat } = userLocation;
-    const userLocationValid = lon !== null && lat !== null;
-    // log.trace('userLocation', state.userLocation)
-    if (showCurrentLocation && userLocationValid && (followingUser || !mapIsFullScreen(state) || !mapTapped || trackingActivity)) {
-
-      pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
-        loc: [lon, lat],
-        color: colors.pulsars.userLocation,
-        visible: true,
+    const loc = [lon, lat];
+    if (utils.haveLonLat(loc as LonLat)) {
+      if (showCurrentLocation && (followingUser || !mapIsFullScreen(state) || !mapTapped || trackingActivity)) {
+        pulsars.userLocation = { // so, hidden only when not following or tracking, in mapFullScreen, with mapTapped...
+          loc: [lon, lat],
+          color: colors.pulsars.userLocation,
+          visible: true,
+        }
       }
     }
   }

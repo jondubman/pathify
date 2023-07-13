@@ -15,7 +15,7 @@ import {
 export interface MapRegionUpdate {
   bounds: LonLat[];
   heading: number;
-  zoomLevel: number;
+  zoom: number;
 }
 
 import { MAPBOX_ACCESS_TOKEN } from 'react-native-dotenv'; // deliberately omitted from repo
@@ -183,9 +183,13 @@ class MapArea extends Component<MapAreaProps> {
   // Note the difference between flyTo and moveTo is that flyTo uses Mapbox.CameraModes.Flight.
   flyTo(coordinates: LonLat, duration: number = 0) {
     try {
-      if (this._camera) {
-        const camera = this._camera!;
-        camera.flyTo(coordinates, duration);
+      if (utils.haveLonLat(coordinates)) {
+        if (this._camera) {
+          const camera = this._camera!;
+          camera.flyTo(coordinates, duration);
+        }
+      } else {
+        log.debug("flyTo: invalid coordinates", coordinates);
       }
     } catch (err) {
       log.error('map flyTo', err);
@@ -261,29 +265,35 @@ class MapArea extends Component<MapAreaProps> {
     }
   }
 
-  onCameraChanged(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+  onCameraChanged(state:{properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) {
     try {
-      const { isUserInteraction } = args.properties;
+      const isUserInteraction = state.gestures.isGestureActive
       if (isUserInteraction) {
-        log.trace('onCameraChanged', args.geometry.coordinates);
+        log.trace('onCameraChanged', state);
       }
       this.props.mapRegionChanging();
+      this.onMapIdle(state); // TODO this is here because it isn't getting called automatically by Mapbox - remove when that is fixed
     } catch (err) {
       log.error('map onCameraChanged', err);
     }
   }
 
-  onMapIdle(args: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) {
+  // TODO Bug in Mapbox v10; this is not always getting called, thus mapMoving gets stuck as true
+  // because mapRegionChanged doesn't get called.
+  onMapIdle(state:{
+    properties: {center: GeoJSON.Position, bounds: {ne: GeoJSON.Position, sw: GeoJSON.Position}, zoom: number, heading: number, pitch: number}, gestures: {isGestureActive: boolean}, timestamp: number}) {
     try {
-      const { heading, isUserInteraction, zoomLevel } = args.properties;
-      const { visibleBounds } = args.properties as any; // TODO: TS definition is off
-      log.trace(`onMapIdle bounds: ${visibleBounds} heading: ${heading} zoomLevel: ${zoomLevel}`);
+      const { bounds, center, heading, zoom } = state.properties;
+      const isUserInteraction = state.gestures.isGestureActive;
+      log.debug(`onMapIdle bounds: ${bounds} heading: ${heading} zoom: ${zoom}`);
       this.props.mapRendered();
       if (isUserInteraction) {
-        this.props.userMovedMap(args.geometry.coordinates as LonLat);
+        this.props.userMovedMap(center as LonLat);
       }
-      if (visibleBounds) {
-        this.props.mapRegionChanged({ bounds: visibleBounds, heading, zoomLevel });
+      if (bounds) {
+        // Convert bounds to a LonLat
+        const fixedBounds = [bounds.ne, bounds.sw]
+        this.props.mapRegionChanged({ bounds: fixedBounds, heading, zoom });
       }
     } catch (err) {
       log.error('map onMapIdle', err);
