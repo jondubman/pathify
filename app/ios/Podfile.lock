@@ -235,13 +235,13 @@ PODS:
   - React-jsinspector (0.69.11)
   - React-logger (0.69.11):
     - glog
-  - react-native-get-random-values (1.8.0):
+  - react-native-get-random-values (1.9.0):
     - React-Core
   - react-native-haptic (1.0.9):
     - React
-  - react-native-restart (0.0.24):
+  - react-native-restart (0.0.27):
     - React-Core
-  - react-native-slider (4.4.2):
+  - react-native-slider (4.4.3):
     - React-Core
   - React-perflogger (0.69.11)
   - React-RCTActionSheet (0.69.11):
@@ -319,7 +319,7 @@ PODS:
     - React-Core
   - RNDateTimePicker (7.5.0):
     - React-Core
-  - RNDeviceInfo (10.3.0):
+  - RNDeviceInfo (10.9.0):
     - React-Core
   - rnmapbox-maps (10.0.13):
     - MapboxMaps (~> 10.15.0)
@@ -519,10 +519,10 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 5813455a4a908fb7284aa13307a9e0386e93b0bb
   React-jsinspector: 9ca5bf73ed0a195397e45fdbcd507cf7d503c428
   React-logger: 700340e325f21ba2a2d6413a61ef14268c7360aa
-  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
+  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-haptic: 72526107049dfe8fed1c3a1cc5f8113a93e360ce
-  react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
-  react-native-slider: 33b8d190b59d4f67a541061bb91775d53d617d9d
+  react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
+  react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   React-perflogger: fdee2a0c512167ae4c19c4e230ccf6aa66a6aff0
   React-RCTActionSheet: 1cf5fef4e372f1c877969710a51bea4bb25e78fe
   React-RCTAnimation: 73816e3acd1f5e3f00166fc7eedb34f6b112f734
@@ -539,7 +539,7 @@ SPEC CHECKSUMS:
   RNBackgroundFetch: 13fbe7b23d4a082eac8caa7b08c5bcbeabd92f79
   RNBackgroundGeolocation: 8f64068cbcd2b249ca6f57cde9557c50480a9b8b
   RNDateTimePicker: b722c23030b744763cf51d80fc22f354653f65e0
-  RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
+  RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
   rnmapbox-maps: d9026150191bd0af18721335bb9ea0082f7ca27d
   RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
   RNSVG: ed492aaf3af9ca01bc945f7a149d76d62e73ec82
