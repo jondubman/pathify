@@ -17,12 +17,12 @@ PODS:
     - GCDWebServer/Core (= 3.5.4)
   - GCDWebServer/Core (3.5.4)
   - glog (0.3.5)
-  - MapboxCommon (23.6.0)
-  - MapboxCoreMaps (10.14.0):
-    - MapboxCommon (~> 23.6)
-  - MapboxMaps (10.14.0):
-    - MapboxCommon (= 23.6.0)
-    - MapboxCoreMaps (= 10.14.0)
+  - MapboxCommon (23.7.0)
+  - MapboxCoreMaps (10.15.0):
+    - MapboxCommon (~> 23.7)
+  - MapboxMaps (10.15.0):
+    - MapboxCommon (= 23.7.0)
+    - MapboxCoreMaps (= 10.15.0)
     - MapboxMobileEvents (= 1.0.10)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.10)
@@ -321,14 +321,14 @@ PODS:
     - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
-  - rnmapbox-maps (10.0.10-rc.1):
-    - MapboxMaps (~> 10.14.0)
+  - rnmapbox-maps (10.0.13):
+    - MapboxMaps (~> 10.15.0)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.0.10-rc.1)
+    - rnmapbox-maps/DynamicLibrary (= 10.0.13)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.0.10-rc.1):
-    - MapboxMaps (~> 10.14.0)
+  - rnmapbox-maps/DynamicLibrary (10.0.13):
+    - MapboxMaps (~> 10.15.0)
     - React
     - React-Core
     - Turf
@@ -338,7 +338,7 @@ PODS:
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Turf (2.6.1)
+  - Turf (2.7.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -501,9 +501,9 @@ SPEC CHECKSUMS:
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
-  MapboxCommon: 4a0251dd470ee37e7fadda8e285c01921a5e1eb0
-  MapboxCoreMaps: eb07203bbb0b1509395db5ab89cd3ad6c2e3c04c
-  MapboxMaps: af50ec61a7eb3b032c3f7962c6bd671d93d2a209
+  MapboxCommon: dcbdb86acbcfc1a23efd341ed097c6c63ab532a9
+  MapboxCoreMaps: bcbaac14467616940187f79bba49ca491cd37906
+  MapboxMaps: 1fd9d97d0e8eceb7a45b9ac8bf87a8922da881a8
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: 8e9a57dddc8f8e9e816c67c2d2537271a997137a
@@ -540,11 +540,11 @@ SPEC CHECKSUMS:
   RNBackgroundGeolocation: 8f64068cbcd2b249ca6f57cde9557c50480a9b8b
   RNDateTimePicker: 01e6d27ba2e0931cd05049c5bff6171c3c027ea8
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
-  rnmapbox-maps: 0f21e371dae18eea088e6f9895e06105614e5c33
+  rnmapbox-maps: d9026150191bd0af18721335bb9ea0082f7ca27d
   RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
   RNSVG: 3a79c0c4992213e4f06c08e62730c5e7b9e4dc17
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Turf: 469ce2c3d22e5e8e4818d5a3b254699a5c89efa4
+  Turf: 13d1a92d969ca0311bbc26e8356cca178ce95da2
   Yoga: 7f5ad94937ba3fc58c151ad1b7bbada2c275b28e
 
 PODFILE CHECKSUM: aa29cad535f81d0dad56d7d70bc79a5d930e9d15
