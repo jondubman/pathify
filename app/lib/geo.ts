@@ -632,13 +632,12 @@ export const Geo = {
           }
           locationEvents.sort((e1: LocationEvent, e2: LocationEvent) => (e1.t - e2.t));
 
-          store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: false }));
+          store.dispatch(newAction(AppAction.addEvents, { events: locationEvents, preventRefresh: true }));
           log.debug(`added ${locationEvents.length} locationEvents, ${preprocessedLocations.length} remaining`);
           lastNewEvent = locationEvents[locationEvents.length - 1];
 
           await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
         }
-        // Performance note: This does do some redundant work by refreshing after each batch, but each pass is fast.
         store.dispatch(newAction(AppAction.refreshActivity, { id: activityId }));
         await new Promise(resolve => setTimeout(resolve, sleepBetweenSteps));
 
