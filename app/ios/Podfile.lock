@@ -317,7 +317,7 @@ PODS:
   - RNBackgroundGeolocation (4.9.4):
     - CocoaLumberjack (~> 3.7.2)
     - React-Core
-  - RNDateTimePicker (7.3.0):
+  - RNDateTimePicker (7.5.0):
     - React-Core
   - RNDeviceInfo (10.3.0):
     - React-Core
@@ -334,7 +334,7 @@ PODS:
     - Turf
   - RNStaticSafeAreaInsets (2.2.0):
     - React-Core
-  - RNSVG (13.6.0):
+  - RNSVG (13.13.0):
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
@@ -538,11 +538,11 @@ SPEC CHECKSUMS:
   RealmJS: 2c1f4abe7eeb0b00881f3cbd08d18a208d5e6bd1
   RNBackgroundFetch: 13fbe7b23d4a082eac8caa7b08c5bcbeabd92f79
   RNBackgroundGeolocation: 8f64068cbcd2b249ca6f57cde9557c50480a9b8b
-  RNDateTimePicker: 01e6d27ba2e0931cd05049c5bff6171c3c027ea8
+  RNDateTimePicker: b722c23030b744763cf51d80fc22f354653f65e0
   RNDeviceInfo: 4701f0bf2a06b34654745053db0ce4cb0c53ada7
   rnmapbox-maps: d9026150191bd0af18721335bb9ea0082f7ca27d
   RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
-  RNSVG: 3a79c0c4992213e4f06c08e62730c5e7b9e4dc17
+  RNSVG: ed492aaf3af9ca01bc945f7a149d76d62e73ec82
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   Turf: 13d1a92d969ca0311bbc26e8356cca178ce95da2
   Yoga: 7f5ad94937ba3fc58c151ad1b7bbada2c275b28e
