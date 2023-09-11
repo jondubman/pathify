@@ -1,0 +1,9 @@
+# Use 4 spaces for Swift files
+[*.{swift}]
+indent_style = space
+indent_size = 4
+
+# Use 2 spaces for TypeScript files
+[*.{ts,tsx}]
+indent_style = space
+indent_size = 2

@@ -1,11 +1,31 @@
 $RNMapboxMapsImpl = 'mapbox'
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
 # Uncomment the next line to define a global platform for your project
 platform :ios, '14.1'
+prepare_react_native_project!
 
-install! 'cocoapods', :deterministic_uuids => false
+# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
+# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
+#
+# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
+# ```js
+# module.exports = {
+#   dependencies: {
+#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
+# ```
+flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
 
 def setupPathifyPods
 
@@ -17,10 +37,11 @@ def setupPathifyPods
   # use_modular_headers!
 
   require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-  config = use_native_modules!
 
   # Flags change depending on the env values.
   flags = get_default_flags()
+
+  config = use_native_modules!
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -54,7 +75,16 @@ pre_install do |installer|
 end
 
 post_install do |installer|
-  # flipper_post_install(installer)
+  config = use_native_modules!
+
+  # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+  react_native_post_install(
+    installer,
+    config[:reactNativePath],
+    :mac_catalyst_enabled => false
+  )
+  __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
   installer.generated_projects.each do |project|
     project.build_configurations.each do |config|
         if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 14.1
@@ -69,6 +99,6 @@ post_install do |installer|
       end
     end
   end
-  react_native_post_install(installer)
+
   `sed -i -e  $'s/__IPHONE_12_0/__IPHONE_15_0/' Pods/RCT-Folly/folly/portability/Time.h`
 end
