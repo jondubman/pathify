@@ -6,12 +6,14 @@ import {
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to the Redux application state
   LogBox,
 } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 // import FontAwesome5 from 'react-native-vector-icons';
 import { Provider } from 'react-redux';
 
 import {
   ExportedActivity,
 } from 'lib/activities';
+import { dynamicAreaTop } from 'lib/selectors';
 
 LogBox.ignoreAllLogs(true); // Note this only disables notifications, not uncaught errors.
 
@@ -49,7 +51,8 @@ export default class App extends Component {
   componentDidMount() {
     try {
       store.create(); // proactively create Redux store instance
-      const { flags } = store.getState();
+      const state = store.getState();
+      const { flags } = state;      
       let { devMode } = flags;
       // Configure logging
       log.setEnabled(flags.logInDebugVersion, flags.logInProductionVersion);
@@ -71,6 +74,7 @@ export default class App extends Component {
       log.info('develop', develop); // set (maybe) in XCode build scheme
       log.info('foo', foo); // set in AppDelegate.m
       log.info('test', test); // set in loadSampleData in PathifyNative.swift
+      log.info('dynamicAreaTop', dynamicAreaTop(state))
       store.dispatch(newAction(AppAction.setAppOption, { appBuild, appVersion }));
 
       if (devMode || develop === 'true') {
@@ -150,7 +154,9 @@ export default class App extends Component {
   render() {
     return (
       <Provider store={store.create() as any}>
-        <AppUIContainer />
+        <SafeAreaProvider>
+          <AppUIContainer />
+        </SafeAreaProvider>
       </Provider>
     )
   }

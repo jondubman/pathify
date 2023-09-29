@@ -667,12 +667,18 @@ const sagas = {
   appStateChange: function* (action: Action) {
     const params = action.params as AppStateChangeParams;
     const { manual, newState } = params; // manual param not currently used for anything but logging
-    const { appStartupCompleted } = yield select((state: AppState) => state.flags);
+    const { activatedApp, appStartupCompleted } = yield select((state: AppState) => state.flags);
     if (!appStartupCompleted) {
       yield take(AppAction.appStartupCompleted); // Wait for startup to complete if needed.
     }
     yield call(log.info, `appStateChange saga: ${newState}${manual ? ', invoked manually' : ''}`);
     const activating = (newState === AppStateChange.ACTIVE);
+    if (activating) {
+      if (!activatedApp) { // previously
+        log.debug('Activating app for the first time');
+      }
+      yield put(newAction(AppAction.flagEnable, 'activatedApp'));
+    }
     yield put(newAction(activating ? AppAction.flagEnable : AppAction.flagDisable, 'appActive'));
     yield put(newAction(AppAction.setAppOption, { appState: newState }));
     const now = (yield call(utils.now)) as number;

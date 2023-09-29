@@ -7,8 +7,10 @@ import {
 
 import constants, { TimespanKind } from 'lib/constants';
 import {
+  bottomPaddingForAxis,
   dynamicTimelineScrollWidth,
   dynamicTimelineWidth,
+  timelineHeightIfShowing,
   timelineVisibleTime,
   timelineZoomLevel,
 } from 'lib/selectors';
@@ -25,11 +27,13 @@ export interface Timespan {
 export type Timespans = Timespan[];
 
 export interface TimelineStateProps {
+  bottomPaddingForAxis: number;
   centerTime: number;
   pinchZoom: boolean;
   showFutureTimespan: boolean;
   showMarks: boolean;
   showSpans: boolean;
+  timelineHeight: number;
   timelineNow: boolean;
   timelineWidth: number;
   visibleTime: number;
@@ -74,19 +78,22 @@ const mapStateToProps = (state: AppState): TimelineStateProps => {
   } = state.flags;
   const {
     centerTime,
-    timelineZoomValue
+    timelineZoomValue,
   } = state.options;
+  const timelineHeight = timelineHeightIfShowing(state);
   const timelineWidth = dynamicTimelineScrollWidth(state); // scrollable width
   const visibleTime = timelineVisibleTime(timelineZoomValue);
   const visibleWidth = dynamicTimelineWidth(state);
   const zoomDomain = getZoomDomain(state);
   const zoomLevel = timelineZoomLevel(timelineZoomValue);
   return {
+    bottomPaddingForAxis: bottomPaddingForAxis(state),
     centerTime,
     pinchZoom: timelinePinchToZoom,
     showFutureTimespan,
     showMarks: showTimelineMarks,
     showSpans: showTimelineSpans,
+    timelineHeight,
     timelineNow,
     timelineWidth,
     visibleTime,

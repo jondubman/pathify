@@ -7,7 +7,10 @@ import {
   uiCategories,
   UICategory,
 } from 'lib/intro';
-import { snapPositions } from 'lib/selectors';
+import {
+  dynamicAreaTop,
+  snapPositions,
+} from 'lib/selectors';
 import { AppState } from 'lib/state';
 import Intro from 'presenters/Intro';
 import log from 'shared/log';
@@ -17,6 +20,7 @@ interface IntroStateProps {
   pageIndex: number;
   requestedLocationPermission: boolean;
   snapPositions: number[];
+  top: number;
 }
 
 interface IntroDispatchProps {
@@ -34,6 +38,7 @@ const mapStateToProps = (state: AppState): IntroStateProps => {
     pageIndex: state.options.introModePage,
     requestedLocationPermission: state.flags.requestedLocationPermission,
     snapPositions: snapPositions(state),
+    top: dynamicAreaTop(state),
   }
 }
 

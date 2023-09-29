@@ -351,7 +351,7 @@ export const Geo = {
       if (utils.appInBackground()) {
         config = geoconfig_tracking_background;
       }
-      BackgroundGeolocation.ready(
+      await BackgroundGeolocation.ready(
         config,
         pluginState => {
           if (pluginState.enabled) {

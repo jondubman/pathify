@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 
 import {
+  bottomPaddingForAxis,
+  dynamicTimelineHeight,
   listedActivities,
   timepointVisibleOnTimeline,
 } from 'lib/selectors';
@@ -11,10 +13,12 @@ import {
 } from 'lib/activities';
 
 export interface ActivityTimespansStateProps {
+  bottomPaddingForAxis: number;
   colorizeActivites: boolean;
   currentActivityId: string;
   listedActivities: ActivityDataExtended[];
   selectedActivityId: string;
+  timelineHeight: number;
   timelineSpanColorOpacity: number;
   visibleActivities: ActivityDataExtended[];
 }
@@ -39,10 +43,12 @@ const mapStateToProps = (state: AppState): ActivityTimespansStateProps => {
     (activity.tStart < scrollTime && activity.tLast > scrollTime) // or activity spans scrollTime
   ))
   return {
+    bottomPaddingForAxis: bottomPaddingForAxis(state),
     colorizeActivites: state.flags.colorizeActivities,
     currentActivityId: currentActivityId || '',
     listedActivities: allListedActivities,
     selectedActivityId: selectedActivityId || '',
+    timelineHeight: dynamicTimelineHeight(state),
     timelineSpanColorOpacity,
     visibleActivities,
   }

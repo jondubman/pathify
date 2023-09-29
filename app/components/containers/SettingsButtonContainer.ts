@@ -4,9 +4,9 @@ import {
 import { connect } from 'react-redux';
 
 import { newAction, AppAction } from 'lib/actions';
-import constants from 'lib/constants';
 import { dynamicAreaTop } from 'lib/selectors';
 import { AppState } from 'lib/state';
+import utils from 'lib/utils';
 import log from 'shared/log';
 import SettingsButton from 'presenters/SettingsButton';
 
@@ -24,7 +24,7 @@ export type SettingsButtonProps = SettingsButtonStateProps & SettingsButtonDispa
 const mapStateToProps = (state: AppState): SettingsButtonStateProps => {
   return {
     open: state.flags.settingsOpen,
-    topOffset: dynamicAreaTop(),
+    topOffset: dynamicAreaTop(state),
   }
 }
 

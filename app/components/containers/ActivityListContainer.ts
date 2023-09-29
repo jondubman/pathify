@@ -85,7 +85,7 @@ const mapStateToProps = (state: AppState): ActivityListStateProps => {
     selectedActivityId,
     timelineNow,
     trackingActivity,
-    top: dynamicTopBelowButtons(),
+    top: dynamicTopBelowButtons(state),
     visible: shouldShowActivityList(state),
   }
 }

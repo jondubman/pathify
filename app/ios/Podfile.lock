@@ -303,6 +303,8 @@ PODS:
     - React
   - react-native-restart (0.0.27):
     - React-Core
+  - react-native-safe-area-context (4.7.2):
+    - React-Core
   - react-native-slider (4.4.3):
     - React-Core
   - React-NativeModulesApple (0.72.4):
@@ -422,19 +424,17 @@ PODS:
     - React-Core
   - RNDeviceInfo (10.9.0):
     - React-Core
-  - rnmapbox-maps (10.0.13):
+  - rnmapbox-maps (10.0.14):
     - MapboxMaps (~> 10.15.0)
     - React
     - React-Core
-    - rnmapbox-maps/DynamicLibrary (= 10.0.13)
+    - rnmapbox-maps/DynamicLibrary (= 10.0.14)
     - Turf
-  - rnmapbox-maps/DynamicLibrary (10.0.13):
+  - rnmapbox-maps/DynamicLibrary (10.0.14):
     - MapboxMaps (~> 10.15.0)
     - React
     - React-Core
     - Turf
-  - RNStaticSafeAreaInsets (2.2.0):
-    - React-Core
   - RNSVG (13.13.0):
     - React-Core
   - RNVectorIcons (9.2.0):
@@ -468,6 +468,7 @@ DEPENDENCIES:
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-haptic (from `../node_modules/react-native-haptic`)
   - react-native-restart (from `../node_modules/react-native-restart`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -492,7 +493,6 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
-  - RNStaticSafeAreaInsets (from `../node_modules/react-native-static-safe-area-insets`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -556,6 +556,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-haptic"
   react-native-restart:
     :path: "../node_modules/react-native-restart"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   React-NativeModulesApple:
@@ -604,8 +606,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   rnmapbox-maps:
     :path: "../node_modules/@rnmapbox/maps"
-  RNStaticSafeAreaInsets:
-    :path: "../node_modules/react-native-static-safe-area-insets"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -644,6 +644,7 @@ SPEC CHECKSUMS:
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-haptic: 72526107049dfe8fed1c3a1cc5f8113a93e360ce
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
+  react-native-safe-area-context: 7aa8e6d9d0f3100a820efb1a98af68aa747f9284
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   React-NativeModulesApple: 759309419da76ef4c9f331968b840022ee2aa5b1
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
@@ -667,8 +668,7 @@ SPEC CHECKSUMS:
   RNBackgroundGeolocation: f2a2052e63d3bf255de1e2f84a24029f89d91601
   RNDateTimePicker: b722c23030b744763cf51d80fc22f354653f65e0
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
-  rnmapbox-maps: d9026150191bd0af18721335bb9ea0082f7ca27d
-  RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
+  rnmapbox-maps: bf91ca56e25c0f4f2a7c63aef47bbaed7d6cf169
   RNSVG: ed492aaf3af9ca01bc945f7a149d76d62e73ec82
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17

@@ -1,7 +1,6 @@
 // Selector functions for Redux reducer, including some derived quantities not necessarily dependent on Redux state.
 // TODO split this up - getting a bit unwieldly
 
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { createSelector } from 'reselect'
 
 import { OptionalPulsars } from 'containers/PulsarsContainer';
@@ -180,15 +179,22 @@ export const mapIsFullScreen = (state: AppState): boolean => (
   state.options.grabBarSnapIndexPreview === 0 // at the top
 )
 
-// Note this does not depend on state.
-export const dynamicAreaTop = (): number => (
-  utils.safeAreaTop() || getStatusBarHeight()
+export const dynamicAreaTop = (state: AppState): number => (
+  state.options.safeAreaInsets ? state.options.safeAreaInsets.top : 0
 )
 
+export const bottomPaddingForAxis = (state: AppState) => {
+  if (!state.options.safeAreaInsets) {
+    return 0;
+  }
+  return state.options.safeAreaInsets.bottom ? 28 : 14 // empirically optimized for displays with/without home button
+}
+
 // Note this is *from* the bottom, so small number means close to bottom.
-export const bottomGivenTimeline = (state: AppState): number => (
-  (shouldShowTimeline(state) || !utils.safeAreaBottom()) ? 0 : constants.bottomWithoutTimeline
-)
+export const bottomGivenTimeline = (state: AppState): number => {
+  const safeAreaBottom = state.options.safeAreaInsets ? state.options.safeAreaInsets.bottom : 0;
+  return (shouldShowTimeline(state) || !safeAreaBottom) ? 0 : constants.bottomWithoutTimeline
+}
 
 // Note that a larger 'bottom' yields a higher position...
 export const dynamicClockBottom = (state: AppState): number => (
@@ -196,9 +202,10 @@ export const dynamicClockBottom = (state: AppState): number => (
 )
 
 // This returns the distance above any timeline to the bottom of the start menu.
-export const dynamicStartMenuBottom = (state: AppState): number => (
-  dynamicRefTimeHeight(state) + constants.clock.height + utils.safeAreaBottom()
-)
+export const dynamicStartMenuBottom = (state: AppState): number => {
+  const safeAreaBottom = state.options.safeAreaInsets ? state.options.safeAreaInsets.bottom : 0;
+  return  dynamicRefTimeHeight(state) + constants.clock.height + safeAreaBottom
+}
 
 // Note that a smaller 'bottom' yields a lower position.
 export const dynamicRefTimeBottom = (state: AppState): number => (
@@ -226,14 +233,14 @@ export const dynamicMapStyle = (state: AppState): MapStyle => (
   constants.mapStyles.find((mapStyle: MapStyle) => (mapStyle.name === state.options.mapStyle)) as MapStyle
 )
 
-export const timelineHeightIfShowing = () => (
-  constants.initialTimelineHeight + utils.bottomPaddingForAxis()
+export const timelineHeightIfShowing = (state: AppState) => (
+  constants.initialTimelineHeight + bottomPaddingForAxis(state)
 )
 
 export const dynamicTimelineHeight = (state: AppState): number => (
   !shouldShowTimeline(state) || mapIsFullScreen(state) ?
     0
-    : timelineHeightIfShowing()
+    : timelineHeightIfShowing(state)
 )
 
 // pixel width of entire of timeline including off-screen portion
@@ -274,11 +281,11 @@ export const showActivityDetailsRowsPreview = (state: AppState): number => {
 }
 
 export const dynamicTopBelowActivityList = (state: AppState): number => (
-  dynamicTopBelowButtons() + (shouldShowActivityList(state) ? constants.activityList.height : 0)
+  dynamicTopBelowButtons(state) + (shouldShowActivityList(state) ? constants.activityList.height : 0)
 )
 
-export const dynamicTopBelowButtons = (): number => (
-  dynamicAreaTop() + constants.buttonSize + constants.buttonOffset * 2
+export const dynamicTopBelowButtons = (state: AppState): number => (
+  dynamicAreaTop(state) + constants.buttonSize + constants.buttonOffset * 2
 )
 
 export const loggableOptions = (state: AppState) => {
@@ -304,7 +311,7 @@ export const mapPadding = (state: AppState): [number, number] => {
 
   // vertical padding is calculated
   const showActivityList = shouldShowActivityList(state);
-  const topClearZone = dynamicTopBelowButtons()
+  const topClearZone = dynamicTopBelowButtons(state)
     + (showActivityList ? 1 : 0) * constants.activityList.height;
   const bottomClearZone = constants.timeline.default.height; // clear it whether or not timeline is showing now
   // Using min here to ensure padding doesn't get too big, which would generate a Mapbox exception and break fitBounds.
@@ -830,8 +837,8 @@ let snapPositionsNormal = [] as number[];
 
 // Supports GrabBar
 export const snapPositions = (state: AppState): number[] => {
-  const topMin = dynamicAreaTop() + constants.buttonOffset * 2;
-  const belowTopButtons = dynamicTopBelowButtons();
+  const topMin = dynamicAreaTop(state) + constants.buttonOffset * 2;
+  const belowTopButtons = dynamicTopBelowButtons(state);
   const listDetailsBoundary = belowTopButtons + constants.activityList.height;
   const detailsRowHeight = constants.activityDetails.height;
   const detailsRow1 = listDetailsBoundary + detailsRowHeight;

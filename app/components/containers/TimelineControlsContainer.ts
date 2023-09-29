@@ -7,13 +7,15 @@ import {
 import { AppState } from 'lib/state';
 import TimelineControls from 'presenters/TimelineControls';
 import {
-  dynamicClockBottom,
+  bottomPaddingForAxis,
   dynamicRefTimeBottom,
   dynamicTimelineHeight,
 } from 'lib/selectors';
 
 interface TimelineControlsStateProps {
+  bottomPaddingForAxis: number;
   refTimeBottom: number;
+  safeAreaBottom: number;
   showCenterline: boolean;
   timelineHeight: number;
   timelineScrolling: boolean;
@@ -27,7 +29,9 @@ export type TimelineControlsProps = TimelineControlsStateProps & TimelineControl
 
 const mapStateToProps = (state: AppState): TimelineControlsStateProps => {
   return {
+    bottomPaddingForAxis: bottomPaddingForAxis(state),
     refTimeBottom: dynamicRefTimeBottom(state),
+    safeAreaBottom: state.options.safeAreaInsets ? state.options.safeAreaInsets.bottom : 0,
     showCenterline: uiCategories(state).includes(UICategory.refTime),
     timelineHeight: dynamicTimelineHeight(state),
     timelineScrolling: state.flags.timelineScrolling,

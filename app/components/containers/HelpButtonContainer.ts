@@ -23,7 +23,7 @@ export type HelpButtonProps = HelpButtonStateProps & HelpButtonDispatchProps;
 const mapStateToProps = (state: AppState): HelpButtonStateProps => {
   return {
     open: state.flags.helpOpen,
-    topOffset: dynamicAreaTop(),
+    topOffset: dynamicAreaTop(state),
   }
 }
 

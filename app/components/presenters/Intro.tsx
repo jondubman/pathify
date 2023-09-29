@@ -20,7 +20,6 @@ import {
   IntroPageTemplate,
   UICategory,
 } from 'lib/intro';
-import { dynamicAreaTop } from 'lib/selectors';
 import utils from 'lib/utils';
 import log from 'shared/log';
 
@@ -228,7 +227,7 @@ class Intro extends Component<IntroProps> {
     }
     const pageHasGrabBar = currentPage.ui.includes(UICategory.grabBar);
     const grabBarAtTop = pageHasGrabBar && !props.grabBarSnapIndexPreview;
-    const top = dynamicAreaTop();
+    const { top } = props;
     const showRestartButton = currentPage.buttonRestart && !grabBarAtTop;
     return (
       <Fragment>

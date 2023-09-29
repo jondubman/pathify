@@ -1,3 +1,4 @@
+import { EdgeInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import {
@@ -18,6 +19,7 @@ interface AppUIStateProps {
   mapFullScreen: boolean;
   mapTapped: boolean;
   movieMode: boolean;
+  safeAreaInsets: EdgeInsets | null;
   showActivityInfo: boolean;
   showGrabBar: boolean;
   showTimeline: boolean;
@@ -38,6 +40,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     showActivityInfo,
     showGrabBar,
   } = state.flags;
+  const { safeAreaInsets } = state.options; 
   let ui = uiCategories(state);
   if (fullScreenUiMinimized(state)) {
     ui = ui.filter(category => category != UICategory.follow);
@@ -47,6 +50,7 @@ const mapStateToProps = (state: AppState): AppUIStateProps => {
     mapFullScreen: mapIsFullScreen(state),
     mapTapped,
     movieMode,
+    safeAreaInsets,
     showActivityInfo,
     showGrabBar: showGrabBar && ui.includes(UICategory.activities) || ui.includes(UICategory.grabBar),
     showTimeline: shouldShowTimeline(state) && ui.includes(UICategory.activities),

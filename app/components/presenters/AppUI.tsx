@@ -9,7 +9,14 @@ import {
   View,
 } from 'react-native';
 
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
+
+import {
+  AppAction,
+  newAction,
+} from 'lib/actions';
 import constants from 'lib/constants';
+import store from 'lib/store';
 import utils from 'lib/utils';
 import log from 'shared/log';
 
@@ -51,16 +58,21 @@ class AppUI extends Component<AppUIProps> {
   }
 
   render() {
+    const { insets } = this.props as any;
     const {
       introMode,
       mapFullScreen,
       movieMode,
+      safeAreaInsets,
       showActivityInfo,
       showGrabBar,
       showTimeline,
       timelineHeight,
       ui,
     } = this.props;
+    if (insets && !safeAreaInsets) {
+      store.dispatch(newAction(AppAction.setAppOption, { safeAreaInsets: insets }));
+    }
     const pointerEvents = showTimeline ? 'auto' : 'none';
     const timelineOpacity = { opacity: showTimeline ? 1 : 0 };
     const width = utils.windowSize().width;
@@ -102,14 +114,14 @@ class AppUI extends Component<AppUIProps> {
               </View>
               {/* TimelineControls (including ZoomClock) can appear even if Timeline itself hidden */}
               {ui.includes(UICategory.timelineControls) ? <TimelineControlsContainer /> : null}
-              <View style={{ position: 'absolute', width }}>
-                {ui.includes(UICategory.help) ? (
-                    <HelpPanelContainer /> // includes HelpButton
+                <View style={{ position: 'absolute', width }}>
+                  {ui.includes(UICategory.help) ? (
+                      <HelpPanelContainer /> // includes HelpButton
+                    ) : null}
+                  {ui.includes(UICategory.settings) ? (
+                    <SettingsPanelContainer /> // includes SettingsButton
                   ) : null}
-                {ui.includes(UICategory.settings) ? (
-                  <SettingsPanelContainer /> // includes SettingsButton
-                ) : null}
-              </View>
+                </View>
               {ui.includes(UICategory.start) ? (
                 <Fragment>
                   <StartMenuContainer />
@@ -131,4 +143,4 @@ class AppUI extends Component<AppUIProps> {
   }
 }
 
-export default AppUI;
+export default withSafeAreaInsets(AppUI as any);

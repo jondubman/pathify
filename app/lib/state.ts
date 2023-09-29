@@ -1,5 +1,7 @@
 // Interfaces and constants related to the AppState used by the Redux reducer
 
+import { EdgeInsets } from 'react-native-safe-area-context';
+
 import ActivityList from 'presenters/ActivityList'
 import TimelineScroll from 'presenters/TimelineScroll'
 import { OptionalPulsars } from 'containers/PulsarsContainer';
@@ -66,8 +68,9 @@ export const initialAppState = {
   },
   current: noCurrentLocation, // Most recently received location, currently only used for debugging
   flags: { // boolean (which makes enable, disable, toggle actions meaningful)
-    allowMapStyleNone: false, // really only useful for debugging / perf
+    activatedApp: false, // The app can be launched in the background. Has the app ever been activated?
     activityListScrolling: false, // is the activityList currently actively being scrolled?
+    allowMapStyleNone: false, // really only useful for debugging / perf
     animateMapWhenFollowingPath: true, // animation pans more smoothly
     appActive: false, // relates to OS state of the app. set true on AppStateChange.ACTIVE, else set false
     appStartupCompleted: false, // once true, should never be set to false
@@ -168,6 +171,7 @@ export const initialAppState = {
     pathColorOpacity: 0.5, // for colorizing paths, works with activityColors
     pulsars: {} as OptionalPulsars, // pulsing colored dots to indicate location on the map
     pausedTime: now, // timepoint where timeline was last paused
+    safeAreaInsets: null as EdgeInsets | null,
     scrollTime: now, // timepoint that changes even as user is scrolling the timeline
     selectedActivityId: null as string | null, // for now, no more than one Activity is 'selected' at a time
     startupTime: now, // not persisted, never changed once set

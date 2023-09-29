@@ -19,9 +19,9 @@ import { centerline } from 'lib/selectors';
 const { refTime, timeline } = constants;
 const colors = constants.colors.timeline;
 
-const Styles = StyleSheet.create({
+const Styles = (props: TimelineControlsProps) => StyleSheet.create({
   centerLine: {
-    bottom: utils.bottomPaddingForAxis(),
+    bottom: props.bottomPaddingForAxis,
     left: centerline() - timeline.centerLineWidth / 2,
     position: 'absolute',
     width: timeline.centerLineWidth,
@@ -54,15 +54,15 @@ const TimelineControls = (props: TimelineControlsProps) => (
     <View pointerEvents="none">
       <RefTimeContainer />
     </View>
-    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight }]} />
-    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
-    <View pointerEvents="none" style={[Styles.topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
+    <View pointerEvents="none" style={[Styles(props).topLine, { bottom: props.timelineHeight }]} />
+    <View pointerEvents="none" style={[Styles(props).topLine, { bottom: props.timelineHeight + 2 * timeline.topLineHeight }]} />
+    <View pointerEvents="none" style={[Styles(props).topLine, { bottom: props.timelineHeight + 4 * timeline.topLineHeight }]} />
     {props.showCenterline ? (
-      <View pointerEvents="none" style={[Styles.centerLine, {
+      <View pointerEvents="none" style={[Styles(props).centerLine, {
         backgroundColor: backgroundColorFor(props),
-        height: (props.timelineHeight ? props.timelineHeight : utils.safeAreaBottom())
+        height: (props.timelineHeight ? props.timelineHeight : props.safeAreaBottom)
           + refTime.height + props.zoomClockMoved
-          - utils.bottomPaddingForAxis()
+          - props.bottomPaddingForAxis
           + 1
       }]} />
     ) : null}

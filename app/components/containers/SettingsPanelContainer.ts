@@ -41,7 +41,7 @@ const mapStateToProps = (state: AppState): SettingsPanelStateProps => {
     open: state.flags.settingsOpen,
     showAllPastLocations: state.flags.showAllPastLocations,
     showSequentialPaths: state.flags.showSequentialPaths,
-    topOffset: dynamicAreaTop(),
+    topOffset: dynamicAreaTop(state),
   }
 }
 

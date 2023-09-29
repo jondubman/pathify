@@ -8,7 +8,8 @@ import constants, {
 import {
   activityColorForIndex,
   activityListIndex,
-} from 'lib/selectors';
+}
+from 'lib/selectors';
 import utils from 'lib/utils';
 import TimelineSpan from 'presenters/TimelineSpan';
 import { ActivityDataExtended } from 'lib/activities';
@@ -51,6 +52,8 @@ class ActivityTimespans extends React.Component<ActivityTimespansExtendedProps> 
         key={`${scale.x(activity.tStart)}-${scale.x(activity.tLast)}-${index}`}
         color={this.timespanColor(activity, activityListIndex(listedActivities, activity.id))}
         kind={TimespanKind.ACTIVITY}
+        timelineBottom={this.props.bottomPaddingForAxis}
+        timelineHeight={this.props.timelineHeight}
         xStart={scale.x(activity.tStart)}
         xEnd={scale.x(activity.tLast)}
       />

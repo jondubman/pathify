@@ -2,7 +2,6 @@ import {
   AppState as RNAppState, // Rename built-in AppState; would rather use AppState to refer to our Redux application state
   Dimensions,
 } from 'react-native';
-import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 import * as turf from '@turf/turf';
 
 import constants from 'lib/constants';
@@ -27,10 +26,6 @@ const utils = {
 
   appInBackground: (): boolean => (
     (RNAppState.currentState === 'background')
-  ),
-
-  bottomPaddingForAxis: () => (
-    StaticSafeAreaInsets.safeAreaInsetsBottom ? 28 : 14 // empirically optimized for displays with/without home button
   ),
 
   boundsContained: (a: Bounds, b: Bounds): boolean => ( // Is a contained in b?
@@ -132,14 +127,6 @@ const utils = {
     const factor = Math.pow(10, precision);
     return Math.round(num * factor) / factor;
   },
-
-  safeAreaBottom: () => (
-    StaticSafeAreaInsets.safeAreaInsetsBottom
-  ),
-
-  safeAreaTop: () => (
-    StaticSafeAreaInsets.safeAreaInsetsTop
-  ),
 
   setTestMode: (testMode: boolean) => {
     _testMode = testMode; 

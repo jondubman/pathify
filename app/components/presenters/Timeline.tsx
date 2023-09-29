@@ -26,18 +26,11 @@ import constants from 'lib/constants';
 import { timelineHeightIfShowing } from 'lib/selectors';
 import utils from 'lib/utils';
 import timeseries, { interval } from 'lib/timeseries';
+import log from 'shared/log';
 
 const initialState = {
 }
 type State = Readonly<typeof initialState>
-
-const TimelineStyles = StyleSheet.create({
-  timeline: {
-    backgroundColor: constants.colors.timeline.background,
-    height: timelineHeightIfShowing(),
-    opacity: 1,
-  },
-})
 
 const axisStyle = {
   axis: { stroke: constants.colors.timeline.axis },
@@ -104,6 +97,13 @@ class Timeline extends Component<TimelineProps> {
   }
 
   render() {
+    const TimelineStyles = StyleSheet.create({
+      timeline: {
+        backgroundColor: constants.colors.timeline.background,
+        height: this.props.timelineHeight,
+        opacity: 1,
+      },
+    })
     utils.addToCount('renderTimeline');
     const {
       pinchZoom,
@@ -139,9 +139,9 @@ class Timeline extends Component<TimelineProps> {
               onZoomDomainChange={this.handleZoom}
             />
           }
-          height={timelineHeightIfShowing()}
+          height={this.props.timelineHeight}
           width={timelineWidth}
-          padding={{ bottom: utils.bottomPaddingForAxis(), left: 0, right: 0, top: 0 }}
+          padding={{ bottom: this.props.bottomPaddingForAxis, left: 0, right: 0, top: 0 }}
         >
           <VictoryAxis
             style={axisStyle}

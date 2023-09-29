@@ -42,7 +42,7 @@ const mapStateToProps = (state: AppState): HelpPanelStateProps => {
     introLabel,
     labelsEnabled: state.flags.labelsEnabled,
     open: state.flags.helpOpen,
-    topOffset: dynamicAreaTop(),
+    topOffset: dynamicAreaTop(state),
     version: `Pathify v${appVersion}.${appBuild}${period ? '.' : ''}${__DEV__ ? 'dev' : ''}`,
   }
 }
